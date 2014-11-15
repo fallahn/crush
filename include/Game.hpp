@@ -25,14 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+//main game class
 
-#include <Game.hpp>
+#ifndef GAME_H_
+#define GAME_H_
 
-int main()
+#include <StateStack.hpp>
+
+#include <SFML/Graphics/RenderWindow.hpp>
+
+class Game final : private sf::NonCopyable
 {
-    Game game;
-    game.run();
+public:
+    Game();
+    ~Game() = default;
 
-    return 0;
-}
+    void run();
+
+private: 
+
+    static const float m_timePerFrame;
+
+    sf::RenderWindow m_renderWindow;
+
+    StateStack m_stateStack;
+
+    void handleEvents();
+    void update(float dt);
+    void draw();
+
+    void registerStates();
+};
+
+#endif //GAME_H_

@@ -25,14 +25,53 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+//ABC for game states
 
-#include <Game.hpp>
+#ifndef STATE_H_
+#define STATE_H_
 
-int main()
+#include <StateIds.hpp>
+
+#include <SFML/Window/Event.hpp>
+
+#include <memory>
+
+namespace sf
 {
-    Game game;
-    game.run();
-
-    return 0;
+    class RenderWindow;
 }
+
+class StateStack;
+class State
+{
+public:
+    typedef std::unique_ptr<State> Ptr;
+
+    struct Context
+    {
+        Context(sf::RenderWindow& renderWindow);
+        sf::RenderWindow* renderWindow;
+    };
+
+    State(StateStack& stateStack, Context context);
+    virtual ~State() = default;
+
+    virtual void draw() = 0;
+    virtual bool update(float dt) = 0;
+    virtual bool handleEvent(const sf::Event& evt) = 0;
+
+protected:
+    void requestStackPush(States::ID id);
+    void requestStackPop();
+    void requestStackClear();
+
+    Context getContext() const;
+
+private:
+
+    StateStack* m_stack;
+    Context m_context;
+
+};
+
+#endif //STATE_H_

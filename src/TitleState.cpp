@@ -25,14 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+#include <TitleState.hpp>
 
-#include <Game.hpp>
+TitleState::TitleState(StateStack& stack, Context context)
+    : State(stack, context){}
 
-int main()
+void TitleState::draw()
 {
-    Game game;
-    game.run();
 
-    return 0;
+}
+
+bool TitleState::update(float dt)
+{
+    return true;
+}
+
+bool TitleState::handleEvent(const sf::Event& evt)
+{
+    if (evt.type == sf::Event::KeyPressed)
+    {
+        requestStackPop();
+        requestStackPush(States::ID::Menu);
+    }
+    return true;
 }

@@ -25,14 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+//IDs for various game states
 
-#include <Game.hpp>
+#ifndef STATE_IDS_H_
+#define STATE_IDS_H_
 
-int main()
+namespace States
 {
-    Game game;
-    game.run();
-
-    return 0;
+    enum class ID
+    {
+        None,
+        Title,
+        Menu,
+        Game,
+        Loading,
+        Pause
+    };
 }
+
+#endif

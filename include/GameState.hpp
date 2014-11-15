@@ -25,14 +25,17 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+#include <State.hpp>
 
-#include <Game.hpp>
-
-int main()
+class GameState final : public State
 {
-    Game game;
-    game.run();
+public:
+    GameState(StateStack& stack, Context context);
+    ~GameState() = default;
 
-    return 0;
-}
+    void draw() override;
+    bool update(float dt) override;
+    bool handleEvent(const sf::Event& evt) override;
+
+private:
+};

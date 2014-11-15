@@ -25,14 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+#include <State.hpp>
+#include <StateStack.hpp>
 
-#include <Game.hpp>
+State::Context::Context(sf::RenderWindow& window)
+    : renderWindow(&window){}
 
-int main()
+State::State(StateStack& stateStack, Context context)
+    : m_stack(&stateStack),
+    m_context(context){}
+
+void State::requestStackPush(States::ID id)
 {
-    Game game;
-    game.run();
+    m_stack->pushState(id);
+}
 
-    return 0;
+void State::requestStackPop()
+{
+    m_stack->popState();
+}
+
+void State::requestStackClear()
+{
+    m_stack->clearStates();
+}
+
+State::Context State::getContext() const
+{
+    return m_context;
 }

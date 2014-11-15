@@ -25,14 +25,22 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+#include <MenuState.hpp>
 
-#include <Game.hpp>
+MenuState::MenuState(StateStack& stack, Context context)
+    : State(stack, context){}
 
-int main()
+void MenuState::draw()
 {
-    Game game;
-    game.run();
 
-    return 0;
+}
+
+bool MenuState::update(float dt)
+{
+    return true;
+}
+
+bool MenuState::handleEvent(const sf::Event& evt)
+{
+    return true;
 }

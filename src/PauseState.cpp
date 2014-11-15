@@ -25,14 +25,23 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main entry point for game
+#include <PauseState.hpp>
 
-#include <Game.hpp>
+PauseState::PauseState(StateStack& stack, Context context)
+    : State(stack, context){}
 
-int main()
+void PauseState::draw()
 {
-    Game game;
-    game.run();
 
-    return 0;
 }
+
+bool PauseState::update(float dt)
+{
+    return true;
+}
+
+bool PauseState::handleEvent(const sf::Event& evt)
+{
+    return true;
+}
+
