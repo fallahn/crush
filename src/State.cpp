@@ -28,8 +28,8 @@ source distribution.
 #include <State.hpp>
 #include <StateStack.hpp>
 
-State::Context::Context(sf::RenderWindow& window)
-    : renderWindow(&window){}
+State::Context::Context(sf::RenderWindow& window, Game& game)
+    : renderWindow(&window), gameInstance(&game){}
 
 State::State(StateStack& stateStack, Context context)
     : m_stack(&stateStack),

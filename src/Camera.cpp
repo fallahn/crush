@@ -25,26 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <GameState.hpp>
-#include <Game.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <Camera.hpp>
+#include <Node.hpp>
 
-GameState::GameState(StateStack& stack, Context context)
-    : State(stack, context){}
+Camera::Camera()
+    :m_node(nullptr){}
 
-void GameState::draw()
+Camera::~Camera()
 {
-
+    if (m_node)
+        m_node->setCamera(nullptr);
 }
 
-bool GameState::update(float dt)
+void Camera::setView(sf::View view)
 {
-    getContext().gameInstance->setClearColour(sf::Color::Green);
-    getContext().renderWindow->setTitle("Game Screen");
-    return true;
+    m_view = view;
 }
 
-bool GameState::handleEvent(const sf::Event& evt)
+sf::View Camera::getView() const
 {
-    return true;
+    if (m_node)
+        m_view.setCenter(m_node->getWorldPosition());
+    return m_view;
 }
+
+

@@ -25,26 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <GameState.hpp>
-#include <Game.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+//wrapper for a view objects so that it can be attached to a scene node
 
-GameState::GameState(StateStack& stack, Context context)
-    : State(stack, context){}
+#ifndef CAMERA_H_
+#define CAMERA_H_
 
-void GameState::draw()
+#include <SFML/Graphics/View.hpp>
+#include <SFML/System/NonCopyable.hpp>
+
+class Node;
+class Camera final : private sf::NonCopyable
 {
+    friend class Node;
+public:
+    Camera();
+    ~Camera();
 
-}
+    void setView(sf::View view);
+    sf::View getView() const;
 
-bool GameState::update(float dt)
-{
-    getContext().gameInstance->setClearColour(sf::Color::Green);
-    getContext().renderWindow->setTitle("Game Screen");
-    return true;
-}
+private:
+    Node* m_node;
+    mutable sf::View m_view;
+};
 
-bool GameState::handleEvent(const sf::Event& evt)
-{
-    return true;
-}
+#endif //CAMERA_H_

@@ -42,11 +42,14 @@ public:
 
     void run();
 
+    void setClearColour(sf::Color c);
+
 private: 
 
     static const float m_timePerFrame;
 
     sf::RenderWindow m_renderWindow;
+    sf::Color m_clearColour;
 
     StateStack m_stateStack;
 

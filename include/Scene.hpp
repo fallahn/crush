@@ -25,26 +25,32 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <GameState.hpp>
-#include <Game.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+//the root of any scene graph, responsible for managing scene lights and cameras
 
-GameState::GameState(StateStack& stack, Context context)
-    : State(stack, context){}
+#ifndef SCENE_H_
+#define SCENE_H_
 
-void GameState::draw()
+#include <Node.hpp>
+
+class Scene final : public sf::Drawable, private sf::NonCopyable
 {
+public:
+    Scene();
+    ~Scene() = default;
 
-}
+    void addNode(Node::Ptr& node);
+    Node::Ptr removeNode(Node& node);
 
-bool GameState::update(float dt)
-{
-    getContext().gameInstance->setClearColour(sf::Color::Green);
-    getContext().renderWindow->setTitle("Game Screen");
-    return true;
-}
+    void setActiveCamera(Camera* node);
+    static Camera defaultCamera;
 
-bool GameState::handleEvent(const sf::Event& evt)
-{
-    return true;
-}
+private:
+    std::vector<Node::Ptr> m_children;
+    Camera* m_activeCamera;
+
+    
+
+    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+};
+
+#endif //SCENE_H_

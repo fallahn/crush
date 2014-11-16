@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <MenuState.hpp>
+#include <Game.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
 
 MenuState::MenuState(StateStack& stack, Context context)
     : State(stack, context){}
@@ -37,10 +39,17 @@ void MenuState::draw()
 
 bool MenuState::update(float dt)
 {
+    getContext().renderWindow->setTitle("Menu Screen");
+    getContext().gameInstance->setClearColour(sf::Color::Red);
     return true;
 }
 
 bool MenuState::handleEvent(const sf::Event& evt)
 {
+    if (evt.type == sf::Event::KeyPressed)
+    {
+        requestStackPop();
+        requestStackPush(States::ID::Game);
+    }
     return true;
 }

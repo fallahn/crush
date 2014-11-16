@@ -70,20 +70,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
+    <ClCompile Include="src\Node.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
+    <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\MenuState.hpp" />
+    <ClInclude Include="include\Node.hpp" />
     <ClInclude Include="include\PauseState.hpp" />
+    <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\State.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\StateStack.hpp" />

@@ -25,26 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <GameState.hpp>
-#include <Game.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
-GameState::GameState(StateStack& stack, Context context)
-    : State(stack, context){}
+#include <Scene.hpp>
 
-void GameState::draw()
+#include <cassert>
+
+Camera Scene::defaultCamera; //TODO set the default view size
+
+Scene::Scene()
+    : m_activeCamera(nullptr)
 {
-
+    m_activeCamera = &defaultCamera;
 }
 
-bool GameState::update(float dt)
+//public
+void Scene::addNode(Node::Ptr& node)
 {
-    getContext().gameInstance->setClearColour(sf::Color::Green);
-    getContext().renderWindow->setTitle("Game Screen");
-    return true;
+    node->setScene(this);
+    m_children.push_back(std::move(node));
 }
 
-bool GameState::handleEvent(const sf::Event& evt)
+Node::Ptr Scene::removeNode(Node& node)
 {
-    return true;
+    auto result = std::find_if(m_children.begin(), m_children.end(), [&node](const Node::Ptr& p)
+    {
+        return (p.get() == &node);
+    });
+    assert(result != m_children.end());
+
+    Node::Ptr found = std::move(*result);
+    found->setScene(nullptr);
+    m_children.erase(result);
+    return found;
+}
+
+void Scene::setActiveCamera(Camera* camera)
+{
+    m_activeCamera = camera;
+}
+
+//private
+void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.setView(m_activeCamera->getView());
+    for (const auto& c : m_children)
+        rt.draw(*c);
 }

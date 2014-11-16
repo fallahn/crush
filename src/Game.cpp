@@ -35,7 +35,7 @@ const float Game::m_timePerFrame = 1.f / 60.f;
 
 Game::Game()
     : m_renderWindow    (sf::VideoMode(800, 600), "Crush", sf::Style::Close),
-    m_stateStack        (State::Context(m_renderWindow))
+    m_stateStack        (State::Context(m_renderWindow, *this))
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);
@@ -64,12 +64,23 @@ void Game::run()
     }
 }
 
+void Game::setClearColour(sf::Color c)
+{
+    m_clearColour = c;
+}
+
 //private
 void Game::handleEvents()
 {
     sf::Event evt;
     while (m_renderWindow.pollEvent(evt))
     {
+        //--global esc to quit - TODO remove this--
+        if (evt.type == sf::Event::KeyPressed)
+            if (evt.key.code == sf::Keyboard::Escape)
+                m_renderWindow.close();
+        //-----------------------------------------
+
         m_stateStack.handleEvent(evt);
         
         if(evt.type == sf::Event::Closed)
@@ -84,7 +95,7 @@ void Game::update(float dt)
 
 void Game::draw()
 {
-    m_renderWindow.clear();
+    m_renderWindow.clear(m_clearColour);
     m_stateStack.draw();
     m_renderWindow.display();
 }

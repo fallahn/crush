@@ -42,6 +42,7 @@ namespace sf
 }
 
 class StateStack;
+class Game;
 class State
 {
 public:
@@ -49,8 +50,9 @@ public:
 
     struct Context
     {
-        Context(sf::RenderWindow& renderWindow);
+        Context(sf::RenderWindow& renderWindow, Game& game);
         sf::RenderWindow* renderWindow;
+        Game* gameInstance;
     };
 
     State(StateStack& stateStack, Context context);
