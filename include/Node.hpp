@@ -47,11 +47,12 @@ class Node final : public sf::Transformable, public sf::Drawable, private sf::No
 public:
     typedef std::unique_ptr<Node> Ptr;
 
-    Node();
+    explicit Node(const std::string& name = "");
     ~Node();
 
     void addChild(Ptr& child);
     Ptr removeChild(Node& child);
+    Node* findChild(const std::string& name, bool recursive = true);
 
     sf::Vector2f getWorldPosition() const;
     sf::Transform getWorldTransform() const;
@@ -65,10 +66,13 @@ public:
     Scene* getScene() const;
     Camera* getCamera() const;
 
+    const std::string& getName() const;
 
 private:
     std::vector<Ptr> m_children;
     Node* m_parent;
+
+    std::string m_name;
 
     Scene* m_scene;
     Camera* m_camera;

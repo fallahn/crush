@@ -39,10 +39,13 @@ link_libraries(
 
 add_executable(
 	CRUSH_bin src/main.cpp
+	src/Camera.cpp
 	src/Game.cpp
 	src/GameState.cpp
 	src/MenuState.cpp
+	src/Node.cpp
 	src/PauseState.cpp
+	src/Scene.cpp
 	src/State.cpp
 	src/StateStack.cpp
 	src/TitleState.cpp)

@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <State.hpp>
+#include <Scene.hpp>
 
 class GameState final : public State
 {
@@ -38,4 +39,6 @@ public:
     bool handleEvent(const sf::Event& evt) override;
 
 private:
+
+    Scene m_scene;
 };

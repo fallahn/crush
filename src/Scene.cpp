@@ -43,6 +43,10 @@ Scene::Scene()
 void Scene::addNode(Node::Ptr& node)
 {
     node->setScene(this);
+
+    if (node->getCamera() && m_activeCamera == &defaultCamera)
+        m_activeCamera = node->getCamera();
+
     m_children.push_back(std::move(node));
 }
 
@@ -63,6 +67,32 @@ Node::Ptr Scene::removeNode(Node& node)
 void Scene::setActiveCamera(Camera* camera)
 {
     m_activeCamera = camera;
+}
+
+Camera* Scene::getActiveCamera() const
+{
+    return m_activeCamera;
+}
+
+Node* Scene::findNode(const std::string& name, bool recursive)
+{
+    auto result = std::find_if(m_children.begin(), m_children.end(), [&name](const Node::Ptr& p)
+    {
+        return (p->getName() == name);
+    });
+
+    if (result != m_children.end()) return result->get();
+
+    Node* np = nullptr;
+    if (recursive)
+    {
+        for (const auto& c : m_children)
+        {
+            np = c->findChild(name, true);
+            if (np) return np;
+        }
+    }
+    return np;
 }
 
 //private

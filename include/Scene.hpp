@@ -42,7 +42,10 @@ public:
     Node::Ptr removeNode(Node& node);
 
     void setActiveCamera(Camera* node);
+    Camera* getActiveCamera() const;
     static Camera defaultCamera;
+
+    Node* findNode(const std::string& name, bool recursive = true);
 
 private:
     std::vector<Node::Ptr> m_children;

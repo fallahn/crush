@@ -39,6 +39,8 @@ Game::Game()
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);
+
+    m_renderWindow.setVerticalSyncEnabled(true);
 }
 
 //public

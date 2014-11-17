@@ -30,7 +30,10 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 
 TitleState::TitleState(StateStack& stack, Context context)
-    : State(stack, context){}
+    : State(stack, context)
+{
+    getContext().renderWindow->setTitle("Title Screen");
+}
 
 void TitleState::draw()
 {
@@ -39,8 +42,7 @@ void TitleState::draw()
 
 bool TitleState::update(float dt)
 {
-    getContext().renderWindow->setTitle("Title Screen");
-    getContext().gameInstance->setClearColour(sf::Color::Blue);
+
     return true;
 }
 

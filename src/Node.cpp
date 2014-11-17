@@ -27,14 +27,16 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include <Node.hpp>
+#include <Scene.hpp>
 
 #include <cassert>
 
-Node::Node()
-    : m_parent(nullptr),
-    m_scene(nullptr),
-    m_camera(nullptr),
-    m_drawable(nullptr)
+Node::Node(const std::string& name)
+    : m_parent  (nullptr),
+    m_name      (name),
+    m_scene     (nullptr),
+    m_camera    (nullptr),
+    m_drawable  (nullptr)
 {
 
 }
@@ -50,6 +52,10 @@ void Node::addChild(Node::Ptr& child)
 {
     child->m_parent = this;
     child->m_scene = m_scene;
+
+    if (child->m_camera && m_scene->getActiveCamera() == &Scene::defaultCamera)
+        m_scene->setActiveCamera(child->m_camera);
+
     m_children.push_back(std::move(child));
 }
 
@@ -69,6 +75,27 @@ Node::Ptr Node::removeChild(Node& child)
 
 }
 
+Node* Node::findChild(const std::string& name, bool recursive)
+{
+    auto result = std::find_if(m_children.begin(), m_children.end(), [&name](const Node::Ptr& p)
+    {
+        return (p->getName() == name);
+    });
+
+    if (result != m_children.end()) return result->get();
+
+    Node* np = nullptr;
+    if (recursive)
+    {
+        for (const auto& c : m_children)
+        {
+            np = c->findChild(name, true);
+            if (np) return np;
+        }
+    }
+    return np;
+}
+
 sf::Vector2f Node::getWorldPosition() const
 {
     return getWorldTransform() * sf::Vector2f();
@@ -82,7 +109,6 @@ sf::Transform Node::getWorldTransform() const
 
     return t;
 }
-
 
 void Node::setWorldPosition(sf::Vector2f position)
 {
@@ -100,6 +126,7 @@ void Node::setScene(Scene* scene)
 void Node::setCamera(Camera* cam)
 {
     m_camera = cam;
+    cam->m_node = this;
 }
 
 void Node::setDrawable(sf::Drawable* drawable)
@@ -115,6 +142,11 @@ Scene* Node::getScene() const
 Camera* Node::getCamera() const
 {
     return m_camera;
+}
+
+const std::string& Node::getName() const
+{
+    return m_name;
 }
 
 //private

@@ -30,7 +30,10 @@ source distribution.
 #include <SFML/Graphics/RenderWindow.hpp>
 
 MenuState::MenuState(StateStack& stack, Context context)
-    : State(stack, context){}
+    : State(stack, context)
+{
+    getContext().renderWindow->setTitle("Menu Screen");
+}
 
 void MenuState::draw()
 {
@@ -39,8 +42,7 @@ void MenuState::draw()
 
 bool MenuState::update(float dt)
 {
-    getContext().renderWindow->setTitle("Menu Screen");
-    getContext().gameInstance->setClearColour(sf::Color::Red);
+
     return true;
 }
 

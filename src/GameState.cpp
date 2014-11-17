@@ -28,23 +28,56 @@ source distribution.
 #include <GameState.hpp>
 #include <Game.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+
+namespace
+{
+    Camera sceneCam;
+    sf::CircleShape circle(25.f);
+}
 
 GameState::GameState(StateStack& stack, Context context)
-    : State(stack, context){}
+    : State(stack, context)
+{
+    getContext().renderWindow->setTitle("Game Screen");
+    
+    auto camNode = std::make_unique<Node>("camNode");
+    sceneCam.setView({ {}, { 1280.f, 960.f } });
+    camNode->setCamera(&sceneCam);
+    camNode->setPosition(sceneCam.getView().getSize() / 2.f);
+    m_scene.addNode(camNode);
+
+    circle.setFillColor(sf::Color::Transparent);
+    circle.setOutlineColor(sf::Color::Red);
+    circle.setOutlineThickness(3.f);
+    circle.setOrigin(25.f, 25.f);
+
+    auto circleNode = std::make_unique<Node>("circleNode");
+    circleNode->setPosition(400.f, 400.f);
+    circleNode->setDrawable(&circle);
+    m_scene.addNode(circleNode);
+
+}
 
 void GameState::draw()
 {
-
+    getContext().renderWindow->draw(m_scene);
 }
 
 bool GameState::update(float dt)
 {
-    getContext().gameInstance->setClearColour(sf::Color::Green);
-    getContext().renderWindow->setTitle("Game Screen");
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+        m_scene.findNode("camNode")->move(80.f * dt, 0.f);
+
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::B))
+        m_scene.findNode("circleNode")->move(0.f, 82.f * dt);
+
     return true;
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
 {
+    
+    
     return true;
 }
