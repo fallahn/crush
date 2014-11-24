@@ -29,44 +29,44 @@ source distribution.
 #include <PhysWorld.hpp>
 #include <Util.hpp>
 
-PhysWorld::PhysObject::PhysObject(sf::FloatRect size, const PhysWorld::PhysData& pd)
+PhysWorld::Body::Body(sf::FloatRect size, const PhysWorld::BodyData& bd)
     : m_sleeping    (false),
-    m_physData      (pd),
+    m_bodyData      (bd),
     m_node          (nullptr),
     m_aabb          (size)
 {
 
 }
 
-PhysWorld::PhysObject::~PhysObject()
+PhysWorld::Body::~Body()
 {
     if (m_node)
-        m_node->setPhysObject(nullptr);
+        m_node->setPhysBody(nullptr);
 }
 
-const sf::Vector2f& PhysWorld::PhysObject::getPosition() const
+const sf::Vector2f& PhysWorld::Body::getPosition() const
 {
     return m_position;
 }
 
-void PhysWorld::PhysObject::setPosition(const sf::Vector2f& position)
+void PhysWorld::Body::setPosition(const sf::Vector2f& position)
 {
     m_position = position;
     m_aabb.left = position.x;
     m_aabb.top = position.y;
 }
 
-void PhysWorld::PhysObject::addForce(const sf::Vector2f& force)
+void PhysWorld::Body::applyForce(const sf::Vector2f& force)
 {
-    m_velocity += force;
+    m_velocity += force * m_bodyData.m_mass;
 }
 
-void PhysWorld::PhysObject::step(float dt)
+void PhysWorld::Body::step(float dt)
 {
-    if (m_physData.mass == 0) return;
+    if (m_bodyData.m_mass == 0) return;
     
     auto stepSpeed = Util::Vector::length(m_velocity) * dt;
-    auto stepVelocity = Util::Vector::normalize(m_velocity) * stepSpeed;
+    auto stepVelocity = Util::Vector::normalise(m_velocity) * stepSpeed;
 
     m_position += stepVelocity;
     m_aabb.left = m_position.x;

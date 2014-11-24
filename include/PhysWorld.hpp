@@ -44,40 +44,56 @@ class PhysWorld final : private sf::NonCopyable
 public:
     //pass this when creating an object for easy creation
     //of multiple objects with the same properties
-    struct PhysData
+    class Body;
+    class BodyData final
     {
-        float mass;
-        float inverseMass;
-        float restitution;
-
-        PhysData(float mass, float restitution)
-            : mass(mass), inverseMass(0.f), restitution(restitution)
+        friend class PhysWorld;
+        friend class PhysWorld::Body;
+    public:
+        BodyData(float mass, float restitution)
+            : m_mass(mass), m_inverseMass(0.f), m_restitution(restitution)
         {
             assert(mass >= 0.f);
             assert(restitution >= 0.f && restitution <= 1.f);
             if (mass > 0.f)
-                inverseMass = 1.f / mass;
+                m_inverseMass = 1.f / mass;
         }
+
+        void setMass(float mass)
+        {
+            assert(mass >= 0.f);
+            m_mass = mass;
+            (mass > 0.f)? m_inverseMass = 1.f / mass : 0.f;
+        }
+
+        void setRestitution(float r)
+        {
+            m_restitution = r;
+        }
+    private:
+        float m_mass;
+        float m_inverseMass;
+        float m_restitution;
     };
 
     //object in the simulation. we only need to support AABB objects
     //for this simulation
-    class PhysObject final : public Deletable
+    class Body final : public Deletable
     {
         friend class PhysWorld;
         friend class Node;
     public:
-        typedef std::unique_ptr<PhysObject> Ptr;
+        typedef std::unique_ptr<Body> Ptr;
 
-        PhysObject(sf::FloatRect size, const PhysData& physData);
-        ~PhysObject();
+        Body(sf::FloatRect size, const BodyData& BodyData);
+        ~Body();
 
         const sf::Vector2f& getPosition() const;
-        void addForce(const sf::Vector2f& force);
+        void applyForce(const sf::Vector2f& force);
 
     private:
         bool m_sleeping;
-        PhysData m_physData;
+        BodyData m_bodyData;
 
         sf::Vector2f m_velocity;
         sf::Vector2f m_position;
@@ -93,22 +109,28 @@ public:
     ~PhysWorld() = default;
 
     //adds a new physics object to the world and returns a pointer to it
-    PhysObject* addObject(sf::FloatRect size, const PhysData& pd);
+    Body* addObject(sf::FloatRect size, const BodyData& pd);
     //simulates one step by the given time
     void step(float dt);
 
 private:
-    typedef std::pair<PhysObject*, PhysObject*> CollisionPair;
+    typedef std::pair<Body*, Body*> CollisionPair;
 
-    std::vector<PhysObject::Ptr> m_objects;
+    struct CollisionManifold
+    {
+        sf::Vector2f normal;
+        float penetration = 0.f;
+    };
+
+    std::vector<Body::Ptr> m_objects;
     std::set<CollisionPair> m_collisionPairs;
-    std::vector<PhysObject*> m_awakeObjects;
+    std::vector<Body*> m_awakeObjects;
 
     sf::Vector2f m_gravity;
 
-    bool collision(const PhysObject::Ptr& a, const PhysObject::Ptr& b);
+    bool collision(const Body::Ptr& a, const Body::Ptr& b);
     void resolveCollision(const CollisionPair& pair);
-    sf::Vector2f getCollisionNormal(const CollisionPair& pair);
+    CollisionManifold getManifold(const CollisionPair& pair);
 };
 
 

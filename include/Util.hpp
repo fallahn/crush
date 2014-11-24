@@ -44,7 +44,7 @@ namespace Util
             return lv.x * rv.x + lv.y * rv.y;
         }
         //Returns a given vector with its length normalized to 1
-        static sf::Vector2f normalize(sf::Vector2f source)
+        static sf::Vector2f normalise(sf::Vector2f source)
         {
             float length = std::sqrt(dot(source, source));
             if (length != 0) source /= length;

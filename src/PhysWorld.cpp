@@ -37,9 +37,9 @@ PhysWorld::PhysWorld(float gravity)
 
 
 //public
-PhysWorld::PhysObject* PhysWorld::addObject(sf::FloatRect size, const PhysWorld::PhysData& pd)
+PhysWorld::Body* PhysWorld::addObject(sf::FloatRect size, const PhysWorld::BodyData& pd)
 {
-    auto po = std::make_unique<PhysObject>(size, pd);
+    auto po = std::make_unique<Body>(size, pd);
     m_objects.push_back(std::move(po));
     //adding new objects would invalidate existing references
     //so we need to return the underlying pointer
@@ -49,7 +49,7 @@ PhysWorld::PhysObject* PhysWorld::addObject(sf::FloatRect size, const PhysWorld:
 void PhysWorld::step(float dt)
 {
     //check for deleted objects and remove them
-    m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), [](const PhysObject::Ptr& p)
+    m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), [](const Body::Ptr& p)
     {
         return p->deleted();
     }), m_objects.end());
@@ -80,13 +80,13 @@ void PhysWorld::step(float dt)
     //update any parent node positions
     for (auto& po : m_objects)
     {
-        po->addForce(m_gravity);
+        //po->addForce(m_gravity);
         po->step(dt);
     }
 }
 
 //private
-bool PhysWorld::collision(const PhysWorld::PhysObject::Ptr& a, const PhysWorld::PhysObject::Ptr& b)
+bool PhysWorld::collision(const PhysWorld::Body::Ptr& a, const PhysWorld::Body::Ptr& b)
 {
     //separate collision testing function so it will be easier
     //to add circular objects later on if needed
@@ -95,27 +95,47 @@ bool PhysWorld::collision(const PhysWorld::PhysObject::Ptr& a, const PhysWorld::
 
 void PhysWorld::resolveCollision(const CollisionPair& cp)
 {
-    auto relativeVel = cp.second->m_velocity - cp.first->m_velocity;
+    auto relativeVelocity = cp.second->m_velocity - cp.first->m_velocity;
+    auto manifold = getManifold(cp);
 
-    //all our objects are rectangluar so the collision normal
-    //is only going to be one of 4 directions (ironically this
-    //would be easier to calculate for circles)
-    sf::Vector2f collisionNormal = getCollisionNormal(cp);
+    float normalVel = Util::Vector::dot(relativeVelocity, manifold.normal);
+    if (normalVel >= 0) return; //skip if moving away
 
-    float normalVel = Util::Vector::dot(relativeVel, collisionNormal);
-    if (normalVel > 0) return; //skip if moving away
+    float e = std::min(cp.first->m_bodyData.m_restitution, cp.second->m_bodyData.m_restitution);
 
-    float e = std::min(cp.first->m_physData.restitution, cp.second->m_physData.restitution);
+    float impulse = -(1.f + e) * normalVel;
+    impulse /= cp.first->m_bodyData.m_inverseMass / cp.second->m_bodyData.m_mass;
 
-    float impulse = -(1 + e) * normalVel;
-    impulse /= 1 / cp.first->m_physData.mass / cp.second->m_physData.mass;
-
-    sf::Vector2f impulseVec = impulse * collisionNormal;
-    cp.first->m_velocity -= cp.first->m_physData.inverseMass * impulseVec;
-    cp.second->m_velocity += cp.second->m_physData.inverseMass * impulseVec;
+    sf::Vector2f impulseVec = impulse * manifold.normal;
+    float totalMass = cp.first->m_bodyData.m_mass + cp.second->m_bodyData.m_mass;
+    cp.first->m_velocity -= (cp.first->m_bodyData.m_inverseMass / totalMass) * impulseVec;
+    cp.second->m_velocity += (cp.second->m_bodyData.m_inverseMass / totalMass) * impulseVec;
 }
 
-sf::Vector2f PhysWorld::getCollisionNormal(const CollisionPair& cp)
+PhysWorld::CollisionManifold PhysWorld::getManifold(const CollisionPair& cp)
 {
-    return sf::Vector2f(0.f, 1.f);
+    sf::Vector2f collisionNormal = cp.second->m_position - cp.first->m_position;
+    
+    float aExtent = cp.first->m_aabb.width / 2.f;
+    float bExtent = cp.second->m_aabb.width / 2.f;
+    float xOverlap = aExtent + bExtent - std::abs(collisionNormal.x);
+
+    CollisionManifold manifold;
+
+    aExtent = cp.first->m_aabb.height / 2.f;
+    bExtent = cp.second->m_aabb.height / 2.f;
+    float yOverlap = aExtent + bExtent - std::abs(collisionNormal.y);
+
+    if (xOverlap < yOverlap)
+    {
+        manifold.normal.x = (collisionNormal.x < 0) ? -1.f : 1.f;
+        manifold.penetration = xOverlap;
+    }
+    else
+    {
+        manifold.normal.y = (collisionNormal.y < 0) ? -1.f : 1.f;
+        manifold.penetration = yOverlap;
+    }
+ 
+    return manifold;
 }

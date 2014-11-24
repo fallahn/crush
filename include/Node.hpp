@@ -63,7 +63,7 @@ public:
     void setScene(Scene* scene); //this should only be accessable by Scene
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
-    void setPhysObject(PhysWorld::PhysObject* po);
+    void setPhysBody(PhysWorld::Body* b);
 
     Scene* getScene() const;
     Camera* getCamera() const;
@@ -79,7 +79,7 @@ private:
     Scene* m_scene;
     Camera* m_camera;
     sf::Drawable* m_drawable;
-    PhysWorld::PhysObject* m_physObject;
+    PhysWorld::Body* m_physBody;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     void drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const;
