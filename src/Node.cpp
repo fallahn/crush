@@ -36,7 +36,8 @@ Node::Node(const std::string& name)
     m_name      (name),
     m_scene     (nullptr),
     m_camera    (nullptr),
-    m_drawable  (nullptr)
+    m_drawable  (nullptr),
+    m_physObject(nullptr)
 {
 
 }
@@ -45,6 +46,10 @@ Node::~Node()
 {
     if (m_camera)
         m_camera->m_node = nullptr;
+
+    if (m_physObject)
+        m_physObject->deleteObject();
+
 }
 
 //public
@@ -132,6 +137,19 @@ void Node::setCamera(Camera* cam)
 void Node::setDrawable(sf::Drawable* drawable)
 {
     m_drawable = drawable;
+}
+
+void Node::setPhysObject(PhysWorld::PhysObject* po)
+{
+    if (m_physObject) m_physObject->deleteObject();
+
+    m_physObject = po;
+    if (po)
+    {
+        m_physObject->m_node = this;
+        m_physObject->setPosition(getWorldPosition());
+    }
+
 }
 
 Scene* Node::getScene() const

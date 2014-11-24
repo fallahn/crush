@@ -27,17 +27,27 @@ source distribution.
 
 #include <MenuState.hpp>
 #include <Game.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+namespace
+{
+    sf::Text placeholderText;
+}
 
 MenuState::MenuState(StateStack& stack, Context context)
     : State(stack, context)
 {
     getContext().renderWindow->setTitle("Menu Screen");
+
+    placeholderText.setFont(getContext().gameInstance->getFont());
+    placeholderText.setString("Menu goes here.");
 }
 
 void MenuState::draw()
 {
-
+    getContext().renderWindow->draw(placeholderText);
 }
 
 bool MenuState::update(float dt)

@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/System/NonCopyable.hpp>
 
 #include <Camera.hpp>
+#include <PhysWorld.hpp>
 
 #include <vector>
 #include <memory>
@@ -62,6 +63,7 @@ public:
     void setScene(Scene* scene); //this should only be accessable by Scene
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
+    void setPhysObject(PhysWorld::PhysObject* po);
 
     Scene* getScene() const;
     Camera* getCamera() const;
@@ -77,7 +79,7 @@ private:
     Scene* m_scene;
     Camera* m_camera;
     sf::Drawable* m_drawable;
-    //TODO physobj
+    PhysWorld::PhysObject* m_physObject;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     void drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const;

@@ -27,6 +27,7 @@ source distribution.
 
 #include <State.hpp>
 #include <Scene.hpp>
+#include <PhysWorld.hpp>
 
 class GameState final : public State
 {
@@ -34,11 +35,12 @@ public:
     GameState(StateStack& stack, Context context);
     ~GameState() = default;
 
-    void draw() override;
     bool update(float dt) override;
+    void draw() override;
     bool handleEvent(const sf::Event& evt) override;
 
 private:
 
     Scene m_scene;
+    PhysWorld m_physWorld;
 };

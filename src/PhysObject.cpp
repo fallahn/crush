@@ -25,50 +25,53 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <TitleState.hpp>
-#include <Game.hpp>
-
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-
-#include <Resource.hpp>
+#include <Node.hpp>
+#include <PhysWorld.hpp>
 #include <Util.hpp>
 
-namespace
+PhysWorld::PhysObject::PhysObject(sf::FloatRect size, const PhysWorld::PhysData& pd)
+    : m_sleeping    (false),
+    m_physData      (pd),
+    m_node          (nullptr),
+    m_aabb          (size)
 {
-    sf::Text titleText;
+
 }
 
-TitleState::TitleState(StateStack& stack, Context context)
-    : State(stack, context)
+PhysWorld::PhysObject::~PhysObject()
 {
-    getContext().renderWindow->setTitle("Title Screen");
-
-    titleText.setFont(getContext().gameInstance->getFont());
-    titleText.setCharacterSize(36u);
-    titleText.setString("Press any key to continue...");
-
-    Util::Position::centreOrigin(titleText);
-    titleText.setPosition({ 400.f, 300.f });
+    if (m_node)
+        m_node->setPhysObject(nullptr);
 }
 
-void TitleState::draw()
+const sf::Vector2f& PhysWorld::PhysObject::getPosition() const
 {
-    getContext().renderWindow->draw(titleText);
+    return m_position;
 }
 
-bool TitleState::update(float dt)
+void PhysWorld::PhysObject::setPosition(const sf::Vector2f& position)
 {
-
-    return true;
+    m_position = position;
+    m_aabb.left = position.x;
+    m_aabb.top = position.y;
 }
 
-bool TitleState::handleEvent(const sf::Event& evt)
+void PhysWorld::PhysObject::addForce(const sf::Vector2f& force)
 {
-    if (evt.type == sf::Event::KeyPressed)
-    {
-        requestStackPop();
-        requestStackPush(States::ID::Menu);
-    }
-    return true;
+    m_velocity += force;
+}
+
+void PhysWorld::PhysObject::step(float dt)
+{
+    if (m_physData.mass == 0) return;
+    
+    auto stepSpeed = Util::Vector::length(m_velocity) * dt;
+    auto stepVelocity = Util::Vector::normalize(m_velocity) * stepSpeed;
+
+    m_position += stepVelocity;
+    m_aabb.left = m_position.x;
+    m_aabb.top = m_position.y;
+
+    if (m_node)
+        m_node->setWorldPosition(m_position);
 }

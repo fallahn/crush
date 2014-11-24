@@ -25,50 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <TitleState.hpp>
-#include <Game.hpp>
+//basse class for 'deletable' objects, which allows deferring of deletion
+//until it is safe to do so
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
+#ifndef DELETABLE_H_
+#define DELETABLE_H_
 
-#include <Resource.hpp>
-#include <Util.hpp>
-
-namespace
+class Deletable
 {
-    sf::Text titleText;
-}
+public:
+    Deletable() : m_deleted(false){}
 
-TitleState::TitleState(StateStack& stack, Context context)
-    : State(stack, context)
-{
-    getContext().renderWindow->setTitle("Title Screen");
+    void deleteObject(){ m_deleted = true; }
+    
+protected:
+    bool deleted() const { return m_deleted; }
 
-    titleText.setFont(getContext().gameInstance->getFont());
-    titleText.setCharacterSize(36u);
-    titleText.setString("Press any key to continue...");
+private:
+    bool m_deleted;
+};
 
-    Util::Position::centreOrigin(titleText);
-    titleText.setPosition({ 400.f, 300.f });
-}
-
-void TitleState::draw()
-{
-    getContext().renderWindow->draw(titleText);
-}
-
-bool TitleState::update(float dt)
-{
-
-    return true;
-}
-
-bool TitleState::handleEvent(const sf::Event& evt)
-{
-    if (evt.type == sf::Event::KeyPressed)
-    {
-        requestStackPop();
-        requestStackPush(States::ID::Menu);
-    }
-    return true;
-}
+#endif// DELETABLE_H_

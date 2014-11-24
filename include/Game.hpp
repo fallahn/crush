@@ -31,6 +31,7 @@ source distribution.
 #define GAME_H_
 
 #include <StateStack.hpp>
+#include <Resource.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -43,6 +44,7 @@ public:
     void run();
 
     void setClearColour(sf::Color c);
+    sf::Font& getFont(const std::string& path = "");
 
 private: 
 
@@ -52,6 +54,8 @@ private:
     sf::Color m_clearColour;
 
     StateStack m_stateStack;
+
+    FontResource m_fontResource;
 
     void handleEvents();
     void update(float dt);

@@ -31,6 +31,10 @@ source distribution.
 #include <GameState.hpp>
 #include <PauseState.hpp>
 
+#include <Resource.hpp>
+
+#include <SFML/Graphics/Font.hpp>
+
 const float Game::m_timePerFrame = 1.f / 60.f;
 
 Game::Game()
@@ -69,6 +73,11 @@ void Game::run()
 void Game::setClearColour(sf::Color c)
 {
     m_clearColour = c;
+}
+
+sf::Font& Game::getFont(const std::string& path)
+{
+    return m_fontResource.get(path);
 }
 
 //private

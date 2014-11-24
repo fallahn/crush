@@ -28,16 +28,18 @@ source distribution.
 #include <GameState.hpp>
 #include <Game.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace
 {
     Camera sceneCam;
-    sf::CircleShape circle(25.f);
+    sf::RectangleShape rectangleShape({ 130.f, 130.f });
+    sf::RectangleShape groundShape;
 }
 
 GameState::GameState(StateStack& stack, Context context)
-    : State(stack, context)
+    : State     (stack, context),
+    m_physWorld (9.f)
 {
     getContext().renderWindow->setTitle("Game Screen");
     
@@ -47,32 +49,40 @@ GameState::GameState(StateStack& stack, Context context)
     camNode->setPosition(sceneCam.getView().getSize() / 2.f);
     m_scene.addNode(camNode);
 
-    circle.setFillColor(sf::Color::Transparent);
-    circle.setOutlineColor(sf::Color::Red);
-    circle.setOutlineThickness(3.f);
-    circle.setOrigin(25.f, 25.f);
+    rectangleShape.setFillColor(sf::Color::Transparent);
+    rectangleShape.setOutlineColor(sf::Color::Red);
+    rectangleShape.setOutlineThickness(3.f);
+    groundShape = rectangleShape;
 
-    auto circleNode = std::make_unique<Node>("circleNode");
-    circleNode->setPosition(400.f, 400.f);
-    circleNode->setDrawable(&circle);
-    m_scene.addNode(circleNode);
+    auto rectangleNode = std::make_unique<Node>("rectangleNode");
+    rectangleNode->setPosition(400.f, 400.f);
+    rectangleNode->setDrawable(&rectangleShape);
 
+    PhysWorld::PhysData pd(1.f, 0.5f);
+    auto physObj = m_physWorld.addObject({ {}, { 130.f, 130.f } }, pd);
+    rectangleNode->setPhysObject(physObj);
+    m_scene.addNode(rectangleNode);
+
+    groundShape.setSize({ 1280.f, 200.f });
+    auto groundNode = std::make_unique<Node>("groundNode");
+    groundNode->setDrawable(&groundShape);
+    groundNode->setPosition(0.f, 760.f);
+
+    pd.mass = pd.inverseMass = 0.f;
+    auto groundObj = m_physWorld.addObject({ {}, { 1280.f, 200.f } }, pd);
+    groundNode->setPhysObject(groundObj);
+    m_scene.addNode(groundNode);
+}
+
+bool GameState::update(float dt)
+{
+    m_physWorld.step(dt);
+    return true;
 }
 
 void GameState::draw()
 {
     getContext().renderWindow->draw(m_scene);
-}
-
-bool GameState::update(float dt)
-{
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        m_scene.findNode("camNode")->move(80.f * dt, 0.f);
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::B))
-        m_scene.findNode("circleNode")->move(0.f, 82.f * dt);
-
-    return true;
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
