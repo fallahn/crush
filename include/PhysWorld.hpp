@@ -42,6 +42,12 @@ class Node;
 class PhysWorld final : private sf::NonCopyable
 {
 public:
+    enum class BodyType
+    {
+        Static,
+        Dynamic
+    };
+
     //pass this when creating an object for easy creation
     //of multiple objects with the same properties
     class Body;
@@ -51,7 +57,7 @@ public:
         friend class PhysWorld::Body;
     public:
         BodyData(float mass, float restitution)
-            : m_mass(mass), m_inverseMass(0.f), m_restitution(restitution)
+            : m_mass(mass), m_inverseMass(0.f), m_restitution(restitution), m_type(BodyType::Dynamic)
         {
             assert(mass >= 0.f);
             assert(restitution >= 0.f && restitution <= 1.f);
@@ -63,17 +69,24 @@ public:
         {
             assert(mass >= 0.f);
             m_mass = mass;
-            (mass > 0.f)? m_inverseMass = 1.f / mass : 0.f;
+            m_inverseMass = (mass > 0.f)? 1.f / mass : 0.f;
         }
 
         void setRestitution(float r)
         {
+            assert(r >= 0.f && r <= 1.f);
             m_restitution = r;
+        }
+
+        void setType(BodyType type)
+        {
+            m_type = type;
         }
     private:
         float m_mass;
         float m_inverseMass;
         float m_restitution;
+        BodyType m_type;
     };
 
     //object in the simulation. we only need to support AABB objects
@@ -91,6 +104,8 @@ public:
         const sf::Vector2f& getPosition() const;
         void applyForce(const sf::Vector2f& force);
 
+        void setPosition(const sf::Vector2f& position);
+
     private:
         bool m_sleeping;
         BodyData m_bodyData;
@@ -100,8 +115,9 @@ public:
         Node* m_node;
         sf::FloatRect m_aabb;
 
-        void setPosition(const sf::Vector2f& position);
+        
         void step(float dt);
+        void move(const sf::Vector2f movement);
     };
 
 
@@ -122,9 +138,9 @@ private:
         float penetration = 0.f;
     };
 
-    std::vector<Body::Ptr> m_objects;
+    std::vector<Body::Ptr> m_bodies;
     std::set<CollisionPair> m_collisionPairs;
-    std::vector<Body*> m_awakeObjects;
+    std::vector<Body*> m_awakeBodies;
 
     sf::Vector2f m_gravity;
 

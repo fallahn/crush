@@ -54,7 +54,7 @@
     <ClCompile Include="src\PhysWorld.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysObject.cpp">
+    <ClCompile Include="src\PhysBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

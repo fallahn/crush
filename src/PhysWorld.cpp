@@ -40,28 +40,28 @@ PhysWorld::PhysWorld(float gravity)
 PhysWorld::Body* PhysWorld::addObject(sf::FloatRect size, const PhysWorld::BodyData& pd)
 {
     auto po = std::make_unique<Body>(size, pd);
-    m_objects.push_back(std::move(po));
+    m_bodies.push_back(std::move(po));
     //adding new objects would invalidate existing references
     //so we need to return the underlying pointer
-    return m_objects.back().get();
+    return m_bodies.back().get();
 }
 
 void PhysWorld::step(float dt)
 {
     //check for deleted objects and remove them
-    m_objects.erase(std::remove_if(m_objects.begin(), m_objects.end(), [](const Body::Ptr& p)
+    m_bodies.erase(std::remove_if(m_bodies.begin(), m_bodies.end(), [](const Body::Ptr& p)
     {
         return p->deleted();
-    }), m_objects.end());
+    }), m_bodies.end());
     
 
     //check for collision pairs and add to list
     //TODO we could narrow this down with space partitioning
     //like a quad tree, but probably not necessary in this game
     m_collisionPairs.clear();
-    for (const auto& poA : m_objects)
+    for (const auto& poA : m_bodies)
     {
-        for (const auto& poB : m_objects)
+        for (const auto& poB : m_bodies)
         {
             if (poA.get() != poB.get() &&
                 collision(poA, poB))
@@ -78,9 +78,11 @@ void PhysWorld::step(float dt)
         resolveCollision(pair);
 
     //update any parent node positions
-    for (auto& po : m_objects)
+    for (auto& po : m_bodies)
     {
-        //po->addForce(m_gravity);
+        if(po->m_bodyData.m_type == BodyType::Dynamic)
+            //&& Util::Vector::lengthSquared(po->m_velocity) > 0.1f)
+            po->m_velocity += m_gravity;
         po->step(dt);
     }
 }
@@ -104,12 +106,17 @@ void PhysWorld::resolveCollision(const CollisionPair& cp)
     float e = std::min(cp.first->m_bodyData.m_restitution, cp.second->m_bodyData.m_restitution);
 
     float impulse = -(1.f + e) * normalVel;
-    impulse /= cp.first->m_bodyData.m_inverseMass / cp.second->m_bodyData.m_mass;
+    impulse /= (cp.first->m_bodyData.m_inverseMass + cp.second->m_bodyData.m_inverseMass);
 
     sf::Vector2f impulseVec = impulse * manifold.normal;
     float totalMass = cp.first->m_bodyData.m_mass + cp.second->m_bodyData.m_mass;
     cp.first->m_velocity -= (cp.first->m_bodyData.m_inverseMass / totalMass) * impulseVec;
     cp.second->m_velocity += (cp.second->m_bodyData.m_inverseMass / totalMass) * impulseVec;
+
+    //stop sinking - TODO send to sleep?
+    /*sf::Vector2f correction = std::max(0.f, manifold.penetration - 0.01f) / (cp.first->m_bodyData.m_inverseMass + cp.second->m_bodyData.m_inverseMass) * manifold.normal * 0.3f;
+    cp.first->move(-correction * cp.first->m_bodyData.m_inverseMass);
+    cp.second->move(correction * cp.second->m_bodyData.m_inverseMass);*/
 }
 
 PhysWorld::CollisionManifold PhysWorld::getManifold(const CollisionPair& cp)
@@ -120,12 +127,11 @@ PhysWorld::CollisionManifold PhysWorld::getManifold(const CollisionPair& cp)
     float bExtent = cp.second->m_aabb.width / 2.f;
     float xOverlap = aExtent + bExtent - std::abs(collisionNormal.x);
 
-    CollisionManifold manifold;
-
     aExtent = cp.first->m_aabb.height / 2.f;
     bExtent = cp.second->m_aabb.height / 2.f;
     float yOverlap = aExtent + bExtent - std::abs(collisionNormal.y);
 
+    CollisionManifold manifold;
     if (xOverlap < yOverlap)
     {
         manifold.normal.x = (collisionNormal.x < 0) ? -1.f : 1.f;

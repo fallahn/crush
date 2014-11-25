@@ -56,6 +56,13 @@ void PhysWorld::Body::setPosition(const sf::Vector2f& position)
     m_aabb.top = position.y;
 }
 
+void PhysWorld::Body::move(const sf::Vector2f movement)
+{
+    m_position += movement;
+    m_aabb.left = m_position.x;
+    m_aabb.top = m_position.y;
+}
+
 void PhysWorld::Body::applyForce(const sf::Vector2f& force)
 {
     m_velocity += force * m_bodyData.m_mass;
@@ -63,7 +70,7 @@ void PhysWorld::Body::applyForce(const sf::Vector2f& force)
 
 void PhysWorld::Body::step(float dt)
 {
-    if (m_bodyData.m_mass == 0) return;
+    //if (m_bodyData.m_type == BodyType::Static) return;
     
     auto stepSpeed = Util::Vector::length(m_velocity) * dt;
     auto stepVelocity = Util::Vector::normalise(m_velocity) * stepSpeed;

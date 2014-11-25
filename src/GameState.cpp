@@ -60,7 +60,7 @@ GameState::GameState(StateStack& stack, Context context)
     rectangleNode->setPosition(400.f, 400.f);
     rectangleNode->setDrawable(&rectangleShape);
 
-    PhysWorld::BodyData bd(1.f, 0.5f);
+    PhysWorld::BodyData bd(1.f, 0.1f);
     body = m_physWorld.addObject({ {}, { 130.f, 130.f } }, bd);
     rectangleNode->setPhysBody(body);
     m_scene.addNode(rectangleNode);
@@ -68,9 +68,10 @@ GameState::GameState(StateStack& stack, Context context)
     groundShape.setSize({ 1280.f, 200.f });
     auto groundNode = std::make_unique<Node>("groundNode");
     groundNode->setDrawable(&groundShape);
-    groundNode->setPosition(0.f, 660.f);
+    groundNode->setPosition(0.f, 760.f);
 
-    bd.setMass(10.5f);
+    bd.setType(PhysWorld::BodyType::Static);
+    bd.setMass(0.f);
     auto groundObj = m_physWorld.addObject({ {}, { 1280.f, 200.f } }, bd);
     groundNode->setPhysBody(groundObj);
     m_scene.addNode(groundNode);
@@ -81,6 +82,9 @@ bool GameState::update(float dt)
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         body->applyForce({ 0.f, 10.f });
     
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
+        body->setPosition({ 400.f, 400.f });
+
     m_physWorld.step(dt);
     return true;
 }
