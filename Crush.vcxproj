@@ -70,7 +70,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\BlockStates.cpp" />
+    <ClCompile Include="src\BodyState.cpp" />
     <ClCompile Include="src\Camera.cpp" />
+    <ClCompile Include="src\CollisionBody.cpp" />
+    <ClCompile Include="src\CollisionWorld.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\GameState.cpp" />
@@ -87,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.hpp" />
+    <ClInclude Include="include\BodyState.hpp" />
+    <ClInclude Include="include\CollisionWorld.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
     <ClInclude Include="include\Game.hpp" />
     <ClInclude Include="include\GameState.hpp" />

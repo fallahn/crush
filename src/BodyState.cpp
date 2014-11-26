@@ -25,23 +25,17 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <State.hpp>
-#include <Scene.hpp>
-#include <CollisionWorld.hpp>
+#include <BodyState.hpp>
 
+#include <cassert>
 
-class GameState final : public State
+BodyState::BodyState(CollisionWorld::Body* b)
+    : m_body(b)
 {
-public:
-    GameState(StateStack& stack, Context context);
-    ~GameState() = default;
+    assert(b);
+}
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
-
-private:
-
-    Scene m_scene;
-    CollisionWorld m_collisionWorld;
-};
+CollisionWorld::Body* BodyState::getBody() const
+{
+    return m_body;
+}

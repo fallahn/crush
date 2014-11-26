@@ -37,6 +37,7 @@ source distribution.
 
 #include <Camera.hpp>
 #include <PhysWorld.hpp>
+#include <CollisionWorld.hpp>
 
 #include <vector>
 #include <memory>
@@ -64,6 +65,7 @@ public:
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
     void setPhysBody(PhysWorld::Body* b);
+    void setCollisionBody(CollisionWorld::Body* body);
 
     Scene* getScene() const;
     Camera* getCamera() const;
@@ -80,6 +82,7 @@ private:
     Camera* m_camera;
     sf::Drawable* m_drawable;
     PhysWorld::Body* m_physBody;
+    CollisionWorld::Body* m_collisionBody;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     void drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const;

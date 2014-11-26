@@ -32,12 +32,13 @@ source distribution.
 #include <cassert>
 
 Node::Node(const std::string& name)
-    : m_parent  (nullptr),
-    m_name      (name),
-    m_scene     (nullptr),
-    m_camera    (nullptr),
-    m_drawable  (nullptr),
-    m_physBody  (nullptr)
+    : m_parent      (nullptr),
+    m_name          (name),
+    m_scene         (nullptr),
+    m_camera        (nullptr),
+    m_drawable      (nullptr),
+    m_physBody      (nullptr),
+    m_collisionBody (nullptr)
 {
 
 }
@@ -50,6 +51,8 @@ Node::~Node()
     if (m_physBody)
         m_physBody->deleteObject();
 
+    if (m_collisionBody)
+        m_collisionBody->deleteObject();
 }
 
 //public
@@ -148,6 +151,18 @@ void Node::setPhysBody(PhysWorld::Body* b)
     {
         m_physBody->m_node = this;
         m_physBody->setPosition(getWorldPosition());
+    }
+}
+
+void Node::setCollisionBody(CollisionWorld::Body* b)
+{
+    if (m_collisionBody) m_collisionBody->deleteObject();
+
+    m_collisionBody = b;
+    if (m_collisionBody)
+    {
+        m_collisionBody->m_node = this;
+        m_collisionBody->setPosition(getWorldPosition());
     }
 }
 

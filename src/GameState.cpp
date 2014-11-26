@@ -36,12 +36,12 @@ namespace
     sf::RectangleShape rectangleShape({ 130.f, 130.f });
     sf::RectangleShape groundShape;
 
-    PhysWorld::Body* body = nullptr;
+    CollisionWorld::Body* body;
 }
 
 GameState::GameState(StateStack& stack, Context context)
-    : State     (stack, context),
-    m_physWorld (9.f)
+    : State             (stack, context),
+    m_collisionWorld    (10.f)
 {
     getContext().renderWindow->setTitle("Game Screen");
     
@@ -59,33 +59,29 @@ GameState::GameState(StateStack& stack, Context context)
     auto rectangleNode = std::make_unique<Node>("rectangleNode");
     rectangleNode->setPosition(400.f, 400.f);
     rectangleNode->setDrawable(&rectangleShape);
-
-    PhysWorld::BodyData bd(1.f, 0.1f);
-    body = m_physWorld.addObject({ {}, { 130.f, 130.f } }, bd);
-    rectangleNode->setPhysBody(body);
+    body = m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, { {}, { 130.f, 130.f } });
+    rectangleNode->setCollisionBody(body);
     m_scene.addNode(rectangleNode);
 
     groundShape.setSize({ 1280.f, 200.f });
     auto groundNode = std::make_unique<Node>("groundNode");
     groundNode->setDrawable(&groundShape);
     groundNode->setPosition(0.f, 760.f);
-
-    bd.setType(PhysWorld::BodyType::Static);
-    bd.setMass(0.f);
-    auto groundObj = m_physWorld.addObject({ {}, { 1280.f, 200.f } }, bd);
-    groundNode->setPhysBody(groundObj);
+    auto gb = m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, { 1280.f, 200.f } });
+    groundNode->setCollisionBody(gb);
     m_scene.addNode(groundNode);
 }
 
 bool GameState::update(float dt)
 {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        body->applyForce({ 0.f, 10.f });
+        body->applyForce({ 60.f, 0.f });
     
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
         body->setPosition({ 400.f, 400.f });
 
-    m_physWorld.step(dt);
+    m_collisionWorld.step(dt);
+
     return true;
 }
 
