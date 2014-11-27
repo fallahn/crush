@@ -32,10 +32,16 @@ source distribution.
 
 #include <cassert>
 
-CollisionWorld::Body::Body(Type type, const sf::FloatRect& size)
-    : m_type    (type),
-    m_node      (nullptr),
-    m_aabb      (size)
+namespace
+{
+    const float sensorSize = 10.f;
+}
+
+CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
+    : m_type            (type),
+    m_node              (nullptr),
+    m_aabb              ({}, size),
+    m_footSenseCount    (0u)
 {
     switch (type)
     {
@@ -54,6 +60,11 @@ CollisionWorld::Body::Body(Type type, const sf::FloatRect& size)
     default: break;
     }
     assert(m_state);
+
+    //set up perepheral sensor boxes
+    m_footSensor.width = size.x;
+    m_footSensor.height = sensorSize;
+    m_footSensor.top = size.y;
 }
 
 CollisionWorld::Body::~Body()
@@ -68,6 +79,9 @@ void CollisionWorld::Body::setPosition(const sf::Vector2f& position)
     m_position = position;
     m_aabb.left = position.x;
     m_aabb.top = position.y;
+
+    m_footSensor.left = position.x;
+    m_footSensor.top = position.y + m_aabb.height;
 }
 
 void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
@@ -90,8 +104,15 @@ void CollisionWorld::Body::move(const sf::Vector2f& amount)
     m_position += amount;
     m_aabb.left = m_position.x;
     m_aabb.top = m_position.y;
+
+    m_footSensor.left = m_position.x;
+    m_footSensor.top = m_position.y + m_aabb.height;
 }
 
+sf::Uint16 CollisionWorld::Body::getFootSenseCount() const
+{
+    return m_footSenseCount;
+}
 
 //private
 void CollisionWorld::Body::step(float dt)
@@ -104,15 +125,13 @@ void CollisionWorld::Body::step(float dt)
     auto stepSpeed = Util::Vector::length(m_velocity) * dt;
     auto stepVelocity = Util::Vector::normalise(m_velocity) * stepSpeed;
 
-    m_position += stepVelocity;
-    m_aabb.left = m_position.x;
-    m_aabb.top = m_position.y;
+    move(stepVelocity);
 
     if (m_node)
         m_node->setWorldPosition(m_position);
     //--------------------------
 
-    //check to see if the collision has resulted in a new state
+    //check to see if a collision has resulted in a new state
     if (m_nextState)
     {
         m_nextState.swap(m_state);

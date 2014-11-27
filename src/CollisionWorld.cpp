@@ -36,7 +36,7 @@ CollisionWorld::CollisionWorld(float gravity)
 
 }
 
-CollisionWorld::Body* CollisionWorld::addBody(CollisionWorld::Body::Type type, const sf::FloatRect& size)
+CollisionWorld::Body* CollisionWorld::addBody(CollisionWorld::Body::Type type, const sf::Vector2f& size)
 {
     auto b = std::make_unique<Body>(type, size);
     m_bodies.push_back(std::move(b));
@@ -57,16 +57,27 @@ void CollisionWorld::step(float dt)
     m_collisions.clear();
     for (const auto& poA : m_bodies)
     {
+        poA->m_footSenseCount = 0u;
         for (const auto& poB : m_bodies)
         {
-            sf::FloatRect overlap;
-            if (poA.get() != poB.get() &&
-                poA->m_aabb.intersects(poB->m_aabb, overlap))
+            
+            if (poA.get() != poB.get())
             {
-                //minmax assures that as the lowest values is always first in the set
-                //that each collision pair only gets inserted once
-                m_collisions.insert(std::minmax(poA.get(), poB.get()));
-                poA->m_lastPenetration = poB->m_lastPenetration = overlap;
+                sf::FloatRect overlap;
+                //primary collision between bounding boxes
+                if (poA->m_aabb.intersects(poB->m_aabb, overlap))
+                {
+                    //minmax assures that as the lowest values is always first in the set
+                    //that each collision pair only gets inserted once
+                    m_collisions.insert(std::minmax(poA.get(), poB.get()));
+                    poA->m_lastPenetration = poB->m_lastPenetration = overlap;
+                }
+
+                //secondary collisions with sensor boxes
+                if (poA->m_footSensor.intersects(poB->m_aabb))
+                {
+                    poA->m_footSenseCount++;
+                }
             }
         }
     }

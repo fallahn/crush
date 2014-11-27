@@ -60,7 +60,7 @@ public:
             Npc
         };
 
-        Body(Type type, const sf::FloatRect& size);
+        Body(Type type, const sf::Vector2f& size);
         ~Body();
        
         void applyForce(const sf::Vector2f& force);
@@ -75,25 +75,30 @@ public:
         {
             m_nextState = std::move(ptr);
         }
+        sf::Uint16 getFootSenseCount() const;
 
     private:
         Type m_type;
         StatePtr m_state;
         StatePtr m_nextState;
+       
         sf::Vector2f m_velocity;
         sf::Vector2f m_position;
+       
         Node* m_node;
         sf::FloatRect m_aabb;
         sf::FloatRect m_lastPenetration;
 
-        void step(float dt);
+        sf::FloatRect m_footSensor;
+        sf::Uint16 m_footSenseCount;
 
+        void step(float dt);
     };
     
     explicit CollisionWorld(float gravity);
     ~CollisionWorld() = default;
 
-    Body* addBody(Body::Type type, const sf::FloatRect& size);
+    Body* addBody(Body::Type type, const sf::Vector2f& size);
 
     void step(float dt);
 

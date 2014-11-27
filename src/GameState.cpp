@@ -27,17 +27,21 @@ source distribution.
 
 #include <GameState.hpp>
 #include <Game.hpp>
+#include <DebugShape.hpp>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
 namespace
 {
     Camera sceneCam;
-    sf::RectangleShape rectangleShape({ 200.f, 120.f });
+    sf::RectangleShape rectangleShape;// ({ 200.f, 120.f });
     sf::RectangleShape groundShape;
     sf::RectangleShape wallShape;
 
     CollisionWorld::Body* body = nullptr;
+
+    DebugShape debugShape;
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -58,24 +62,27 @@ GameState::GameState(StateStack& stack, Context context)
     groundShape = rectangleShape;
     wallShape = rectangleShape;
 
+    debugShape.setSize({ 200.f, 120.f });
+    debugShape.setColour(sf::Color::Red);
+
     groundShape.setSize({ 1920.f, 50.f });
     auto groundNode = std::make_unique<Node>("groundNode");
     groundNode->setDrawable(&groundShape);
     groundNode->setPosition(0.f, 1030.f);
-    auto gb = m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, groundShape.getSize() });
+    auto gb = m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, groundShape.getSize());
     groundNode->setCollisionBody(gb);
     m_scene.addNode(groundNode);
 
     wallShape.setSize({ 50.f, 1030.f });
     auto leftWallNode = std::make_unique<Node>("leftWall");
     leftWallNode->setDrawable(&wallShape);
-    leftWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, wallShape.getSize() }));
+    leftWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
     m_scene.addNode(leftWallNode);
 
     auto rightWallNode = std::make_unique<Node>("rightWall");
     rightWallNode->setDrawable(&wallShape);
     rightWallNode->setPosition(1880.f, 0.f);
-    rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, wallShape.getSize() }));
+    rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
     m_scene.addNode(rightWallNode);
 }
 
@@ -124,9 +131,9 @@ void GameState::addBlock(const sf::Vector2f& position)
 {
     auto rectangleNode = std::make_unique<Node>("rectangleNode");
     rectangleNode->setPosition(position);
-    rectangleNode->setDrawable(&rectangleShape);
+    rectangleNode->setDrawable(&debugShape);
     
-    body = m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, { {}, rectangleShape.getSize() });
+    body = m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, debugShape.getSize());
     rectangleNode->setCollisionBody(body);
     m_scene.addNode(rectangleNode);
 }

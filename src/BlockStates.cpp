@@ -51,21 +51,26 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::
         getBody()->setVelocity({ 0.f, 0.f });
         getBody()->setState(std::make_unique<BlockStateGround>(getBody()));
 
-        std::cout << "Collision Normal: (" << manifold.x << ", " << manifold.y << "), Penetration: " << manifold.z << std::endl;
+        //std::cout << "Collision Normal: (" << manifold.x << ", " << manifold.y << "), Penetration: " << manifold.z << std::endl;
 
     default: break;
     }
 }
 //-------------------------------------------
 void BlockStateGround::update(float dt)
-{
-    
+{  
     auto vel = getBody()->getVelocity();
     vel.y = 0.f;
 
     const float friction = 0.89f;
     vel.x *= friction; //TODO equate dt into this
     getBody()->setVelocity(vel);
+
+    if (getBody()->getFootSenseCount() == 0u)
+    {
+        //nothing underneath so should be falling
+        getBody()->setState(std::make_unique<BlockStateAir>(getBody()));
+    }
 }
 
 void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
