@@ -47,12 +47,6 @@ class CollisionWorld final : sf::NonCopyable
 public:
     class Body final : public Deletable
     {
-        //TODO a lot of friendship here - particularly need to fix this
-        //with state classes
-        friend class BodyState;
-        friend class BlockStateAir;
-        friend class BlockStateGround;
-        friend class SolidState;
         friend class Node;
         friend class CollisionWorld;
     public:
@@ -72,6 +66,16 @@ public:
         void applyForce(const sf::Vector2f& force);
         void setPosition(const sf::Vector2f& position);
 
+        //TODO we don't really want these being completely public
+        const sf::Vector2f& getVelocity() const;
+        void setVelocity(const sf::Vector2f& vel);
+        void move(const sf::Vector2f& distance);
+        template <typename T>
+        void setState(std::unique_ptr<T>& ptr)
+        {
+            m_nextState = std::move(ptr);
+        }
+
     private:
         Type m_type;
         StatePtr m_state;
@@ -80,9 +84,9 @@ public:
         sf::Vector2f m_position;
         Node* m_node;
         sf::FloatRect m_aabb;
+        sf::FloatRect m_lastPenetration;
 
         void step(float dt);
-        void move(const sf::Vector2f& distance);
 
     };
     

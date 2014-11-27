@@ -59,12 +59,14 @@ void CollisionWorld::step(float dt)
     {
         for (const auto& poB : m_bodies)
         {
+            sf::FloatRect overlap;
             if (poA.get() != poB.get() &&
-                poA->m_aabb.intersects(poB->m_aabb))
+                poA->m_aabb.intersects(poB->m_aabb, overlap))
             {
                 //minmax assures that as the lowest values is always first in the set
                 //that each collision pair only gets inserted once
                 m_collisions.insert(std::minmax(poA.get(), poB.get()));
+                poA->m_lastPenetration = poB->m_lastPenetration = overlap;
             }
         }
     }
@@ -91,25 +93,18 @@ void CollisionWorld::step(float dt)
 sf::Vector3f  CollisionWorld::getManifold(const CollisionPair& cp)
 {
     sf::Vector2f collisionNormal = cp.second->m_position - cp.first->m_position;
-
-    float aExtent = cp.first->m_aabb.width / 2.f;
-    float bExtent = cp.second->m_aabb.width / 2.f;
-    float xOverlap = aExtent + bExtent - std::abs(collisionNormal.x);
-
-    aExtent = cp.first->m_aabb.height / 2.f;
-    bExtent = cp.second->m_aabb.height / 2.f;
-    float yOverlap = aExtent + bExtent - std::abs(collisionNormal.y);
-
+    sf::FloatRect& overlap = cp.first->m_lastPenetration;
+    
     sf::Vector3f manifold;
-    if (xOverlap < yOverlap)
+    if (overlap.width < overlap.height)
     {
         manifold.x = (collisionNormal.x < 0) ? -1.f : 1.f;
-        manifold.z = xOverlap;
+        manifold.z = overlap.width;
     }
     else
     {
         manifold.y = (collisionNormal.y < 0) ? -1.f : 1.f;
-        manifold.z = yOverlap;
+        manifold.z = overlap.height;
     }
 
     return manifold;

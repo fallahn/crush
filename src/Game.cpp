@@ -38,7 +38,7 @@ source distribution.
 const float Game::m_timePerFrame = 1.f / 60.f;
 
 Game::Game()
-    : m_renderWindow    (sf::VideoMode(800, 600), "Crush", sf::Style::Close),
+    : m_renderWindow    (sf::VideoMode(1024, 576), "Crush", sf::Style::Close),
     m_stateStack        (State::Context(m_renderWindow, *this))
 {
     registerStates();

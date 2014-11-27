@@ -33,53 +33,62 @@ source distribution.
 namespace
 {
     Camera sceneCam;
-    sf::RectangleShape rectangleShape({ 130.f, 130.f });
+    sf::RectangleShape rectangleShape({ 200.f, 120.f });
     sf::RectangleShape groundShape;
+    sf::RectangleShape wallShape;
 
-    CollisionWorld::Body* body;
+    CollisionWorld::Body* body = nullptr;
 }
 
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
-    m_collisionWorld    (10.f)
+    m_collisionWorld    (50.f)
 {
     getContext().renderWindow->setTitle("Game Screen");
     
     auto camNode = std::make_unique<Node>("camNode");
-    sceneCam.setView({ {}, { 1280.f, 960.f } });
+    sceneCam.setView({ {}, { 1920.f, 1080.f } });
     camNode->setCamera(&sceneCam);
     camNode->setPosition(sceneCam.getView().getSize() / 2.f);
     m_scene.addNode(camNode);
 
     rectangleShape.setFillColor(sf::Color::Transparent);
     rectangleShape.setOutlineColor(sf::Color::Red);
-    rectangleShape.setOutlineThickness(3.f);
+    rectangleShape.setOutlineThickness(-3.f);
     groundShape = rectangleShape;
+    wallShape = rectangleShape;
 
-    auto rectangleNode = std::make_unique<Node>("rectangleNode");
-    rectangleNode->setPosition(400.f, 400.f);
-    rectangleNode->setDrawable(&rectangleShape);
-    body = m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, { {}, { 130.f, 130.f } });
-    rectangleNode->setCollisionBody(body);
-    m_scene.addNode(rectangleNode);
-
-    groundShape.setSize({ 1280.f, 200.f });
+    groundShape.setSize({ 1920.f, 50.f });
     auto groundNode = std::make_unique<Node>("groundNode");
     groundNode->setDrawable(&groundShape);
-    groundNode->setPosition(0.f, 760.f);
-    auto gb = m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, { 1280.f, 200.f } });
+    groundNode->setPosition(0.f, 1030.f);
+    auto gb = m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, groundShape.getSize() });
     groundNode->setCollisionBody(gb);
     m_scene.addNode(groundNode);
+
+    wallShape.setSize({ 50.f, 1030.f });
+    auto leftWallNode = std::make_unique<Node>("leftWall");
+    leftWallNode->setDrawable(&wallShape);
+    leftWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, wallShape.getSize() }));
+    m_scene.addNode(leftWallNode);
+
+    auto rightWallNode = std::make_unique<Node>("rightWall");
+    rightWallNode->setDrawable(&wallShape);
+    rightWallNode->setPosition(1880.f, 0.f);
+    rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { {}, wallShape.getSize() }));
+    m_scene.addNode(rightWallNode);
 }
 
 bool GameState::update(float dt)
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        body->applyForce({ 60.f, 0.f });
-    
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
-        body->setPosition({ 400.f, 400.f });
+    if (body)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            body->applyForce({ -60.f, 0.f });
 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            body->applyForce({ 60.f, 0.f });
+    }
     m_collisionWorld.step(dt);
 
     return true;
@@ -92,7 +101,32 @@ void GameState::draw()
 
 bool GameState::handleEvent(const sf::Event& evt)
 {
-    
+    switch (evt.type)
+    {
+    case sf::Event::MouseButtonReleased:
+        switch(evt.mouseButton.button)
+        {
+        case sf::Mouse::Left:
+            auto position = getContext().renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*getContext().renderWindow));
+            addBlock(position);
+            break;
+        }
+        break;
+    }
     
     return true;
+}
+
+
+
+//private
+void GameState::addBlock(const sf::Vector2f& position)
+{
+    auto rectangleNode = std::make_unique<Node>("rectangleNode");
+    rectangleNode->setPosition(position);
+    rectangleNode->setDrawable(&rectangleShape);
+    
+    body = m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, { {}, rectangleShape.getSize() });
+    rectangleNode->setCollisionBody(body);
+    m_scene.addNode(rectangleNode);
 }

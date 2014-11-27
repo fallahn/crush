@@ -123,6 +123,9 @@ PhysWorld::CollisionManifold PhysWorld::getManifold(const CollisionPair& cp)
 {
     sf::Vector2f collisionNormal = cp.second->m_position - cp.first->m_position;
     
+    //TODO this is just plain WRONG. use the AABB intersection function to return
+    //the correct overlap (thankyou laurent)
+
     float aExtent = cp.first->m_aabb.width / 2.f;
     float bExtent = cp.second->m_aabb.width / 2.f;
     float xOverlap = aExtent + bExtent - std::abs(collisionNormal.x);

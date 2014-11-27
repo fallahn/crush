@@ -75,12 +75,29 @@ void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
     m_velocity += force;
 }
 
+const sf::Vector2f& CollisionWorld::Body::getVelocity()const
+{
+    return m_velocity;
+}
+
+void CollisionWorld::Body::setVelocity(const sf::Vector2f& velocity)
+{
+    m_velocity = velocity;
+}
+
+void CollisionWorld::Body::move(const sf::Vector2f& amount)
+{
+    m_position += amount;
+    m_aabb.left = m_position.x;
+    m_aabb.top = m_position.y;
+}
+
+
 //private
 void CollisionWorld::Body::step(float dt)
 {
     //state controls the actual force amount
     m_state->update(dt);
-
 
     //then we apply whatever force there is
     //-------------------------
@@ -103,9 +120,3 @@ void CollisionWorld::Body::step(float dt)
     }
 }
 
-void CollisionWorld::Body::move(const sf::Vector2f& amount)
-{
-    m_position += amount;
-    m_aabb.left = m_position.x;
-    m_aabb.top = m_position.y;
-}

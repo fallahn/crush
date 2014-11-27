@@ -44,4 +44,6 @@ private:
 
     Scene m_scene;
     CollisionWorld m_collisionWorld;
+
+    void addBlock(const sf::Vector2f& position);
 };
