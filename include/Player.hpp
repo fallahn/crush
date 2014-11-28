@@ -25,45 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//creates an aggregated stack of commands, executed by the scene graph each frame
+//responsible for parsing input and assigning the correct commands to the relevant player node
 
-#ifndef COMMAND_STACK_H_
-#define COMMAND_STACK_H_
+#include <CommandStack.hpp>
 
-#include <queue>
-#include <functional>
+#include <SFML/Window/Event.hpp>
+#include <SFML/System/NonCopyable.hpp>
 
-//category for node targets
-namespace Category
-{
-    enum Type
-    {
-        None      = 0,
-        PlayerOne = (1 << 0), //probably shouldn't rely on these actually being '1' and '2' respectively
-        PlayerTwo = (1 << 1),
-        Block     = (1 << 2),
-        Enemy     = (1 << 3)
-    };
-}
-
-class Node;
-struct Command
-{
-    Command();
-    ~Command() = default;
-    std::function<void(Node&, float)> action;
-    unsigned short categoryMask; //target node categories are OR'd into this
-};
-
-class CommandStack final
+class Player final// : private sf::NonCopyable
 {
 public:
-    void push(const Command& command);
-    Command pop();
-    bool empty() const;
+    struct Keys
+    {
+        Keys();
+        sf::Keyboard::Key left;
+        sf::Keyboard::Key right;
+        sf::Keyboard::Key jump;
+        sf::Uint8 joyButtonJump;
+    };
+
+    Player(CommandStack& commandStack, Category::Type type);
+    ~Player() = default;
+
+    void update(float dt);
+    void handleEvent(const sf::Event& evt); //TODO should this return bool to mark events have been consumed?
+
+    void setKeyBinds(Keys keys);
 
 private:
-    std::queue<Command> m_stack;
-};
 
-#endif //COMMAND_STACK_H_
+    CommandStack& m_commandStack;
+    Category::Type m_id;
+    sf::Uint8 m_joyId;
+
+    Keys m_keyBinds;
+    sf::Uint32 m_buttonMask;
+};

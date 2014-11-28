@@ -49,6 +49,7 @@ public:
     {
         friend class Node;
         friend class CollisionWorld;
+        friend class BodyState;
     public:
         typedef std::unique_ptr<Body> Ptr;
         typedef std::unique_ptr<BodyState> StatePtr;
@@ -66,17 +67,6 @@ public:
         void applyForce(const sf::Vector2f& force);
         void setPosition(const sf::Vector2f& position);
 
-        //TODO we don't really want these being completely public
-        const sf::Vector2f& getVelocity() const;
-        void setVelocity(const sf::Vector2f& vel);
-        void move(const sf::Vector2f& distance);
-        template <typename T>
-        void setState(std::unique_ptr<T>& ptr)
-        {
-            m_nextState = std::move(ptr);
-        }
-        sf::Uint16 getFootSenseCount() const;
-
     private:
         Type m_type;
         StatePtr m_state;
@@ -87,12 +77,18 @@ public:
        
         Node* m_node;
         sf::FloatRect m_aabb;
-        sf::FloatRect m_lastPenetration;
 
         sf::FloatRect m_footSensor;
         sf::Uint16 m_footSenseCount;
 
         void step(float dt);
+        void move(const sf::Vector2f& distance);
+
+        //template <typename T>
+        //void setState()
+        //{
+        //    m_nextState = std::make_unique<T>(this);
+        //}
     };
     
     explicit CollisionWorld(float gravity);

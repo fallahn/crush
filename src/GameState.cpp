@@ -28,6 +28,7 @@ source distribution.
 #include <GameState.hpp>
 #include <Game.hpp>
 #include <DebugShape.hpp>
+#include <BodyState.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -35,18 +36,21 @@ source distribution.
 namespace
 {
     Camera sceneCam;
-    sf::RectangleShape rectangleShape;// ({ 200.f, 120.f });
+
     sf::RectangleShape groundShape;
     sf::RectangleShape wallShape;
 
-    CollisionWorld::Body* body = nullptr;
+    DebugShape blockShape;
+    DebugShape playerShape;
 
-    DebugShape debugShape;
+    const sf::Uint8 maxPlayers = 2u;
+
+    sf::Vector2f blockSize(180.f, 110.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
-    m_collisionWorld    (50.f)
+    m_collisionWorld    (80.f)
 {
     getContext().renderWindow->setTitle("Game Screen");
     
@@ -56,14 +60,17 @@ GameState::GameState(StateStack& stack, Context context)
     camNode->setPosition(sceneCam.getView().getSize() / 2.f);
     m_scene.addNode(camNode);
 
-    rectangleShape.setFillColor(sf::Color::Transparent);
-    rectangleShape.setOutlineColor(sf::Color::Red);
-    rectangleShape.setOutlineThickness(-3.f);
-    groundShape = rectangleShape;
-    wallShape = rectangleShape;
+    groundShape.setFillColor(sf::Color::Transparent);
+    groundShape.setOutlineColor(sf::Color::Red);
+    groundShape.setOutlineThickness(-3.f);
 
-    debugShape.setSize({ 200.f, 120.f });
-    debugShape.setColour(sf::Color::Red);
+    wallShape = groundShape;
+
+    blockShape.setSize(blockSize);
+    blockShape.setColour(sf::Color::Red);
+
+    playerShape.setSize(blockSize);
+    playerShape.setColour(sf::Color::Blue);
 
     groundShape.setSize({ 1920.f, 50.f });
     auto groundNode = std::make_unique<Node>("groundNode");
@@ -88,14 +95,13 @@ GameState::GameState(StateStack& stack, Context context)
 
 bool GameState::update(float dt)
 {
-    if (body)
-    {
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-            body->applyForce({ -60.f, 0.f });
+    while (!m_commandStack.empty())
+        m_scene.executeCommand(m_commandStack.pop(), dt);
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-            body->applyForce({ 60.f, 0.f });
-    }
+    //update players
+    for (auto& p : m_players)
+        p.update(dt);
+
     m_collisionWorld.step(dt);
 
     return true;
@@ -110,15 +116,28 @@ bool GameState::handleEvent(const sf::Event& evt)
 {
     switch (evt.type)
     {
-    case sf::Event::MouseButtonReleased:
-        switch(evt.mouseButton.button)
+    case sf::Event::MouseButtonPressed:
+    {  
+        auto position = getContext().renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*getContext().renderWindow));
+        switch (evt.mouseButton.button)
         {
         case sf::Mouse::Left:
-            auto position = getContext().renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*getContext().renderWindow));
             addBlock(position);
             break;
+        case sf::Mouse::Right:
+            addPlayer(position);
+            break;
+        default: break;
         }
+    break;
+    }
+    case sf::Event::KeyPressed:
+        /*switch (evt.key.code)
+        {
+
+        }*/
         break;
+    default: break;
     }
     
     return true;
@@ -129,11 +148,27 @@ bool GameState::handleEvent(const sf::Event& evt)
 //private
 void GameState::addBlock(const sf::Vector2f& position)
 {
-    auto rectangleNode = std::make_unique<Node>("rectangleNode");
-    rectangleNode->setPosition(position);
-    rectangleNode->setDrawable(&debugShape);
-    
-    body = m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, debugShape.getSize());
-    rectangleNode->setCollisionBody(body);
-    m_scene.addNode(rectangleNode);
+    auto blockNode = std::make_unique<Node>("blockNode");
+    blockNode->setPosition(position);
+    blockNode->setDrawable(&blockShape);
+    blockNode->setCategory(Category::Block);
+    blockNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, blockShape.getSize()));
+    m_scene.addNode(blockNode);
+}
+
+void GameState::addPlayer(const sf::Vector2f& position)
+{
+    if (m_players.size() < maxPlayers)
+    {
+        Category::Type type = (m_players.size() == 0u) ? Category::PlayerOne : Category::PlayerTwo;
+        
+        auto playerNode = std::make_unique<Node>("Player");
+        playerNode->setPosition(position);
+        playerNode->setDrawable(&playerShape);
+        playerNode->setCategory(type);
+        playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, playerShape.getSize()));
+        m_scene.addNode(playerNode);
+
+        m_players.emplace_back(m_commandStack, type);
+    }
 }

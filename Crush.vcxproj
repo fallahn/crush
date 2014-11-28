@@ -75,6 +75,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\CollisionBody.cpp" />
     <ClCompile Include="src\CollisionWorld.cpp" />
+    <ClCompile Include="src\CommandStack.cpp" />
     <ClCompile Include="src\DebugShape.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\Game.cpp" />
@@ -85,6 +86,8 @@
     <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\PhysBody.cpp" />
     <ClCompile Include="src\PhysWorld.cpp" />
+    <ClCompile Include="src\Player.cpp" />
+    <ClCompile Include="src\PlayerStates.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
@@ -94,6 +97,7 @@
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\BodyState.hpp" />
     <ClInclude Include="include\CollisionWorld.hpp" />
+    <ClInclude Include="include\CommandStack.hpp" />
     <ClInclude Include="include\DebugShape.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
     <ClInclude Include="include\Game.hpp" />
@@ -102,6 +106,7 @@
     <ClInclude Include="include\Node.hpp" />
     <ClInclude Include="include\PauseState.hpp" />
     <ClInclude Include="include\PhysWorld.hpp" />
+    <ClInclude Include="include\Player.hpp" />
     <ClInclude Include="include\Resource.hpp" />
     <ClInclude Include="include\Scene.hpp" />
     <ClInclude Include="include\State.hpp" />

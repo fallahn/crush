@@ -39,12 +39,21 @@ link_libraries(
 
 add_executable(
 	CRUSH_bin src/main.cpp
+	src/BlockStates.cpp
+	src/BodyState.cpp
 	src/Camera.cpp
+	src/CollisionBody.cpp
+	src/CollisionWorld.cpp
+	src/CommandStack.cpp
+	src/DebugShape.cpp
+	src/FontResource.cpp
 	src/Game.cpp
 	src/GameState.cpp
 	src/MenuState.cpp
 	src/Node.cpp
 	src/PauseState.cpp
+	src/Player.cpp
+	src/PlayerStates.cpp
 	src/Scene.cpp
 	src/State.cpp
 	src/StateStack.cpp

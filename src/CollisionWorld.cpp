@@ -63,14 +63,12 @@ void CollisionWorld::step(float dt)
             
             if (poA.get() != poB.get())
             {
-                sf::FloatRect overlap;
                 //primary collision between bounding boxes
-                if (poA->m_aabb.intersects(poB->m_aabb, overlap))
+                if (poA->m_aabb.intersects(poB->m_aabb))
                 {
                     //minmax assures that as the lowest values is always first in the set
                     //that each collision pair only gets inserted once
                     m_collisions.insert(std::minmax(poA.get(), poB.get()));
-                    poA->m_lastPenetration = poB->m_lastPenetration = overlap;
                 }
 
                 //secondary collisions with sensor boxes
@@ -104,8 +102,11 @@ void CollisionWorld::step(float dt)
 sf::Vector3f  CollisionWorld::getManifold(const CollisionPair& cp)
 {
     sf::Vector2f collisionNormal = cp.second->m_position - cp.first->m_position;
-    sf::FloatRect& overlap = cp.first->m_lastPenetration;
-    
+    sf::FloatRect overlap;
+    //might seem less eficient than caching the first intersection test
+    //but appears to work more accurately
+    cp.first->m_aabb.intersects(cp.second->m_aabb, overlap);
+
     sf::Vector3f manifold;
     if (overlap.width < overlap.height)
     {

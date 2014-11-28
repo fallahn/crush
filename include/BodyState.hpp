@@ -32,7 +32,7 @@ source distribution.
 
 #include <CollisionWorld.hpp>
 
-class BodyState
+class BodyState : private sf::NonCopyable
 {
 public:
     explicit BodyState(CollisionWorld::Body* b);
@@ -40,9 +40,24 @@ public:
 
     virtual void update(float dt) = 0;
     virtual void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) = 0;
+    virtual sf::Vector2f vetForce(const sf::Vector2f& vel){ return vel; }
 
 protected:
     CollisionWorld::Body* getBody() const;
+    //by adding accessors to base class we can allow
+    //states access to body's privates without a tower of friendship
+    const sf::Vector2f& getVelocity() const;
+    void setVelocity(const sf::Vector2f& vel);
+    void move(const sf::Vector2f& distance);
+
+    template <typename T>
+    void setState()
+    {
+        m_body->m_nextState = std::make_unique<T>(m_body);// setState<T>();
+    }
+
+    sf::Uint16 getFootSenseCount() const;
+
 private:
     CollisionWorld::Body* m_body;
 };
@@ -67,6 +82,23 @@ class SolidState final : public BodyState
 {
 public:
     explicit SolidState(CollisionWorld::Body* b) : BodyState(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+};
+
+class PlayerStateAir final : public BodyState
+{
+public:
+    explicit PlayerStateAir(CollisionWorld::Body* b) : BodyState(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    sf::Vector2f vetForce(const sf::Vector2f& force) override;
+};
+
+class PlayerStateGround final : public BodyState
+{
+public:
+    explicit PlayerStateGround(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
 };

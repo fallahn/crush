@@ -95,6 +95,12 @@ Node* Scene::findNode(const std::string& name, bool recursive)
     return np;
 }
 
+void Scene::executeCommand(Command& command, float dt)
+{
+    for (auto& child : m_children)
+        child->executeCommand(command, dt);
+}
+
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {

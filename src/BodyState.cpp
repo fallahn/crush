@@ -39,3 +39,23 @@ CollisionWorld::Body* BodyState::getBody() const
 {
     return m_body;
 }
+
+const sf::Vector2f& BodyState::getVelocity() const
+{
+    return m_body->m_velocity;
+}
+
+void BodyState::setVelocity(const sf::Vector2f& vel)
+{
+    m_body->m_velocity = vel;
+}
+
+void BodyState::move(const sf::Vector2f& amount)
+{
+    m_body->move(amount);
+}
+
+sf::Uint16 BodyState::getFootSenseCount() const
+{
+    return m_body->m_footSenseCount;
+}

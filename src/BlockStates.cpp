@@ -36,9 +36,9 @@ source distribution.
 void BlockStateAir::update(float dt)
 {
     //simply negate sideways movement and allow gravity to do its thing
-    auto vel = getBody()->getVelocity();
+    auto vel = getVelocity();
     vel.x = 0.f;
-    getBody()->setVelocity(vel);
+    setVelocity(vel);
 }
 
 void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
@@ -47,9 +47,9 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::
     {
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
-        getBody()->move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        getBody()->setVelocity({ 0.f, 0.f });
-        getBody()->setState(std::make_unique<BlockStateGround>(getBody()));
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({ 0.f, 0.f });
+        setState<BlockStateGround>();
 
         //std::cout << "Collision Normal: (" << manifold.x << ", " << manifold.y << "), Penetration: " << manifold.z << std::endl;
 
@@ -59,17 +59,17 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::
 //-------------------------------------------
 void BlockStateGround::update(float dt)
 {  
-    auto vel = getBody()->getVelocity();
+    auto vel = getVelocity();
     vel.y = 0.f;
 
-    const float friction = 0.89f;
+    const float friction = 0.8f; //TODO make this a work const like gravity? - might be fun to add block types like ice
     vel.x *= friction; //TODO equate dt into this
-    getBody()->setVelocity(vel);
+    setVelocity(vel);
 
-    if (getBody()->getFootSenseCount() == 0u)
+    if (getFootSenseCount() == 0u)
     {
         //nothing underneath so should be falling
-        getBody()->setState(std::make_unique<BlockStateAir>(getBody()));
+        setState<BlockStateAir>();
     }
 }
 
@@ -78,16 +78,16 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     switch (otherType)
     {
     case CollisionWorld::Body::Type::Block:
-        if (Util::Vector::lengthSquared(getBody()->getVelocity()) > 0.2f
+        if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && manifold.x != 0.f) //prevents shifting vertically
         {
-            getBody()->move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            getBody()->setVelocity({ 0.f, 0.f });
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            setVelocity({ 0.f, 0.f });
         }
         break;
     case CollisionWorld::Body::Type::Solid:
-        getBody()->move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        getBody()->setVelocity({ 0.f, 0.f });
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({ 0.f, 0.f });
         break;
     default: break;
     }
@@ -95,7 +95,7 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 //-------------------------------------------
 void SolidState::update(float dt)
 {
-    getBody()->setVelocity({ 0.f, 0.f });
+    setVelocity({ 0.f, 0.f });
 }
 
 void SolidState::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)

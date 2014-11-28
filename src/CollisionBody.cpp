@@ -52,7 +52,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
 
         break;
     case Type::Player:
-
+        m_state = std::make_unique<PlayerStateAir>(this);
         break;
     case Type::Solid:
         m_state = std::make_unique<SolidState>(this);
@@ -86,32 +86,7 @@ void CollisionWorld::Body::setPosition(const sf::Vector2f& position)
 
 void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
 {
-    m_velocity += force;
-}
-
-const sf::Vector2f& CollisionWorld::Body::getVelocity()const
-{
-    return m_velocity;
-}
-
-void CollisionWorld::Body::setVelocity(const sf::Vector2f& velocity)
-{
-    m_velocity = velocity;
-}
-
-void CollisionWorld::Body::move(const sf::Vector2f& amount)
-{
-    m_position += amount;
-    m_aabb.left = m_position.x;
-    m_aabb.top = m_position.y;
-
-    m_footSensor.left = m_position.x;
-    m_footSensor.top = m_position.y + m_aabb.height;
-}
-
-sf::Uint16 CollisionWorld::Body::getFootSenseCount() const
-{
-    return m_footSenseCount;
+    m_velocity += m_state->vetForce(force);
 }
 
 //private
@@ -139,3 +114,12 @@ void CollisionWorld::Body::step(float dt)
     }
 }
 
+void CollisionWorld::Body::move(const sf::Vector2f& amount)
+{
+    m_position += amount;
+    m_aabb.left = m_position.x;
+    m_aabb.top = m_position.y;
+
+    m_footSensor.left = m_position.x;
+    m_footSensor.top = m_position.y + m_aabb.height;
+}

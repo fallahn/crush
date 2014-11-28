@@ -39,6 +39,8 @@ source distribution.
 #include <PhysWorld.hpp>
 #include <CollisionWorld.hpp>
 
+#include <CommandStack.hpp>
+
 #include <vector>
 #include <memory>
 
@@ -66,11 +68,18 @@ public:
     void setDrawable(sf::Drawable* drawable);
     void setPhysBody(PhysWorld::Body* b);
     void setCollisionBody(CollisionWorld::Body* body);
+    CollisionWorld::Body* getCollisionBody() const;
+
 
     Scene* getScene() const;
     Camera* getCamera() const;
 
     const std::string& getName() const;
+
+    void setCategory(Category::Type cat);
+    sf::Uint16 getCategory() const;
+
+    void executeCommand(Command& c, float dt);
 
 private:
     std::vector<Ptr> m_children;
@@ -83,6 +92,8 @@ private:
     sf::Drawable* m_drawable;
     PhysWorld::Body* m_physBody;
     CollisionWorld::Body* m_collisionBody;
+
+    Category::Type m_category;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     void drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const;

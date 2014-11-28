@@ -38,7 +38,8 @@ Node::Node(const std::string& name)
     m_camera        (nullptr),
     m_drawable      (nullptr),
     m_physBody      (nullptr),
-    m_collisionBody (nullptr)
+    m_collisionBody (nullptr),
+    m_category      (Category::None)
 {
 
 }
@@ -166,6 +167,11 @@ void Node::setCollisionBody(CollisionWorld::Body* b)
     }
 }
 
+CollisionWorld::Body* Node::getCollisionBody() const
+{
+    return m_collisionBody;
+}
+
 Scene* Node::getScene() const
 {
     return m_scene;
@@ -179,6 +185,25 @@ Camera* Node::getCamera() const
 const std::string& Node::getName() const
 {
     return m_name;
+}
+
+void Node::setCategory(Category::Type cat)
+{
+    m_category = cat;
+}
+
+sf::Uint16 Node::getCategory() const
+{
+    return m_category;
+}
+
+void Node::executeCommand(Command& c, float dt)
+{
+    if (c.categoryMask & m_category)
+        c.action(*this, dt);
+
+    for (auto& child : m_children)
+        executeCommand(c, dt);
 }
 
 //private

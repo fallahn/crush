@@ -28,7 +28,7 @@ source distribution.
 #include <State.hpp>
 #include <Scene.hpp>
 #include <CollisionWorld.hpp>
-
+#include <Player.hpp>
 
 class GameState final : public State
 {
@@ -43,7 +43,10 @@ public:
 private:
 
     Scene m_scene;
+    CommandStack m_commandStack;
     CollisionWorld m_collisionWorld;
+    std::vector<Player> m_players;
 
     void addBlock(const sf::Vector2f& position);
+    void addPlayer(const sf::Vector2f& position);
 };
