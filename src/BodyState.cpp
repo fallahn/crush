@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <BodyState.hpp>
+#include <Node.hpp>
 
 #include <cassert>
 
@@ -58,4 +59,12 @@ void BodyState::move(const sf::Vector2f& amount)
 sf::Uint16 BodyState::getFootSenseCount() const
 {
     return m_body->m_footSenseCount;
+}
+
+void BodyState::kill()
+{
+    game::Event evt;
+    evt.type = game::Event::Despawn;
+    evt.despawn.type = Category::None;
+    m_body->notify(*m_body, evt);
 }

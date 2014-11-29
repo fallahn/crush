@@ -32,7 +32,9 @@ source distribution.
 
 #include <Node.hpp>
 
-class Scene final : public sf::Drawable, private sf::NonCopyable
+#include <list>
+
+class Scene final : public sf::Drawable, private sf::NonCopyable, public Observer
 {
 public:
     Scene();
@@ -49,11 +51,16 @@ public:
 
     void executeCommand(const Command& command, float dt);
 
+    void onNotify(Subject& s, const game::Event& evt) override;
+
+    //delete any nodes waiting
+    void flush();
+
 private:
     std::vector<Node::Ptr> m_children;
     Camera* m_activeCamera;
 
-    
+    std::list<Node*> m_deletedList;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };

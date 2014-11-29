@@ -37,7 +37,6 @@ Node::Node(const std::string& name)
     m_scene         (nullptr),
     m_camera        (nullptr),
     m_drawable      (nullptr),
-    m_physBody      (nullptr),
     m_collisionBody (nullptr),
     m_category      (Category::None)
 {
@@ -49,11 +48,11 @@ Node::~Node()
     if (m_camera)
         m_camera->m_node = nullptr;
 
-    if (m_physBody)
-        m_physBody->deleteObject();
-
     if (m_collisionBody)
+    {
         m_collisionBody->deleteObject();
+        m_collisionBody->m_node = nullptr;
+    }
 }
 
 //public
@@ -143,18 +142,6 @@ void Node::setDrawable(sf::Drawable* drawable)
     m_drawable = drawable;
 }
 
-void Node::setPhysBody(PhysWorld::Body* b)
-{
-    if (m_physBody) m_physBody->deleteObject();
-
-    m_physBody = b;
-    if (m_physBody)
-    {
-        m_physBody->m_node = this;
-        m_physBody->setPosition(getWorldPosition());
-    }
-}
-
 void Node::setCollisionBody(CollisionWorld::Body* b)
 {
     if (m_collisionBody) m_collisionBody->deleteObject();
@@ -164,6 +151,7 @@ void Node::setCollisionBody(CollisionWorld::Body* b)
     {
         m_collisionBody->m_node = this;
         m_collisionBody->setPosition(getWorldPosition());
+        m_collisionBody->addObserver(*this);
     }
 }
 
@@ -204,6 +192,23 @@ void Node::executeCommand(const Command& c, float dt)
 
     for (auto& child : m_children)
         executeCommand(c, dt);
+}
+
+void Node::onNotify(Subject& s, const game::Event& evt)
+{
+    switch (evt.type)
+    {
+    case game::Event::Despawn:
+    {
+        //let our observers know it's time to die
+        game::Event e = evt;
+        e.despawn.type = m_category;
+        notify(*this, e);        
+    }
+        break;
+    default: break;
+    }
+   
 }
 
 //private

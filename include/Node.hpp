@@ -36,18 +36,19 @@ source distribution.
 #include <SFML/System/NonCopyable.hpp>
 
 #include <Camera.hpp>
-#include <PhysWorld.hpp>
 #include <CollisionWorld.hpp>
 
 #include <CommandStack.hpp>
+#include <Observer.hpp>
 
 #include <vector>
 #include <memory>
 
 
 class Scene;
-class Node final : public sf::Transformable, public sf::Drawable, private sf::NonCopyable
+class Node final : public sf::Transformable, public sf::Drawable, private sf::NonCopyable, public Subject, public Observer
 {
+    friend class CollisionWorld::Body;
 public:
     typedef std::unique_ptr<Node> Ptr;
 
@@ -66,10 +67,8 @@ public:
     void setScene(Scene* scene); //this should only be accessable by Scene
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
-    void setPhysBody(PhysWorld::Body* b);
     void setCollisionBody(CollisionWorld::Body* body);
     CollisionWorld::Body* getCollisionBody() const;
-
 
     Scene* getScene() const;
     Camera* getCamera() const;
@@ -81,6 +80,8 @@ public:
 
     void executeCommand(const Command& c, float dt);
 
+    void onNotify(Subject& s, const game::Event& evt) override;
+
 private:
     std::vector<Ptr> m_children;
     Node* m_parent;
@@ -90,7 +91,6 @@ private:
     Scene* m_scene;
     Camera* m_camera;
     sf::Drawable* m_drawable;
-    PhysWorld::Body* m_physBody;
     CollisionWorld::Body* m_collisionBody;
 
     Category::Type m_category;

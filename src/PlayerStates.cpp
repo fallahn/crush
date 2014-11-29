@@ -47,12 +47,18 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body:
         setState<PlayerStateGround>();
         break;
     case CollisionWorld::Body::Type::Player:
+    {
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        auto vel = getVelocity();
         if (manifold.x != 0) //players colliding sideways in air
         {
-            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            auto vel = getVelocity();
             setVelocity({ -vel.x, vel.y });
         }
+        else
+        {
+            setVelocity({ vel.x, -vel.y });
+        }
+    }
         break;
     default: break;
     }
@@ -103,11 +109,16 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         //adding vertical velocity, and velocity in direction of collision
         break;
     case CollisionWorld::Body::Type::Player:
-        //move away if side collision, else squish when from above
+        //move away if side collision 
         if (manifold.x != 0)
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
+        }
+        else if (manifold.y * manifold.z > 0.f)
+        {
+            //else squish when from above
+            kill();
         }
         break;
     default: break;

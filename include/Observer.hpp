@@ -25,34 +25,70 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//creates an aggregated stack of commands, executed by the scene graph each frame
+//implements the observer pattern
 
-#ifndef COMMAND_STACK_H_
-#define COMMAND_STACK_H_
+#ifndef OBSERVER_H_
+#define OBSERVER_H_
 
 #include <CommandCategories.hpp>
 
-#include <queue>
-#include <functional>
+#include <vector>
 
-class Node;
-struct Command
+namespace game
 {
-    Command();
-    ~Command() = default;
-    std::function<void(Node&, float)> action;
-    unsigned short categoryMask; //target node categories are OR'd into this
-};
+    class Event
+    {
+    public:
+        //when a scene node is destroyed
+        struct DespawnEvent
+        {
+            Category::Type type;
+        };
+    
+        //TODO other events such as scoring points
 
-class CommandStack final
+        enum Type
+        {
+            Despawn
+        } type;
+
+        union
+        {
+            DespawnEvent despawn;
+        };
+    };
+}
+
+class Subject;
+class Observer
 {
 public:
-    void push(const Command& command);
-    Command pop();
-    bool empty() const;
-
-private:
-    std::queue<Command> m_stack;
+    virtual ~Observer() = default;
+    //when implementing this either deal with event directly, or
+    //add to an event list in the inheriting class for deferred handling
+    virtual void onNotify(Subject&, const game::Event& evt) = 0;
 };
 
-#endif //COMMAND_STACK_H_
+class Subject
+{
+public:
+    virtual ~Subject(){};
+
+    void addObserver(Observer& o)
+    {
+        m_observers.push_back(&o);
+    }
+
+protected:
+    void notify(Subject& s, game::Event evt)
+    {
+        for (auto& o : m_observers)
+            o->onNotify(s, evt);
+    }
+
+private:
+    std::vector<Observer*> m_observers;
+};
+
+
+#endif //OBSERVER_H_

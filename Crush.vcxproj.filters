@@ -51,12 +51,6 @@
     <ClCompile Include="src\FontResource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\PhysWorld.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\PhysBody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\CollisionBody.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -119,9 +113,6 @@
     <ClInclude Include="include\Resource.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\PhysWorld.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\Deletable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -141,6 +132,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Player.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Observer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\CommandCategories.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

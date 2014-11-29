@@ -43,6 +43,7 @@ Scene::Scene()
 void Scene::addNode(Node::Ptr& node)
 {
     node->setScene(this);
+    node->addObserver(*this);
 
     if (node->getCamera() && m_activeCamera == &defaultCamera)
         m_activeCamera = node->getCamera();
@@ -99,6 +100,28 @@ void Scene::executeCommand(const Command& command, float dt)
 {
     for (auto& child : m_children)
         child->executeCommand(command, dt);
+}
+
+void Scene::onNotify(Subject& s, const game::Event& evt)
+{
+    switch (evt.type)
+    {
+    case game::Event::Despawn:
+        m_deletedList.push_back(dynamic_cast<Node*>(&s)); //HAH! ok...
+        break;
+    default: break;
+    }
+}
+
+void Scene::flush()
+{
+    if (m_deletedList.size())
+    {
+        for (auto n : m_deletedList)
+            removeNode(*n);
+
+        m_deletedList.clear();
+    }
 }
 
 //private

@@ -30,7 +30,8 @@ source distribution.
 #ifndef COLLISION_WORLD_H_
 #define COLLISION_WORLD_H_
 
-#include <Deletable.hpp>
+#include <Deletable.hpp> //TODO the observer makes this redundant
+#include <Observer.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector3.hpp>
@@ -45,7 +46,7 @@ class BodyState;
 class CollisionWorld final : sf::NonCopyable
 {
 public:
-    class Body final : public Deletable
+    class Body final : public Deletable, public Subject
     {
         friend class Node;
         friend class CollisionWorld;
@@ -84,11 +85,6 @@ public:
         void step(float dt);
         void move(const sf::Vector2f& distance);
 
-        //template <typename T>
-        //void setState()
-        //{
-        //    m_nextState = std::make_unique<T>(this);
-        //}
     };
     
     explicit CollisionWorld(float gravity);

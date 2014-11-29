@@ -31,6 +31,7 @@ source distribution.
 #define BODY_STATE_H_
 
 #include <CollisionWorld.hpp>
+#include <Observer.hpp>
 
 class BodyState : private sf::NonCopyable
 {
@@ -57,6 +58,9 @@ protected:
     }
 
     sf::Uint16 getFootSenseCount() const;
+
+    //notifys the body that it should die
+    void kill();
 
 private:
     CollisionWorld::Body* m_body;

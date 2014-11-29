@@ -84,8 +84,6 @@
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\Node.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
-    <ClCompile Include="src\PhysBody.cpp" />
-    <ClCompile Include="src\PhysWorld.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\PlayerStates.cpp" />
     <ClCompile Include="src\Scene.cpp" />
@@ -97,6 +95,7 @@
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\BodyState.hpp" />
     <ClInclude Include="include\CollisionWorld.hpp" />
+    <ClInclude Include="include\CommandCategories.hpp" />
     <ClInclude Include="include\CommandStack.hpp" />
     <ClInclude Include="include\DebugShape.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
@@ -104,8 +103,8 @@
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\MenuState.hpp" />
     <ClInclude Include="include\Node.hpp" />
+    <ClInclude Include="include\Observer.hpp" />
     <ClInclude Include="include\PauseState.hpp" />
-    <ClInclude Include="include\PhysWorld.hpp" />
     <ClInclude Include="include\Player.hpp" />
     <ClInclude Include="include\Resource.hpp" />
     <ClInclude Include="include\Scene.hpp" />

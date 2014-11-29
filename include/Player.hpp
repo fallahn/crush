@@ -28,11 +28,12 @@ source distribution.
 //responsible for parsing input and assigning the correct commands to the relevant player node
 
 #include <CommandStack.hpp>
+#include <Observer.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/NonCopyable.hpp>
 
-class Player final// : private sf::NonCopyable
+class Player final : public Observer// : private sf::NonCopyable
 {
 public:
     struct Keys
@@ -52,6 +53,12 @@ public:
 
     void setKeyBinds(Keys keys);
 
+    Category::Type getType() const;
+    bool canSpawn() const;
+    void setSpawnable(bool spawnable);
+
+    void onNotify(Subject& s, const game::Event& evt) override;
+
 private:
     float m_moveForce;
 
@@ -61,4 +68,6 @@ private:
 
     Keys m_keyBinds;
     sf::Uint32 m_buttonMask;
+
+    bool m_canSpawn;
 };

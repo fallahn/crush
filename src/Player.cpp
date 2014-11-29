@@ -55,7 +55,8 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_commandStack  (cs),
     m_id            (type),
     m_joyId         (0u),
-    m_buttonMask    (0u)
+    m_buttonMask    (0u),
+    m_canSpawn      (true)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
     if (type == Category::PlayerTwo)
@@ -132,6 +133,36 @@ void Player::handleEvent(const sf::Event& evt)
 void Player::setKeyBinds(Player::Keys keys)
 {
     m_keyBinds = keys;
+}
+
+Category::Type Player::getType() const
+{
+    return m_id;
+}
+
+bool Player::canSpawn() const
+{
+    return m_canSpawn;
+}
+
+void Player::setSpawnable(bool spawnable)
+{
+    m_canSpawn = spawnable;
+}
+
+void Player::onNotify(Subject& s, const game::Event& evt)
+{
+    switch (evt.type)
+    {
+    case game::Event::Despawn:
+        if (evt.despawn.type == m_id)
+        {
+            //oh noes, we died!
+            m_canSpawn = true;
+        }
+        break;
+    default: break;
+    }
 }
 
 //private

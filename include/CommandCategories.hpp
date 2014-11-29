@@ -25,24 +25,21 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <PauseState.hpp>
+//category for node targets
 
-PauseState::PauseState(StateStack& stack, Context context)
-    : State(stack, context){}
+#ifndef COMMAND_CAT_H_
+#define COMMAND_CAT_H_
 
-
-bool PauseState::update(float dt)
+namespace Category
 {
-    return true;
+    enum Type
+    {
+        None      = 0,
+        PlayerOne = (1 << 0), //don't rely on these actually being '1' and '2' respectively
+        PlayerTwo = (1 << 1),
+        Block     = (1 << 2),
+        Enemy     = (1 << 3)
+    };
 }
 
-void PauseState::draw()
-{
-
-}
-
-bool PauseState::handleEvent(const sf::Event& evt)
-{
-    return true;
-}
-
+#endif //COMMAND_CAT_H_

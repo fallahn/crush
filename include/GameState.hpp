@@ -48,5 +48,5 @@ private:
     std::vector<Player> m_players;
 
     void addBlock(const sf::Vector2f& position);
-    void addPlayer(const sf::Vector2f& position);
+    void addPlayer(const sf::Vector2f& position, Player& player);
 };

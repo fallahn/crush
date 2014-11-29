@@ -52,6 +52,8 @@ GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
     m_collisionWorld    (80.f)
 {
+    m_players.reserve(2);
+    
     getContext().renderWindow->setTitle("Game Screen");
     
     auto camNode = std::make_unique<Node>("camNode");
@@ -104,6 +106,7 @@ bool GameState::update(float dt)
 
     m_collisionWorld.step(dt);
 
+    m_scene.flush();
     return true;
 }
 
@@ -125,17 +128,30 @@ bool GameState::handleEvent(const sf::Event& evt)
             addBlock(position);
             break;
         case sf::Mouse::Right:
-            addPlayer(position);
+
             break;
         default: break;
         }
     break;
     }
     case sf::Event::KeyPressed:
-        /*switch (evt.key.code)
+        switch (evt.key.code)
         {
+        case sf::Keyboard::Num1:
+            if (m_players.size() == 0u)
+                m_players.emplace_back(m_commandStack, Category::PlayerOne);            
+            
+            addPlayer({ 80.f, 900.f }, m_players[0]);
+            break;
+        case sf::Keyboard::Num2:
+            if (m_players.size() == 1u)
+                m_players.emplace_back(m_commandStack, Category::PlayerTwo);
 
-        }*/
+            if (m_players.size() == 2u)
+                addPlayer({ 1680.f, 900.f }, m_players[1]);
+            break;
+        default:break;
+        }
         break;
     default: break;
     }
@@ -156,19 +172,18 @@ void GameState::addBlock(const sf::Vector2f& position)
     m_scene.addNode(blockNode);
 }
 
-void GameState::addPlayer(const sf::Vector2f& position)
+void GameState::addPlayer(const sf::Vector2f& position, Player& player)
 {
-    if (m_players.size() < maxPlayers)
+    if (player.canSpawn())
     {
-        Category::Type type = (m_players.size() == 0u) ? Category::PlayerOne : Category::PlayerTwo;
-        
         auto playerNode = std::make_unique<Node>("Player");
         playerNode->setPosition(position);
         playerNode->setDrawable(&playerShape);
-        playerNode->setCategory(type);
+        playerNode->setCategory(player.getType());
         playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, playerShape.getSize()));
+        playerNode->addObserver(player);
         m_scene.addNode(playerNode);
 
-        m_players.emplace_back(m_commandStack, type);
+        player.setSpawnable(false);
     }
 }

@@ -55,8 +55,6 @@ add_executable(
 	src/MenuState.cpp
 	src/Node.cpp
 	src/PauseState.cpp
-	src/PhysBody.cpp
-	src/PhysWorld.cpp
 	src/Player.cpp
 	src/PlayerStates.cpp
 	src/Scene.cpp
