@@ -60,6 +60,23 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body:
         }
     }
         break;
+    case CollisionWorld::Body::Type::Npc:
+        //bound off if on top
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        {
+            auto vel = getVelocity();
+            if (manifold.y != 0)
+            {
+                setVelocity({ vel.x, -vel.y });
+            }
+
+            if (manifold.y * manifold.z > 0.f)
+            {
+                //squish when from above
+                kill();
+            }
+        }
+        break;
     default: break;
     }
 }
@@ -118,6 +135,13 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         else if (manifold.y * manifold.z > 0.f)
         {
             //else squish when from above
+            kill();
+        }
+        break;
+    case CollisionWorld::Body::Type::Npc:
+        if (manifold.y * manifold.z > 0.f)
+        {
+            //squish when from above
             kill();
         }
         break;

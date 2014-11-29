@@ -54,7 +54,7 @@ protected:
     template <typename T>
     void setState()
     {
-        m_body->m_nextState = std::make_unique<T>(m_body);// setState<T>();
+        m_body->m_nextState = std::make_unique<T>(m_body);
     }
 
     sf::Uint16 getFootSenseCount() const;
@@ -103,6 +103,14 @@ class PlayerStateGround final : public BodyState
 {
 public:
     explicit PlayerStateGround(CollisionWorld::Body* b) : BodyState(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+};
+
+class NpcStateAir final : public BodyState
+{
+public:
+    explicit NpcStateAir(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
 };

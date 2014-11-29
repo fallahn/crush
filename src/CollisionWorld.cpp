@@ -59,8 +59,7 @@ void CollisionWorld::step(float dt)
     {
         poA->m_footSenseCount = 0u;
         for (const auto& poB : m_bodies)
-        {
-            
+        {           
             if (poA.get() != poB.get())
             {
                 //primary collision between bounding boxes

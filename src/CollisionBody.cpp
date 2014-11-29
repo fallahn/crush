@@ -49,7 +49,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         m_state = std::make_unique<BlockStateAir>(this);
         break;
     case Type::Npc:
-
+        m_state = std::make_unique<NpcStateAir>(this);
         break;
     case Type::Player:
         m_state = std::make_unique<PlayerStateAir>(this);

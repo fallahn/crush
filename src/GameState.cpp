@@ -42,10 +42,11 @@ namespace
 
     DebugShape blockShape;
     DebugShape playerShape;
+    DebugShape npcShape;
 
     const sf::Uint8 maxPlayers = 2u;
 
-    sf::Vector2f blockSize(180.f, 110.f);
+    sf::Vector2f blockSize(140.f, 80.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -73,6 +74,9 @@ GameState::GameState(StateStack& stack, Context context)
 
     playerShape.setSize(blockSize);
     playerShape.setColour(sf::Color::Blue);
+
+    npcShape.setSize(blockSize);
+    npcShape.setColour(sf::Color::Green);
 
     groundShape.setSize({ 1920.f, 50.f });
     auto groundNode = std::make_unique<Node>("groundNode");
@@ -128,7 +132,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             addBlock(position);
             break;
         case sf::Mouse::Right:
-
+            addNpc(position);
             break;
         default: break;
         }
@@ -186,4 +190,15 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
 
         player.setSpawnable(false);
     }
+}
+
+void GameState::addNpc(const sf::Vector2f& position)
+{
+    auto npcNode = std::make_unique<Node>("npc");
+    npcNode->setPosition(position);
+    npcNode->setDrawable(&npcShape);
+    npcNode->setCategory(Category::Enemy);
+    npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, npcShape.getSize()));
+    //TODO add AI observer
+    m_scene.addNode(npcNode);
 }
