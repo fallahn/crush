@@ -53,6 +53,7 @@ public:
     void setKeyBinds(Keys keys);
 
 private:
+    float m_moveForce;
 
     CommandStack& m_commandStack;
     Category::Type m_id;

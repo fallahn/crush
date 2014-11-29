@@ -50,7 +50,7 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({ 0.f, 0.f });
         setState<BlockStateGround>();
-
+        break;
         //std::cout << "Collision Normal: (" << manifold.x << ", " << manifold.y << "), Penetration: " << manifold.z << std::endl;
 
     default: break;

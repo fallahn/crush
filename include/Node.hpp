@@ -79,7 +79,7 @@ public:
     void setCategory(Category::Type cat);
     sf::Uint16 getCategory() const;
 
-    void executeCommand(Command& c, float dt);
+    void executeCommand(const Command& c, float dt);
 
 private:
     std::vector<Ptr> m_children;

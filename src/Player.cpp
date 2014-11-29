@@ -35,14 +35,7 @@ namespace
     const float joyDeadZone = 25.f;
     
     const float maxMoveForce = 220.f;
-    float moveForce = 220.f; //allow movement force based on analogue controller input
     const float jumpForce = 1900.f;
-
-    void move(Node& n, float dt)
-    {
-        assert(n.getCollisionBody());
-        n.getCollisionBody()->applyForce({ moveForce, 0.f });
-    }
 
     void jump(Node& n, float dt)
     {
@@ -54,14 +47,15 @@ namespace
 Player::Keys::Keys()
     : left          (sf::Keyboard::A),
     right           (sf::Keyboard::D),
-    jump            (sf::Keyboard::Space),
+    jump            (sf::Keyboard::W),
     joyButtonJump   (0u){}
 
 Player::Player(CommandStack& cs, Category::Type type)
-    : m_commandStack    (cs),
-    m_id                (type),
-    m_joyId             (0u),
-    m_buttonMask        (0u)
+    : m_moveForce   (0.f),
+    m_commandStack  (cs),
+    m_id            (type),
+    m_joyId         (0u),
+    m_buttonMask    (0u)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
     if (type == Category::PlayerTwo)
@@ -77,32 +71,36 @@ Player::Player(CommandStack& cs, Category::Type type)
 void Player::update(float dt)
 {
     //calc movement
-    moveForce = 0;
+    m_moveForce = 0;
     if (sf::Joystick::isConnected(m_joyId))
     {
         auto axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::PovX);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            moveForce = maxMoveForce * (axisPos / 100.f);
+            m_moveForce = maxMoveForce * (axisPos / 100.f);
         }
         axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::X);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            moveForce = maxMoveForce * (axisPos / 100.f);
+            m_moveForce = maxMoveForce * (axisPos / 100.f);
         }
     }
-    else
+    //else
     {
         if (sf::Keyboard::isKeyPressed(m_keyBinds.left))
-            moveForce = -maxMoveForce;
-        else if (sf::Keyboard::isKeyPressed(m_keyBinds.right))
-            moveForce = maxMoveForce;
+            m_moveForce -= maxMoveForce;
+        if (sf::Keyboard::isKeyPressed(m_keyBinds.right))
+            m_moveForce += maxMoveForce;
     }
     
-    if (moveForce != 0.f)
+    if (m_moveForce != 0.f)
     {
         Command c;
-        c.action = move;
+        c.action = [&](Node& n, float dt)
+        {
+            assert(n.getCollisionBody());
+            n.getCollisionBody()->applyForce({ m_moveForce, 0.f });
+        };
         c.categoryMask |= m_id;
         m_commandStack.push(c);
     }

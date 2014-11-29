@@ -197,7 +197,7 @@ sf::Uint16 Node::getCategory() const
     return m_category;
 }
 
-void Node::executeCommand(Command& c, float dt)
+void Node::executeCommand(const Command& c, float dt)
 {
     if (c.categoryMask & m_category)
         c.action(*this, dt);

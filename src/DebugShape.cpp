@@ -43,6 +43,7 @@ DebugShape::DebugShape()
     m_footShape = m_mainShape;
     m_footShape.setPosition(0.f, m_mainShape.getSize().y);
     m_footShape.setSize({ m_mainShape.getSize().x, padding });
+    m_footShape.setOutlineThickness(-1.f);
 }
 
 //public

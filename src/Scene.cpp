@@ -95,7 +95,7 @@ Node* Scene::findNode(const std::string& name, bool recursive)
     return np;
 }
 
-void Scene::executeCommand(Command& command, float dt)
+void Scene::executeCommand(const Command& command, float dt)
 {
     for (auto& child : m_children)
         child->executeCommand(command, dt);

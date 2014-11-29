@@ -1,6 +1,7 @@
 project(CRUSH)
 cmake_minimum_required(VERSION 2.8)
 
+#prefer clang, comment out if using g++ (4.9+)
 SET (CMAKE_C_COMPILER             "/usr/bin/clang")
 SET (CMAKE_C_FLAGS                "-Wall -std=c99")
 SET (CMAKE_C_FLAGS_DEBUG          "-g -_DEBUG_")
@@ -14,20 +15,22 @@ SET (CMAKE_CXX_FLAGS_DEBUG          "-g -_DEBUG_")
 SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
 SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 
 SET (CMAKE_AR      "/usr/bin/llvm-ar")
 SET (CMAKE_LINKER  "/usr/bin/llvm-ld")
 SET (CMAKE_NM      "/usr/bin/llvm-nm")
 SET (CMAKE_OBJDUMP "/usr/bin/llvm-objdump")
 SET (CMAKE_RANLIB  "/usr/bin/llvm-ranlib")
+#---------------------------------------------
 
-SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
+
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 find_package(SFML 2 REQUIRED system window graphics)
 #optional package manager
-include (FindPkgConfig)
-PKG_SEARCH_MODULE(SFML 2 REQUIRED system window graphics)
+#include (FindPkgConfig)
+#PKG_SEARCH_MODULE(SFML 2 REQUIRED system window graphics)
 
 
 include_directories(
@@ -38,7 +41,7 @@ link_libraries(
 	${SFML_LIBRARIES})
 
 add_executable(
-	CRUSH_bin src/main.cpp
+	CRUSH_BIN src/main.cpp
 	src/BlockStates.cpp
 	src/BodyState.cpp
 	src/Camera.cpp
@@ -52,6 +55,8 @@ add_executable(
 	src/MenuState.cpp
 	src/Node.cpp
 	src/PauseState.cpp
+	src/PhysBody.cpp
+	src/PhysWorld.cpp
 	src/Player.cpp
 	src/PlayerStates.cpp
 	src/Scene.cpp

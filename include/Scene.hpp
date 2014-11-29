@@ -47,7 +47,7 @@ public:
 
     Node* findNode(const std::string& name, bool recursive = true);
 
-    void executeCommand(Command& command, float dt);
+    void executeCommand(const Command& command, float dt);
 
 private:
     std::vector<Node::Ptr> m_children;

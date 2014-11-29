@@ -45,7 +45,15 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({ getVelocity().x, 0.f });
         setState<PlayerStateGround>();
-
+        break;
+    case CollisionWorld::Body::Type::Player:
+        if (manifold.x != 0) //players colliding sideways in air
+        {
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            auto vel = getVelocity();
+            setVelocity({ -vel.x, vel.y });
+        }
+        break;
     default: break;
     }
 }
@@ -93,6 +101,14 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             setVelocity({ }); //we hit a wall so stop
         //TODO rather than try resolve wall jumping use side sensors to prevent
         //adding vertical velocity, and velocity in direction of collision
+        break;
+    case CollisionWorld::Body::Type::Player:
+        //move away if side collision, else squish when from above
+        if (manifold.x != 0)
+        {
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            setVelocity({});
+        }
         break;
     default: break;
     }
