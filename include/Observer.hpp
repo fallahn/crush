@@ -44,17 +44,32 @@ namespace game
         {
             Category::Type type;
         };
+
+        struct PlayerEvent
+        {
+            Category::Type playerId;
+            enum Action
+            {
+                Landed,
+                Jumped,
+                Grabbed,
+                Died
+            }action;
+            float positionX, positionY;
+        };
     
         //TODO other events such as scoring points
 
         enum Type
         {
-            Despawn
+            Despawn,
+            Player
         } type;
 
         union
         {
             DespawnEvent despawn;
+            PlayerEvent player;
         };
     };
 }

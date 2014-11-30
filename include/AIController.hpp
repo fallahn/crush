@@ -25,51 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <BodyState.hpp>
-#include <Node.hpp>
+//sends commands to npcs and reacts to npc events
 
-#include <cassert>
+#include <Observer.hpp>
+#include <CommandStack.hpp>
 
-BodyState::BodyState(CollisionWorld::Body* b)
-    : m_body(b)
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Clock.hpp>
+
+//TODO have this in charge of spawning new entities?
+class AIController final : private sf::NonCopyable, public Observer
 {
-    assert(b);
-}
+public:
+    explicit AIController(CommandStack& c);
+    ~AIController() = default;
 
-CollisionWorld::Body* BodyState::getBody() const
-{
-    return m_body;
-}
+    void onNotify(Subject& s, const game::Event& evt) override;
 
-const sf::Vector2f& BodyState::getVelocity() const
-{
-    return m_body->m_velocity;
-}
+    void update(float dt);
 
-void BodyState::setVelocity(const sf::Vector2f& vel)
-{
-    m_body->m_velocity = vel;
-}
+private:
+    CommandStack& m_commandStack;
 
-void BodyState::move(const sf::Vector2f& amount)
-{
-    m_body->move(amount);
-}
-
-sf::Uint16 BodyState::getFootSenseCount() const
-{
-    return m_body->m_footSenseCount;
-}
-
-void BodyState::kill()
-{
-    game::Event evt;
-    evt.type = game::Event::Despawn;
-    evt.despawn.type = Category::None;
-    raiseEvent(evt);
-}
-
-void BodyState::raiseEvent(const game::Event& evt)
-{
-    m_body->notify(*m_body, evt);
-}
+    sf::Clock m_clock;
+    float m_randTime;
+};

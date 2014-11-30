@@ -39,9 +39,11 @@ namespace
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     : m_type            (type),
+    m_centre            (size / 2.f),
     m_node              (nullptr),
     m_aabb              ({}, size),
-    m_footSenseCount    (0u)
+    m_footSenseCount    (0u),
+    m_gravityAmount     (1.f)
 {
     switch (type)
     {
@@ -50,6 +52,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::Npc:
         m_state = std::make_unique<NpcStateAir>(this);
+        m_gravityAmount = 0.25f;
         break;
     case Type::Player:
         m_state = std::make_unique<PlayerStateAir>(this);
@@ -89,6 +92,16 @@ void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
     m_velocity += m_state->vetForce(force);
 }
 
+void CollisionWorld::Body::setGravityAmount(float amount)
+{
+    m_gravityAmount = amount;
+}
+
+sf::Vector2f CollisionWorld::Body::getCentre() const
+{
+    return m_position + m_centre;
+}
+
 //private
 void CollisionWorld::Body::step(float dt)
 {
@@ -122,4 +135,9 @@ void CollisionWorld::Body::move(const sf::Vector2f& amount)
 
     m_footSensor.left = m_position.x;
     m_footSensor.top = m_position.y + m_aabb.height;
+}
+
+void CollisionWorld::Body::applyGravity(const sf::Vector2f& gravity)
+{
+    m_velocity += gravity * m_gravityAmount;
 }

@@ -67,7 +67,9 @@ public:
        
         void applyForce(const sf::Vector2f& force);
         void setPosition(const sf::Vector2f& position);
+        void setGravityAmount(float amount);
 
+        sf::Vector2f getCentre() const; //centre of body in world coordinates
     private:
         Type m_type;
         StatePtr m_state;
@@ -75,6 +77,7 @@ public:
        
         sf::Vector2f m_velocity;
         sf::Vector2f m_position;
+        sf::Vector2f m_centre;
        
         Node* m_node;
         sf::FloatRect m_aabb;
@@ -82,9 +85,11 @@ public:
         sf::FloatRect m_footSensor;
         sf::Uint16 m_footSenseCount;
 
+        float m_gravityAmount;
+
         void step(float dt);
         void move(const sf::Vector2f& distance);
-
+        void applyGravity(const sf::Vector2f& gravity);
     };
     
     explicit CollisionWorld(float gravity);

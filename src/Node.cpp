@@ -203,7 +203,32 @@ void Node::onNotify(Subject& s, const game::Event& evt)
         //let our observers know it's time to die
         game::Event e = evt;
         e.despawn.type = m_category;
-        notify(*this, e);        
+        notify(*this, e);
+
+        if (m_category == Category::PlayerOne
+            || m_category == Category::PlayerTwo)
+        {
+            game::Event playerEvent;
+            playerEvent.type = game::Event::Player;
+            playerEvent.player.playerId = m_category;
+            playerEvent.player.action = game::Event::PlayerEvent::Died;
+            assert(m_collisionBody);
+            auto pos = m_collisionBody->getCentre();
+            playerEvent.player.positionX = pos.x;
+            playerEvent.player.positionY = pos.y;
+            notify(*this, playerEvent);
+        }
+    }
+        break;
+    case game::Event::Player:
+    {
+        game::Event e = evt;
+        e.player.playerId = m_category;
+        assert(m_collisionBody);
+        auto pos = m_collisionBody->getCentre();
+        e.player.positionX = pos.x;
+        e.player.positionY = pos.y;
+        notify(*this, e);
     }
         break;
     default: break;

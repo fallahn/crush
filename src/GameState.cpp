@@ -29,9 +29,12 @@ source distribution.
 #include <Game.hpp>
 #include <DebugShape.hpp>
 #include <BodyState.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+
+#include <iostream>
 
 namespace
 {
@@ -46,12 +49,13 @@ namespace
 
     const sf::Uint8 maxPlayers = 2u;
 
-    sf::Vector2f blockSize(140.f, 80.f);
+    sf::Vector2f blockSize(100.f, 70.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
-    m_collisionWorld    (80.f)
+    m_collisionWorld    (70.f),
+    m_aiController      (m_commandStack)
 {
     m_players.reserve(2);
     
@@ -97,6 +101,7 @@ GameState::GameState(StateStack& stack, Context context)
     rightWallNode->setPosition(1880.f, 0.f);
     rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
     m_scene.addNode(rightWallNode);
+
 }
 
 bool GameState::update(float dt)
@@ -108,6 +113,10 @@ bool GameState::update(float dt)
     for (auto& p : m_players)
         p.update(dt);
 
+    //update AI
+    m_aiController.update(dt);
+
+    //update collision detection
     m_collisionWorld.step(dt);
 
     m_scene.flush();
@@ -186,6 +195,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
         playerNode->setCategory(player.getType());
         playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, playerShape.getSize()));
         playerNode->addObserver(player);
+        playerNode->addObserver(m_aiController);
         m_scene.addNode(playerNode);
 
         player.setSpawnable(false);
@@ -199,6 +209,6 @@ void GameState::addNpc(const sf::Vector2f& position)
     npcNode->setDrawable(&npcShape);
     npcNode->setCategory(Category::Enemy);
     npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, npcShape.getSize()));
-    //TODO add AI observer
+    npcNode->addObserver(m_aiController);
     m_scene.addNode(npcNode);
 }

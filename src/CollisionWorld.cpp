@@ -92,7 +92,7 @@ void CollisionWorld::step(float dt)
     //update any parent node positions
     for (auto& po : m_bodies)
     {
-        po->m_velocity += m_gravity;
+        po->applyGravity(m_gravity);
         po->step(dt);
     }
 }

@@ -34,8 +34,8 @@ namespace
 {
     const float joyDeadZone = 25.f;
     
-    const float maxMoveForce = 220.f;
-    const float jumpForce = 1900.f;
+    const float maxMoveForce = 200.f;
+    const float jumpForce = 1650.f;
 
     void jump(Node& n, float dt)
     {

@@ -33,6 +33,14 @@ source distribution.
 #include <SFML/Graphics/Text.hpp>
 
 #include <cmath>
+#include <random>
+#include <ctime>
+#include <cassert>
+
+namespace
+{
+    std::default_random_engine rndEngine(static_cast<unsigned long>(std::time(0)));
+}
 
 namespace Util
 {
@@ -73,6 +81,23 @@ namespace Util
         {
             sf::FloatRect bounds = text.getLocalBounds();
             text.setOrigin(std::floor(bounds.width / 2.f), std::floor(bounds.height / 2.f));
+        }
+    }
+
+    namespace Random
+    {
+        static float value(float begin, float end)
+        {
+            assert(begin < end);
+            std::uniform_real_distribution<float> dist(begin, end);
+            return dist(rndEngine);
+        }
+
+        static int value(int begin, int end)
+        {
+            assert(begin < end);
+            std::uniform_int_distribution<int> dist(begin, end);
+            return dist(rndEngine);
         }
     }
 }

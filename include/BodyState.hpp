@@ -61,6 +61,7 @@ protected:
 
     //notifys the body that it should die
     void kill();
+    void raiseEvent(const game::Event& evt);
 
 private:
     CollisionWorld::Body* m_body;

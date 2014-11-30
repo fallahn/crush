@@ -29,6 +29,7 @@ source distribution.
 #include <Scene.hpp>
 #include <CollisionWorld.hpp>
 #include <Player.hpp>
+#include <AIController.hpp>
 
 class GameState final : public State
 {
@@ -46,6 +47,7 @@ private:
     CommandStack m_commandStack;
     CollisionWorld m_collisionWorld;
     std::vector<Player> m_players;
+    AIController m_aiController;
 
     void addBlock(const sf::Vector2f& position);
     void addPlayer(const sf::Vector2f& position, Player& player);

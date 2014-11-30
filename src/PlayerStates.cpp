@@ -43,8 +43,17 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body:
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({ getVelocity().x, 0.f });
-        setState<PlayerStateGround>();
+        if (manifold.y * manifold.z < 0) //contact is below so must be standing on something
+        {
+            setVelocity({ getVelocity().x, 0.f });
+            setState<PlayerStateGround>();
+
+            game::Event playerEvent;
+            playerEvent.type = game::Event::Player;
+            playerEvent.player.playerId = Category::None;
+            playerEvent.player.action = game::Event::PlayerEvent::Landed;
+            raiseEvent(playerEvent);
+        }
         break;
     case CollisionWorld::Body::Type::Player:
     {
@@ -54,28 +63,18 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body:
         {
             setVelocity({ -vel.x, vel.y });
         }
-        else
-        {
-            setVelocity({ vel.x, -vel.y });
-        }
     }
         break;
     case CollisionWorld::Body::Type::Npc:
-        //bound off if on top
-        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+    {
+        if (manifold.y * manifold.z > 0.f)
         {
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             auto vel = getVelocity();
-            if (manifold.y != 0)
-            {
-                setVelocity({ vel.x, -vel.y });
-            }
-
-            if (manifold.y * manifold.z > 0.f)
-            {
-                //squish when from above
-                kill();
-            }
+            vel.y = 0.f;
+            setVelocity(vel);
         }
+    }
         break;
     default: break;
     }
@@ -115,15 +114,18 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({ 0.f, 0.f });
         }
+        if (manifold.y * manifold.z > 0)
+        {
+            //block is above, so DIE!!!!!
+            kill();
+        }
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         if (manifold.x == 0)
             setVelocity({ getVelocity().x, 0.f }); //carry on moving if we hit ground
         else
-            setVelocity({ }); //we hit a wall so stop
-        //TODO rather than try resolve wall jumping use side sensors to prevent
-        //adding vertical velocity, and velocity in direction of collision
+            setVelocity({ }); 
         break;
     case CollisionWorld::Body::Type::Player:
         //move away if side collision 

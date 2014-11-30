@@ -70,6 +70,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\AIController.cpp" />
     <ClCompile Include="src\BlockStates.cpp" />
     <ClCompile Include="src\BodyState.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -93,6 +94,7 @@
     <ClCompile Include="src\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\AIController.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\BodyState.hpp" />
     <ClInclude Include="include\CollisionWorld.hpp" />
