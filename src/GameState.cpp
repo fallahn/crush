@@ -187,6 +187,8 @@ void GameState::addBlock(const sf::Vector2f& position)
     blockNode->setDrawable(&blockShape);
     blockNode->setCategory(Category::Block);
     blockNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, blockShape.getSize()));
+    blockNode->addObserver(m_players[0]);
+    blockNode->addObserver(m_players[1]);
     m_scene.addNode(blockNode);
 }
 

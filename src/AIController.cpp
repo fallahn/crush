@@ -58,7 +58,7 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
     {
     case game::Event::Despawn:
         //spawn new NPC if needed
-        spawn({ 500.f, -50.f });
+        //spawn({ 500.f, -50.f });
         break;
     case game::Event::Player:
         switch (evt.player.action)

@@ -68,6 +68,8 @@ public:
         void applyForce(const sf::Vector2f& force);
         void setPosition(const sf::Vector2f& position);
         void setGravityAmount(float amount);
+        void setFriction(float friction);
+        float getFriction() const;
 
         sf::Vector2f getCentre() const; //centre of body in world coordinates
         bool contains(const sf::Vector2f& point) const;
@@ -87,6 +89,7 @@ public:
         sf::Uint16 m_footSenseCount;
 
         float m_gravityAmount;
+        float m_friction;
 
         void step(float dt);
         void move(const sf::Vector2f& distance);

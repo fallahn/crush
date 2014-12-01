@@ -58,6 +58,7 @@ protected:
     }
 
     sf::Uint16 getFootSenseCount() const;
+    float getFriction() const;
 
     //notifys the body that it should die
     void kill();

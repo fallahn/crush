@@ -177,7 +177,49 @@ const std::string& Node::getName() const
 
 void Node::setCategory(Category::Type cat)
 {
-    m_category = cat;
+    if (m_category != cat)
+    {
+        game::Event e;
+        e.type = game::Event::Player;
+        //TODO there's a better way to see which bit was set / unset but my brain is fried
+        //compare states and raise an event   
+        if ((m_category & Category::GrabbedOne)
+            && ((cat & Category::GrabbedOne) == 0))
+        {
+            //player one released
+            e.player.playerId = Category::PlayerOne;
+            e.player.action = game::Event::PlayerEvent::Released;
+        }
+        else if (((m_category & Category::GrabbedOne) == 0)
+            && (cat & Category::GrabbedOne))
+        {
+            //player one grabbed
+            e.player.playerId = Category::PlayerOne;
+            e.player.action = game::Event::PlayerEvent::Grabbed;
+        }
+        else if ((m_category & Category::GrabbedTwo)
+            && ((cat & Category::GrabbedTwo) == 0))
+        {
+            //player two released
+            e.player.playerId = Category::PlayerTwo;
+            e.player.action = game::Event::PlayerEvent::Released;
+
+        }
+        else if (((m_category & Category::GrabbedTwo) == 0)
+            && (cat & Category::GrabbedTwo))
+        {
+            //player two grabbed
+            e.player.playerId = Category::PlayerTwo;
+            e.player.action = game::Event::PlayerEvent::Released;
+        }
+        
+        auto pos = getWorldPosition();
+        e.player.positionX = pos.x;
+        e.player.positionY = pos.y;
+        notify(*this, e);
+        
+        m_category = cat;
+    }
 }
 
 sf::Uint16 Node::getCategory() const

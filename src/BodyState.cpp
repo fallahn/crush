@@ -61,6 +61,11 @@ sf::Uint16 BodyState::getFootSenseCount() const
     return m_body->m_footSenseCount;
 }
 
+float BodyState::getFriction() const
+{
+    return m_body->m_friction;
+}
+
 void BodyState::kill()
 {
     game::Event evt;

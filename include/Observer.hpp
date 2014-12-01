@@ -53,6 +53,7 @@ namespace game
                 Landed,
                 Jumped,
                 Grabbed,
+                Released,
                 Died
             }action;
             float positionX, positionY;

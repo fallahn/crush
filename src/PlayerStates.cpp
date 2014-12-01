@@ -92,8 +92,7 @@ void PlayerStateGround::update(float dt)
     auto vel = getVelocity();
     if(vel.y > 0.f) vel.y = 0.f;
 
-    const float friction = 0.86f; //TODO make this variable in state class so it can be changed via gameplay
-    vel.x *= friction; //TODO equate dt into this
+    vel.x *= getFriction(); //TODO equate dt into this
     setVelocity(vel);
 
     if (getFootSenseCount() == 0u)

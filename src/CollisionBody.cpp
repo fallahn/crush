@@ -43,12 +43,14 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_node              (nullptr),
     m_aabb              ({}, size),
     m_footSenseCount    (0u),
-    m_gravityAmount     (1.f)
+    m_gravityAmount     (1.f),
+    m_friction          (0.86f)
 {
     switch (type)
     {
     case Type::Block:
         m_state = std::make_unique<BlockStateAir>(this);
+        m_friction = 0.8f;
         break;
     case Type::Npc:
         m_state = std::make_unique<NpcStateAir>(this);
@@ -95,6 +97,17 @@ void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
 void CollisionWorld::Body::setGravityAmount(float amount)
 {
     m_gravityAmount = amount;
+}
+
+void CollisionWorld::Body::setFriction(float friction)
+{
+    assert(friction >= 0 && friction <= 1);
+    m_friction = friction;
+}
+
+float CollisionWorld::Body::getFriction() const
+{
+    return m_friction;
 }
 
 sf::Vector2f CollisionWorld::Body::getCentre() const

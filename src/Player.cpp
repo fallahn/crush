@@ -29,6 +29,7 @@ source distribution.
 #include <Node.hpp>
 
 #include <cassert>
+#include <iostream>
 
 namespace
 {
@@ -37,6 +38,8 @@ namespace
     
     const float maxMoveForce = 200.f;
     const float jumpForce = 1650.f;
+
+    const float friction = 0.86f;
 
     void jump(Node& n, float dt)
     {
@@ -153,7 +156,7 @@ void Player::update(float dt)
             c.action = [&](Node& n, float dt)
             {
                 //ask node if it is in grabbing distance
-                sf::Vector2f offset(100.f, 0.f);
+                sf::Vector2f offset(60.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
                 auto point = (m_leftFacing) ? m_currentPosition - offset : m_currentPosition + offset;
                 //and or it's type with grabbed
                 //TODO allow both players to grab same box?
@@ -226,6 +229,44 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             //oh noes, we died!
             m_canSpawn = true;
             m_spawnClock.restart();
+        }
+        break;
+    case game::Event::Player:
+        if (evt.player.playerId == m_id)
+        {
+            switch (evt.player.action)
+            {
+                //grabbing / releasing the blocks updates the players
+                //friction so that they are slower when dragging
+            case game::Event::PlayerEvent::Grabbed:
+            {
+                auto blockNode = dynamic_cast<Node*>(&s);
+                assert(blockNode->getCollisionBody());
+                float friction = blockNode->getCollisionBody()->getFriction();
+
+                Command c;
+                c.categoryMask |= m_id;
+                c.action = [=](Node& n, float dt)
+                {
+                    assert(n.getCollisionBody());
+                    n.getCollisionBody()->setFriction(friction);
+                };
+                m_commandStack.push(c);
+            }
+                break;
+            case game::Event::PlayerEvent::Released:
+            {
+                Command c;
+                c.categoryMask |= m_id;
+                c.action = [](Node& n, float dt)
+                {
+                    assert(n.getCollisionBody());
+                    n.getCollisionBody()->setFriction(friction);
+                };
+                m_commandStack.push(c);
+            }
+                break;
+            }
         }
         break;
     default: break;

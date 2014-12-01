@@ -62,8 +62,7 @@ void BlockStateGround::update(float dt)
     auto vel = getVelocity();
     vel.y = 0.f;
 
-    const float friction = 0.8f; //TODO make this a work const like gravity? - might be fun to add block types like ice
-    vel.x *= friction; //TODO equate dt into this
+    vel.x *= getFriction(); //TODO equate dt into this
     setVelocity(vel);
 
     if (getFootSenseCount() == 0u)
