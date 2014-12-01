@@ -57,8 +57,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_collisionWorld    (70.f),
     m_aiController      (m_commandStack)
 {
-    m_players.reserve(2);
-    
+    //build world
     getContext().renderWindow->setTitle("Game Screen");
     
     auto camNode = std::make_unique<Node>("camNode");
@@ -101,6 +100,19 @@ GameState::GameState(StateStack& stack, Context context)
     rightWallNode->setPosition(1880.f, 0.f);
     rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
     m_scene.addNode(rightWallNode);
+
+    //set up controllers
+    m_players.reserve(2);
+    m_players.emplace_back(m_commandStack, Category::PlayerOne);
+    m_players.emplace_back(m_commandStack, Category::PlayerTwo);
+
+    std::function<void(const sf::Vector2f&, Player&)> spawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
+    m_players[0].setSpawnFunction(spawnFunc);
+    m_players[1].setSpawnFunction(spawnFunc);
+    m_players[0].enable();
+
+    std::function<void(const sf::Vector2f&)> f = std::bind(&GameState::addNpc, this, std::placeholders::_1);
+    m_aiController.setSpawnFunction(f);
 
 }
 
@@ -151,17 +163,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Num1:
-            if (m_players.size() == 0u)
-                m_players.emplace_back(m_commandStack, Category::PlayerOne);            
             
-            addPlayer({ 80.f, 900.f }, m_players[0]);
             break;
         case sf::Keyboard::Num2:
-            if (m_players.size() == 1u)
-                m_players.emplace_back(m_commandStack, Category::PlayerTwo);
-
-            if (m_players.size() == 2u)
-                addPlayer({ 1680.f, 900.f }, m_players[1]);
+            m_players[1].enable();
             break;
         default:break;
         }

@@ -70,6 +70,7 @@ public:
         void setGravityAmount(float amount);
 
         sf::Vector2f getCentre() const; //centre of body in world coordinates
+        bool contains(const sf::Vector2f& point) const;
     private:
         Type m_type;
         StatePtr m_state;

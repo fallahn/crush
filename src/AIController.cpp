@@ -58,6 +58,7 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
     {
     case game::Event::Despawn:
         //spawn new NPC if needed
+        spawn({ 500.f, -50.f });
         break;
     case game::Event::Player:
         switch (evt.player.action)
@@ -101,4 +102,9 @@ void AIController::update(float dt)
         c.categoryMask |= Category::Enemy;
         m_commandStack.push(c);
     }
+}
+
+void AIController::setSpawnFunction(std::function<void(const sf::Vector2f&)>& func)
+{
+    spawn = func;
 }

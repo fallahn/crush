@@ -32,6 +32,7 @@ source distribution.
 
 namespace
 {
+    const float spawnTime = 3.f;
     const float joyDeadZone = 25.f;
     
     const float maxMoveForce = 200.f;
@@ -48,15 +49,21 @@ Player::Keys::Keys()
     : left          (sf::Keyboard::A),
     right           (sf::Keyboard::D),
     jump            (sf::Keyboard::W),
-    joyButtonJump   (0u){}
+    grab            (sf::Keyboard::Space),
+    joyButtonJump   (0u),
+    joyButtonGrab   (1u){}
 
 Player::Player(CommandStack& cs, Category::Type type)
     : m_moveForce   (0.f),
     m_commandStack  (cs),
     m_id            (type),
+    m_grabId        (Category::GrabbedOne),
     m_joyId         (0u),
     m_buttonMask    (0u),
-    m_canSpawn      (true)
+    m_canSpawn      (true),
+    m_enabled       (false),
+    m_leftFacing    (false),
+    m_spawnPosition (80.f, 900.f)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
     if (type == Category::PlayerTwo)
@@ -65,12 +72,19 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_keyBinds.left = sf::Keyboard::Left;
         m_keyBinds.right = sf::Keyboard::Right;
         m_keyBinds.jump = sf::Keyboard::Up;
+        m_keyBinds.grab = sf::Keyboard::RShift;
+
+        m_leftFacing = true;
+        m_spawnPosition = { 1680.f, 900.f };
+        m_grabId = Category::GrabbedTwo;
     }
 }
 
 //public
 void Player::update(float dt)
 {
+    if(!m_enabled) return;
+
     //calc movement
     m_moveForce = 0;
     if (sf::Joystick::isConnected(m_joyId))
@@ -101,16 +115,20 @@ void Player::update(float dt)
         {
             assert(n.getCollisionBody());
             n.getCollisionBody()->applyForce({ m_moveForce, 0.f });
+            m_currentPosition = n.getCollisionBody()->getCentre();
         };
-        c.categoryMask |= m_id;
+        c.categoryMask |= m_id | m_grabId;
         m_commandStack.push(c);
+
+        m_leftFacing = (m_moveForce < 0.f);
     }
 
-    //check for jump / grab
+    //check for jump
     if (sf::Keyboard::isKeyPressed(m_keyBinds.jump)
         || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonJump))
     {
-        if ((m_buttonMask & (1 << m_keyBinds.joyButtonJump)) == 0)
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonJump)) == 0
+            && (m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
         {
             Command c;
             c.action = jump;
@@ -123,6 +141,54 @@ void Player::update(float dt)
     {
         m_buttonMask &= ~(1 << m_keyBinds.joyButtonJump);
     }
+
+    //check for grab
+    if (sf::Keyboard::isKeyPressed(m_keyBinds.grab)
+        || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonGrab))
+    {
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
+        {
+            Command c;
+            c.categoryMask |= Category::Block;
+            c.action = [&](Node& n, float dt)
+            {
+                //ask node if it is in grabbing distance
+                sf::Vector2f offset(100.f, 0.f);
+                auto point = (m_leftFacing) ? m_currentPosition - offset : m_currentPosition + offset;
+                //and or it's type with grabbed
+                //TODO allow both players to grab same box?
+                assert(n.getCollisionBody());
+                if (n.getCollisionBody()->contains(point))
+                {
+                    n.setCategory(static_cast<Category::Type>(n.getCategory() | m_grabId));
+                }
+            };
+
+            m_commandStack.push(c);
+            m_buttonMask |= (1 << m_keyBinds.joyButtonGrab);
+        }
+    }
+    else
+    {
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)))
+        {
+            //send a command to all grabbed blocks to set their id as not grabbed
+            Command c;
+            c.categoryMask |= m_grabId;
+            c.action = [&](Node& n, float dt)
+            {
+                auto newCat = (n.getCategory() & ~m_grabId);
+                n.setCategory(static_cast<Category::Type>(newCat));
+            };
+            m_commandStack.push(c);
+        }
+        m_buttonMask &= ~(1 << m_keyBinds.joyButtonGrab);  
+    }
+
+    //TODO check life count
+    //spawn a new player
+    if (m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
+        spawn(m_spawnPosition, *this);
 }
 
 void Player::handleEvent(const sf::Event& evt)
@@ -159,10 +225,22 @@ void Player::onNotify(Subject& s, const game::Event& evt)
         {
             //oh noes, we died!
             m_canSpawn = true;
+            m_spawnClock.restart();
         }
         break;
     default: break;
     }
+}
+
+void Player::setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>& func)
+{
+    spawn = func;
+}
+
+void Player::enable()
+{
+    m_enabled = true;
+    spawn(m_spawnPosition, *this);
 }
 
 //private

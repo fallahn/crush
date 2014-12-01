@@ -34,11 +34,13 @@ namespace Category
 {
     enum Type
     {
-        None      = 0,
-        PlayerOne = (1 << 0), //don't rely on these actually being '1' and '2' respectively
-        PlayerTwo = (1 << 1),
-        Block     = (1 << 2),
-        Enemy     = (1 << 3)
+        None       = 0,
+        PlayerOne  = (1 << 0), //don't rely on these actually being '1' and '2' respectively
+        PlayerTwo  = (1 << 1),
+        Block      = (1 << 2),
+        Enemy      = (1 << 3),
+        GrabbedOne = (1 << 4),
+        GrabbedTwo = (1 << 5)
     };
 }
 

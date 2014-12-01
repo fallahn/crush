@@ -32,6 +32,9 @@ source distribution.
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <functional>
 
 //TODO have this in charge of spawning new entities?
 class AIController final : private sf::NonCopyable, public Observer
@@ -41,12 +44,15 @@ public:
     ~AIController() = default;
 
     void onNotify(Subject& s, const game::Event& evt) override;
-
     void update(float dt);
+
+    void setSpawnFunction(std::function<void(const sf::Vector2f&)>& func);
 
 private:
     CommandStack& m_commandStack;
 
     sf::Clock m_clock;
     float m_randTime;
+
+    std::function<void(const sf::Vector2f&)> spawn;
 };

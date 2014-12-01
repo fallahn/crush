@@ -102,6 +102,11 @@ sf::Vector2f CollisionWorld::Body::getCentre() const
     return m_position + m_centre;
 }
 
+bool CollisionWorld::Body::contains(const sf::Vector2f& point) const
+{
+    return m_aabb.contains(point);
+}
+
 //private
 void CollisionWorld::Body::step(float dt)
 {
