@@ -59,13 +59,15 @@ GameState::GameState(StateStack& stack, Context context)
     m_aiController      (m_commandStack)
 {
     //build world
-    getContext().renderWindow->setTitle("Game Screen");
+    getContext().renderWindow.setTitle("Game Screen");
     
-    auto camNode = std::make_unique<Node>("camNode");
+    Scene::defaultCamera.setView(getContext().defaultView);
+
+    /*auto camNode = std::make_unique<Node>("camNode");
     sceneCam.setView({ {}, { 1920.f, 1080.f } });
     camNode->setCamera(&sceneCam);
     camNode->setPosition(sceneCam.getView().getSize() / 2.f);
-    m_scene.addNode(camNode);
+    m_scene.addNode(camNode);*/
 
     groundShape.setFillColor(sf::Color::Transparent);
     groundShape.setOutlineColor(sf::Color::Red);
@@ -152,7 +154,7 @@ bool GameState::update(float dt)
 
 void GameState::draw()
 {
-    getContext().renderWindow->draw(m_scene);
+    getContext().renderWindow.draw(m_scene);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
@@ -161,7 +163,7 @@ bool GameState::handleEvent(const sf::Event& evt)
     {
     case sf::Event::MouseButtonPressed:
     {  
-        auto position = getContext().renderWindow->mapPixelToCoords(sf::Mouse::getPosition(*getContext().renderWindow));
+        auto position = getContext().renderWindow.mapPixelToCoords(sf::Mouse::getPosition(getContext().renderWindow));
         switch (evt.mouseButton.button)
         {
         case sf::Mouse::Left:

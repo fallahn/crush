@@ -36,7 +36,7 @@ source distribution.
 namespace
 {
     const float sensorSize = 10.f;
-    const float defaultStrength = 50.f;
+    const float defaultStrength = 60.f;
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)

@@ -54,18 +54,20 @@ namespace
 MenuState::MenuState(StateStack& stack, Context context)
     : State(stack, context)
 {
-    getContext().renderWindow->setTitle("Menu Screen");
+    getContext().renderWindow.setTitle("Menu Screen");
+    getContext().renderWindow.setView(getContext().defaultView);
 
-    placeholderText.setFont(getContext().gameInstance->getFont("default"));
+    placeholderText.setFont(getContext().gameInstance.getFont("default"));
     placeholderText.setString(str);
-    //Util::Position::centreOrigin(placeholderText);
-    placeholderText.setPosition({ 60.f, 60.f });
+    placeholderText.setCharacterSize(60u);
+    Util::Position::centreOrigin(placeholderText);
+    placeholderText.setPosition(getContext().defaultView.getCenter());
     
 }
 
 void MenuState::draw()
 {
-    getContext().renderWindow->draw(placeholderText);
+    getContext().renderWindow.draw(placeholderText);
 }
 
 bool MenuState::update(float dt)

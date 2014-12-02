@@ -33,6 +33,7 @@ source distribution.
 #include <StateIds.hpp>
 
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/View.hpp>
 
 #include <memory>
 
@@ -51,8 +52,9 @@ public:
     struct Context
     {
         Context(sf::RenderWindow& renderWindow, Game& game);
-        sf::RenderWindow* renderWindow;
-        Game* gameInstance;
+        sf::RenderWindow& renderWindow;
+        Game& gameInstance;
+        sf::View defaultView; //automatically updated to correctly letterbox screen
     };
 
     State(StateStack& stateStack, Context context);

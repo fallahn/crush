@@ -42,12 +42,14 @@ namespace
 PauseState::PauseState(StateStack& stack, Context context)
     : State(stack, context)
 {
+    getContext().renderWindow.setView(getContext().defaultView);
+    
     grey.setFillColor({ 0u, 0u, 0u, 148u });
-    text.setFont(getContext().gameInstance->getFont("default"));
+    text.setFont(getContext().gameInstance.getFont("default"));
     text.setString("PAUSED");
     text.setCharacterSize(80u);
     Util::Position::centreOrigin(text);
-    text.setPosition({ 960.f, 540.f });
+    text.setPosition(getContext().defaultView.getCenter());
 }
 
 
@@ -58,8 +60,8 @@ bool PauseState::update(float dt)
 
 void PauseState::draw()
 {
-    getContext().renderWindow->draw(grey);
-    getContext().renderWindow->draw(text);
+    getContext().renderWindow.draw(grey);
+    getContext().renderWindow.draw(text);
 }
 
 bool PauseState::handleEvent(const sf::Event& evt)

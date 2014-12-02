@@ -156,7 +156,7 @@ void Player::update(float dt)
             c.action = [&](Node& n, float dt)
             {
                 //ask node if it is in grabbing distance
-                sf::Vector2f offset(60.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
+                sf::Vector2f offset(70.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
                 auto point = (m_leftFacing) ? m_currentPosition - offset : m_currentPosition + offset;
                 //and or it's type with grabbed
                 //TODO allow both players to grab same box?

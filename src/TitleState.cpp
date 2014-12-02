@@ -43,25 +43,27 @@ namespace
 TitleState::TitleState(StateStack& stack, Context context)
     : State(stack, context)
 {
-    getContext().renderWindow->setTitle("Title Screen");
+    getContext().renderWindow.setTitle("Title Screen");
+    getContext().renderWindow.setView(getContext().defaultView);
 
-    titleText.setFont(getContext().gameInstance->getFont("default"));
+    titleText.setFont(getContext().gameInstance.getFont("default"));
     titleText.setCharacterSize(36u);
     titleText.setString("Press any key to continue...");
 
     Util::Position::centreOrigin(titleText);
-    titleText.setPosition({ 400.f, 300.f });
+    titleText.setPosition(getContext().defaultView.getCenter());
 
-    bigText.setFont(getContext().gameInstance->getFont("default"));
+    bigText.setFont(getContext().gameInstance.getFont("default"));
     bigText.setCharacterSize(100u);
     bigText.setString("CRUSH!");
-    bigText.setPosition(100.f, 100.f);
+    Util::Position::centreOrigin(bigText);
+    bigText.setPosition(titleText.getPosition() - sf::Vector2f(0.f, bigText.getLocalBounds().height + 20.f));
 }
 
 void TitleState::draw()
 {
-    getContext().renderWindow->draw(titleText);
-    getContext().renderWindow->draw(bigText);
+    getContext().renderWindow.draw(titleText);
+    getContext().renderWindow.draw(bigText);
 }
 
 bool TitleState::update(float dt)

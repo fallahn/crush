@@ -28,8 +28,32 @@ source distribution.
 #include <State.hpp>
 #include <StateStack.hpp>
 
+#include <SFML/Graphics/RenderWindow.hpp>
+
 State::Context::Context(sf::RenderWindow& window, Game& game)
-    : renderWindow(&window), gameInstance(&game){}
+    : renderWindow  (window),
+    gameInstance    (game)
+{
+    //calculate the correct viewe size / ratio for window size
+    defaultView.setSize(1920.f, 1080.f);
+    defaultView.setCenter(960.f, 540.f);
+
+    float ratioX = static_cast<float>(window.getSize().x) / 16.f;
+    float ratioY = static_cast<float>(window.getSize().y) / ratioX;
+
+    if (ratioY != 9)
+    {
+        auto winSize = static_cast<sf::Vector2f>(window.getSize());
+        float windowRatio = winSize.x / winSize.y;
+        float viewRatio = 16.f / 9.f;
+
+        float sizeY = windowRatio / viewRatio;
+        defaultView.setViewport({ { 0.f, (1.f - sizeY) / 2.f }, { 1.f, sizeY } });
+    }
+}
+
+
+//-------------------------------------------
 
 State::State(StateStack& stateStack, Context context)
     : m_stack(&stateStack),
