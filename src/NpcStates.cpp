@@ -36,9 +36,9 @@ void NpcStateAir::update(float dt)
     setVelocity(vel);
 }
 
-void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
+void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
-    switch (otherType)
+    switch (other->getType())
     {
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:

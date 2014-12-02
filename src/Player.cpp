@@ -66,7 +66,7 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_canSpawn      (true),
     m_enabled       (false),
     m_leftFacing    (false),
-    m_spawnPosition (80.f, 900.f)
+    m_spawnPosition (80.f, 500.f)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
     if (type == Category::PlayerTwo)
@@ -78,7 +78,7 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_keyBinds.grab = sf::Keyboard::RShift;
 
         m_leftFacing = true;
-        m_spawnPosition = { 1680.f, 900.f };
+        m_spawnPosition = { 1680.f, 500.f };
         m_grabId = Category::GrabbedTwo;
     }
 }

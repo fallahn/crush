@@ -40,7 +40,7 @@ public:
     virtual ~BodyState() = default;
 
     virtual void update(float dt) = 0;
-    virtual void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) = 0;
+    virtual void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) = 0;
     virtual sf::Vector2f vetForce(const sf::Vector2f& vel){ return vel; }
 
 protected:
@@ -62,6 +62,7 @@ protected:
 
     //notifys the body that it should die
     void kill();
+    void damage(float amount);
     void raiseEvent(const game::Event& evt);
 
 private:
@@ -73,7 +74,7 @@ class BlockStateAir final : public BodyState
 public:
     explicit BlockStateAir(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
 class BlockStateGround final : public BodyState
@@ -81,7 +82,7 @@ class BlockStateGround final : public BodyState
 public:
     explicit BlockStateGround(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
 class SolidState final : public BodyState
@@ -89,7 +90,7 @@ class SolidState final : public BodyState
 public:
     explicit SolidState(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
 class PlayerStateAir final : public BodyState
@@ -97,7 +98,7 @@ class PlayerStateAir final : public BodyState
 public:
     explicit PlayerStateAir(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
     sf::Vector2f vetForce(const sf::Vector2f& force) override;
 };
 
@@ -106,7 +107,7 @@ class PlayerStateGround final : public BodyState
 public:
     explicit PlayerStateGround(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
 class NpcStateAir final : public BodyState
@@ -114,7 +115,7 @@ class NpcStateAir final : public BodyState
 public:
     explicit NpcStateAir(CollisionWorld::Body* b) : BodyState(b){};
     void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
 #endif //COLLISION_STATE_H_

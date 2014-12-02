@@ -84,9 +84,9 @@ void CollisionWorld::step(float dt)
     {
         //call state resolve
         auto man = getManifold(pair);
-        pair.second->m_state->resolve(man, pair.first->m_type);
+        pair.second->m_state->resolve(man, pair.first);
         man.z = -man.z;
-        pair.first->m_state->resolve(man, pair.second->m_type);
+        pair.first->m_state->resolve(man, pair.second);
     }
 
     //update any parent node positions

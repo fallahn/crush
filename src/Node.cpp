@@ -210,7 +210,7 @@ void Node::setCategory(Category::Type cat)
         {
             //player two grabbed
             e.player.playerId = Category::PlayerTwo;
-            e.player.action = game::Event::PlayerEvent::Released;
+            e.player.action = game::Event::PlayerEvent::Grabbed;
         }
         
         auto pos = getWorldPosition();

@@ -70,9 +70,12 @@ public:
         void setGravityAmount(float amount);
         void setFriction(float friction);
         float getFriction() const;
+        void setStrength(float strength);
+        Type getType() const;
 
         sf::Vector2f getCentre() const; //centre of body in world coordinates
         bool contains(const sf::Vector2f& point) const;
+
     private:
         Type m_type;
         StatePtr m_state;
@@ -90,10 +93,13 @@ public:
 
         float m_gravityAmount;
         float m_friction;
+        float m_health;
+        float m_strength;
 
         void step(float dt);
         void move(const sf::Vector2f& distance);
         void applyGravity(const sf::Vector2f& gravity);
+        void destroy();
     };
     
     explicit CollisionWorld(float gravity);

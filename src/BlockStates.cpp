@@ -41,14 +41,14 @@ void BlockStateAir::update(float dt)
     setVelocity(vel);
 }
 
-void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
+void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
-    switch (otherType)
+    switch (other->getType())
     {
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({ 0.f, 0.f });
+        setVelocity({});
         setState<BlockStateGround>();
         break;
         //std::cout << "Collision Normal: (" << manifold.x << ", " << manifold.y << "), Penetration: " << manifold.z << std::endl;
@@ -72,21 +72,32 @@ void BlockStateGround::update(float dt)
     }
 }
 
-void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
+void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
-    switch (otherType)
+    switch (other->getType())
     {
     case CollisionWorld::Body::Type::Block:
+    //case CollisionWorld::Body::Type::Player:
         if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            setVelocity({ 0.f, 0.f });
+            setVelocity({});
         }
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({ 0.f, 0.f });
+        setVelocity({});
+        break;
+    case CollisionWorld::Body::Type::Player:
+        other->applyForce(getVelocity());
+
+        //fall if play pushed block out from underneath
+        if (getFootSenseCount() <= 1u
+            && (manifold.y * manifold.z) < 0.f)
+        {
+            setState<BlockStateAir>();
+        }
         break;
     default: break;
     }
@@ -94,10 +105,10 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 //-------------------------------------------
 void SolidState::update(float dt)
 {
-    setVelocity({ 0.f, 0.f });
+    setVelocity({});
 }
 
-void SolidState::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
+void SolidState::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
 
 }

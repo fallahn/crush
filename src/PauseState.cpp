@@ -26,23 +26,54 @@ source distribution.
 *********************************************************************/
 
 #include <PauseState.hpp>
+#include <Game.hpp>
+#include <Util.hpp>
+
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics//Text.hpp>
+
+namespace
+{
+    sf::RectangleShape grey({ 1920.f, 1080.f });
+    sf::Text text;
+}
 
 PauseState::PauseState(StateStack& stack, Context context)
-    : State(stack, context){}
+    : State(stack, context)
+{
+    grey.setFillColor({ 0u, 0u, 0u, 148u });
+    text.setFont(getContext().gameInstance->getFont());
+    text.setString("PAUSED");
+    text.setCharacterSize(80u);
+    Util::Position::centreOrigin(text);
+    text.setPosition({ 960.f, 540.f });
+}
 
 
 bool PauseState::update(float dt)
 {
-    return true;
+    return false;
 }
 
 void PauseState::draw()
 {
-
+    getContext().renderWindow->draw(grey);
+    getContext().renderWindow->draw(text);
 }
 
 bool PauseState::handleEvent(const sf::Event& evt)
 {
-    return true;
+    if (evt.type == sf::Event::KeyPressed)
+    {
+        switch (evt.key.code)
+        {
+        case sf::Keyboard::P:
+            requestStackPop();
+            break;
+        default: break;
+        }
+    }
+    return false;
 }
 

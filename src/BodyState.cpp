@@ -68,10 +68,12 @@ float BodyState::getFriction() const
 
 void BodyState::kill()
 {
-    game::Event evt;
-    evt.type = game::Event::Despawn;
-    evt.despawn.type = Category::None;
-    raiseEvent(evt);
+    m_body->destroy();
+}
+
+void BodyState::damage(float amount)
+{
+    m_body->m_health -= amount;
 }
 
 void BodyState::raiseEvent(const game::Event& evt)

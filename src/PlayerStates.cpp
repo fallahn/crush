@@ -36,9 +36,9 @@ void PlayerStateAir::update(float dt)
     setVelocity(vel);
 }
 
-void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
+void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
-    switch (otherType)
+    switch (other->getType())
     {
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
@@ -102,29 +102,32 @@ void PlayerStateGround::update(float dt)
     }
 }
 
-void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body::Type otherType)
+void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
-    switch (otherType)
+    switch (other->getType())
     {
     case CollisionWorld::Body::Type::Block:
         if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            setVelocity({ 0.f, 0.f });
+            setVelocity({});
+            
         }
         if (manifold.y * manifold.z > 0)
         {
             //block is above, so DIE!!!!!
-            kill();
+            //kill();
+           // damage(std::fabs(manifold.z));
         }
+        damage(std::fabs(manifold.z * 0.4f));
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         if (manifold.x == 0)
             setVelocity({ getVelocity().x, 0.f }); //carry on moving if we hit ground
         else
-            setVelocity({ }); 
+            setVelocity({}); 
         break;
     case CollisionWorld::Body::Type::Player:
         //move away if side collision 

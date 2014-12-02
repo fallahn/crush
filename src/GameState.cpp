@@ -42,6 +42,7 @@ namespace
 
     sf::RectangleShape groundShape;
     sf::RectangleShape wallShape;
+    sf::RectangleShape shelfShape;
 
     DebugShape blockShape;
     DebugShape playerShape;
@@ -71,6 +72,7 @@ GameState::GameState(StateStack& stack, Context context)
     groundShape.setOutlineThickness(-3.f);
 
     wallShape = groundShape;
+    shelfShape = groundShape;
 
     blockShape.setSize(blockSize);
     blockShape.setColour(sf::Color::Red);
@@ -100,6 +102,19 @@ GameState::GameState(StateStack& stack, Context context)
     rightWallNode->setPosition(1880.f, 0.f);
     rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
     m_scene.addNode(rightWallNode);
+
+    shelfShape.setSize({ 200.f, 16.f });
+    auto leftShelfNode = std::make_unique<Node>("leftShelf");
+    leftShelfNode->setDrawable(&shelfShape);
+    leftShelfNode->setPosition({ 50.f, 600.f });
+    leftShelfNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, shelfShape.getSize()));
+    m_scene.addNode(leftShelfNode);
+
+    auto rightShelfNode = std::make_unique<Node>("rightShelf");
+    rightShelfNode->setDrawable(&shelfShape);
+    rightShelfNode->setPosition({ 1680.f, 600.f });
+    rightShelfNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, shelfShape.getSize()));
+    m_scene.addNode(rightShelfNode);
 
     //set up controllers
     m_players.reserve(2);
@@ -167,6 +182,9 @@ bool GameState::handleEvent(const sf::Event& evt)
             break;
         case sf::Keyboard::Num2:
             m_players[1].enable();
+            break;
+        case sf::Keyboard::P:
+            requestStackPush(States::ID::Pause);
             break;
         default:break;
         }

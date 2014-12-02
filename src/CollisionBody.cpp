@@ -31,10 +31,12 @@ source distribution.
 #include <BodyState.hpp>
 
 #include <cassert>
+//#include <iostream>
 
 namespace
 {
     const float sensorSize = 10.f;
+    const float defaultStrength = 50.f;
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
@@ -44,7 +46,9 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_aabb              ({}, size),
     m_footSenseCount    (0u),
     m_gravityAmount     (1.f),
-    m_friction          (0.86f)
+    m_friction          (0.86f),
+    m_health            (defaultStrength),
+    m_strength          (defaultStrength)
 {
     switch (type)
     {
@@ -110,6 +114,16 @@ float CollisionWorld::Body::getFriction() const
     return m_friction;
 }
 
+void CollisionWorld::Body::setStrength(float strength)
+{
+    m_strength = strength;
+}
+
+CollisionWorld::Body::Type CollisionWorld::Body::getType() const
+{
+    return m_type;
+}
+
 sf::Vector2f CollisionWorld::Body::getCentre() const
 {
     return m_position + m_centre;
@@ -143,6 +157,18 @@ void CollisionWorld::Body::step(float dt)
         m_nextState.swap(m_state);
         m_nextState.reset();
     }
+
+    //update strength value or kill if no health
+    if (m_health < 0)
+    {
+        destroy();
+    }
+    else if (m_health < m_strength)
+    {
+        m_health += m_strength * dt;
+        //std::cout << m_health << std::endl;
+    }
+
 }
 
 void CollisionWorld::Body::move(const sf::Vector2f& amount)
@@ -158,4 +184,12 @@ void CollisionWorld::Body::move(const sf::Vector2f& amount)
 void CollisionWorld::Body::applyGravity(const sf::Vector2f& gravity)
 {
     m_velocity += gravity * m_gravityAmount;
+}
+
+void CollisionWorld::Body::destroy()
+{
+    game::Event evt;
+    evt.type = game::Event::Despawn;
+    evt.despawn.type = Category::None;
+    notify(*this, evt);
 }
