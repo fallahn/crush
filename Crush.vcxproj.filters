@@ -149,5 +149,8 @@
     <ClInclude Include="include\AIController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\GameHud.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

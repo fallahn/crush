@@ -103,6 +103,7 @@
     <ClInclude Include="include\DebugShape.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\GameHud.hpp" />
     <ClInclude Include="include\GameState.hpp" />
     <ClInclude Include="include\MenuState.hpp" />
     <ClInclude Include="include\Node.hpp" />

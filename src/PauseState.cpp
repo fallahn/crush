@@ -43,7 +43,7 @@ PauseState::PauseState(StateStack& stack, Context context)
     : State(stack, context)
 {
     grey.setFillColor({ 0u, 0u, 0u, 148u });
-    text.setFont(getContext().gameInstance->getFont());
+    text.setFont(getContext().gameInstance->getFont("default"));
     text.setString("PAUSED");
     text.setCharacterSize(80u);
     Util::Position::centreOrigin(text);

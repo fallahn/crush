@@ -25,43 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main game class
+//observes the game to update the scores
 
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef HUD_H_
+#define HUD_H_
 
-#include <StateStack.hpp>
-#include <Resource.hpp>
+#include <Observer.hpp>
 
-#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 
-class Game final : private sf::NonCopyable
+class GameHud final : public Observer, public sf::Drawable, private sf::NonCopyable
 {
 public:
-    Game();
-    ~Game() = default;
+    GameHud();
+    ~GameHud() = default;
 
-    void run();
+    void onNotify(Subject& s, const game::Event& evt) override;
 
-    void setClearColour(sf::Color c);
-    sf::Font& getFont(const std::string& path);
 
-private: 
+private:
 
-    static const float m_timePerFrame;
-
-    sf::RenderWindow m_renderWindow;
-    sf::Color m_clearColour;
-
-    StateStack m_stateStack;
-
-    FontResource m_fontResource;
-
-    void handleEvents();
-    void update(float dt);
-    void draw();
-
-    void registerStates();
+    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 
-#endif //GAME_H_
+#endif //HUD_H_

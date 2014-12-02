@@ -33,7 +33,7 @@ source distribution.
 
 namespace
 {
-    const float spawnTime = 3.f;
+    const float spawnTime = 2.6f;
     const float joyDeadZone = 25.f;
     
     const float maxMoveForce = 200.f;

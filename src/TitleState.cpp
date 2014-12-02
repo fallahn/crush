@@ -37,6 +37,7 @@ source distribution.
 namespace
 {
     sf::Text titleText;
+    sf::Text bigText;
 }
 
 TitleState::TitleState(StateStack& stack, Context context)
@@ -44,17 +45,23 @@ TitleState::TitleState(StateStack& stack, Context context)
 {
     getContext().renderWindow->setTitle("Title Screen");
 
-    titleText.setFont(getContext().gameInstance->getFont());
+    titleText.setFont(getContext().gameInstance->getFont("default"));
     titleText.setCharacterSize(36u);
     titleText.setString("Press any key to continue...");
 
     Util::Position::centreOrigin(titleText);
     titleText.setPosition({ 400.f, 300.f });
+
+    bigText.setFont(getContext().gameInstance->getFont("default"));
+    bigText.setCharacterSize(100u);
+    bigText.setString("CRUSH!");
+    bigText.setPosition(100.f, 100.f);
 }
 
 void TitleState::draw()
 {
     getContext().renderWindow->draw(titleText);
+    getContext().renderWindow->draw(bigText);
 }
 
 bool TitleState::update(float dt)
