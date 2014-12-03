@@ -31,7 +31,6 @@ source distribution.
 #include <BodyState.hpp>
 
 #include <cassert>
-//#include <iostream>
 
 namespace
 {
@@ -58,7 +57,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::Npc:
         m_state = std::make_unique<NpcStateAir>(this);
-        m_gravityAmount = 0.25f;
+        m_gravityAmount = 0.15f;
         break;
     case Type::Player:
         m_state = std::make_unique<PlayerStateAir>(this);
@@ -174,7 +173,6 @@ void CollisionWorld::Body::step(float dt)
     else if (m_health < m_strength)
     {
         m_health += m_strength * dt;
-        //std::cout << m_health << std::endl;
     }
 
 }

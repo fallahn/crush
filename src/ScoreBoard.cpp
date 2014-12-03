@@ -90,7 +90,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
         }
         else if(evt.node.action == game::Event::NodeEvent::KilledNode)
         {
-            auto textUpdateTarget = evt.node.target;
+            auto textUpdateTarget = evt.node.type;
             switch (evt.node.type)
             {
             case Category::PlayerOne:

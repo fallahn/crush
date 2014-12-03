@@ -57,7 +57,7 @@ GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
     m_collisionWorld    (70.f),
     m_aiController      (m_commandStack),
-    m_scoreBoard               (stack, context)
+    m_scoreBoard        (stack, context)
 {
     //build world
     getContext().renderWindow.setTitle("Game Screen");
@@ -126,6 +126,9 @@ GameState::GameState(StateStack& stack, Context context)
     std::function<void(const sf::Vector2f&)> f = std::bind(&GameState::addNpc, this, std::placeholders::_1);
     m_aiController.setSpawnFunction(f);
 
+    m_scoreBoard.addObserver(m_players[0]);
+    m_scoreBoard.addObserver(m_players[1]);
+    m_scoreBoard.addObserver(m_aiController);
 }
 
 bool GameState::update(float dt)

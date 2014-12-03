@@ -36,7 +36,7 @@ source distribution.
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 
-class ScoreBoard final : public Observer, public sf::Drawable, private sf::NonCopyable
+class ScoreBoard final : public Observer, public Subject, public sf::Drawable, private sf::NonCopyable
 {
 public:
     ScoreBoard(StateStack& stack, State::Context context);

@@ -48,7 +48,7 @@ namespace
         "by jumping on them - but don't acidentally crush\n"
         "yourself!\n"
         "\n"
-        "Press any key to begin.";
+        "Press Enter to begin.";
 }
 
 MenuState::MenuState(StateStack& stack, Context context)
@@ -80,8 +80,11 @@ bool MenuState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyPressed)
     {
-        requestStackPop();
-        requestStackPush(States::ID::Game);
+        if (evt.key.code == sf::Keyboard::Return)
+        {
+            requestStackPop();
+            requestStackPush(States::ID::Game);
+        }
     }
     return true;
 }

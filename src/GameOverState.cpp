@@ -37,7 +37,7 @@ namespace
 {
     sf::Text placeholderText;
     std::string str =
-        "GAME OVER";
+        "       GAME OVER\n Press C to Continue";
 
     sf::RectangleShape rectangle;
 }
@@ -60,6 +60,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 
 void GameOverState::draw()
 {
+    getContext().renderWindow.draw(rectangle);
     getContext().renderWindow.draw(placeholderText);
 }
 
@@ -73,8 +74,11 @@ bool GameOverState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyPressed)
     {
-        requestStackClear();
-        requestStackPush(States::ID::Menu);
+        if (evt.key.code == sf::Keyboard::C)
+        {
+            requestStackClear();
+            requestStackPush(States::ID::Menu);
+        }
     }
     return false;
 }
