@@ -25,33 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <State.hpp>
-#include <Scene.hpp>
-#include <CollisionWorld.hpp>
-#include <Player.hpp>
-#include <AIController.hpp>
-#include <ScoreBoard.hpp>
+//observes the game to update the scores
 
-class GameState final : public State
+#ifndef SCOREBOARD_H_
+#define SCOREBOARD_H_
+
+#include <Observer.hpp>
+#include <State.hpp>
+
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+
+class ScoreBoard final : public Observer, public sf::Drawable, private sf::NonCopyable
 {
 public:
-    GameState(StateStack& stack, Context context);
-    ~GameState() = default;
+    ScoreBoard(StateStack& stack, State::Context context);
+    ~ScoreBoard() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    void onNotify(Subject& s, const game::Event& evt) override;
+
 
 private:
+    StateStack& m_stack;
+    State::Context m_context;
 
-    Scene m_scene;
-    CommandStack m_commandStack;
-    CollisionWorld m_collisionWorld;
-    std::vector<Player> m_players;
-    AIController m_aiController;
-    ScoreBoard m_scoreBoard;
+    sf::Int16 m_playerOneLives;
+    sf::Int16 m_playerTwoLives;
 
-    void addBlock(const sf::Vector2f& position);
-    void addPlayer(const sf::Vector2f& position, Player& player);
-    void addNpc(const sf::Vector2f& position);
+    sf::Uint16 m_playerOneScore;
+    sf::Uint16 m_playerTwoScore;
+
+    void updateText(Category::Type type);
+
+    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
+
+#endif //HUD_H_

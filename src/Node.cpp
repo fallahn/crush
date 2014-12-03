@@ -240,25 +240,32 @@ void Node::onNotify(Subject& s, const game::Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Despawn:
+    case game::Event::Node:
     {
-        //let our observers know it's time to die
-        game::Event e = evt;
-        e.despawn.type = m_category;
-        notify(*this, e);
-
-        if (m_category == Category::PlayerOne
-            || m_category == Category::PlayerTwo)
+        if (evt.node.action == game::Event::NodeEvent::Despawn)
         {
-            game::Event playerEvent;
-            playerEvent.type = game::Event::Player;
-            playerEvent.player.playerId = m_category;
-            playerEvent.player.action = game::Event::PlayerEvent::Died;
-            assert(m_collisionBody);
-            auto pos = m_collisionBody->getCentre();
-            playerEvent.player.positionX = pos.x;
-            playerEvent.player.positionY = pos.y;
-            notify(*this, playerEvent);
+            //let our observers know it's time to die
+            game::Event e = evt;
+            e.node.type = m_category;
+            notify(*this, e);
+
+            if (m_category == Category::PlayerOne
+                || m_category == Category::PlayerTwo)
+            {
+                game::Event playerEvent;
+                playerEvent.type = game::Event::Player;
+                playerEvent.player.playerId = m_category;
+                playerEvent.player.action = game::Event::PlayerEvent::Died;
+                assert(m_collisionBody);
+                auto pos = m_collisionBody->getCentre();
+                playerEvent.player.positionX = pos.x;
+                playerEvent.player.positionY = pos.y;
+                notify(*this, playerEvent);
+            }
+        }
+        else if (evt.node.action == game::Event::NodeEvent::KilledNode)
+        {
+            notify(*this, evt);
         }
     }
         break;

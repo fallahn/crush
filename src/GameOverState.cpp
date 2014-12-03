@@ -25,59 +25,56 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <PauseState.hpp>
+#include <GameOverState.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
 
-#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics//Text.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace
 {
-    sf::RectangleShape grey;
-    sf::Text text;
+    sf::Text placeholderText;
+    std::string str =
+        "GAME OVER";
+
+    sf::RectangleShape rectangle;
 }
 
-PauseState::PauseState(StateStack& stack, Context context)
+GameOverState::GameOverState(StateStack& stack, Context context)
     : State(stack, context)
 {
+    getContext().renderWindow.setTitle("Menu Screen");
     getContext().renderWindow.setView(getContext().defaultView);
-    
-    grey.setFillColor({ 0u, 0u, 0u, 148u });
-    grey.setSize(context.defaultView.getSize());
 
-    text.setFont(getContext().gameInstance.getFont("default"));
-    text.setString("PAUSED");
-    text.setCharacterSize(80u);
-    Util::Position::centreOrigin(text);
-    text.setPosition(getContext().defaultView.getCenter());
+    placeholderText.setFont(getContext().gameInstance.getFont("default"));
+    placeholderText.setString(str);
+    placeholderText.setCharacterSize(60u);
+    Util::Position::centreOrigin(placeholderText);
+    placeholderText.setPosition(getContext().defaultView.getCenter());
+
+    rectangle.setFillColor({ 0u, 0u, 0u, 148u });
+    rectangle.setSize(context.defaultView.getSize());
 }
 
-
-bool PauseState::update(float dt)
+void GameOverState::draw()
 {
-    return false;
+    getContext().renderWindow.draw(placeholderText);
 }
 
-void PauseState::draw()
+bool GameOverState::update(float dt)
 {
-    getContext().renderWindow.draw(grey);
-    getContext().renderWindow.draw(text);
+
+    return true; //return true so we can see remaining baddies bouncing about / finish death animations
 }
 
-bool PauseState::handleEvent(const sf::Event& evt)
+bool GameOverState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyPressed)
     {
-        switch (evt.key.code)
-        {
-        case sf::Keyboard::P:
-            requestStackPop();
-            break;
-        default: break;
-        }
+        requestStackClear();
+        requestStackPush(States::ID::Menu);
     }
     return false;
 }
-

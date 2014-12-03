@@ -42,12 +42,25 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
     {
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
-        //jump up from ground, or away from walls
-        //kill when squished under or between blocks
-        if (manifold.y * manifold.z > 0 && getFootSenseCount() > 0) kill();
+        //kill if block above and NPC is touching the ground
+        if (manifold.y * manifold.z > 0 && getFootSenseCount() > 0)
+        {
+            kill();
+            
+            //raise event to say player killed us
+            game::Event e;
+            e.node.action = game::Event::NodeEvent::KilledNode;
+            e.node.type = Category::Block;
+            e.node.target = Category::Npc;
+            if (other->getParentCategory() & Category::LastTouchedOne) e.node.owner = Category::PlayerOne;
+            else if (other->getParentCategory() & Category::LastTouchedTwo) e.node.owner = Category::PlayerTwo;
+            else e.node.owner = Category::None;
+            e.type = game::Event::Node;
+            raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
+        }
 
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
-    {
+    {   //jump up from ground, or away from walls
         auto vel = getVelocity();
         if (manifold.y != 0 && getFootSenseCount() > 0)
             vel.y -= 1600.f; //jump only when foot on ground
@@ -65,7 +78,19 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
             auto vel = getVelocity();
             vel.y = 0.f;
             setVelocity(vel);
-            if (getFootSenseCount() > 0) kill();
+            if (getFootSenseCount() > 0)
+            {
+                kill();
+                
+                //raise event to say player killed us
+                game::Event e;
+                e.node.action = game::Event::NodeEvent::KilledNode;
+                e.node.type = other->getParentCategory();
+                e.node.target = Category::Npc;
+                e.type = game::Event::Node;
+                raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
+                //other->notify(*other, e);
+            }
         }
 
     }

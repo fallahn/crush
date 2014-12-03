@@ -124,6 +124,14 @@ CollisionWorld::Body::Type CollisionWorld::Body::getType() const
     return m_type;
 }
 
+Category::Type CollisionWorld::Body::getParentCategory() const
+{
+    if (m_node)
+        return static_cast<Category::Type>(m_node->getCategory());
+    else
+        return Category::None;
+}
+
 sf::Vector2f CollisionWorld::Body::getCentre() const
 {
     return m_position + m_centre;
@@ -189,7 +197,8 @@ void CollisionWorld::Body::applyGravity(const sf::Vector2f& gravity)
 void CollisionWorld::Body::destroy()
 {
     game::Event evt;
-    evt.type = game::Event::Despawn;
-    evt.despawn.type = Category::None;
+    evt.type = game::Event::Node;
+    evt.node.type = Category::None;
+    evt.node.action = game::Event::NodeEvent::Despawn;
     notify(*this, evt);
 }

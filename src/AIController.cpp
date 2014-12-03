@@ -56,7 +56,7 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Despawn:
+    case game::Event::Node:
         //spawn new NPC if needed
         //spawn({ 500.f, -50.f });
         break;
@@ -68,7 +68,7 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
             //get player position and point an npc at it
             sf::Vector2f pos(evt.player.positionX, evt.player.positionY);
             Command c;
-            c.categoryMask = Category::Enemy;
+            c.categoryMask = Category::Npc;
             c.action = [=](Node& n, float dt)
             {
                 assert(n.getCollisionBody());
@@ -99,7 +99,7 @@ void AIController::update(float dt)
 
         Command c;
         c.action = nudge;
-        c.categoryMask |= Category::Enemy;
+        c.categoryMask |= Category::Npc;
         m_commandStack.push(c);
     }
 }

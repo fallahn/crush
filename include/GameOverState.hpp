@@ -25,28 +25,17 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//observes the game to update the scores
+#include <State.hpp>
 
-#ifndef HUD_H_
-#define HUD_H_
-
-#include <Observer.hpp>
-
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-
-class GameHud final : public Observer, public sf::Drawable, private sf::NonCopyable
+class GameOverState final : public State
 {
 public:
-    GameHud();
-    ~GameHud() = default;
+    GameOverState(StateStack& stack, Context context);
+    ~GameOverState() = default;
 
-    void onNotify(Subject& s, const game::Event& evt) override;
-
+    void draw() override;
+    bool update(float dt) override;
+    bool handleEvent(const sf::Event& evt) override;
 
 private:
-
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
-
-#endif //HUD_H_

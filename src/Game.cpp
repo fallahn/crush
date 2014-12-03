@@ -30,6 +30,7 @@ source distribution.
 #include <MenuState.hpp>
 #include <GameState.hpp>
 #include <PauseState.hpp>
+#include <GameOverState.hpp>
 
 #include <Resource.hpp>
 
@@ -117,4 +118,5 @@ void Game::registerStates()
     m_stateStack.registerState<MenuState>(States::ID::Menu);
     m_stateStack.registerState<GameState>(States::ID::Game);
     m_stateStack.registerState<PauseState>(States::ID::Pause);
+    m_stateStack.registerState<GameOverState>(States::ID::GameOver);
 }

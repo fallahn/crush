@@ -50,8 +50,8 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* 
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
         setState<BlockStateGround>();
+        setParentCategory(Category::Block); //reset any previous owners
         break;
-        //std::cout << "Collision Normal: (" << manifold.x << ", " << manifold.y << "), Penetration: " << manifold.z << std::endl;
 
     default: break;
     }
@@ -69,6 +69,8 @@ void BlockStateGround::update(float dt)
     {
         //nothing underneath so should be falling
         setState<BlockStateAir>();
+
+        //TODO should set this to not grabbed, but previously owned
     }
 }
 
@@ -97,6 +99,7 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             && (manifold.y * manifold.z) < 0.f)
         {
             setState<BlockStateAir>();
+            setParentCategory(Category::Block);
         }
         break;
     default: break;

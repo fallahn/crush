@@ -106,8 +106,9 @@ void Scene::onNotify(Subject& s, const game::Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Despawn:
-        m_deletedList.push_back(dynamic_cast<Node*>(&s)); //HAH! ok...
+    case game::Event::Node:
+        if (evt.node.action == game::Event::NodeEvent::Despawn)
+            m_deletedList.push_back(dynamic_cast<Node*>(&s)); //HAH! ok...
         break;
     default: break;
     }

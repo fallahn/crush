@@ -81,6 +81,12 @@
     <ClCompile Include="src\AIController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameOverState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScoreBoard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -149,7 +155,10 @@
     <ClInclude Include="include\AIController.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\GameHud.hpp">
+    <ClInclude Include="include\GameOverState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ScoreBoard.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

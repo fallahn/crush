@@ -72,7 +72,7 @@ private:
     float m_moveForce;
 
     CommandStack& m_commandStack;
-    Category::Type m_id, m_grabId;
+    Category::Type m_id, m_grabId, m_lastTouchId;
     sf::Uint8 m_joyId;
 
     Keys m_keyBinds;

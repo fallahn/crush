@@ -61,6 +61,7 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_commandStack  (cs),
     m_id            (type),
     m_grabId        (Category::GrabbedOne),
+    m_lastTouchId   (Category::LastTouchedOne),
     m_joyId         (0u),
     m_buttonMask    (0u),
     m_canSpawn      (true),
@@ -80,6 +81,7 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_leftFacing = true;
         m_spawnPosition = { 1680.f, 500.f };
         m_grabId = Category::GrabbedTwo;
+        m_lastTouchId = Category::LastTouchedTwo;
     }
 }
 
@@ -181,6 +183,7 @@ void Player::update(float dt)
             c.action = [&](Node& n, float dt)
             {
                 auto newCat = (n.getCategory() & ~m_grabId);
+                newCat |= m_lastTouchId; //state player was last to touch
                 n.setCategory(static_cast<Category::Type>(newCat));
             };
             m_commandStack.push(c);
@@ -223,8 +226,9 @@ void Player::onNotify(Subject& s, const game::Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Despawn:
-        if (evt.despawn.type == m_id)
+    case game::Event::Node:
+        if (evt.node.type == m_id
+            && evt.node.action == game::Event::NodeEvent::Despawn)
         {
             //oh noes, we died!
             m_canSpawn = true;

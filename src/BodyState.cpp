@@ -66,6 +66,18 @@ float BodyState::getFriction() const
     return m_body->m_friction;
 }
 
+Category::Type BodyState::getParentCategory() const
+{
+    if (m_body->m_node)
+        return static_cast<Category::Type>(m_body->m_node->getCategory());
+    else return Category::None;
+}
+
+void BodyState::setParentCategory(Category::Type type)
+{
+    if (m_body->m_node) m_body->m_node->setCategory(type);
+}
+
 void BodyState::kill()
 {
     m_body->destroy();

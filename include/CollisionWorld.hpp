@@ -72,6 +72,7 @@ public:
         float getFriction() const;
         void setStrength(float strength);
         Type getType() const;
+        Category::Type getParentCategory() const;
 
         sf::Vector2f getCentre() const; //centre of body in world coordinates
         bool contains(const sf::Vector2f& point) const;

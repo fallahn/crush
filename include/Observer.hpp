@@ -39,12 +39,21 @@ namespace game
     class Event
     {
     public:
-        //when a scene node is destroyed
-        struct DespawnEvent
+        //when a scene node is modified
+        struct NodeEvent
         {
             Category::Type type;
+            enum Action
+            {
+                Spawn,
+                Despawn,
+                KilledNode
+            }action;
+            Category::Type target; //node type with was target of deathness
+            Category::Type owner; //if this is a block, who last owned it
         };
 
+        //when players do stuff
         struct PlayerEvent
         {
             Category::Type playerId;
@@ -59,17 +68,16 @@ namespace game
             float positionX, positionY;
         };
     
-        //TODO other events such as scoring points
 
         enum Type
         {
-            Despawn,
+            Node,
             Player
         } type;
 
         union
         {
-            DespawnEvent despawn;
+            NodeEvent node;
             PlayerEvent player;
         };
     };

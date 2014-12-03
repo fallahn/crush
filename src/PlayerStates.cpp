@@ -114,12 +114,7 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             setVelocity({});
             
         }
-        if (manifold.y * manifold.z > 0)
-        {
-            //block is above, so DIE!!!!!
-            //kill();
-           // damage(std::fabs(manifold.z));
-        }
+
         damage(std::fabs(manifold.z * 0.4f));
         break;
     case CollisionWorld::Body::Type::Solid:
@@ -140,6 +135,14 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         {
             //else squish when from above
             kill();
+
+            //raise event to say player killed us
+            game::Event e;
+            e.node.action = game::Event::NodeEvent::KilledNode;
+            e.node.type = other->getParentCategory();
+            e.node.target = getParentCategory();
+            e.type = game::Event::Node;
+            raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
         }
         break;
     case CollisionWorld::Body::Type::Npc:
@@ -147,6 +150,8 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         {
             //squish when from above
             kill();
+
+            //don't need to raise event because NPCs don't earn points :)
         }
         break;
     default: break;

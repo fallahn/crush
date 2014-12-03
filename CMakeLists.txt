@@ -53,6 +53,7 @@ add_executable(
 	src/FontResource.cpp
 	src/Game.cpp
 	src/GameState.cpp
+	src/GameOverState.cpp
 	src/MenuState.cpp
 	src/Node.cpp
 	src/NpcStates.cpp
@@ -60,6 +61,7 @@ add_executable(
 	src/Player.cpp
 	src/PlayerStates.cpp
 	src/Scene.cpp
+	src/ScoreBoard.cpp
 	src/State.cpp
 	src/StateStack.cpp
 	src/TitleState.cpp)

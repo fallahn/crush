@@ -56,18 +56,13 @@ namespace
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
     m_collisionWorld    (70.f),
-    m_aiController      (m_commandStack)
+    m_aiController      (m_commandStack),
+    m_scoreBoard               (stack, context)
 {
     //build world
     getContext().renderWindow.setTitle("Game Screen");
     
     Scene::defaultCamera.setView(getContext().defaultView);
-
-    /*auto camNode = std::make_unique<Node>("camNode");
-    sceneCam.setView({ {}, { 1920.f, 1080.f } });
-    camNode->setCamera(&sceneCam);
-    camNode->setPosition(sceneCam.getView().getSize() / 2.f);
-    m_scene.addNode(camNode);*/
 
     groundShape.setFillColor(sf::Color::Transparent);
     groundShape.setOutlineColor(sf::Color::Red);
@@ -155,6 +150,7 @@ bool GameState::update(float dt)
 void GameState::draw()
 {
     getContext().renderWindow.draw(m_scene);
+    getContext().renderWindow.draw(m_scoreBoard);
 }
 
 bool GameState::handleEvent(const sf::Event& evt)
@@ -209,6 +205,7 @@ void GameState::addBlock(const sf::Vector2f& position)
     blockNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, blockShape.getSize()));
     blockNode->addObserver(m_players[0]);
     blockNode->addObserver(m_players[1]);
+    blockNode->addObserver(m_scoreBoard);
     m_scene.addNode(blockNode);
 }
 
@@ -223,6 +220,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
         playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, playerShape.getSize()));
         playerNode->addObserver(player);
         playerNode->addObserver(m_aiController);
+        playerNode->addObserver(m_scoreBoard);
         m_scene.addNode(playerNode);
 
         player.setSpawnable(false);
@@ -234,8 +232,9 @@ void GameState::addNpc(const sf::Vector2f& position)
     auto npcNode = std::make_unique<Node>("npc");
     npcNode->setPosition(position);
     npcNode->setDrawable(&npcShape);
-    npcNode->setCategory(Category::Enemy);
+    npcNode->setCategory(Category::Npc);
     npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, npcShape.getSize()));
     npcNode->addObserver(m_aiController);
+    npcNode->addObserver(m_scoreBoard);
     m_scene.addNode(npcNode);
 }
