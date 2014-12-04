@@ -52,9 +52,11 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
             e.node.action = game::Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
             e.node.target = Category::Npc;
-            if (other->getParentCategory() & Category::LastTouchedOne) e.node.owner = Category::PlayerOne;
-            else if (other->getParentCategory() & Category::LastTouchedTwo) e.node.owner = Category::PlayerTwo;
+
+            if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+            else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
             else e.node.owner = Category::None;
+
             e.type = game::Event::Node;
             raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
         }

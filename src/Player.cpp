@@ -191,7 +191,6 @@ void Player::update(float dt)
         m_buttonMask &= ~(1 << m_keyBinds.joyButtonGrab);  
     }
 
-    //TODO check life count
     //spawn a new player
     if (m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
         spawn(m_spawnPosition, *this);
@@ -273,6 +272,24 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             }
         }
         break;
+    case game::Event::Game:
+        switch (evt.game.action)
+        {
+        case game::Event::GameEvent::PlayerOneEnable:
+            if (m_id == Category::PlayerOne) enable();
+            break;
+        case game::Event::GameEvent::PlayerOneDisable:
+            if (m_id == Category::PlayerOne) m_enabled = false;
+            break;
+        case game::Event::GameEvent::PlayerTwoEnable:
+            if (m_id == Category::PlayerTwo) enable();
+            break;
+        case game::Event::GameEvent::PlayerTwoDisable:
+            if (m_id == Category::PlayerTwo) m_enabled = false;
+            break;
+        default: break;
+        }
+        break;
     default: break;
     }
 }
@@ -282,10 +299,9 @@ void Player::setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>&
     spawn = func;
 }
 
+//private
 void Player::enable()
 {
     m_enabled = true;
     spawn(m_spawnPosition, *this);
 }
-
-//private

@@ -44,6 +44,7 @@ public:
 
     void onNotify(Subject& s, const game::Event& evt) override;
 
+    void enablePlayer(Category::Type player);
 
 private:
     StateStack& m_stack;

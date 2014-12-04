@@ -83,9 +83,25 @@ void BodyState::kill()
     m_body->destroy();
 }
 
-void BodyState::damage(float amount)
+void BodyState::damage(float amount, CollisionWorld::Body* damager)
 {
     m_body->m_health -= amount;
+
+    //check if health now zero and raise event declaring who did the killing
+    if (m_body->m_health <= 0)
+    {
+        game::Event e;
+        e.node.action = game::Event::NodeEvent::KilledNode;
+        e.node.type = damager->getParentCategory();
+        e.node.target = getParentCategory();
+
+        if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+        else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
+        else e.node.owner = Category::None;
+
+        e.type = game::Event::Node;
+        raiseEvent(e); //TODO this should be called on damager
+    }
 }
 
 void BodyState::raiseEvent(const game::Event& evt)

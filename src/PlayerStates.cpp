@@ -112,10 +112,9 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
-            
         }
 
-        damage(std::fabs(manifold.z * 0.4f));
+        damage(std::fabs(manifold.z * 0.4f), other);
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);

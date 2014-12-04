@@ -121,7 +121,6 @@ GameState::GameState(StateStack& stack, Context context)
     std::function<void(const sf::Vector2f&, Player&)> spawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
     m_players[0].setSpawnFunction(spawnFunc);
     m_players[1].setSpawnFunction(spawnFunc);
-    m_players[0].enable();
 
     std::function<void(const sf::Vector2f&)> f = std::bind(&GameState::addNpc, this, std::placeholders::_1);
     m_aiController.setSpawnFunction(f);
@@ -129,6 +128,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);
     m_scoreBoard.addObserver(m_aiController);
+    m_scoreBoard.enablePlayer(Category::PlayerOne);
 }
 
 bool GameState::update(float dt)
@@ -182,7 +182,7 @@ bool GameState::handleEvent(const sf::Event& evt)
             
             break;
         case sf::Keyboard::Num2:
-            m_players[1].enable();
+            m_scoreBoard.enablePlayer(Category::PlayerTwo);
             break;
         case sf::Keyboard::P:
             requestStackPush(States::ID::Pause);

@@ -66,8 +66,6 @@ public:
 
     void setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>& func);
 
-    void enable();
-
 private:
     float m_moveForce;
 
@@ -86,4 +84,6 @@ private:
     sf::Clock m_spawnClock;
     sf::Vector2f m_spawnPosition;
     sf::Vector2f m_currentPosition;
+
+    void enable();
 };

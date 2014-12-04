@@ -68,17 +68,31 @@ namespace game
             float positionX, positionY;
         };
     
+        struct GameEvent
+        {
+            enum Action
+            {
+                PlayerOneEnable,
+                PlayerTwoEnable,
+                NpcEnable,
+                PlayerOneDisable,
+                PlayerTwoDisable,
+                NpcDisable
+            }action;
+        };
 
         enum Type
         {
             Node,
-            Player
+            Player,
+            Game
         } type;
 
         union
         {
             NodeEvent node;
             PlayerEvent player;
+            GameEvent game;
         };
     };
 }

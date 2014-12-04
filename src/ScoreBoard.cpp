@@ -32,6 +32,7 @@ source distribution.
 #include <SFML/Graphics/Text.hpp>
 
 #include <sstream>
+#include <assert.h>
 
 namespace
 {
@@ -73,12 +74,27 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             {
             case Category::PlayerOne:
                 m_playerOneLives--;
-                //TODO disable spawning if lives zero  
+                
+                if (m_playerOneLives < 0)
+                {
+                    game::Event e;
+                    e.type = game::Event::Game;
+                    e.game.action = game::Event::GameEvent::PlayerOneDisable;
+                    notify(*this, e);
+                }
+
                 updateText(evt.node.type);
                 break;
             case Category::PlayerTwo:
                 m_playerTwoLives--;
-                //TODO disable spawning if lives zero
+                
+                if (m_playerTwoLives < 0)
+                {
+                    game::Event e;
+                    e.type = game::Event::Game;
+                    e.game.action = game::Event::GameEvent::PlayerTwoDisable;
+                    notify(*this, e);
+                }
                 updateText(evt.node.type);
                 break;
             case Category::Npc:
@@ -148,6 +164,23 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                         default: break;
                         }
                 }
+                else if (evt.node.owner == Category::None)
+                {
+                    switch (evt.node.target)
+                    {
+                    case Category::PlayerOne: //p1 killed self, doh
+                        (m_playerOneScore > suicidePoints) ?
+                            m_playerOneScore -= suicidePoints :
+                            m_playerOneScore = 0u;
+                        break;
+                    case Category::PlayerTwo: //p2 crushed self :S
+                        (m_playerTwoScore > suicidePoints) ?
+                            m_playerTwoScore -= suicidePoints :
+                            m_playerTwoScore = 0u;
+                        break;
+                    default: break;
+                    }
+                }
                 textUpdateTarget = evt.node.owner;
                 break;
             default: break;
@@ -160,6 +193,27 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
 
         break;
     default: break;
+    }
+}
+
+void ScoreBoard::enablePlayer(Category::Type player)
+{
+    assert(player == Category::PlayerOne || player == Category::PlayerTwo);
+
+    //TODO prevent re-enabling players who have lost all lives
+
+    game::Event e;
+    e.type = game::Event::Game;
+    e.game.action = (player == Category::PlayerOne) ? 
+        game::Event::GameEvent::PlayerOneEnable : 
+        game::Event::GameEvent::PlayerTwoEnable;
+
+    notify(*this, e);
+
+    if (player == Category::PlayerTwo)
+    {
+        m_playerTwoLives = 5;
+        updateText(Category::PlayerTwo);
     }
 }
 
