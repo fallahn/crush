@@ -88,9 +88,10 @@ GameState::GameState(StateStack& stack, Context context)
     groundNode->setCollisionBody(gb);
     m_scene.addNode(groundNode);
 
-    wallShape.setSize({ 50.f, 1030.f });
+    wallShape.setSize({ 150.f, 1030.f });
     auto leftWallNode = std::make_unique<Node>("leftWall");
     leftWallNode->setDrawable(&wallShape);
+    leftWallNode->setPosition(-100.0f, 0.f);
     leftWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
     m_scene.addNode(leftWallNode);
 

@@ -141,7 +141,7 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             e.node.type = other->getParentCategory();
             e.node.target = getParentCategory();
             e.type = game::Event::Node;
-            raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
+            raiseEvent(e, other); //this should reference the other body as the sender not the NPC
         }
         break;
     case CollisionWorld::Body::Type::Npc:

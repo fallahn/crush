@@ -51,7 +51,9 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_playerOneLives    (5),
     m_playerTwoLives    (-1),
     m_playerOneScore    (0u),
-    m_playerTwoScore    (0u)
+    m_playerTwoScore    (0u),
+    m_playerOneExtinct  (false),
+    m_playerTwoExtinct  (false)
 {
     playerOneText.setFont(context.gameInstance.getFont("default"));
     playerOneText.setPosition({ 60.f, 10.f });
@@ -81,6 +83,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                     e.type = game::Event::Game;
                     e.game.action = game::Event::GameEvent::PlayerOneDisable;
                     notify(*this, e);
+                    m_playerOneExtinct = true;
                 }
 
                 updateText(evt.node.type);
@@ -94,6 +97,8 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                     e.type = game::Event::Game;
                     e.game.action = game::Event::GameEvent::PlayerTwoDisable;
                     notify(*this, e);
+
+                    m_playerTwoExtinct = true;
                 }
                 updateText(evt.node.type);
                 break;
@@ -200,7 +205,12 @@ void ScoreBoard::enablePlayer(Category::Type player)
 {
     assert(player == Category::PlayerOne || player == Category::PlayerTwo);
 
-    //TODO prevent re-enabling players who have lost all lives
+    //prevent re-enabling players who have lost all lives
+    if ((player == Category::PlayerOne && m_playerOneExtinct)
+        || (player == Category::PlayerTwo && m_playerTwoExtinct))
+    {
+        return;
+    }
 
     game::Event e;
     e.type = game::Event::Game;
@@ -224,18 +234,29 @@ void ScoreBoard::updateText(Category::Type type)
     if (type == Category::PlayerOne)
     {
         if (m_playerOneLives >= 0)
+        {
             ss << "Lives: " << m_playerOneLives << "    Score: " << m_playerOneScore;
-        else
+            playerOneText.setString(ss.str());
+        }
+        else if (m_playerOneExtinct)
+        {
             ss << "GAME OVER    Score: " << m_playerOneScore;
-        playerOneText.setString(ss.str());
+            playerOneText.setString(ss.str());
+        }
+        
     }
     else
     {
         if (m_playerTwoLives >= 0)
+        {
             ss << "Lives: " << m_playerTwoLives << "    Score: " << m_playerTwoScore;
-        else
+            playerTwoText.setString(ss.str());
+        }
+        else if (m_playerTwoExtinct)
+        {
             ss << "GAME OVER    Score: " << m_playerTwoScore;
-        playerTwoText.setString(ss.str());
+            playerTwoText.setString(ss.str());
+        }
     }
 
     if (m_playerOneLives < 0 && m_playerTwoLives < 0)

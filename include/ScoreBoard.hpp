@@ -56,6 +56,9 @@ private:
     sf::Uint16 m_playerOneScore;
     sf::Uint16 m_playerTwoScore;
 
+    bool m_playerOneExtinct;
+    bool m_playerTwoExtinct;
+
     void updateText(Category::Type type);
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;

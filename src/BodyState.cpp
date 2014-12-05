@@ -95,16 +95,28 @@ void BodyState::damage(float amount, CollisionWorld::Body* damager)
         e.node.type = damager->getParentCategory();
         e.node.target = getParentCategory();
 
-        if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
-        else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
-        else e.node.owner = Category::None;
+        if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne))
+        {
+            e.node.owner = Category::PlayerOne;
+            e.node.type = Category::Block; //remove the flags from the event, else it might not get parsed
+        }
+        else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo))
+        {
+            e.node.owner = Category::PlayerTwo;
+            e.node.type = Category::Block;
+        }
+        else
+        {
+            e.node.owner = Category::None;
+        }
 
         e.type = game::Event::Node;
-        raiseEvent(e); //TODO this should be called on damager
+        raiseEvent(e, damager);
     }
 }
 
-void BodyState::raiseEvent(const game::Event& evt)
+void BodyState::raiseEvent(const game::Event& evt, CollisionWorld::Body* target)
 {
-    m_body->notify(*m_body, evt);
+    if(!target) m_body->notify(*m_body, evt);
+    else target->notify(*target, evt);
 }

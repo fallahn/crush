@@ -58,7 +58,7 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
             else e.node.owner = Category::None;
 
             e.type = game::Event::Node;
-            raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
+            raiseEvent(e, other); //this should reference the other body as the sender not the NPC
         }
 
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
@@ -90,8 +90,7 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
                 e.node.type = other->getParentCategory();
                 e.node.target = Category::Npc;
                 e.type = game::Event::Node;
-                raiseEvent(e); //TODO this should reference the other body as the sender not the NPC
-                //other->notify(*other, e);
+                raiseEvent(e, other); //this should reference the other body as the sender not the NPC
             }
         }
 
