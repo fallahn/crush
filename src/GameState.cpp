@@ -130,6 +130,8 @@ GameState::GameState(StateStack& stack, Context context)
     m_scoreBoard.addObserver(m_players[1]);
     m_scoreBoard.addObserver(m_aiController);
     m_scoreBoard.enablePlayer(Category::PlayerOne);
+
+    m_scene.addObserver(m_scoreBoard);
 }
 
 bool GameState::update(float dt)

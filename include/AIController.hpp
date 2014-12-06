@@ -51,8 +51,11 @@ public:
 private:
     CommandStack& m_commandStack;
 
-    sf::Clock m_clock;
+    sf::Clock m_movementClock;
+    sf::Clock m_spawnClock;
     float m_randTime;
+
+    bool m_enabled;
 
     std::function<void(const sf::Vector2f&)> spawn;
 };

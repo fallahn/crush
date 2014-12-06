@@ -46,19 +46,42 @@ namespace
             n.getCollisionBody()->applyForce({ rf, 0.f });
         }
     }
+
+    sf::Uint8 aiSpawnCount = 3u; //how many npcs initially
+    const float aiSpawnTime = 1.f;
 }
 
 AIController::AIController(CommandStack& c)
     : m_commandStack    (c),
-    m_randTime          (10.f){}
+    m_randTime          (10.f),
+    m_enabled           (true){}
 
 void AIController::onNotify(Subject& s, const game::Event& evt)
 {
     switch (evt.type)
     {
+    case game::Event::Game:
+        if (evt.game.action == game::Event::GameEvent::NpcEnable)
+        {
+            m_enabled = true;
+        }
+        else if (evt.game.action == game::Event::GameEvent::NpcDisable)
+        {
+            m_enabled = false;
+        }
+        break;
     case game::Event::Node:
-        //spawn new NPC if needed
-        //spawn({ 500.f, -50.f });
+        if (evt.node.type == Category::Npc && m_enabled)
+        {
+            switch (evt.node.action)
+            {
+            case game::Event::NodeEvent::Despawn:
+            case game::Event::NodeEvent::Spawn:
+                spawn({ Util::Random::value(240.f, 1580.f), -40.f });          
+                break;
+            default: break;
+            }
+     }
         break;
     case game::Event::Player:
         switch (evt.player.action)
@@ -92,15 +115,25 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
 
 void AIController::update(float dt)
 {
-    if (m_clock.getElapsedTime().asSeconds() > m_randTime)
+    if (!m_enabled) return;
+
+    if (m_movementClock.getElapsedTime().asSeconds() > m_randTime)
     {
         m_randTime = Util::Random::value(3.f, 5.f);
-        m_clock.restart();
+        m_movementClock.restart();
 
         Command c;
         c.action = nudge;
         c.categoryMask |= Category::Npc;
         m_commandStack.push(c);
+    }
+
+    if (aiSpawnCount > 0u 
+        && m_spawnClock.getElapsedTime().asSeconds() > aiSpawnTime)
+    {
+        aiSpawnCount--;
+        m_spawnClock.restart();
+        spawn({ Util::Random::value(300.f, 1200.f), -40.f });
     }
 }
 

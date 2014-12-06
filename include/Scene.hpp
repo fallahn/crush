@@ -34,7 +34,7 @@ source distribution.
 
 #include <list>
 
-class Scene final : public sf::Drawable, private sf::NonCopyable, public Observer
+class Scene final : public sf::Drawable, private sf::NonCopyable, public Observer, public Subject
 {
 public:
     Scene();

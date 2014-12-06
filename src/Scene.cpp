@@ -48,6 +48,15 @@ void Scene::addNode(Node::Ptr& node)
     if (node->getCamera() && m_activeCamera == &defaultCamera)
         m_activeCamera = node->getCamera();
 
+    //announce our arrival in the scene
+    game::Event e;
+    e.type = game::Event::Node;
+    e.node.action = game::Event::NodeEvent::Spawn;
+    e.node.type = static_cast<Category::Type>(node->getCategory());
+    e.node.target = Category::None;
+    e.node.owner = Category::None;
+    notify(*this, e);
+
     m_children.push_back(std::move(node));
 }
 

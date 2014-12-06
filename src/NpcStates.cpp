@@ -65,7 +65,7 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
     {   //jump up from ground, or away from walls
         auto vel = getVelocity();
         if (manifold.y != 0 && getFootSenseCount() > 0 && vel.y > 0)
-            vel.y -= 1400.f; //jump only when foot on ground
+            vel.y -= 1100.f; //jump only when foot on ground
         if (manifold.x != 0)
             vel.y = 0.f;//vel.x = -vel.x;
         setVelocity(vel);

@@ -105,6 +105,7 @@
     <ClInclude Include="include\DebugShape.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\Particles.hpp" />
     <ClInclude Include="include\ScoreBoard.hpp" />
     <ClInclude Include="include\GameOverState.hpp" />
     <ClInclude Include="include\GameState.hpp" />

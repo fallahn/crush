@@ -43,6 +43,10 @@ namespace
     const sf::Uint16 playerPoints = 300; //points for killing other player
     const sf::Uint16 crushPoints = 500; //points for crushing someone
     const sf::Uint16 suicidePoints = 200; //points deducted for accidentally crushing self
+
+    sf::Uint8 maxNpcs = 12u;
+    sf::Uint8 deadNpcs = 0u;
+    sf::Uint8 spawnedNpcs = 0u;
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
@@ -103,8 +107,32 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 updateText(evt.node.type);
                 break;
             case Category::Npc:
-                //TODO end game if bad guys all dead
-                //TODO disable npc spawner
+                deadNpcs++;
+                if (maxNpcs == deadNpcs)
+                {
+                    //game over, all dead
+                    m_stack.pushState(States::ID::GameOver);
+                }
+                
+                break;
+            default: break;
+            }
+        }
+        else if (evt.node.action == game::Event::NodeEvent::Spawn)
+        {
+            switch (evt.node.type)
+            {
+            case Category::Npc:
+                spawnedNpcs++;
+                if (spawnedNpcs == maxNpcs)
+                {
+                    //stop spawning
+                    game::Event e;
+                    e.type = game::Event::Game;
+                    e.game.action = game::Event::GameEvent::NpcDisable;
+                    notify(*this, e);
+                }
+                
                 break;
             default: break;
             }
