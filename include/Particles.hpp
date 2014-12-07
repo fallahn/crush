@@ -41,12 +41,14 @@ source distribution.
 #include <array>
 #include <functional>
 
-class Particle : private sf::NonCopyable
+class Particle final : private sf::NonCopyable
 {
     friend class ParticleSystem;
 public:
     typedef std::array<sf::Vertex*, 4u> Quad;
     typedef std::unique_ptr<Particle> Ptr;
+    typedef std::function<void(Particle& p, float dt)> Affector;
+
     enum class State
     {
         Alive,
@@ -55,9 +57,9 @@ public:
     };
 
     explicit Particle(Quad& q);
-    virtual ~Particle() = default;
+    ~Particle() = default;
 
-    virtual void update(float dt) = 0;
+    void update(float dt);
     void spawn(const sf::Vector2f& position, const sf::Vector2f& velocity, float force, float rotation);
     State getState() const;
     void kill();

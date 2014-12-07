@@ -63,12 +63,14 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
         }
 
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
-    {   //jump up from ground, or away from walls
-        auto vel = getVelocity();
-        if (manifold.y != 0 && getFootSenseCount() > 0 && vel.y > 0)
+    {   
+        if (getFootSenseCount() > 0 && manifold.y * manifold.z < 0)
             setState<NpcStateGround>();
-        if (manifold.x != 0)
-            vel.y = 0.f;//vel.x = -vel.x;
+        //jump away from walls, or switch to ground sitting
+        auto vel = getVelocity();       
+        //if (manifold.x != 0)
+        vel.x = -vel.x;
+        vel.y = 0.f;
         setVelocity(vel);
     }
         break;

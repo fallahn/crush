@@ -54,7 +54,7 @@ namespace
 AIController::AIController(CommandStack& c)
     : m_commandStack    (c),
     m_randTime          (10.f),
-    m_enabled           (false){}
+    m_enabled           (true){}
 
 void AIController::onNotify(Subject& s, const game::Event& evt)
 {
