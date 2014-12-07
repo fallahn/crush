@@ -54,7 +54,7 @@ namespace
 AIController::AIController(CommandStack& c)
     : m_commandStack    (c),
     m_randTime          (10.f),
-    m_enabled           (true){}
+    m_enabled           (false){}
 
 void AIController::onNotify(Subject& s, const game::Event& evt)
 {
@@ -76,6 +76,9 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
             switch (evt.node.action)
             {
             case game::Event::NodeEvent::Despawn:
+                aiSpawnCount++;
+                m_spawnClock.restart();
+                break;
             case game::Event::NodeEvent::Spawn:
                 spawn({ Util::Random::value(240.f, 1580.f), -40.f });          
                 break;

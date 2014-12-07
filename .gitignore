@@ -1,2 +1,6 @@
 Debug
 Release
+build
+packages
+bin
+obj

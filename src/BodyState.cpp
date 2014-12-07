@@ -95,12 +95,12 @@ void BodyState::damage(float amount, CollisionWorld::Body* damager)
         e.node.type = damager->getParentCategory();
         e.node.target = getParentCategory();
 
-        if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne))
+        if (e.node.type & (Category::LastTouchedOne | Category::GrabbedOne))
         {
             e.node.owner = Category::PlayerOne;
             e.node.type = Category::Block; //remove the flags from the event, else it might not get parsed
         }
-        else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo))
+        else if (e.node.type & (Category::LastTouchedTwo | Category::GrabbedTwo))
         {
             e.node.owner = Category::PlayerTwo;
             e.node.type = Category::Block;

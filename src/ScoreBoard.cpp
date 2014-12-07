@@ -150,7 +150,6 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 else if (evt.node.target == Category::PlayerTwo)
                 {
                     m_playerOneScore += playerPoints;
-                    m_playerOneLives++;
                 }
                 break;
             case Category::PlayerTwo:
@@ -161,7 +160,6 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 else if (evt.node.target == Category::PlayerOne)
                 {
                     m_playerTwoScore += playerPoints;
-                    m_playerTwoLives++;
                 }
                 break;
             case Category::Block:
@@ -169,8 +167,9 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 {
                         switch (evt.node.target)
                         {
-                        case Category::Npc: //p1 killed bad guy
                         case Category::PlayerTwo: //p1 crushed p2
+                            m_playerOneLives++;
+                        case Category::Npc: //p1 killed bad guy
                             m_playerOneScore += crushPoints;
                             break;
                         case Category::PlayerOne: //p1 killed self, doh
@@ -185,8 +184,9 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 {
                         switch (evt.node.target)
                         {
+                        case Category::PlayerOne: //p2 killed p1  
+                            m_playerTwoLives++;
                         case Category::Npc: //p2 killed bad guy
-                        case Category::PlayerOne: //p2 killed p1
                             m_playerTwoScore += crushPoints;
                             break;
                         case Category::PlayerTwo: //p2 crushed self :S

@@ -36,6 +36,8 @@ namespace
 {
     const float sensorSize = 10.f;
     const float defaultStrength = 60.f;
+    //TODO fix magic numbers - basically default view size with 100 unit padding
+    const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
@@ -153,6 +155,13 @@ void CollisionWorld::Body::step(float dt)
     auto stepVelocity = Util::Vector::normalise(m_velocity) * stepSpeed;
 
     move(stepVelocity);
+
+    //check to see if still in world bounds
+    if (!worldSize.contains(getCentre()))
+    {
+        setPosition({ worldSize.width / 2.f, worldSize.top + 20.f });
+        m_velocity.y = 0.f;
+    }
 
     if (m_node)
         m_node->setWorldPosition(m_position);

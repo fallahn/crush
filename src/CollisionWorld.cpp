@@ -45,6 +45,7 @@ CollisionWorld::Body* CollisionWorld::addBody(CollisionWorld::Body::Type type, c
 
 void CollisionWorld::step(float dt)
 {
+
     //check for deleted objects and remove them
     m_bodies.erase(std::remove_if(m_bodies.begin(), m_bodies.end(), [](const Body::Ptr& p)
     {

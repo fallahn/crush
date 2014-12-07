@@ -111,10 +111,13 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             && manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            setVelocity({});
+            setVelocity({});    
         }
-
-        damage(std::fabs(manifold.z * 0.4f), other);
+        {
+            int cat = other->getParentCategory();
+            if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
+                damage(std::fabs(manifold.z * 0.4f), other);
+        }
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);

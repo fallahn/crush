@@ -120,7 +120,7 @@ void Player::update(float dt)
         {
             assert(n.getCollisionBody());
             n.getCollisionBody()->applyForce({ m_moveForce, 0.f });
-            m_currentPosition = n.getCollisionBody()->getCentre();
+            m_currentPosition = n.getCollisionBody()->getCentre(); //er... won't his only work when notgrabbing?
         };
         c.categoryMask |= m_id | m_grabId;
         m_commandStack.push(c);
@@ -165,7 +165,9 @@ void Player::update(float dt)
                 assert(n.getCollisionBody());
                 if (n.getCollisionBody()->contains(point))
                 {
-                    n.setCategory(static_cast<Category::Type>(n.getCategory() | m_grabId));
+                    auto cat = n.getCategory();
+                    cat &= ~(Category::LastTouchedOne | Category::LastTouchedTwo); //make sure to remove any previous touches
+                    n.setCategory(static_cast<Category::Type>(cat | m_grabId));
                 }
             };
 
@@ -232,6 +234,17 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             //oh noes, we died!
             m_canSpawn = true;
             m_spawnClock.restart();
+
+            //let go of any blocks were were holding
+            Command c;
+            c.categoryMask |= m_grabId;
+            c.action = [](Node& n, float dt)
+            {
+                //TODO this should really unOR whichever
+                //value the node has, as later on we might want to
+                //grab other types
+                n.setCategory(Category::Block);
+            };
         }
         break;
     case game::Event::Player:

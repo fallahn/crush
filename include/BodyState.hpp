@@ -120,4 +120,16 @@ public:
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
+class NpcStateGround final : public BodyState
+{
+public:
+    explicit NpcStateGround(CollisionWorld::Body* b);
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    float m_jumpDelay;
+    float m_accumulatedTime;
+};
+
 #endif //COLLISION_STATE_H_
