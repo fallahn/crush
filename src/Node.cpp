@@ -28,6 +28,7 @@ source distribution.
 
 #include <Node.hpp>
 #include <Scene.hpp>
+#include <Particles.hpp>
 
 #include <cassert>
 
@@ -37,6 +38,7 @@ Node::Node(const std::string& name)
     m_scene         (nullptr),
     m_camera        (nullptr),
     m_drawable      (nullptr),
+    m_particleSystem(nullptr),
     m_collisionBody (nullptr),
     m_category      (Category::None)
 {
@@ -140,6 +142,11 @@ void Node::setCamera(Camera* cam)
 void Node::setDrawable(sf::Drawable* drawable)
 {
     m_drawable = drawable;
+}
+
+void Node::setParticleSystem(ParticleSystem* ps)
+{
+    m_particleSystem = ps;
 }
 
 void Node::setCollisionBody(CollisionWorld::Body* b)
@@ -297,6 +304,9 @@ void Node::drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (m_drawable)
         rt.draw(*m_drawable, states);
+
+    if (m_particleSystem)
+        rt.draw(*m_particleSystem, states);
 }
 
 void Node::drawChildren(sf::RenderTarget& rt, sf::RenderStates states) const

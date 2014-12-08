@@ -80,6 +80,7 @@
     <ClCompile Include="src\DebugShape.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Particles.cpp" />
     <ClCompile Include="src\ScoreBoard.cpp" />
     <ClCompile Include="src\GameOverState.cpp" />
     <ClCompile Include="src\GameState.cpp" />

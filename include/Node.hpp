@@ -46,6 +46,7 @@ source distribution.
 
 
 class Scene;
+class ParticleSystem;
 class Node final : public sf::Transformable, public sf::Drawable, private sf::NonCopyable, public Subject, public Observer
 {
     friend class CollisionWorld::Body;
@@ -67,6 +68,7 @@ public:
     void setScene(Scene* scene); //this should only be accessable by Scene
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
+    void setParticleSystem(ParticleSystem* ps);
     void setCollisionBody(CollisionWorld::Body* body);
     CollisionWorld::Body* getCollisionBody() const;
 
@@ -91,6 +93,7 @@ private:
     Scene* m_scene;
     Camera* m_camera;
     sf::Drawable* m_drawable;
+    ParticleSystem* m_particleSystem;
     CollisionWorld::Body* m_collisionBody;
 
     Category::Type m_category;

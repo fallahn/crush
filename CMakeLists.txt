@@ -41,7 +41,7 @@ link_libraries(
 	${SFML_LIBRARIES})
 
 add_executable(
-	CRUSH_BIN src/main.cpp
+	CRUSH src/main.cpp
 	src/AIController.cpp
 	src/BlockStates.cpp
 	src/BodyState.cpp
@@ -57,6 +57,7 @@ add_executable(
 	src/MenuState.cpp
 	src/Node.cpp
 	src/NpcStates.cpp
+	src/Particles.cpp
 	src/PauseState.cpp
 	src/Player.cpp
 	src/PlayerStates.cpp

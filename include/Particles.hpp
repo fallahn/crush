@@ -30,108 +30,67 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Clock.hpp>
-
-#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <SFML/Graphics/Transformable.hpp>
 
-#include <memory>
-#include <array>
+#include <deque>
 #include <functional>
+#include <vector>
 
-class Particle final : private sf::NonCopyable
-{
-    friend class ParticleSystem;
-public:
-    typedef std::array<sf::Vertex*, 4u> Quad;
-    typedef std::unique_ptr<Particle> Ptr;
-    typedef std::function<void(Particle& p, float dt)> Affector;
-
-    enum class State
-    {
-        Alive,
-        Dying,
-        Dead
-    };
-
-    explicit Particle(Quad& q);
-    ~Particle() = default;
-
-    void update(float dt);
-    void spawn(const sf::Vector2f& position, const sf::Vector2f& velocity, float force, float rotation);
-    State getState() const;
-    void kill();
-    void setTexture(const sf::Texture& t);
-
-protected:
-    void setForce(float force);
-    float getForce() const;
-    void setVelocity(const sf::Vector2f& velocity);
-    const sf::Vector2f& getVelocity() const;
-    void setState(State state);
-
-    void setColour(const sf::Color& c);
-    void move(const sf::Vector2f& amount);
-    void setPosition(const sf::Vector2f& position);
-    void rotate(float amount);
-    void setRotation(float rotation);
-    void setSize(const sf::Vector2f& size);
-    void scale(const sf::Vector2f& amount);
-    void setScale(const sf::Vector2f& scale);
-
-    void applyTransform();
-private:
-    float m_force;
-    sf::Vector2f m_velocity;
-    State m_state;
-
-    Quad m_vertices;
-    sf::Vector2f m_position;
-    sf::Vector2f m_size, m_scale;
-    float m_rotation;
-    bool m_applyTransform;
-};
-
-class ParticleSystem final : public sf::Drawable, private sf::Transformable, private sf::NonCopyable
-{
-public:
+struct Particle final
+{    
     enum class Type
     {
         Splat
     };
 
-    typedef std::unique_ptr<ParticleSystem> Ptr;
-    ParticleSystem(float emissionRate, sf::Uint16 count, std::function<Particle::Ptr(Particle::Quad& verts)>& create);
+    sf::Vector2f position;
+    sf::Color colour;
+    float lifetime = 0.f;
+};
+
+class ParticleSystem final : private sf::NonCopyable, public sf::Drawable
+{
+public:
+    typedef std::function<void(Particle& p, float dt)> Affector;
+
+    explicit ParticleSystem(Particle::Type type);
     ~ParticleSystem() = default;
 
-    void update(float dt);
-    void start(float duration = 0.f);
-    void stop();
-
-    void setPosition(const sf::Vector2f& position);
-    void setVelocity(const sf::Vector2f& velocity);
-    void setRandomVelocity(bool rndVel);
-    void setStrength(float strength);
-    void setRotation(float rotation);
-
-    void kill();
     void setTexture(const sf::Texture& t);
-    void setBlendMode(sf::BlendMode blendmode);
+    void setColour(const sf::Color& colour);
+    void setPosition(const sf::Vector2f& position);
+    void move(const sf::Vector2f& amount);
+    void setParticleLifetime(float time);
+    void addAffector(Affector& a);
+
+    void start();
+    void stop();
+    void update(float dt);
+    
+    Particle::Type getType() const;
 
 private:
+    std::deque<Particle> m_particles;
+    sf::Texture* m_texture;
+    sf::Color m_colour;
+    sf::Vector2f m_position;
+    sf::Vector2f m_particleSize;
+    float m_particleLifetime;
+    Particle::Type m_type;
 
-    sf::VertexArray m_vertices;
-    std::vector<Particle::Ptr> m_particles;
-    sf::Uint16 m_particleCount, m_currentIndex;
-    float m_emissionRate;
-    sf::Clock m_emitClock, m_durationClock;
-    sf::Vector2f m_velocity;
-    float m_force, m_rotation, m_duration;
-    bool m_enabled, m_randomVelocity;
-    const sf::Texture* m_texture;
-    sf::BlendMode m_blendMode;
+    bool m_started;
+    float m_accumulator;
+    
+    std::vector<Affector> m_affectors;
+
+    mutable sf::VertexArray m_vertices;
+    mutable bool m_needsUpdate;
+
+    void emit(float dt);
+    void addParticle(const sf::Vector2f& position);
+    void addVertex(float x, float y, float u, float v, const sf::Color& colour)const;
+    void updateVertices() const;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
