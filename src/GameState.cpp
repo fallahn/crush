@@ -52,16 +52,17 @@ namespace
     const sf::Uint8 maxPlayers = 2u;
 
     sf::Vector2f blockSize(100.f, 70.f);
-
-    ParticleSystem particleSystem(Particle::Type::Splat);
+ 
     TextureResource textureResource;
+
 }
 
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
     m_collisionWorld    (70.f),
     m_aiController      (m_commandStack),
-    m_scoreBoard        (stack, context)
+    m_scoreBoard        (stack, context),
+    m_particleController(textureResource)
 {
     //build world
     getContext().renderWindow.setTitle("Game Screen");
@@ -136,15 +137,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_scoreBoard.enablePlayer(Category::PlayerOne);
 
     m_scene.addObserver(m_scoreBoard);
-
-    //particleSystem.setPosition({ 960.f, 540.f });
-    ParticleSystem::Affector a = [](Particle& p, float dt)
-    {
-        p.position += sf::Vector2f(0.f, -200.f) * dt;
-    };
-    particleSystem.addAffector(a);
-    particleSystem.setTexture(textureResource.get());
-    particleSystem.start();
+    
 }
 
 bool GameState::update(float dt)
@@ -163,7 +156,7 @@ bool GameState::update(float dt)
     m_collisionWorld.step(dt);
 
     //update particles
-    particleSystem.update(dt);
+    m_particleController.update(dt);
 
     m_scene.flush();
     return true;
@@ -172,7 +165,7 @@ bool GameState::update(float dt)
 void GameState::draw()
 {
     getContext().renderWindow.draw(m_scene);
-    //getContext().renderWindow.draw(particleSystem);
+    getContext().renderWindow.draw(m_particleController);
     getContext().renderWindow.draw(m_scoreBoard);
 }
 
@@ -244,9 +237,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
         playerNode->addObserver(player);
         playerNode->addObserver(m_aiController);
         playerNode->addObserver(m_scoreBoard);
-
-        playerNode->setParticleSystem(&particleSystem);
-
+        playerNode->addObserver(m_particleController);
         m_scene.addNode(playerNode);
 
         player.setSpawnable(false);
@@ -262,5 +253,6 @@ void GameState::addNpc(const sf::Vector2f& position)
     npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, npcShape.getSize()));
     npcNode->addObserver(m_aiController);
     npcNode->addObserver(m_scoreBoard);
+    npcNode->addObserver(m_particleController);
     m_scene.addNode(npcNode);
 }

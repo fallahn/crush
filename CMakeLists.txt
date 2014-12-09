@@ -42,6 +42,7 @@ link_libraries(
 
 add_executable(
 	CRUSH src/main.cpp
+	src/Affectors.cpp
 	src/AIController.cpp
 	src/BlockStates.cpp
 	src/BodyState.cpp
@@ -57,6 +58,7 @@ add_executable(
 	src/MenuState.cpp
 	src/Node.cpp
 	src/NpcStates.cpp
+	src/ParticleController.cpp
 	src/Particles.cpp
 	src/PauseState.cpp
 	src/Player.cpp

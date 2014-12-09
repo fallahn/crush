@@ -25,35 +25,36 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <State.hpp>
-#include <Scene.hpp>
-#include <CollisionWorld.hpp>
-#include <Player.hpp>
-#include <AIController.hpp>
-#include <ScoreBoard.hpp>
-#include <ParticleController.hpp>
+//in charge of particle systems used throughout the world
 
-class GameState final : public State
+#ifndef PARTICLE_CONTROLLER_H_
+#define PARTICLE_CONTROLLER_H_
+
+#include <Observer.hpp>
+#include <Particles.hpp>
+#include <Resource.hpp>
+
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+
+#include <vector>
+
+class ParticleController final : public Observer, private sf::NonCopyable, public sf::Drawable
 {
 public:
-    GameState(StateStack& stack, Context context);
-    ~GameState() = default;
+    explicit ParticleController(TextureResource& tr);
+    ~ParticleController() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    void update(float dt);
+
+    void onNotify(Subject& s, const game::Event& evt) override;
 
 private:
+    std::vector<ParticleSystem> m_systems;
+    TextureResource& m_textureResource;
 
-    Scene m_scene;
-    CommandStack m_commandStack;
-    CollisionWorld m_collisionWorld;
-    std::vector<Player> m_players;
-    AIController m_aiController;
-    ScoreBoard m_scoreBoard;
-    ParticleController m_particleController;
-
-    void addBlock(const sf::Vector2f& position);
-    void addPlayer(const sf::Vector2f& position, Player& player);
-    void addNpc(const sf::Vector2f& position);
+    ParticleSystem& addSystem(Particle::Type type);
+    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
+
+#endif //PARTICLE_CONTROLLER_H_

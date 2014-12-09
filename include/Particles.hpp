@@ -30,26 +30,31 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Clock.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/Transformable.hpp>
+
+#include <Affectors.hpp>
 
 #include <deque>
 #include <functional>
 #include <vector>
 
-struct Particle final
+struct Particle final : public sf::Transformable
 {    
     enum class Type
     {
         Splat
     };
 
-    sf::Vector2f position;
+    //sf::Vector2f position;
+    sf::Vector2f velocity;
     sf::Color colour;
     float lifetime = 0.f;
 };
 
-class ParticleSystem final : private sf::NonCopyable, public sf::Drawable
+class ParticleSystem final : public sf::Drawable
 {
 public:
     typedef std::function<void(Particle& p, float dt)> Affector;
@@ -62,13 +67,19 @@ public:
     void setPosition(const sf::Vector2f& position);
     void move(const sf::Vector2f& amount);
     void setParticleLifetime(float time);
+    void setInitialVelocity(const sf::Vector2f& vel);
+    void setRandomInitialVelocity(bool b);
     void addAffector(Affector& a);
+    template <typename T>
+    void addAffector(T& affector);
 
-    void start();
+    void start(sf::Uint8 releaseCount = 1, float duration = 0.f);
+    bool started() const;
     void stop();
     void update(float dt);
     
     Particle::Type getType() const;
+    sf::Uint32 getParticleCount() const;
 
 private:
     std::deque<Particle> m_particles;
@@ -76,8 +87,12 @@ private:
     sf::Color m_colour;
     sf::Vector2f m_position;
     sf::Vector2f m_particleSize;
+    sf::Vector2f m_texCoords;
     float m_particleLifetime;
     Particle::Type m_type;
+
+    sf::Vector2f m_initialVelocity;
+    bool m_randVelocity;
 
     bool m_started;
     float m_accumulator;
@@ -87,12 +102,23 @@ private:
     mutable sf::VertexArray m_vertices;
     mutable bool m_needsUpdate;
 
+    sf::Clock m_durationClock;
+    float m_duration;
+    sf::Uint8 m_releaseCount;
+
     void emit(float dt);
     void addParticle(const sf::Vector2f& position);
-    void addVertex(float x, float y, float u, float v, const sf::Color& colour)const;
+    void addVertex(const sf::Vector2f& position, float u, float v, const sf::Color& colour)const;
     void updateVertices() const;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
+
+template <typename T>
+void ParticleSystem::addAffector(T& affector)
+{
+    Affector a = std::bind(affector, std::placeholders::_1, std::placeholders::_2);
+    m_affectors.push_back(a);
+}
 
 #endif //PARTICLES_H_

@@ -70,6 +70,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Affectors.cpp" />
     <ClCompile Include="src\AIController.cpp" />
     <ClCompile Include="src\BlockStates.cpp" />
     <ClCompile Include="src\BodyState.cpp" />
@@ -80,6 +81,7 @@
     <ClCompile Include="src\DebugShape.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\ParticleController.cpp" />
     <ClCompile Include="src\Particles.cpp" />
     <ClCompile Include="src\ScoreBoard.cpp" />
     <ClCompile Include="src\GameOverState.cpp" />
@@ -97,6 +99,7 @@
     <ClCompile Include="src\TitleState.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\AIController.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\BodyState.hpp" />
@@ -106,6 +109,7 @@
     <ClInclude Include="include\DebugShape.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\ParticleController.hpp" />
     <ClInclude Include="include\Particles.hpp" />
     <ClInclude Include="include\ScoreBoard.hpp" />
     <ClInclude Include="include\GameOverState.hpp" />

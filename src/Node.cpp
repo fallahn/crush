@@ -28,7 +28,6 @@ source distribution.
 
 #include <Node.hpp>
 #include <Scene.hpp>
-#include <Particles.hpp>
 
 #include <cassert>
 
@@ -38,7 +37,6 @@ Node::Node(const std::string& name)
     m_scene         (nullptr),
     m_camera        (nullptr),
     m_drawable      (nullptr),
-    m_particleSystem(nullptr),
     m_collisionBody (nullptr),
     m_category      (Category::None)
 {
@@ -142,11 +140,6 @@ void Node::setCamera(Camera* cam)
 void Node::setDrawable(sf::Drawable* drawable)
 {
     m_drawable = drawable;
-}
-
-void Node::setParticleSystem(ParticleSystem* ps)
-{
-    m_particleSystem = ps;
 }
 
 void Node::setCollisionBody(CollisionWorld::Body* b)
@@ -254,6 +247,11 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             //let our observers know it's time to die
             game::Event e = evt;
             e.node.type = m_category;
+            
+            auto pos = m_collisionBody->getCentre();
+            e.node.positionX = pos.x;
+            e.node.positionY = pos.y;
+
             notify(*this, e);
 
             if (m_category == Category::PlayerOne
@@ -264,7 +262,7 @@ void Node::onNotify(Subject& s, const game::Event& evt)
                 playerEvent.player.playerId = m_category;
                 playerEvent.player.action = game::Event::PlayerEvent::Died;
                 assert(m_collisionBody);
-                auto pos = m_collisionBody->getCentre();
+                
                 playerEvent.player.positionX = pos.x;
                 playerEvent.player.positionY = pos.y;
                 notify(*this, playerEvent);
@@ -304,9 +302,6 @@ void Node::drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (m_drawable)
         rt.draw(*m_drawable, states);
-
-    if (m_particleSystem)
-        rt.draw(*m_particleSystem, states);
 }
 
 void Node::drawChildren(sf::RenderTarget& rt, sf::RenderStates states) const

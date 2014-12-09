@@ -51,6 +51,7 @@ namespace game
             }action;
             Category::Type target; //node type with was target of deathness
             Category::Type owner; //if this is a block, who last owned it
+            float positionX, positionY;
         };
 
         //when players do stuff

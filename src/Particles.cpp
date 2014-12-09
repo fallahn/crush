@@ -26,20 +26,44 @@ source distribution.
 *********************************************************************/
 
 #include <Particles.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+namespace
+{
+    //actually looks better to pick one of these at random
+    //rather than trying to get random floats in such a large range
+    std::vector<sf::Vector2f> randVelocities = 
+    {
+        { -200.f, -500.f },
+        { 0.f, -400.f },
+        { -250.f, -600.f },
+        { -100.f, -1000.f },
+        { 70.f, -900.f },
+        { 200.f, -500.f },
+        { -300.f, -400.f },
+        { 50.f, -450.f },
+        { -200.f, -350.f },
+        { -174.f, -1050.f },
+        { 380.f, -900.f },
+    };
+}
+
 ParticleSystem::ParticleSystem(Particle::Type type)
     : m_texture         (nullptr),
     m_colour            (sf::Color::White),
-    m_particleSize      (10.f, 10.f),
+    m_particleSize      (4.f, 4.f),
     m_type              (type),
+    m_randVelocity      (false),
     m_particleLifetime  (2.f),
     m_started           (false),
     m_accumulator       (0.f),
     m_vertices          (sf::Quads),
-    m_needsUpdate       (true)
+    m_needsUpdate       (true),
+    m_duration          (0.f),
+    m_releaseCount      (1u)
 {
 
 }
@@ -48,7 +72,7 @@ ParticleSystem::ParticleSystem(Particle::Type type)
 void ParticleSystem::setTexture(const sf::Texture& t)
 {
     m_texture = const_cast<sf::Texture*>(&t);
-    m_particleSize = sf::Vector2f(m_texture->getSize());
+    m_texCoords = sf::Vector2f(m_texture->getSize());
 }
 
 void ParticleSystem::setColour(const sf::Color& colour)
@@ -71,14 +95,35 @@ void ParticleSystem::setParticleLifetime(float time)
     m_particleLifetime = time;
 }
 
+void ParticleSystem::setInitialVelocity(const sf::Vector2f& vel)
+{
+    m_initialVelocity = vel;
+}
+
+void ParticleSystem::setRandomInitialVelocity(bool b)
+{
+    m_randVelocity = b;
+}
+
 void ParticleSystem::addAffector(Affector& a)
 {
     m_affectors.push_back(a);
 }
 
-void ParticleSystem::start()
+void ParticleSystem::start(sf::Uint8 releaseCount, float duration)
 {
+    assert(releaseCount > 0);
+    assert(duration >= 0.f);
+    m_releaseCount = releaseCount;
+    m_duration = duration;
+    m_durationClock.restart();
+
     m_started = true;
+}
+
+bool ParticleSystem::started() const
+{
+    return m_started;
 }
 
 void ParticleSystem::stop()
@@ -97,6 +142,7 @@ void ParticleSystem::update(float dt)
     for (auto& p : m_particles)
     {
         p.lifetime -= dt;
+        p.move(p.velocity * dt);
         for (auto& a : m_affectors)
         {
             a(p, dt);
@@ -105,7 +151,17 @@ void ParticleSystem::update(float dt)
 
     m_needsUpdate = true;
 
-    if (m_started) emit(dt);
+    if (m_started)
+    {
+        emit(dt);
+        if (m_duration > 0)
+        {
+            if (m_durationClock.getElapsedTime().asSeconds() > m_duration)
+            {
+                m_started = false;
+            }
+        }
+    }
 }
 
 void ParticleSystem::emit(float dt)
@@ -117,7 +173,8 @@ void ParticleSystem::emit(float dt)
     while (m_accumulator > interval)
     {
         m_accumulator -= interval;
-        addParticle(m_position);
+        for (auto i = 0u; i < m_releaseCount; ++i)
+            addParticle(m_position);
     }
 }
 
@@ -126,23 +183,29 @@ Particle::Type ParticleSystem::getType() const
     return m_type;
 }
 
+sf::Uint32 ParticleSystem::getParticleCount() const
+{
+    return m_particles.size();
+}
+
 //private
 void ParticleSystem::addParticle(const sf::Vector2f& position)
 {
     Particle p;
-    p.position = position;
+    p.setPosition(position);
     p.colour = m_colour;
     p.lifetime = m_particleLifetime;
-
-    //TODO add any of this system's affectors
+    p.velocity = (m_randVelocity) ? 
+        randVelocities[Util::Random::value(0, randVelocities.size() - 1)] :
+        m_initialVelocity;
 
     m_particles.push_back(p);
 }
 
-void ParticleSystem::addVertex(float x, float y, float u, float v, const sf::Color& colour) const
+void ParticleSystem::addVertex(const sf::Vector2f& position, float u, float v, const sf::Color& colour) const
 {
     sf::Vertex vert;
-    vert.position = { x, y };
+    vert.position = position;
     vert.texCoords = { u, v };
     vert.color = colour;
 
@@ -156,17 +219,18 @@ void ParticleSystem::updateVertices() const
     m_vertices.clear();
     for (auto& p : m_particles)
     {
-        auto pos = p.position;
+        auto pos = p.getPosition();
         auto colour = p.colour;
 
         //make particle fade based on lifetime
         float ratio = p.lifetime / m_particleLifetime;
         colour.a = static_cast<sf::Uint8>(255.f * std::max(ratio, 0.f));
 
-        addVertex(pos.x - halfSize.x, pos.y - halfSize.y, 0.f, 0.f, colour);
-        addVertex(pos.x + halfSize.x, pos.y - halfSize.y, m_particleSize.x, 0.f, colour);
-        addVertex(pos.x + halfSize.x, pos.y + halfSize.y, m_particleSize.x, m_particleSize.y, colour);
-        addVertex(pos.x - halfSize.x, pos.y + halfSize.y, 0.f, m_particleSize.y, colour);
+        auto t = p.getTransform();
+        addVertex(t.transformPoint(-halfSize.x, -halfSize.y), 0.f, 0.f, colour);
+        addVertex(t.transformPoint(halfSize.x, -halfSize.y), m_texCoords.x, 0.f, colour);
+        addVertex(t.transformPoint(halfSize), m_texCoords.x, m_texCoords.y, colour);
+        addVertex(t.transformPoint(-halfSize.x, halfSize.y), 0.f, m_texCoords.y, colour);
     }
 }
 
