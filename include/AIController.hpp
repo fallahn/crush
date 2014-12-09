@@ -36,7 +36,6 @@ source distribution.
 
 #include <functional>
 
-//TODO have this in charge of spawning new entities?
 class AIController final : private sf::NonCopyable, public Observer
 {
 public:
@@ -56,6 +55,7 @@ private:
     float m_randTime;
 
     bool m_enabled;
+    sf::Uint8 m_aiSpawnCount;
 
     std::function<void(const sf::Vector2f&)> spawn;
 };

@@ -66,12 +66,16 @@ Node::Ptr Scene::removeNode(Node& node)
     {
         return (p.get() == &node);
     });
-    assert(result != m_children.end());
 
-    Node::Ptr found = std::move(*result);
-    found->setScene(nullptr);
-    m_children.erase(result);
-    return found;
+    if (result != m_children.end())
+    {
+        Node::Ptr found = std::move(*result);
+        found->setScene(nullptr);
+        m_children.erase(result);
+        return found;
+    }
+    else //TODO hmm.. kludgy kludgy?
+        return nullptr;
 }
 
 void Scene::setActiveCamera(Camera* camera)

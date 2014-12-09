@@ -59,8 +59,12 @@ private:
     bool m_playerOneExtinct;
     bool m_playerTwoExtinct;
 
-    void updateText(Category::Type type);
+    sf::Uint8 m_maxNpcs;
+    sf::Uint8 m_spawnedNpcs;
+    sf::Uint8 m_deadNpcs;
 
+    void updateText(Category::Type type);
+    void disablePlayer(Category::Type player);
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 

@@ -39,14 +39,10 @@ namespace
     sf::Text playerOneText;
     sf::Text playerTwoText;
 
-    const sf::Uint16 npcPoints = 200; //points for killing npc
-    const sf::Uint16 playerPoints = 300; //points for killing other player
+    const sf::Uint16 npcPoints = 50; //points for killing npc
+    const sf::Uint16 playerPoints = 100; //points for killing other player
     const sf::Uint16 crushPoints = 500; //points for crushing someone
     const sf::Uint16 suicidePoints = 200; //points deducted for accidentally crushing self
-
-    sf::Uint8 maxNpcs = 12u;
-    sf::Uint8 deadNpcs = 0u;
-    sf::Uint8 spawnedNpcs = 0u;
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
@@ -57,7 +53,10 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_playerOneScore    (0u),
     m_playerTwoScore    (0u),
     m_playerOneExtinct  (false),
-    m_playerTwoExtinct  (false)
+    m_playerTwoExtinct  (false),
+    m_maxNpcs           (12u),
+    m_spawnedNpcs       (0u),
+    m_deadNpcs          (0u)
 {
     playerOneText.setFont(context.gameInstance.getFont("default"));
     playerOneText.setPosition({ 60.f, 10.f });
@@ -83,11 +82,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 
                 if (m_playerOneLives < 0)
                 {
-                    game::Event e;
-                    e.type = game::Event::Game;
-                    e.game.action = game::Event::GameEvent::PlayerOneDisable;
-                    notify(*this, e);
-                    m_playerOneExtinct = true;
+                    disablePlayer(Category::PlayerOne);
                 }
 
                 updateText(evt.node.type);
@@ -97,21 +92,20 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 
                 if (m_playerTwoLives < 0)
                 {
-                    game::Event e;
-                    e.type = game::Event::Game;
-                    e.game.action = game::Event::GameEvent::PlayerTwoDisable;
-                    notify(*this, e);
-
-                    m_playerTwoExtinct = true;
+                    disablePlayer(Category::PlayerTwo);
                 }
                 updateText(evt.node.type);
                 break;
             case Category::Npc:
-                deadNpcs++;
-                if (maxNpcs == deadNpcs)
+                m_deadNpcs++;
+                if (m_maxNpcs == m_deadNpcs)
                 {
                     //game over, all dead
                     m_stack.pushState(States::ID::GameOver);
+
+                    //disable player input
+                    disablePlayer(Category::PlayerOne);
+                    disablePlayer(Category::PlayerTwo);
                 }
                 
                 break;
@@ -123,8 +117,8 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             switch (evt.node.type)
             {
             case Category::Npc:
-                spawnedNpcs++;
-                if (spawnedNpcs == maxNpcs)
+                m_spawnedNpcs++;
+                if (m_spawnedNpcs == m_maxNpcs)
                 {
                     //stop spawning
                     game::Event e;
@@ -292,6 +286,23 @@ void ScoreBoard::updateText(Category::Type type)
         //Gaaaaaaame Oveeeeer!!!
         m_stack.pushState(States::ID::GameOver);
     }
+}
+
+void ScoreBoard::disablePlayer(Category::Type player)
+{
+    assert(player == Category::PlayerOne || player == Category::PlayerTwo);
+
+    game::Event e;
+    e.type = game::Event::Game;
+    e.game.action = (player == Category::PlayerOne) ? 
+        game::Event::GameEvent::PlayerOneDisable :
+        game::Event::GameEvent::PlayerTwoDisable;
+    notify(*this, e);
+
+    if (player == Category::PlayerOne)
+        m_playerOneExtinct = true;
+    else
+        m_playerTwoExtinct = true;
 }
 
 void ScoreBoard::draw(sf::RenderTarget& rt, sf::RenderStates states) const

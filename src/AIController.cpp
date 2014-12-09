@@ -47,14 +47,15 @@ namespace
         }
     }
 
-    sf::Uint8 aiSpawnCount = 3u; //how many npcs initially
+    const sf::Uint8 aiSpawnCount = 3u; //how many npcs initially - TODO set the the member var as part of game rules
     const float aiSpawnTime = 1.f;
 }
 
 AIController::AIController(CommandStack& c)
     : m_commandStack    (c),
     m_randTime          (10.f),
-    m_enabled           (true){}
+    m_enabled           (true),
+    m_aiSpawnCount      (aiSpawnCount){}
 
 void AIController::onNotify(Subject& s, const game::Event& evt)
 {
@@ -76,11 +77,11 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
             switch (evt.node.action)
             {
             case game::Event::NodeEvent::Despawn:
-                aiSpawnCount++;
+                m_aiSpawnCount++;
                 m_spawnClock.restart();
                 break;
             case game::Event::NodeEvent::Spawn:
-                spawn({ Util::Random::value(240.f, 1580.f), -40.f });          
+                //spawn({ Util::Random::value(240.f, 1580.f), -40.f });          
                 break;
             default: break;
             }
@@ -131,10 +132,10 @@ void AIController::update(float dt)
         m_commandStack.push(c);
     }
 
-    if (aiSpawnCount > 0u 
+    if (m_aiSpawnCount > 0u 
         && m_spawnClock.getElapsedTime().asSeconds() > aiSpawnTime)
     {
-        aiSpawnCount--;
+        m_aiSpawnCount--;
         m_spawnClock.restart();
         spawn({ Util::Random::value(300.f, 1200.f), -40.f });
     }

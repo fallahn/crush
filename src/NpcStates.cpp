@@ -205,8 +205,10 @@ void NpcStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
             e.node.type = other->getParentCategory();
             e.node.target = Category::Npc;
             e.type = game::Event::Node;
-            raiseEvent(e, other); //this should reference the other body as the sender not the NPC
+            raiseEvent(e, other); //this should reference the other body as the sender not the NPC           
         }
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+
     case CollisionWorld::Body::Type::Npc:
         if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && manifold.x != 0.f) //prevents shifting vertically
