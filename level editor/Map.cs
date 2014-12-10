@@ -27,55 +27,51 @@ source distribution.
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-
 
 namespace Level_editor
 {
-    class Node
+    class Map
     {
-        public Node(Panel p)
+        private int m_npcCount;
+        public int NpcCount
         {
-            //multiply the sizes by two as UI size if half that of
-            //actual game area
-            m_position = new PointF(p.Top * 2, p.Left * 2);
-            m_size = new SizeF(p.Width * 2, p.Height * 2);
-            m_type = BodyType.Solid;
-        }
-        
-        public enum BodyType
-        {
-            Block,
-            Solid,
-            PlayerOne,
-            PlayerTwo
+            get { return m_npcCount; }
+            set { m_npcCount = value; }
         }
 
-        private PointF m_position;
-
-        public PointF Position
+        private int m_npcTotal;
+        public int NpcTotal
         {
-            get { return m_position; }
-            set { m_position = value; }
+            get { return m_npcTotal; }
+            set { m_npcTotal = value; }
         }
 
-        private SizeF m_size;
-
-        public SizeF Size
+        private string m_npcTexture;
+        public string NpcTexture
         {
-            get { return m_size; }
-            set { m_size = value; }
+            get { return m_npcTexture; }
+            set { m_npcTexture = value; }
         }
 
-        private BodyType m_type;
-        public BodyType Type
+        private string m_mapName;
+        public string MapName
         {
-            get { return m_type; }
-            set { m_type = value; }
+            get { return m_mapName; }
+            set { m_mapName = value; }
+        }
+
+        private List<Node> m_nodes;
+        public List<Node> Nodes
+        {
+            get { return m_nodes; }
+        }
+
+        public Map()
+        {
+            m_nodes = new List<Node>();
         }
     }
 }

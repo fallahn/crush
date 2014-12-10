@@ -31,7 +31,7 @@ source distribution.
 
 #include <cassert>
 
-Camera Scene::defaultCamera; //TODO set the default view size
+Camera Scene::defaultCamera;
 
 Scene::Scene()
     : m_activeCamera(nullptr)
@@ -74,7 +74,7 @@ Node::Ptr Scene::removeNode(Node& node)
         m_children.erase(result);
         return found;
     }
-    else //TODO hmm.. kludgy kludgy?
+    else //TODO hmm.. kludgy kludgy? See BodyState::damage (approx line 93, BodyState.cpp)
         return nullptr;
 }
 
