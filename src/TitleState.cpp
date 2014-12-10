@@ -46,14 +46,14 @@ TitleState::TitleState(StateStack& stack, Context context)
     getContext().renderWindow.setTitle("Title Screen");
     getContext().renderWindow.setView(getContext().defaultView);
 
-    titleText.setFont(getContext().gameInstance.getFont("default"));
+    titleText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
     titleText.setCharacterSize(36u);
     titleText.setString("Press any key to continue...");
 
     Util::Position::centreOrigin(titleText);
     titleText.setPosition(getContext().defaultView.getCenter());
 
-    bigText.setFont(getContext().gameInstance.getFont("default"));
+    bigText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
     bigText.setCharacterSize(100u);
     bigText.setString("CRUSH!");
     Util::Position::centreOrigin(bigText);

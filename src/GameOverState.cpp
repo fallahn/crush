@@ -48,7 +48,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     getContext().renderWindow.setTitle("Menu Screen");
     getContext().renderWindow.setView(getContext().defaultView);
 
-    placeholderText.setFont(getContext().gameInstance.getFont("default"));
+    placeholderText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
     placeholderText.setString(str);
     placeholderText.setCharacterSize(60u);
     Util::Position::centreOrigin(placeholderText);

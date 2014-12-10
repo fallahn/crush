@@ -45,7 +45,7 @@ namespace
         "(player two) to grab a box and drag it around.\n"
         "Score the most points by crushing the bad guys,\n"
         "(or each other!). Crush enemies between blocks, or\n"
-        "by jumping on them - but don't acidentally crush\n"
+        "by jumping on them - but don't accidentally crush\n"
         "yourself!\n"
         "\n"
         "Press Enter to begin.";
@@ -57,7 +57,7 @@ MenuState::MenuState(StateStack& stack, Context context)
     getContext().renderWindow.setTitle("Menu Screen");
     getContext().renderWindow.setView(getContext().defaultView);
 
-    placeholderText.setFont(getContext().gameInstance.getFont("default"));
+    placeholderText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
     placeholderText.setString(str);
     placeholderText.setCharacterSize(60u);
     Util::Position::centreOrigin(placeholderText);

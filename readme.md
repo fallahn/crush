@@ -17,6 +17,8 @@ source code. Contributions are welcome, particularly when adding platform suppor
 
 
 ------Building------
+--------------------
+
 
 LINUX:
 ------
@@ -49,3 +51,10 @@ chosen compiler. Clicking Configure in CMake-gui will probably lead to path erro
 find the SFML libraries, simply open each entry highlighted in red and browse to the corresponding 
 lirary file. Click Configure again, and then Generate if there are no furhter errors to output a 
 project file which can be used to build CRUSH.
+
+
+OSX:
+----
+
+In theory the build process is similar to that on Linux, but I don't have a mac (nor will I likely
+ever), so you're on your own.

@@ -67,13 +67,14 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
         break;
     case CollisionWorld::Body::Type::Npc:
     {
-        if (manifold.y * manifold.z > 0.f)
-        {
-            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            auto vel = getVelocity();
-            vel.y = -vel.y;// 0.f;
-            setVelocity(vel);
-        }
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+
+        auto vel = getVelocity();
+        if (manifold.x != 0)
+            vel.x = -vel.x;
+        if (manifold.y != 0)
+            vel.y = -vel.y;
+        setVelocity(vel);
     }
         break;
     default: break;
@@ -148,20 +149,8 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         }
         break;
     case CollisionWorld::Body::Type::Npc:
-        if (manifold.y * manifold.z > 0.f
-            || manifold.x != 0.f)
-        {
-            //squish when from above or side
-            kill();
-
-            //don't need to raise event because NPCs don't earn points :)
-        }
-        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        /*{
-            auto vel = getVelocity();
-            vel.y = -1500.f;
-            setVelocity(vel);
-        }*/
+        //always die
+        kill();
         break;
     default: break;
     }

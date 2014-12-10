@@ -69,5 +69,11 @@ add_executable(
 	src/StateStack.cpp
 	src/TitleState.cpp)
 
+#copy reources to output directory
+add_custom_command(
+	TARGET CRUSH POST_BUILD
+	COMMAND {$CMAKE_COMMAND} -E copy_directory
+	"${PROJECT_SOURCE_DIR}/res"
+	$<TARGET_FILE_DIR:CRUSH>)
 		
 

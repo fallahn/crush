@@ -76,26 +76,13 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
         break;
     case CollisionWorld::Body::Type::Player:
     {
-        //kill self if player is above
-        if (manifold.y * manifold.z > 0)
-        {
-            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            auto vel = getVelocity();
-            vel.y = 0.f;
-            setVelocity(vel);
-            if (getFootSenseCount() > 0)
-            {
-                kill();
-                
-                //raise event to say player killed us
-                game::Event e;
-                e.node.action = game::Event::NodeEvent::KilledNode;
-                e.node.type = other->getParentCategory();
-                e.node.target = Category::Npc;
-                e.type = game::Event::Node;
-                raiseEvent(e, other); //this should reference the other body as the sender not the NPC
-            }
-        }
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        auto vel = getVelocity();
+        if (manifold.x != 0)
+            vel.x = -vel.x;
+        if (manifold.y != 0)
+            vel.y = -vel.y;
+        setVelocity(vel);
     }
     break;
     case CollisionWorld::Body::Type::Npc:
@@ -194,20 +181,7 @@ void NpcStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
         setVelocity({});
         break;
     case CollisionWorld::Body::Type::Player:
-        //kill self if player is above
-        if (manifold.y * manifold.z > 0)
-        {
-            kill();
-
-            //raise event to say player killed us
-            game::Event e;
-            e.node.action = game::Event::NodeEvent::KilledNode;
-            e.node.type = other->getParentCategory();
-            e.node.target = Category::Npc;
-            e.type = game::Event::Node;
-            raiseEvent(e, other); //this should reference the other body as the sender not the NPC           
-        }
-        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        break;
 
     case CollisionWorld::Body::Type::Npc:
         if (Util::Vector::lengthSquared(getVelocity()) > 0.2f

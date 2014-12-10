@@ -160,7 +160,7 @@ void Player::update(float dt)
                 //ask node if it is in grabbing distance
                 sf::Vector2f offset(70.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
                 auto point = (m_leftFacing) ? m_currentPosition - offset : m_currentPosition + offset;
-                //and or it's type with grabbed
+                //and OR it's type with grabbed
                 //TODO allow both players to grab same box?
                 assert(n.getCollisionBody());
                 if (n.getCollisionBody()->contains(point))
@@ -235,16 +235,16 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             m_canSpawn = true;
             m_spawnClock.restart();
 
-            //let go of any blocks were were holding
+            //let go of any blocks we were holding
             Command c;
             c.categoryMask |= m_grabId;
-            c.action = [](Node& n, float dt)
+            c.action = [&](Node& n, float dt)
             {
-                //TODO this should really unOR whichever
-                //value the node has, as later on we might want to
-                //grab other types
-                n.setCategory(Category::Block);
+                auto newCat = (n.getCategory() & ~m_grabId);
+                newCat |= m_lastTouchId; //state player was last to touch
+                n.setCategory(static_cast<Category::Type>(newCat));
             };
+            m_commandStack.push(c);
         }
         break;
     case game::Event::Player:

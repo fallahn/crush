@@ -58,7 +58,7 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_spawnedNpcs       (0u),
     m_deadNpcs          (0u)
 {
-    playerOneText.setFont(context.gameInstance.getFont("default"));
+    playerOneText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     playerOneText.setPosition({ 60.f, 10.f });
     updateText(Category::PlayerOne);
 
