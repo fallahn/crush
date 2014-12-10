@@ -46,8 +46,8 @@ namespace Level_editor
         private void centreEditor()
         {
             //centre the inner editor area to its parent
-            panelEditorInner.Left = (panelEditorOuter.Width - panelEditorInner.Width) / 2;
-            panelEditorInner.Top = (panelEditorOuter.Height - panelEditorInner.Height) / 2;
+            panelEditorInner.Left = (panelEditorOuter.Width - panelEditorInner.Width) / scale;
+            panelEditorInner.Top = (panelEditorOuter.Height - panelEditorInner.Height) / scale;
         }
 
         /// <summary>
@@ -56,14 +56,14 @@ namespace Level_editor
         /// <param name="type">Type of node</param>
         /// <param name="position">Position of node</param>
         /// <param name="size">size of node</param>
-        private Panel addNode(Node.BodyType type, PointF position, SizeF size)
+        private Panel addNode(Node.BodyType type, Point position, Size size)
         {
             //divide by two as UI is half world game world size
             Panel p = new Panel();
-            p.Left = (int)position.X / 2;
-            p.Top = (int)position.Y / 2;
-            p.Width = (int)size.Width / 2;
-            p.Height = (int)size.Height / 2;
+            p.Left = position.X / scale;
+            p.Top = position.Y / scale;
+            p.Width = size.Width / scale;
+            p.Height = size.Height / scale;
 
             p.MouseDown += mouseDown;
             p.MouseUp += mouseUp;
@@ -75,22 +75,22 @@ namespace Level_editor
             switch (type)
             {
                 case Node.BodyType.Block:
-                    p.BackColor = Color.Firebrick;
-                    p.MouseClick += mouseClick;
+                    p.BackColor = blockColour;
                     p.Move += node_Move;
+                    p.ContextMenuStrip = m_nodeMenu;
                     break;
                 case Node.BodyType.PlayerOne:
-                    p.BackColor = Color.DodgerBlue;
+                    p.BackColor = playerOneColour;
                     p.Move += p1_Move;
                     break;
                 case Node.BodyType.PlayerTwo:
-                    p.BackColor = Color.Gold;
+                    p.BackColor = playerTwoColour;
                     p.Move += p2_Move;
                     break;
                 case Node.BodyType.Solid:
-                    p.BackColor = Color.Maroon;
-                    p.MouseClick += mouseClick;
+                    p.BackColor = solidColour;
                     p.Move += node_Move;
+                    p.ContextMenuStrip = m_nodeMenu;
                     break;
                 default: break;
             }
@@ -104,10 +104,16 @@ namespace Level_editor
         {
             if (m_selectedNode != null) m_selectedNode.BorderStyle = BorderStyle.None;
             m_selectedNode = p;
-            m_selectedNode.BorderStyle = BorderStyle.FixedSingle;
+            m_selectedNode.BorderStyle = BorderStyle.Fixed3D;
 
             numericUpDownNodePropertyPosX.Enabled = true;
             numericUpDownNodePropertyPosY.Enabled = true;
+
+            numericUpDownNodePropertyPosX.Value = (decimal)m_selectedNode.Left * scale;
+            numericUpDownNodePropertyPosY.Value = (decimal)m_selectedNode.Top * scale;
+
+            numericUpDownNodePropertySizeX.Value = (decimal)m_selectedNode.Width * scale;
+            numericUpDownNodePropertySizeY.Value = (decimal)m_selectedNode.Height * scale;
 
             //TODO these tags are likely to change
             var tag = (Node.BodyType)p.Tag;
@@ -115,11 +121,15 @@ namespace Level_editor
             {
                 numericUpDownNodePropertySizeX.Enabled = true;
                 numericUpDownNodePropertySizeY.Enabled = true;
+
+                comboBoxNodePropertyType.SelectedIndex = 1;
             }
             else if(tag == Node.BodyType.Block)
             {
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;
+
+                comboBoxNodePropertyType.SelectedIndex = 0;
             }
         }
 
@@ -146,13 +156,13 @@ namespace Level_editor
             comboBoxAddNode.SelectedIndex = 0;
 
             //add the default bounds
-            addNode(Node.BodyType.Solid, new PointF(), new SizeF(50f, 1030f));
-            addNode(Node.BodyType.Solid, new PointF(1870f, 0f), new SizeF(50f, 1030f));
-            addNode(Node.BodyType.Solid, new PointF(0f, 1030f), new SizeF(1920f, 50f));
+            addNode(Node.BodyType.Solid, new Point(), new Size(50, 1030));
+            addNode(Node.BodyType.Solid, new Point(1870, 0), new Size(50, 1030));
+            addNode(Node.BodyType.Solid, new Point(0, 1030), new Size(1920, 50));
 
             //add player spawn points
-            m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new PointF(80f, 500f), new SizeF(blockSize.Width, blockSize.Height));
-            m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new PointF(1680f, 500f), new SizeF(blockSize.Width, blockSize.Height));
+            m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new Point(80, 500), blockSize);
+            m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new Point(1680, 500), blockSize);
 
 
             //reset map properties

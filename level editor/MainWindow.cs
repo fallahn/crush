@@ -48,6 +48,13 @@ namespace Level_editor
         private Panel m_selectedNode = null;
 
         private Size blockSize = new Size(100, 70);
+        private const int scale = 2;// ui is half the size of the actual game world
+        private Color playerOneColour = Color.DodgerBlue;
+        private Color playerTwoColour = Color.Gold;
+        private Color blockColour = Color.Firebrick;
+        private Color solidColour = Color.IndianRed;
+
+        ContextMenuStrip m_nodeMenu = new ContextMenuStrip();
 
         public MainWindow()
         {
@@ -84,6 +91,10 @@ namespace Level_editor
             toolTips.SetToolTip(numericUpDownNpcCount, "Minimum number of NPCs on screen");
             toolTips.SetToolTip(numericUpDownNpcTotal, "Total number of NPCs for this map");
             toolTips.SetToolTip(buttonNpcTexture, "Select the texture to use for this map's NPCs");
+
+            ToolStripMenuItem cloneItem = new ToolStripMenuItem("Clone");
+            cloneItem.MouseDown += cloneItem_MouseDown;
+            m_nodeMenu.Items.Add(cloneItem);
         }
 
         //toolstrip---
@@ -146,22 +157,22 @@ namespace Level_editor
         }
         private void numericUpDownPlayerOneX_ValueChanged(object sender, EventArgs e)
         {
-            m_playerOnePanel.Left = (int)numericUpDownPlayerOneX.Value / 2;
+            m_playerOnePanel.Left = (int)numericUpDownPlayerOneX.Value / scale;
             m_modified = true;
         }
         private void numericUpDownPlayerOneY_ValueChanged(object sender, EventArgs e)
         {
-            m_playerOnePanel.Top = (int)numericUpDownPlayerOneY.Value / 2;
+            m_playerOnePanel.Top = (int)numericUpDownPlayerOneY.Value / scale;
             m_modified = true;
         }
         private void numericUpDownPlayerTwoX_ValueChanged(object sender, EventArgs e)
         {
-            m_playerTwoPanel.Left = (int)numericUpDownPlayerTwoX.Value / 2;
+            m_playerTwoPanel.Left = (int)numericUpDownPlayerTwoX.Value / scale;
             m_modified = true;
         }
         private void numericUpDownPlayerTwoY_ValueChanged(object sender, EventArgs e)
         {
-            m_playerTwoPanel.Top = (int)numericUpDownPlayerTwoY.Value / 2;
+            m_playerTwoPanel.Top = (int)numericUpDownPlayerTwoY.Value / scale;
             m_modified = true;
         }
 
@@ -170,7 +181,7 @@ namespace Level_editor
         {
             if(m_selectedNode != null)
             {
-                m_selectedNode.Left = (int)numericUpDownNodePropertyPosX.Value / 2;
+                m_selectedNode.Left = (int)numericUpDownNodePropertyPosX.Value / scale;
                 m_modified = true;
             }
         }
@@ -178,7 +189,7 @@ namespace Level_editor
         {
             if(m_selectedNode != null)
             {
-                m_selectedNode.Top = (int)numericUpDownNodePropertyPosY.Value / 2;
+                m_selectedNode.Top = (int)numericUpDownNodePropertyPosY.Value / scale;
                 m_modified = true;
             }
         }
@@ -186,7 +197,7 @@ namespace Level_editor
         {
             if(m_selectedNode != null)
             {
-                m_selectedNode.Width = (int)numericUpDownNodePropertySizeX.Value / 2;
+                m_selectedNode.Width = (int)numericUpDownNodePropertySizeX.Value / scale;
                 m_modified = true;
             }
         }
@@ -194,7 +205,7 @@ namespace Level_editor
         {
             if(m_selectedNode != null)
             {
-                m_selectedNode.Height = (int)numericUpDownNodePropertySizeY.Value / 2;
+                m_selectedNode.Height = (int)numericUpDownNodePropertySizeY.Value / scale;
                 m_modified = true;
             }
         }
@@ -207,18 +218,18 @@ namespace Level_editor
                 {
                     case "Block":
                         //restore size to block size
-                        m_selectedNode.Width = blockSize.Width / 2;
-                        m_selectedNode.Height = blockSize.Height / 2;
+                        m_selectedNode.Width = blockSize.Width / scale;
+                        m_selectedNode.Height = blockSize.Height / scale;
 
                         m_selectedNode.Tag = Node.BodyType.Block;
-                        m_selectedNode.BackColor = Color.Firebrick;
+                        m_selectedNode.BackColor = blockColour;
 
                         numericUpDownNodePropertySizeX.Enabled = false;
                         numericUpDownNodePropertySizeY.Enabled = false;
                         break;
                     case "Solid":
                         m_selectedNode.Tag = Node.BodyType.Solid;
-                        m_selectedNode.BackColor = Color.Maroon;
+                        m_selectedNode.BackColor = solidColour;
 
                         numericUpDownNodePropertySizeX.Enabled = true;
                         numericUpDownNodePropertySizeY.Enabled = true;
@@ -253,7 +264,7 @@ namespace Level_editor
                 type = Node.BodyType.Solid;
             }
 
-            selectNode(addNode(type, new PointF(960f, 540f), new SizeF(100f, 70f)));
+            selectNode(addNode(type, new Point(960, 540), blockSize));
         }
 
         //player panel movement
@@ -262,8 +273,8 @@ namespace Level_editor
             var p = (Panel)sender;
             numericUpDownPlayerOneX.ValueChanged -= numericUpDownPlayerOneX_ValueChanged;
             numericUpDownPlayerOneY.ValueChanged -= numericUpDownPlayerOneY_ValueChanged;
-            numericUpDownPlayerOneX.Value = (decimal)p.Left * 2; //don't forget to scale
-            numericUpDownPlayerOneY.Value = (decimal)p.Top * 2;
+            numericUpDownPlayerOneX.Value = (decimal)p.Left * scale; //don't forget to scale
+            numericUpDownPlayerOneY.Value = (decimal)p.Top * scale;
             numericUpDownPlayerOneX.ValueChanged += numericUpDownPlayerOneX_ValueChanged;
             numericUpDownPlayerOneY.ValueChanged += numericUpDownPlayerOneY_ValueChanged;
             m_modified = true;
@@ -273,8 +284,8 @@ namespace Level_editor
             var p = (Panel)sender;
             numericUpDownPlayerTwoX.ValueChanged -= numericUpDownPlayerTwoX_ValueChanged;
             numericUpDownPlayerTwoY.ValueChanged -= numericUpDownPlayerTwoY_ValueChanged;
-            numericUpDownPlayerTwoX.Value = (decimal)p.Left * 2; //don't forget to scale
-            numericUpDownPlayerTwoY.Value = (decimal)p.Top * 2;
+            numericUpDownPlayerTwoX.Value = (decimal)p.Left * scale; //don't forget to scale
+            numericUpDownPlayerTwoY.Value = (decimal)p.Top * scale;
             numericUpDownPlayerTwoX.ValueChanged += numericUpDownPlayerTwoX_ValueChanged;
             numericUpDownPlayerTwoY.ValueChanged += numericUpDownPlayerTwoY_ValueChanged;
             m_modified = true;
@@ -284,13 +295,36 @@ namespace Level_editor
             var p = (Panel)sender;
             numericUpDownNodePropertyPosX.ValueChanged -= numericUpDownNodePropertyPosX_ValueChanged;
             numericUpDownNodePropertyPosY.ValueChanged -= numericUpDownNodePropertyPosY_ValueChanged;
-            numericUpDownNodePropertyPosX.Value = (decimal)p.Left * 2;
-            numericUpDownNodePropertyPosY.Value = (decimal)p.Top * 2;
+            numericUpDownNodePropertyPosX.Value = (decimal)p.Left * scale;
+            numericUpDownNodePropertyPosY.Value = (decimal)p.Top * scale;
             numericUpDownNodePropertyPosX.ValueChanged += numericUpDownNodePropertyPosX_ValueChanged;
             numericUpDownNodePropertyPosY.ValueChanged += numericUpDownNodePropertyPosY_ValueChanged;
             m_modified = true;
         }
 
+        //draw grid
+        private void panelEditorInner_Paint(object sender, PaintEventArgs e)
+        {
+            //draw grid
+            if (checkBoxSnap.Checked)
+            {
+                var step = (int)numericUpDownSnap.Value;
+                Pen pen = new Pen(Color.Gray);
+                for (int i = 0; i < panelEditorInner.Width; i += step)
+                    e.Graphics.DrawLine(pen, i, 0, i, panelEditorInner.Height);
+
+                for (int i = 0; i < panelEditorInner.Height; i += step)
+                    e.Graphics.DrawLine(pen, 0, i, panelEditorInner.Width, i);
+            }
+        }
+        private void checkBoxSnap_CheckedChanged(object sender, EventArgs e)
+        {
+            panelEditorInner.Invalidate();
+        }
+        private void numericUpDownSnap_ValueChanged(object sender, EventArgs e)
+        {
+            panelEditorInner.Invalidate();
+        }
 
         //drag events for panels
         private bool mousePressed = false;
@@ -303,11 +337,36 @@ namespace Level_editor
                 lastMouseX = e.X;
                 lastMouseY = e.Y;
             }
+
+            var p = (Panel)sender;
+            var t = (Node.BodyType)p.Tag;
+            if (t != Node.BodyType.PlayerOne && t != Node.BodyType.PlayerTwo)
+            {
+                selectNode(p);
+            }
         }
         private void mouseUp(Object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
+            {
                 mousePressed = false;
+                
+                //grid snap
+                var p = (Panel)sender;
+                if (checkBoxSnap.Checked)
+                {
+                    var step = (int)numericUpDownSnap.Value;
+                    p.Left = (int)Math.Round((double)p.Left / step) * step;
+                    p.Top = (int)Math.Round((double)p.Top / step) * step;  
+                }
+
+                //clamp to bounds
+                if (p.Left < 0) p.Left = 0;
+                if (p.Top < 0) p.Top = 0;
+
+                if (p.Left > panelEditorInner.Width) p.Left = panelEditorInner.Width - 20;
+                if (p.Top > panelEditorInner.Height) p.Top = panelEditorInner.Height - 20;
+            }
         }
         private void mouseMove(Object sender, MouseEventArgs e)
         {
@@ -316,19 +375,21 @@ namespace Level_editor
                 var p = (Panel)sender;
                 p.Left += e.X - lastMouseX;
                 p.Top += e.Y - lastMouseY;
+
                 m_modified = true;
             }
         }
 
-        //selecting nodes
-        private void mouseClick(Object sender, MouseEventArgs e)
+
+        //node context menu
+        void cloneItem_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == MouseButtons.Left)
+            if(e.Button == MouseButtons.Left)
             {
-                var p = (Panel)sender;
-                selectNode(p);
+                addNode((Node.BodyType)m_selectedNode.Tag,
+                    new Point(960, 540),
+                    new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale));
             }
         }
-
     }
 }
