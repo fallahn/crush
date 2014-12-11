@@ -43,8 +43,8 @@ namespace
         "to move player two. Press 2 to spawn the second\n"
         "player. Hold Space (player one) or Right Shift\n"
         "(player two) to grab a box and drag it around.\n"
-        "Score the most points by crushing the bad guys,\n"
-        "(or each other!). Crush enemies between blocks..r\n"
+        "Score the most points by crushing the bad guys\n"
+        "(or each other!). Crush enemies between blocks..\n"
         " but don't accidentally crush yourself!\n"
         "\n"
         "Press Enter to begin.";

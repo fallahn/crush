@@ -33,7 +33,7 @@ void NpcStateAir::update(float dt)
 {
     //reduce lateral velocity so sideways movement is minimal
     auto vel = getVelocity();
-    vel.x *= 0.89f;
+    vel.x *= 0.92f;
     setVelocity(vel);
 }
 
@@ -65,7 +65,17 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
     {   
         if (getFootSenseCount() > 0 && manifold.y * manifold.z < 0)
-            setState<NpcStateGround>();
+        {//set state at random
+            if (Util::Random::value(0, 1))
+            {
+                setState<NpcStateWalk>();
+            }
+            else
+            {
+                setState<NpcStateGround>();
+            }
+        }
+
         //jump away from walls, or switch to ground sitting
         auto vel = getVelocity();       
         //if (manifold.x != 0)
@@ -82,6 +92,7 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
             vel.x = -vel.x;
         if (manifold.y != 0)
             vel.y = -vel.y;
+        vel *= getFriction();
         setVelocity(vel);
     }
     break;
@@ -115,7 +126,7 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
 
 NpcStateGround::NpcStateGround(CollisionWorld::Body* b)
     : BodyState         (b),
-    m_jumpDelay         (Util::Random::value(1.f, 2.f)),
+    m_changeDelay       (Util::Random::value(1.f, 2.f)),
     m_accumulatedTime   (0.f)
 {
     setVelocity({});
@@ -130,11 +141,19 @@ void NpcStateGround::update(float dt)
     vel.x *= getFriction();
        
     m_accumulatedTime += dt;
-    if (m_accumulatedTime > m_jumpDelay
+    if (m_accumulatedTime > m_changeDelay
         && fsc > 0)
     {
-        vel.y = -900.f;
-        setState<NpcStateAir>();
+        //random between this and walking
+        if (Util::Random::value(0, 1))
+        {
+            vel.y = -900.f;
+            setState<NpcStateAir>();
+        }
+        else
+        {
+            setState<NpcStateWalk>();
+        }
     }
 
     setVelocity(vel);
@@ -188,6 +207,103 @@ void NpcStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
             && manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            setVelocity({});
+        }
+        break;
+    default: break;
+    }
+}
+
+//-------------------------------------------
+
+NpcStateWalk::NpcStateWalk(CollisionWorld::Body* b)
+    : BodyState         (b),
+    m_changeDelay       (Util::Random::value(3.f, 5.f)),
+    m_accumulatedTime   (0.f),
+    m_moveForce         (Util::Random::value(28.f, 40.f))
+{
+    setVelocity({m_moveForce, 0.f});
+}
+
+void NpcStateWalk::update(float dt)
+{
+    auto fsc = getFootSenseCount();
+
+    auto vel = getVelocity();
+    if (fsc > 0) vel.y = 0.f;
+    vel.x += m_moveForce;
+    vel.x *= getFriction();
+
+    m_accumulatedTime += dt;
+    if (m_accumulatedTime > m_changeDelay
+        && fsc > 0)
+    {
+        //random between this and ground state
+        if (Util::Random::value(0, 1) == 0)
+        {
+            vel.y = -900.f;
+            setState<NpcStateAir>();
+        }
+        else
+        {
+            setState<NpcStateGround>();
+        }
+    }
+
+    setVelocity(vel);
+}
+
+void NpcStateWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    switch (other->getType())
+    {
+    case CollisionWorld::Body::Type::Block:
+        if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
+            && */(manifold.x != 0.f || (manifold.y * manifold.z < 0))) //prevents shifting vertically down
+        {
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            m_moveForce = -m_moveForce;
+            setVelocity({});
+            //m_accumulatedTime = 0.f;
+        }
+        else if (manifold.y * manifold.z > 0)
+        {
+            //block is above, so crush
+            kill();
+
+            //raise event to say player killed us
+            game::Event e;
+            e.node.action = game::Event::NodeEvent::KilledNode;
+            e.node.type = Category::Block;
+            e.node.target = Category::Npc;
+
+            if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+            else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
+            else e.node.owner = Category::None;
+
+            e.type = game::Event::Node;
+            raiseEvent(e, other);
+        }
+        {
+            int cat = other->getParentCategory();
+            if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
+                damage(std::fabs(manifold.z * 0.3f), other);
+        }
+        break;
+    case CollisionWorld::Body::Type::Solid:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        m_moveForce = -m_moveForce;
+        setVelocity({});
+        break;
+    case CollisionWorld::Body::Type::Player:
+        break;
+
+    case CollisionWorld::Body::Type::Npc:
+        if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
+            && manifold.x != 0.f) //prevents shifting vertically
+        {
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            m_moveForce = -m_moveForce;
             setVelocity({});
         }
         break;

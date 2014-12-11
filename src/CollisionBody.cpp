@@ -60,6 +60,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     case Type::Npc:
         m_state = std::make_unique<NpcStateAir>(this);
         m_gravityAmount = 0.15f;
+        m_strength = 70.f;
         break;
     case Type::Player:
         m_state = std::make_unique<PlayerStateAir>(this);

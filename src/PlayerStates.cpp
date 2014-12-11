@@ -117,9 +117,9 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});    
         }
-        {
-            int cat = other->getParentCategory();
-            if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
+        {//sometimes this means we can pass through blocks?
+            //int cat = other->getParentCategory();
+            //if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
                 damage(std::fabs(manifold.z * 0.4f), other);
         }
         break;

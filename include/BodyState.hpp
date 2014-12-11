@@ -128,8 +128,20 @@ public:
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 
 private:
-    float m_jumpDelay;
+    float m_changeDelay;
     float m_accumulatedTime;
 };
 
+class NpcStateWalk final : public BodyState
+{
+public:
+    explicit NpcStateWalk(CollisionWorld::Body* b);
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    float m_changeDelay;
+    float m_accumulatedTime;
+    float m_moveForce;
+};
 #endif //COLLISION_STATE_H_

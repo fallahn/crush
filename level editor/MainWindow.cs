@@ -321,7 +321,7 @@ namespace Level_editor
             //draw grid
             if (checkBoxSnap.Checked)
             {
-                var step = (int)numericUpDownSnap.Value;
+                var step = (int)numericUpDownSnap.Value / scale;
                 Pen pen = new Pen(Color.Gray);
                 for (int i = 0; i < panelEditorInner.Width; i += step)
                     e.Graphics.DrawLine(pen, i, 0, i, panelEditorInner.Height);
@@ -368,7 +368,7 @@ namespace Level_editor
                 var p = (Panel)sender;
                 if (checkBoxSnap.Checked)
                 {
-                    var step = (int)numericUpDownSnap.Value;
+                    var step = (int)numericUpDownSnap.Value / scale;
                     p.Left = (int)Math.Round((double)p.Left / step) * step;
                     p.Top = (int)Math.Round((double)p.Top / step) * step;  
                 }

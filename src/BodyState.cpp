@@ -111,7 +111,7 @@ void BodyState::damage(float amount, CollisionWorld::Body* damager)
         }
         else
         {
-            e.node.owner = Category::None;
+            e.node.owner = e.node.target;//assume player crushed self
         }
 
         e.type = game::Event::Node;
