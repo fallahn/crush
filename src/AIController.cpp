@@ -47,7 +47,6 @@ namespace
         }
     }
 
-    const sf::Uint8 aiSpawnCount = 3u; //how many npcs initially - TODO set the the member var as part of game rules
     const float aiSpawnTime = 1.f;
 }
 
@@ -55,7 +54,7 @@ AIController::AIController(CommandStack& c)
     : m_commandStack    (c),
     m_randTime          (10.f),
     m_enabled           (true),
-    m_aiSpawnCount      (aiSpawnCount){}
+    m_aiSpawnCount      (0u){}
 
 void AIController::onNotify(Subject& s, const game::Event& evt)
 {
@@ -144,4 +143,9 @@ void AIController::update(float dt)
 void AIController::setSpawnFunction(std::function<void(const sf::Vector2f&)>& func)
 {
     spawn = func;
+}
+
+void AIController::setAiCount(sf::Uint16 count)
+{
+    m_aiSpawnCount = count;
 }

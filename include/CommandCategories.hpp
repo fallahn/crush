@@ -42,7 +42,8 @@ namespace Category
         GrabbedOne      = (1 << 4),
         GrabbedTwo      = (1 << 5),
         LastTouchedOne  = (1 << 6),
-        LastTouchedTwo  = (1 << 7)
+        LastTouchedTwo  = (1 << 7),
+        Solid           = (1 << 8)
     };
 }
 

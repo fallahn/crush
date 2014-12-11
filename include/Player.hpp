@@ -54,7 +54,7 @@ public:
     ~Player() = default;
 
     void update(float dt);
-    void handleEvent(const sf::Event& evt); //TODO should this return bool to mark events have been consumed?
+    void handleEvent(const sf::Event& evt);
 
     void setKeyBinds(Keys keys);
 
@@ -65,6 +65,7 @@ public:
     void onNotify(Subject& s, const game::Event& evt) override;
 
     void setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>& func);
+    void setSpawnPosition(const sf::Vector2f& position);
 
 private:
     float m_moveForce;

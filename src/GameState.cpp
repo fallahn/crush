@@ -31,6 +31,7 @@ source distribution.
 #include <BodyState.hpp>
 #include <Util.hpp>
 #include <Particles.hpp>
+#include <Map.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -119,6 +120,7 @@ GameState::GameState(StateStack& stack, Context context)
     rightShelfNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, shelfShape.getSize()));
     m_scene.addNode(rightShelfNode);
 
+
     //set up controllers
     m_players.reserve(2);
     m_players.emplace_back(m_commandStack, Category::PlayerOne);
@@ -138,6 +140,32 @@ GameState::GameState(StateStack& stack, Context context)
 
     m_scene.addObserver(m_scoreBoard);
     
+
+    //must be done after controllers are initialised
+    Map map("res/maps/testmap.crm");
+    m_aiController.setAiCount(map.getNpcCount());
+    m_scoreBoard.setMaxNpcs(map.getNpcTotal());
+
+    //TODO properly parse map with sprites / textures
+    const auto& nodes = map.getNodes();
+    for (const auto& n : nodes)
+    {
+        switch (n.type)
+        {
+        case Category::Block:
+            addBlock(n.position);
+            break;
+        case Category::PlayerOne:
+            //set spawn point
+            m_players[0].setSpawnPosition(n.position);
+            break;
+        case Category::PlayerTwo:
+            //set spawn point
+            m_players[1].setSpawnPosition(n.position);
+            break;
+        default: break;
+        }
+    }
 }
 
 bool GameState::update(float dt)

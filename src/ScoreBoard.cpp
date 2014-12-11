@@ -249,6 +249,11 @@ void ScoreBoard::enablePlayer(Category::Type player)
     }
 }
 
+void ScoreBoard::setMaxNpcs(sf::Uint8 count)
+{
+    m_maxNpcs = count;
+}
+
 //private
 void ScoreBoard::updateText(Category::Type type)
 {

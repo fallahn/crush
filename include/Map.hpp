@@ -25,38 +25,50 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//sends commands to npcs and reacts to npc events
+//parses map data into object representation
 
-#include <Observer.hpp>
-#include <CommandStack.hpp>
+#ifndef MAP_H_
+#define MAP_H_
 
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Clock.hpp>
+#include <CommandCategories.hpp>
+
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Config.hpp>
 
-#include <functional>
+#include <string>
+#include <vector>
 
-class AIController final : private sf::NonCopyable, public Observer
+class Map final
 {
 public:
-    explicit AIController(CommandStack& c);
-    ~AIController() = default;
 
-    void onNotify(Subject& s, const game::Event& evt) override;
-    void update(float dt);
+    struct Node final
+    {
+        Node(const std::string& position, const std::string& size, const std::string& type);
+        sf::Vector2f position;
+        sf::Vector2f size;
+        Category::Type type;
+    };
 
-    void setSpawnFunction(std::function<void(const sf::Vector2f&)>& func);
-    void setAiCount(sf::Uint16 count);
+    explicit Map(const std::string& path);
+    ~Map() = default;
+
+    sf::Uint8 getNpcCount() const;
+    sf::Uint8 getNpcTotal() const;
+    const std::string& getNpcTexture() const;
+    std::string getMapName() const;
+
+    const std::vector<Node>& getNodes() const;
 
 private:
-    CommandStack& m_commandStack;
 
-    sf::Clock m_movementClock;
-    sf::Clock m_spawnClock;
-    float m_randTime;
+    sf::Uint8 m_npcCount;
+    sf::Uint8 m_npcTotal;
+    std::string m_npcTexture;
 
-    bool m_enabled;
-    sf::Uint8 m_aiSpawnCount; //how many to have on screen at a time
+    std::string m_mapName;
 
-    std::function<void(const sf::Vector2f&)> spawn;
+    std::vector<Node> m_nodes;
 };
+
+#endif //MAP_H_

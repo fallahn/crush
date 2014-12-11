@@ -45,6 +45,7 @@ public:
     void onNotify(Subject& s, const game::Event& evt) override;
 
     void enablePlayer(Category::Type player);
+    void setMaxNpcs(sf::Uint8 count);
 
 private:
     StateStack& m_stack;

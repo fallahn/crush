@@ -44,6 +44,32 @@ namespace
 
 namespace Util
 {
+    namespace String
+    {
+        //converts a comma delimited string of floats into an array
+        static std::vector<float> toFloatArray(const std::string& str)
+        {
+            std::vector<float> values;
+            auto start = 0u;
+            auto next = str.find_first_of(',');
+            while (next != std::string::npos && start < str.length())
+            {
+                try
+                {
+                    values.push_back(std::stof(str.substr(start, next)));
+                }
+                catch (...)
+                {
+                    values.push_back(0.f);
+                }
+                start = ++next;
+                next = str.find_first_of(',', start);
+                if (next > str.length()) next = str.length();
+            }
+            return values;
+        }
+    }
+
     namespace Vector
     {
         //calculates dot product of 2 vectors
@@ -67,6 +93,23 @@ namespace Util
         static float length(const sf::Vector2f& source)
         {
             return std::sqrt(lengthSquared(source));
+        }
+
+        //converts a comma delimited string to vector 2
+        static sf::Vector2f vec2FromString(const std::string& str)
+        {
+            sf::Vector2f retVec;
+            auto values = String::toFloatArray(str);
+            switch (values.size())
+            {
+            case 2:
+                retVec.y = values[1];
+            case 1:
+                retVec.x = values[0];
+                break;
+            default: break;
+            }
+            return retVec;
         }
     }
 

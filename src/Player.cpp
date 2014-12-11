@@ -312,6 +312,11 @@ void Player::setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>&
     spawn = func;
 }
 
+void Player::setSpawnPosition(const sf::Vector2f& position)
+{
+    m_spawnPosition = position;
+}
+
 //private
 void Player::enable()
 {

@@ -81,6 +81,7 @@
     <ClCompile Include="src\DebugShape.cpp" />
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\ParticleController.cpp" />
     <ClCompile Include="src\Particles.cpp" />
     <ClCompile Include="src\ScoreBoard.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="include\DebugShape.hpp" />
     <ClInclude Include="include\Deletable.hpp" />
     <ClInclude Include="include\Game.hpp" />
+    <ClInclude Include="include\Map.hpp" />
     <ClInclude Include="include\ParticleController.hpp" />
     <ClInclude Include="include\Particles.hpp" />
     <ClInclude Include="include\ScoreBoard.hpp" />
