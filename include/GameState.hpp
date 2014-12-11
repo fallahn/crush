@@ -29,7 +29,7 @@ source distribution.
 #include <Scene.hpp>
 #include <CollisionWorld.hpp>
 #include <Player.hpp>
-#include <AIController.hpp>
+#include <NpcController.hpp>
 #include <ScoreBoard.hpp>
 #include <ParticleController.hpp>
 
@@ -49,7 +49,7 @@ private:
     CommandStack m_commandStack;
     CollisionWorld m_collisionWorld;
     std::vector<Player> m_players;
-    AIController m_aiController;
+    NpcController m_npcController;
     ScoreBoard m_scoreBoard;
     ParticleController m_particleController;
 

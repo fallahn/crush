@@ -238,7 +238,7 @@ namespace Level_editor
             }
 
             //set window title to map name
-            this.Text = Path.GetFileName(m_currentMap.MapName);
+            this.Text = m_currentMap.MapName;
             m_modified = false;
         }
 
@@ -250,7 +250,7 @@ namespace Level_editor
             JsonSerializer srlz = new JsonSerializer();
             srlz.NullValueHandling = NullValueHandling.Ignore;
 
-            using (StreamWriter sw = new StreamWriter(m_currentMap.MapName))
+            using (StreamWriter sw = new StreamWriter(m_mapPath))
             using (JsonWriter jw = new JsonTextWriter(sw))
             {
                 srlz.Serialize(jw, m_currentMap);
@@ -258,13 +258,13 @@ namespace Level_editor
 
             m_modified = false;
 
-            this.Text = Path.GetFileName(m_currentMap.MapName);
+            this.Text = m_currentMap.MapName;
         }
 
         private void saveFileAs(string path)
         {
             //update map object path and save
-            m_currentMap.MapName = path;
+            m_currentMap.MapName = Path.GetFileName(path);
             saveFile();
         }
 

@@ -36,17 +36,17 @@ source distribution.
 
 #include <functional>
 
-class AIController final : private sf::NonCopyable, public Observer
+class NpcController final : private sf::NonCopyable, public Observer
 {
 public:
-    explicit AIController(CommandStack& c);
-    ~AIController() = default;
+    explicit NpcController(CommandStack& c);
+    ~NpcController() = default;
 
     void onNotify(Subject& s, const game::Event& evt) override;
     void update(float dt);
 
     void setSpawnFunction(std::function<void(const sf::Vector2f&)>& func);
-    void setAiCount(sf::Uint16 count);
+    void setNpcCount(sf::Uint8 count);
 
 private:
     CommandStack& m_commandStack;
@@ -56,7 +56,7 @@ private:
     float m_randTime;
 
     bool m_enabled;
-    sf::Uint8 m_aiSpawnCount; //how many to have on screen at a time
+    sf::Uint8 m_npcSpawnCount; //how many to have on screen at a time
 
     std::function<void(const sf::Vector2f&)> spawn;
 };

@@ -61,7 +61,7 @@ namespace
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
     m_collisionWorld    (70.f),
-    m_aiController      (m_commandStack),
+    m_npcController     (m_commandStack),
     m_scoreBoard        (stack, context),
     m_particleController(textureResource)
 {
@@ -131,11 +131,11 @@ GameState::GameState(StateStack& stack, Context context)
     m_players[1].setSpawnFunction(spawnFunc);
 
     std::function<void(const sf::Vector2f&)> f = std::bind(&GameState::addNpc, this, std::placeholders::_1);
-    m_aiController.setSpawnFunction(f);
+    m_npcController.setSpawnFunction(f);
 
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);
-    m_scoreBoard.addObserver(m_aiController);
+    m_scoreBoard.addObserver(m_npcController);
     m_scoreBoard.enablePlayer(Category::PlayerOne);
 
     m_scene.addObserver(m_scoreBoard);
@@ -143,7 +143,7 @@ GameState::GameState(StateStack& stack, Context context)
 
     //must be done after controllers are initialised
     Map map("res/maps/testmap.crm");
-    m_aiController.setAiCount(map.getNpcCount());
+    m_npcController.setNpcCount(map.getNpcCount());
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
 
     //TODO properly parse map with sprites / textures
@@ -178,7 +178,7 @@ bool GameState::update(float dt)
         p.update(dt);
 
     //update AI
-    m_aiController.update(dt);
+    m_npcController.update(dt);
 
     //update collision detection
     m_collisionWorld.step(dt);
@@ -263,7 +263,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
         playerNode->setCategory(player.getType());
         playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, playerShape.getSize()));
         playerNode->addObserver(player);
-        playerNode->addObserver(m_aiController);
+        playerNode->addObserver(m_npcController);
         playerNode->addObserver(m_scoreBoard);
         playerNode->addObserver(m_particleController);
         m_scene.addNode(playerNode);
@@ -279,7 +279,7 @@ void GameState::addNpc(const sf::Vector2f& position)
     npcNode->setDrawable(&npcShape);
     npcNode->setCategory(Category::Npc);
     npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, npcShape.getSize()));
-    npcNode->addObserver(m_aiController);
+    npcNode->addObserver(m_npcController);
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
     m_scene.addNode(npcNode);

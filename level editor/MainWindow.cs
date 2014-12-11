@@ -40,6 +40,7 @@ namespace Level_editor
     public partial class MainWindow : Form
     {
         private Map m_currentMap = new Map();
+        private string m_mapPath;
         private bool m_modified = false;
         private const string fileFilter = "Map Files (.crm)|*.crm";
 
@@ -129,12 +130,12 @@ namespace Level_editor
             if(fd.ShowDialog() == DialogResult.OK)
             {
                 openFile(fd.FileName);
-                m_currentMap.MapName = fd.FileName;
+                m_mapPath = fd.FileName;
             }
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_currentMap.MapName == string.Empty || m_currentMap.MapName == null)
+            if (m_mapPath == string.Empty || m_mapPath == null)
                 saveAsToolStripMenuItem_Click(sender, e);
             else
                 saveFile();
@@ -146,8 +147,8 @@ namespace Level_editor
 
             if(sd.ShowDialog() == DialogResult.OK)
             {
-                saveFileAs(sd.FileName);
-                m_currentMap.MapName = sd.FileName;
+                m_mapPath = sd.FileName;
+                saveFileAs(sd.FileName); 
             }
         }
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)

@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <AIController.hpp>
+#include <NpcController.hpp>
 #include <Node.hpp>
 #include <Util.hpp>
 
@@ -47,16 +47,16 @@ namespace
         }
     }
 
-    const float aiSpawnTime = 1.f;
+    const float npcSpawnTime = 1.f;
 }
 
-AIController::AIController(CommandStack& c)
+NpcController::NpcController(CommandStack& c)
     : m_commandStack    (c),
     m_randTime          (10.f),
     m_enabled           (true),
-    m_aiSpawnCount      (0u){}
+    m_npcSpawnCount     (0u){}
 
-void AIController::onNotify(Subject& s, const game::Event& evt)
+void NpcController::onNotify(Subject& s, const game::Event& evt)
 {
     switch (evt.type)
     {
@@ -76,7 +76,7 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
             switch (evt.node.action)
             {
             case game::Event::NodeEvent::Despawn:
-                m_aiSpawnCount++;
+                m_npcSpawnCount++;
                 m_spawnClock.restart();
                 break;
             case game::Event::NodeEvent::Spawn:
@@ -116,7 +116,7 @@ void AIController::onNotify(Subject& s, const game::Event& evt)
     }
 }
 
-void AIController::update(float dt)
+void NpcController::update(float dt)
 {
     if (!m_enabled) return;
 
@@ -131,21 +131,21 @@ void AIController::update(float dt)
         m_commandStack.push(c);
     }
 
-    if (m_aiSpawnCount > 0u 
-        && m_spawnClock.getElapsedTime().asSeconds() > aiSpawnTime)
+    if (m_npcSpawnCount > 0u 
+        && m_spawnClock.getElapsedTime().asSeconds() > npcSpawnTime)
     {
-        m_aiSpawnCount--;
+        m_npcSpawnCount--;
         m_spawnClock.restart();
         spawn({ Util::Random::value(300.f, 1200.f), -40.f });
     }
 }
 
-void AIController::setSpawnFunction(std::function<void(const sf::Vector2f&)>& func)
+void NpcController::setSpawnFunction(std::function<void(const sf::Vector2f&)>& func)
 {
     spawn = func;
 }
 
-void AIController::setAiCount(sf::Uint16 count)
+void NpcController::setNpcCount(sf::Uint8 count)
 {
-    m_aiSpawnCount = count;
+    m_npcSpawnCount = count;
 }
