@@ -95,6 +95,10 @@ namespace Level_editor
             ToolStripMenuItem cloneItem = new ToolStripMenuItem("Clone");
             cloneItem.MouseDown += cloneItem_MouseDown;
             m_nodeMenu.Items.Add(cloneItem);
+
+            ToolStripMenuItem deleteItem = new ToolStripMenuItem("Delete");
+            deleteItem.MouseDown += buttonDeleteNode_Click;
+            m_nodeMenu.Items.Add(deleteItem);
         }
 
         //toolstrip---
@@ -111,6 +115,14 @@ namespace Level_editor
         }               
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (m_modified)
+            {
+                if (MessageBox.Show("Save changes to current map?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    saveFile();
+                }
+            }
+            
             OpenFileDialog fd = new OpenFileDialog();
             fd.Filter = fileFilter;
 
@@ -122,7 +134,7 @@ namespace Level_editor
         }
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (m_currentMap.MapName == string.Empty)
+            if (m_currentMap.MapName == string.Empty || m_currentMap.MapName == null)
                 saveAsToolStripMenuItem_Click(sender, e);
             else
                 saveFile();

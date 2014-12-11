@@ -3,9 +3,9 @@ CRUSH
 
 Crush or be Crushed!
 
-A simple 2D game where the main objective is to crush all of the bad guys either by jumping on them
-or by squishing them between two blocks, without getting crushed yourself. Special bonuses are 
-awarded for collecting all of the time limited items which appear in the map.
+A simple 2D game where the main objective is to crush all of the bad guys by squashing them between
+two blocks, without getting crushed yourself. Special bonuses are awarded for collecting all of 
+the time limited items which appear in the map.
 
 
 CRUSH is written in C++1y and requires a modern compiler, such as Visual Studio 2013 or clang/llvm
@@ -49,7 +49,7 @@ or unix style make files for mingw. The same limitations apply as the linux buil
 need to have either clang 3.4 or g++ 4.9 or higher installed, and a set of SFML binaries for your 
 chosen compiler. Clicking Configure in CMake-gui will probably lead to path errors when it cannot 
 find the SFML libraries, simply open each entry highlighted in red and browse to the corresponding 
-lirary file. Click Configure again, and then Generate if there are no furhter errors to output a 
+library file. Click Configure again, and then Generate if there are no further errors to output a 
 project file which can be used to build CRUSH.
 
 

@@ -69,11 +69,14 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
     {
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
 
+        //bounce off NPCs
         auto vel = getVelocity();
         if (manifold.x != 0)
             vel.x = -vel.x;
         if (manifold.y != 0)
             vel.y = -vel.y;
+
+        vel *= getFriction();
         setVelocity(vel);
     }
         break;

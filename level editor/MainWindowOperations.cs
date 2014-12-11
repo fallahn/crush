@@ -32,10 +32,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
+using Newtonsoft.Json;
 
 namespace Level_editor
 {
@@ -138,9 +141,14 @@ namespace Level_editor
         /// </summary>
         private void updateMapData()
         {
-            //TODO only update what's changed - for instance we might
-            //only want to modify a node rather than add a new one - 
-            //or even take one away
+            m_currentMap.NpcCount = (int)numericUpDownNpcCount.Value;
+            m_currentMap.NpcTotal = (int)numericUpDownNpcTotal.Value;
+            m_currentMap.Nodes.Clear();
+
+            foreach(Panel p in panelEditorInner.Controls)
+            {
+                m_currentMap.Nodes.Add(new Node(p));
+            }
 
             m_modified = true;
         }
@@ -164,7 +172,6 @@ namespace Level_editor
             m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new Point(80, 500), blockSize);
             m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new Point(1680, 500), blockSize);
 
-
             //reset map properties
             numericUpDownNpcCount.Value = 3;
             numericUpDownNpcTotal.Value = 12;
@@ -184,17 +191,74 @@ namespace Level_editor
         private void openFile(string path)
         {
             //create new map object and parse data into it
+            m_currentMap = new Map();
+
+            JsonSerializer js = new JsonSerializer();
+            js.NullValueHandling = NullValueHandling.Ignore;
+
+            using (StreamReader sr = new StreamReader(path))
+            using(JsonReader jr = new JsonTextReader(sr))
+            {
+                m_currentMap = js.Deserialize<Map>(jr);
+            }
+
+            //update UI from object
+            numericUpDownNpcCount.Value = (decimal)m_currentMap.NpcCount;
+            numericUpDownNpcTotal.Value = (decimal)m_currentMap.NpcTotal;
+
+            panelEditorInner.Controls.Clear();
+            m_selectedNode = null;
+            m_playerOnePanel = null;
+            m_playerTwoPanel = null;
+
+            foreach(Node n in m_currentMap.Nodes)
+            {
+                switch(n.Type)
+                {
+                    case "Solid":
+                        addNode(Node.BodyType.Solid, n.Position, n.Size);
+                        break;
+                    case "Block":
+                        addNode(Node.BodyType.Block, n.Position, n.Size);
+                        break;
+                    case "PlayerOne":
+                        m_playerOnePanel = addNode(Node.BodyType.PlayerOne, n.Position, n.Size);
+                        break;
+                    case "PlayerTwo":
+                        m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, n.Position, n.Size);
+                        break;
+                }
+            }
+            
+            if(m_playerOnePanel == null || m_playerTwoPanel == null)
+            {
+                MessageBox.Show("Missing Player Data. Map File Not Loaded.", "Error");
+                newFile();
+                return;
+            }
+
             //set window title to map name
+            this.Text = Path.GetFileName(m_currentMap.MapName);
+            m_modified = false;
         }
 
         private void saveFile()
         {
-            //use current path / map object
-            //set window title to map name
-            //update map object data
-            //write data to file
+            updateMapData();
+
+            //save json file
+            JsonSerializer srlz = new JsonSerializer();
+            srlz.NullValueHandling = NullValueHandling.Ignore;
+
+            using (StreamWriter sw = new StreamWriter(m_currentMap.MapName))
+            using (JsonWriter jw = new JsonTextWriter(sw))
+            {
+                srlz.Serialize(jw, m_currentMap);
+            }
 
             m_modified = false;
+
+            this.Text = Path.GetFileName(m_currentMap.MapName);
         }
 
         private void saveFileAs(string path)

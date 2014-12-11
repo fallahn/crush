@@ -33,6 +33,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using Newtonsoft.Json;
 
 namespace Level_editor
 {
@@ -42,9 +43,33 @@ namespace Level_editor
         {
             //multiply the sizes by two as UI size if half that of
             //actual game area
-            m_position = new PointF(p.Top * 2, p.Left * 2);
-            m_size = new SizeF(p.Width * 2, p.Height * 2);
-            m_type = BodyType.Solid;
+            m_position = new Point(p.Left * 2, p.Top * 2);
+            m_size = new Size(p.Width * 2, p.Height * 2);
+            var type = (BodyType)p.Tag;
+            switch (type)
+            {
+                case BodyType.Solid:
+                    m_type = "Solid";
+                    break;
+                case BodyType.Block:
+                    m_type = "Block";
+                    break;
+                case BodyType.PlayerOne:
+                    m_type = "PlayerOne";
+                    break;
+                case BodyType.PlayerTwo:
+                    m_type = "PlayerTwo";
+                    break;
+                default: break;
+            }
+        }
+
+        [JsonConstructor]
+        public Node(Point position, Size size, string type)
+        {
+            m_position = position;
+            m_size = size;
+            m_type = type;
         }
         
         public enum BodyType
@@ -55,24 +80,24 @@ namespace Level_editor
             PlayerTwo
         }
 
-        private PointF m_position;
+        private Point m_position;
 
-        public PointF Position
+        public Point Position
         {
             get { return m_position; }
             set { m_position = value; }
         }
 
-        private SizeF m_size;
+        private Size m_size;
 
-        public SizeF Size
+        public Size Size
         {
             get { return m_size; }
             set { m_size = value; }
         }
 
-        private BodyType m_type;
-        public BodyType Type
+        private string m_type;
+        public string Type
         {
             get { return m_type; }
             set { m_type = value; }

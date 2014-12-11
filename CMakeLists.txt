@@ -73,7 +73,7 @@ add_executable(
 add_custom_command(
 	TARGET CRUSH POST_BUILD
 	COMMAND {$CMAKE_COMMAND} -E copy_directory
-	"${PROJECT_SOURCE_DIR}/res"
+	"${CMAKE_SOURCE_DIR}/res"
 	$<TARGET_FILE_DIR:CRUSH>)
 		
 
