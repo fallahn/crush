@@ -43,6 +43,7 @@ link_libraries(
 add_executable(
 	CRUSH src/main.cpp
 	src/Affectors.cpp
+	src/BlockController.cpp
 	src/BlockStates.cpp
 	src/BodyState.cpp
 	src/Camera.cpp
@@ -74,7 +75,7 @@ add_executable(
 add_custom_command(
 	TARGET CRUSH POST_BUILD
 	COMMAND {$CMAKE_COMMAND} -E copy_directory
-	"${CMAKE_SOURCE_DIR}/res"
+	${CMAKE_SOURCE_DIR}/res
 	$<TARGET_FILE_DIR:CRUSH>)
 		
 

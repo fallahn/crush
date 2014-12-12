@@ -49,7 +49,7 @@ namespace game
                 Despawn,
                 KilledNode
             }action;
-            Category::Type target; //node type with was target of deathness
+            Category::Type target; //node type which was target of deathness
             Category::Type owner; //if this is a block, who last owned it
             float positionX, positionY;
         };
@@ -64,7 +64,9 @@ namespace game
                 Jumped,
                 Grabbed,
                 Released,
-                Died
+                Died,
+                PickedUp,
+                Dropped
             }action;
             float positionX, positionY;
         };

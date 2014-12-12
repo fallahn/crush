@@ -25,23 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef PAUSE_STATE_H_
-#define PAUSE_STATE_H_
+//controls spawning of solid / block items in world
 
-#include <State.hpp>
+#ifndef BLOCK_CONTROLLER_H_
+#define BLOCK_CONTROLLER_H_
 
-class PauseState final : public State
+#include <Observer.hpp>
+#include <CommandStack.hpp>
+
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/System/Vector2.hpp>
+
+#include <functional>
+
+class BlockController final : public Observer, private sf::NonCopyable
 {
 public:
-    PauseState(StateStack& stack, Context context);
-    ~PauseState() = default;
+    explicit BlockController(CommandStack& cs);
+    ~BlockController() = default;
 
-    void draw() override;
-    bool update(float dt) override;
-    bool handleEvent(const sf::Event& evt) override;
+    void onNotify(Subject& s, const game::Event& e) override;
+
+    void setSpawnFunction(std::function<void(const sf::Vector2f&)>& func);
 
 private:
+    CommandStack& m_commandStack;
 
+    std::function<void(const sf::Vector2f&)> spawn;
 };
 
-#endif //PAUSE_STATE_H_
+#endif //BLOCK_CONTROLLER_H_

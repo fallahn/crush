@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
+    <ClCompile Include="src\BlockController.cpp" />
     <ClCompile Include="src\NpcController.cpp" />
     <ClCompile Include="src\BlockStates.cpp" />
     <ClCompile Include="src\BodyState.cpp" />
@@ -101,6 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
+    <ClInclude Include="include\BlockController.hpp" />
     <ClInclude Include="include\NpcController.hpp" />
     <ClInclude Include="include\Camera.hpp" />
     <ClInclude Include="include\BodyState.hpp" />

@@ -44,8 +44,9 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
         //kill if block above and NPC is touching the ground
-        if (manifold.y * manifold.z > 0 && getFootSenseCount() > 0)
+        if (manifold.y * manifold.z > 3 && getFootSenseCount() > 0)
         {
+            //TODO: replace this with taking damage?
             kill();
             
             //raise event to say player killed us
@@ -266,7 +267,7 @@ void NpcStateWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* o
             setVelocity({});
             //m_accumulatedTime = 0.f;
         }
-        else if (manifold.y * manifold.z > 0)
+        else if (manifold.y * manifold.z > 2) //prevent dying when just clipping bottom by making sure there is some depth
         {
             //block is above, so crush
             kill();

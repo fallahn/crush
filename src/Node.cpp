@@ -290,6 +290,11 @@ void Node::onNotify(Subject& s, const game::Event& evt)
    
 }
 
+void Node::raiseEvent(const game::Event& evt)
+{
+    notify(*this, evt);
+}
+
 //private
 void Node::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {

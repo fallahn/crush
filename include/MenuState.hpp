@@ -25,6 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#ifndef MENU_STATE_H_
+#define MENU_STATE_H_
+
 #include <State.hpp>
 
 class MenuState final : public State
@@ -39,3 +42,5 @@ public:
 
 private:
 };
+
+#endif //MENU_STATE_H_

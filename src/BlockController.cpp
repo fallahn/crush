@@ -25,23 +25,37 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef PAUSE_STATE_H_
-#define PAUSE_STATE_H_
+#include <BlockController.hpp>
 
-#include <State.hpp>
-
-class PauseState final : public State
+BlockController::BlockController(CommandStack& cs)
+    : m_commandStack(cs)
 {
-public:
-    PauseState(StateStack& stack, Context context);
-    ~PauseState() = default;
 
-    void draw() override;
-    bool update(float dt) override;
-    bool handleEvent(const sf::Event& evt) override;
+}
 
-private:
+//public
+void BlockController::onNotify(Subject& s, const game::Event& evt)
+{
+    switch (evt.type)
+    {
+    case game::Event::Node:
+        switch (evt.node.action)
+        {
+        case game::Event::NodeEvent::Spawn:
+            if (evt.node.type == Category::Block)
+            {
+                spawn({ evt.node.positionX, evt.node.positionY });
+            }
+            //TODO spawn solids?
+            break;
+        default: break;
+        }
+        break;
+    default: break;
+    }
+}
 
-};
-
-#endif //PAUSE_STATE_H_
+void BlockController::setSpawnFunction(std::function<void(const sf::Vector2f&)>& func)
+{
+    spawn = func;
+}

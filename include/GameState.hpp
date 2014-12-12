@@ -25,6 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#ifndef GAME_STATE_H_
+#define GAME_STATE_H_
+
 #include <State.hpp>
 #include <Scene.hpp>
 #include <CollisionWorld.hpp>
@@ -32,6 +35,7 @@ source distribution.
 #include <NpcController.hpp>
 #include <ScoreBoard.hpp>
 #include <ParticleController.hpp>
+#include <BlockController.hpp>
 
 class GameState final : public State
 {
@@ -52,8 +56,11 @@ private:
     NpcController m_npcController;
     ScoreBoard m_scoreBoard;
     ParticleController m_particleController;
+    BlockController m_blockController;
 
     void addBlock(const sf::Vector2f& position);
     void addPlayer(const sf::Vector2f& position, Player& player);
     void addNpc(const sf::Vector2f& position);
 };
+
+#endif //GAME_STATE_H_

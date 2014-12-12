@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 //sends commands to npcs and reacts to npc events
+#ifndef NPC_CONTROLLER_H_
+#define NPC_CONTROLLER_H_
 
 #include <Observer.hpp>
 #include <CommandStack.hpp>
@@ -60,3 +62,5 @@ private:
 
     std::function<void(const sf::Vector2f&)> spawn;
 };
+
+#endif //NPC_CONTROLLER_H_

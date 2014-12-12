@@ -25,6 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#ifndef TITLESTATE_H_
+#define TITLESTATE_H_
+
 #include <State.hpp>
 
 class TitleState final : public State
@@ -40,3 +43,5 @@ public:
 private:
 
 };
+
+#endif //STATE_H_

@@ -67,16 +67,18 @@ public:
        
         void applyForce(const sf::Vector2f& force);
         void setPosition(const sf::Vector2f& position);
+        void move(const sf::Vector2f& distance);
         void setGravityAmount(float amount);
         void setFriction(float friction);
         float getFriction() const;
         void setStrength(float strength);
         Type getType() const;
         Category::Type getParentCategory() const;
+        sf::Vector2f getSize() const;
 
         sf::Vector2f getCentre() const; //centre of body in world coordinates
         bool contains(const sf::Vector2f& point) const;
-
+        
     private:
         Type m_type;
         StatePtr m_state;
@@ -98,7 +100,6 @@ public:
         float m_strength;
 
         void step(float dt);
-        void move(const sf::Vector2f& distance);
         void applyGravity(const sf::Vector2f& gravity);
         void destroy();
     };

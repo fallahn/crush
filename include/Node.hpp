@@ -82,6 +82,8 @@ public:
 
     void onNotify(Subject& s, const game::Event& evt) override;
 
+    void raiseEvent(const game::Event& evt);
+
 private:
     std::vector<Ptr> m_children;
     Node* m_parent;

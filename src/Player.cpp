@@ -41,11 +41,8 @@ namespace
 
     const float friction = 0.86f;
 
-    void jump(Node& n, float dt)
-    {
-        assert(n.getCollisionBody());
-        n.getCollisionBody()->applyForce({ 0.f, -jumpForce });
-    }
+    const sf::Vector2f pickupVec(0.f, 37.f); //TODO this needs to link to player height
+    const sf::Vector2f grabVec(70.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
 }
 
 Player::Keys::Keys()
@@ -53,11 +50,14 @@ Player::Keys::Keys()
     right           (sf::Keyboard::D),
     jump            (sf::Keyboard::W),
     grab            (sf::Keyboard::Space),
+    pickUp          (sf::Keyboard::S),
     joyButtonJump   (0u),
-    joyButtonGrab   (1u){}
+    joyButtonGrab   (1u),
+    joyButtonPickUp (3u){}
 
 Player::Player(CommandStack& cs, Category::Type type)
     : m_moveForce   (0.f),
+    m_jumpForce     (jumpForce),
     m_commandStack  (cs),
     m_id            (type),
     m_grabId        (Category::GrabbedOne),
@@ -67,6 +67,7 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_canSpawn      (true),
     m_enabled       (false),
     m_leftFacing    (false),
+    m_carryingBlock (false),
     m_spawnPosition (80.f, 500.f)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
@@ -77,6 +78,7 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_keyBinds.right = sf::Keyboard::Right;
         m_keyBinds.jump = sf::Keyboard::Up;
         m_keyBinds.grab = sf::Keyboard::RShift;
+        m_keyBinds.pickUp = sf::Keyboard::Down;
 
         m_leftFacing = true;
         m_spawnPosition = { 1680.f, 500.f };
@@ -90,108 +92,23 @@ void Player::update(float dt)
 {
     if(!m_enabled) return;
 
-    //calc movement
-    m_moveForce = 0;
-    if (sf::Joystick::isConnected(m_joyId))
-    {
-        auto axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::PovX);
-        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
-        {
-            m_moveForce = maxMoveForce * (axisPos / 100.f);
-        }
-        axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::X);
-        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
-        {
-            m_moveForce = maxMoveForce * (axisPos / 100.f);
-        }
-    }
-    //else
-    {
-        if (sf::Keyboard::isKeyPressed(m_keyBinds.left))
-            m_moveForce -= maxMoveForce;
-        if (sf::Keyboard::isKeyPressed(m_keyBinds.right))
-            m_moveForce += maxMoveForce;
-    }
-    
-    if (m_moveForce != 0.f)
-    {
-        Command c;
-        c.action = [&](Node& n, float dt)
-        {
-            assert(n.getCollisionBody());
-            n.getCollisionBody()->applyForce({ m_moveForce, 0.f });
-            m_currentPosition = n.getCollisionBody()->getCentre(); //er... won't his only work when notgrabbing?
-        };
-        c.categoryMask |= m_id | m_grabId;
-        m_commandStack.push(c);
+    doMovement();
 
-        m_leftFacing = (m_moveForce < 0.f);
-    }
+    doJump();
 
-    //check for jump
-    if (sf::Keyboard::isKeyPressed(m_keyBinds.jump)
-        || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonJump))
-    {
-        if ((m_buttonMask & (1 << m_keyBinds.joyButtonJump)) == 0
-            && (m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
-        {
-            Command c;
-            c.action = jump;
-            c.categoryMask |= m_id;
-            m_commandStack.push(c);
-            m_buttonMask |= (1 << m_keyBinds.joyButtonJump);
-        }
-    }
-    else
-    {
-        m_buttonMask &= ~(1 << m_keyBinds.joyButtonJump);
-    }
+    doGrab();
 
-    //check for grab
-    if (sf::Keyboard::isKeyPressed(m_keyBinds.grab)
-        || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonGrab))
-    {
-        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
-        {
-            Command c;
-            c.categoryMask |= Category::Block;
-            c.action = [&](Node& n, float dt)
-            {
-                //ask node if it is in grabbing distance
-                sf::Vector2f offset(70.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
-                auto point = (m_leftFacing) ? m_currentPosition - offset : m_currentPosition + offset;
-                //and OR it's type with grabbed
-                //TODO allow both players to grab same box?
-                assert(n.getCollisionBody());
-                if (n.getCollisionBody()->contains(point))
-                {
-                    auto cat = n.getCategory();
-                    cat &= ~(Category::LastTouchedOne | Category::LastTouchedTwo); //make sure to remove any previous touches
-                    n.setCategory(static_cast<Category::Type>(cat | m_grabId));
-                }
-            };
+    doPickUp();
 
-            m_commandStack.push(c);
-            m_buttonMask |= (1 << m_keyBinds.joyButtonGrab);
-        }
-    }
-    else
+    //update the current position
+    Command c;
+    c.categoryMask |= m_id;
+    c.action = [&](Node& n, float dt)
     {
-        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)))
-        {
-            //send a command to all grabbed blocks to set their id as not grabbed
-            Command c;
-            c.categoryMask |= m_grabId;
-            c.action = [&](Node& n, float dt)
-            {
-                auto newCat = (n.getCategory() & ~m_grabId);
-                newCat |= m_lastTouchId; //state player was last to touch
-                n.setCategory(static_cast<Category::Type>(newCat));
-            };
-            m_commandStack.push(c);
-        }
-        m_buttonMask &= ~(1 << m_keyBinds.joyButtonGrab);  
-    }
+        m_currentPosition = n.getCollisionBody()->getCentre();
+    };
+    m_commandStack.push(c);
+
 
     //spawn a new player
     if (m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
@@ -245,6 +162,9 @@ void Player::onNotify(Subject& s, const game::Event& evt)
                 n.setCategory(static_cast<Category::Type>(newCat));
             };
             m_commandStack.push(c);
+
+            //and drop anything we were carrying
+            doDrop();
         }
         break;
     case game::Event::Player:
@@ -282,6 +202,23 @@ void Player::onNotify(Subject& s, const game::Event& evt)
                 m_commandStack.push(c);
             }
                 break;
+            case game::Event::PlayerEvent::PickedUp:
+            {
+                //we picked up a block
+                m_carryingBlock = true;
+                Command c;
+                c.categoryMask |= m_id;
+                c.action = [](Node& n, float dt)
+                {
+                    assert(n.getCollisionBody());
+                    n.getCollisionBody()->setFriction(friction * 0.75f);
+                };
+                m_commandStack.push(c);
+
+                m_jumpForce = jumpForce * 0.75f;
+            }
+                break;
+            default: break;
             }
         }
         break;
@@ -317,9 +254,218 @@ void Player::setSpawnPosition(const sf::Vector2f& position)
     m_spawnPosition = position;
 }
 
+void Player::setSize(const sf::Vector2f& size)
+{
+    m_size = size;
+}
+
 //private
 void Player::enable()
 {
     m_enabled = true;
     spawn(m_spawnPosition, *this);
+}
+
+void Player::doMovement()
+{
+    //calc movement
+    m_moveForce = 0;
+    if (sf::Joystick::isConnected(m_joyId))
+    {
+        auto axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::PovX);
+        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
+        {
+            m_moveForce = maxMoveForce * (axisPos / 100.f);
+        }
+        axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::X);
+        if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
+        {
+            m_moveForce = maxMoveForce * (axisPos / 100.f);
+        }
+    }
+    //else
+    {
+        if (sf::Keyboard::isKeyPressed(m_keyBinds.left))
+            m_moveForce -= maxMoveForce;
+        if (sf::Keyboard::isKeyPressed(m_keyBinds.right))
+            m_moveForce += maxMoveForce;
+    }
+
+    if (m_moveForce != 0.f)
+    {
+        Command c;
+        c.action = [&](Node& n, float dt)
+        {
+            assert(n.getCollisionBody());
+            n.getCollisionBody()->applyForce({ m_moveForce, 0.f });
+        };
+        c.categoryMask |= m_id | m_grabId;
+        m_commandStack.push(c);
+
+        m_leftFacing = (m_moveForce < 0.f);
+    }
+}
+
+void Player::doJump()
+{
+    //check for jump
+    if (sf::Keyboard::isKeyPressed(m_keyBinds.jump)
+        || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonJump))
+    {
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonJump)) == 0
+            && (m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
+        {
+            Command c;
+            c.action = [&](Node& n, float dt)
+            {
+                assert(n.getCollisionBody());
+                n.getCollisionBody()->applyForce({ 0.f, -m_jumpForce });
+            };
+            c.categoryMask |= m_id;
+            m_commandStack.push(c);
+            m_buttonMask |= (1 << m_keyBinds.joyButtonJump);
+        }
+    }
+    else
+    {
+        m_buttonMask &= ~(1 << m_keyBinds.joyButtonJump);
+    }
+}
+
+void Player::doGrab()
+{
+    if (m_carryingBlock) return; //can't drag when carrying
+
+    //check for grab
+    if (sf::Keyboard::isKeyPressed(m_keyBinds.grab)
+        || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonGrab))
+    {
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
+        {
+            Command c;
+            c.categoryMask |= Category::Block;
+            c.action = [&](Node& n, float dt)
+            {
+                //ask node if it is in grabbing distance               
+                auto point = (m_leftFacing) ? m_currentPosition - grabVec : m_currentPosition + grabVec;
+                //and OR it's type with grabbed
+                //TODO allow both players to grab same box?
+                assert(n.getCollisionBody());
+                if (n.getCollisionBody()->contains(point))
+                {
+                    auto cat = n.getCategory();
+                    cat &= ~(Category::LastTouchedOne | Category::LastTouchedTwo); //make sure to remove any previous touches
+                    n.setCategory(static_cast<Category::Type>(cat | m_grabId));
+                }
+            };
+
+            m_commandStack.push(c);
+            m_buttonMask |= (1 << m_keyBinds.joyButtonGrab);
+        }
+    }
+    else
+    {
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)))
+        {
+            //send a command to all grabbed blocks to set their id as not grabbed
+            Command c;
+            c.categoryMask |= m_grabId;
+            c.action = [&](Node& n, float dt)
+            {
+                auto newCat = (n.getCategory() & ~m_grabId);
+                newCat |= m_lastTouchId; //state player was last to touch
+                n.setCategory(static_cast<Category::Type>(newCat));
+            };
+            m_commandStack.push(c);
+        }
+        m_buttonMask &= ~(1 << m_keyBinds.joyButtonGrab);
+    }
+}
+
+void Player::doPickUp()
+{
+    //check for picking up / dropping block
+    if (sf::Keyboard::isKeyPressed(m_keyBinds.pickUp)
+        || sf::Joystick::isButtonPressed(m_joyId, m_keyBinds.joyButtonPickUp))
+    {
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonPickUp)) == 0)
+        {
+            if (!m_carryingBlock)
+            {
+                //try picking up
+                auto point = m_currentPosition + pickupVec;
+                Command c;
+                c.categoryMask |= Category::Block;
+                c.action = [point, this](Node& n, float dt)
+                {
+                    auto cat = n.getCategory();
+                    if (cat & (Category::GrabbedOne | Category::GrabbedTwo)) //don't pick up blocks being dragged
+                        return;
+
+                    assert(n.getCollisionBody());
+                    if (n.getCollisionBody()->contains(point))
+                    {
+                        //pick it up
+                        game::Event e;
+                        e.type = game::Event::Node;
+                        e.node.type = Category::Block;
+                        e.node.action = game::Event::NodeEvent::Despawn;
+                        auto pos = n.getCollisionBody()->getCentre();
+                        e.node.positionX = pos.x;
+                        e.node.positionY = pos.y;
+                        n.raiseEvent(e);
+                        
+                        //let everyone know player picked up block
+                        game::Event f;
+                        f.type = game::Event::Player;
+                        f.player.action = game::Event::PlayerEvent::PickedUp;
+                        f.player.playerId = this->m_id;
+                        f.player.positionX = this->m_currentPosition.x;
+                        f.player.positionY = this->m_currentPosition.y;
+                        n.raiseEvent(f);
+                    }
+                };
+                m_commandStack.push(c);
+            }
+            else
+            {
+                //drop it
+                doDrop();
+            }
+            m_buttonMask |= (1 << m_keyBinds.joyButtonPickUp);
+        }
+    }
+    else
+    {
+        m_buttonMask &= ~(1 << m_keyBinds.joyButtonPickUp);
+    }
+}
+
+void Player::doDrop()
+{
+    if (m_carryingBlock)
+    {
+        m_jumpForce = jumpForce;
+        Command c;
+        c.categoryMask |= m_id;
+        c.action = [&](Node& n, float dt)
+        {
+            assert(n.getCollisionBody());
+            n.getCollisionBody()->setFriction(friction); 
+        };
+        m_commandStack.push(c);
+
+        //spawn block
+        game::Event e;
+        e.type = game::Event::Node;
+        e.node.action = game::Event::NodeEvent::Spawn;
+        e.node.positionX = (m_leftFacing) ?
+            m_currentPosition.x - (m_size.x * 1.5f) :
+            m_currentPosition.x + (m_size.x / 2.f);
+        e.node.positionY = m_currentPosition.y;// -(m_size.y / 2.f);
+        e.node.type = Category::Block;
+        notify(*this, e);
+
+        m_carryingBlock = false;
+    }
 }

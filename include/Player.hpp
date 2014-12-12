@@ -27,6 +27,9 @@ source distribution.
 
 //responsible for parsing input and assigning the correct commands to the relevant player node
 
+#ifndef PLAYER_H_
+#define PLAYER_H_
+
 #include <CommandStack.hpp>
 #include <Observer.hpp>
 
@@ -36,7 +39,7 @@ source distribution.
 
 #include <functional>
 
-class Player final : public Observer// : private sf::NonCopyable
+class Player final : public Observer, public Subject// : private sf::NonCopyable
 {
 public:
     struct Keys
@@ -46,8 +49,10 @@ public:
         sf::Keyboard::Key right;
         sf::Keyboard::Key jump;
         sf::Keyboard::Key grab;
+        sf::Keyboard::Key pickUp;
         sf::Uint8 joyButtonJump;
         sf::Uint8 joyButtonGrab;
+        sf::Uint8 joyButtonPickUp;
     };
 
     Player(CommandStack& commandStack, Category::Type type);
@@ -66,9 +71,11 @@ public:
 
     void setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>& func);
     void setSpawnPosition(const sf::Vector2f& position);
+    void setSize(const sf::Vector2f& size);
 
 private:
     float m_moveForce;
+    float m_jumpForce;
 
     CommandStack& m_commandStack;
     Category::Type m_id, m_grabId, m_lastTouchId;
@@ -80,11 +87,21 @@ private:
     bool m_canSpawn;
     bool m_enabled;
     bool m_leftFacing;
+    bool m_carryingBlock;
 
     std::function<void(const sf::Vector2f&, Player&)> spawn;
     sf::Clock m_spawnClock;
     sf::Vector2f m_spawnPosition;
     sf::Vector2f m_currentPosition;
+    sf::Vector2f m_size;
 
     void enable();
+
+    void doMovement();
+    void doJump();
+    void doGrab();
+    void doPickUp();
+    void doDrop();
 };
+
+#endif //PLAYER_H_

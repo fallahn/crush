@@ -25,6 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#ifndef GAME_OVER_STATE_H_
+#define GAME_OVER_STATE_H_
+
 #include <State.hpp>
 
 class GameOverState final : public State
@@ -39,3 +42,5 @@ public:
 
 private:
 };
+
+#endif // GAME_OVER_STATE_H_

@@ -134,6 +134,11 @@ Category::Type CollisionWorld::Body::getParentCategory() const
         return Category::None;
 }
 
+sf::Vector2f CollisionWorld::Body::getSize() const
+{
+    return { m_aabb.width, m_aabb.height };
+}
+
 sf::Vector2f CollisionWorld::Body::getCentre() const
 {
     return m_position + m_centre;
