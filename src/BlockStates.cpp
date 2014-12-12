@@ -39,6 +39,14 @@ void BlockStateAir::update(float dt)
     auto vel = getVelocity();
     vel.x = 0.f;
     setVelocity(vel);
+
+    sf::Int32 cat = getParentCategory();
+    if (cat & (Category::CarriedOne | Category::CarriedTwo))
+    {
+        //can't carry blocks which are in the air - TODO how to unset player status?
+        cat &= ~(Category::CarriedOne | Category::CarriedTwo);
+        setParentCategory(static_cast<Category::Type>(cat));
+    }
 }
 
 void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -72,6 +80,12 @@ void BlockStateGround::update(float dt)
 
         //TODO should set this to not grabbed, but previously owned
     }
+
+    sf::Int32 cat = getParentCategory();
+    if (cat & (Category::CarriedOne | Category::CarriedTwo))
+    {
+        setState<BlockStateCarry>();
+    }
 }
 
 void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -101,6 +115,53 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             setState<BlockStateAir>();
             setParentCategory(Category::Block);
         }
+        break;
+    default: break;
+    }
+}
+//-------------------------------------------
+void BlockStateCarry::update(float dt)
+{
+    //auto vel = getVelocity();
+    //vel.y = 0.f;
+
+    //vel.x *= getFriction(); //TODO equate dt into this
+    setVelocity({});
+
+    if ((getParentCategory() & (Category::CarriedOne | Category::CarriedTwo)) == 0)
+    {
+        //no longer being carried
+        setState<BlockStateAir>();
+    }
+}
+
+void BlockStateCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    switch (other->getType())
+    {
+    case CollisionWorld::Body::Type::Block:
+        //case CollisionWorld::Body::Type::Player:
+        if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
+            && manifold.x != 0.f) //prevents shifting vertically
+        {
+            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+            setVelocity({});
+        }
+        break;
+    case CollisionWorld::Body::Type::Solid:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({});
+        break;
+    case CollisionWorld::Body::Type::Player:
+        other->applyForce(getVelocity());
+
+        //fall if play pushed block out from underneath
+        /*if (getFootSenseCount() <= 1u
+            && (manifold.y * manifold.z) < 0.f)
+        {
+            setState<BlockStateAir>();
+            setParentCategory(Category::Block);
+        }*/
         break;
     default: break;
     }

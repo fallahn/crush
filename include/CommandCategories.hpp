@@ -39,11 +39,13 @@ namespace Category
         PlayerTwo       = (1 << 1),
         Block           = (1 << 2),
         Npc             = (1 << 3),
-        GrabbedOne      = (1 << 4),
+        GrabbedOne      = (1 << 4), //for dragging
         GrabbedTwo      = (1 << 5),
         LastTouchedOne  = (1 << 6),
         LastTouchedTwo  = (1 << 7),
-        Solid           = (1 << 8)
+        Solid           = (1 << 8),
+        CarriedOne      = (1 << 9), //for carrying
+        CarriedTwo      = (1 << 10)
     };
 }
 

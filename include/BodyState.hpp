@@ -87,6 +87,14 @@ public:
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
+class BlockStateCarry final : public BodyState
+{
+public:
+    explicit BlockStateCarry(CollisionWorld::Body* b) : BodyState(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+};
+
 class SolidState final : public BodyState
 {
 public:

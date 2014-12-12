@@ -67,7 +67,6 @@ public:
        
         void applyForce(const sf::Vector2f& force);
         void setPosition(const sf::Vector2f& position);
-        void move(const sf::Vector2f& distance);
         void setGravityAmount(float amount);
         void setFriction(float friction);
         float getFriction() const;
@@ -101,6 +100,7 @@ public:
 
         void step(float dt);
         void applyGravity(const sf::Vector2f& gravity);
+        void move(const sf::Vector2f& distance);
         void destroy();
     };
     

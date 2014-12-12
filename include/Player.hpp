@@ -78,7 +78,7 @@ private:
     float m_jumpForce;
 
     CommandStack& m_commandStack;
-    Category::Type m_id, m_grabId, m_lastTouchId;
+    Category::Type m_id, m_grabId, m_lastTouchId, m_carryId;
     sf::Uint8 m_joyId;
 
     Keys m_keyBinds;
@@ -88,6 +88,7 @@ private:
     bool m_enabled;
     bool m_leftFacing;
     bool m_carryingBlock;
+    sf::Vector2f m_carryVector; //position of block relative to player when carrying
 
     std::function<void(const sf::Vector2f&, Player&)> spawn;
     sf::Clock m_spawnClock;

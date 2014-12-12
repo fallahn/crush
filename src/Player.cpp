@@ -62,6 +62,7 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_id            (type),
     m_grabId        (Category::GrabbedOne),
     m_lastTouchId   (Category::LastTouchedOne),
+    m_carryId       (Category::CarriedOne),
     m_joyId         (0u),
     m_buttonMask    (0u),
     m_canSpawn      (true),
@@ -84,6 +85,7 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_spawnPosition = { 1680.f, 500.f };
         m_grabId = Category::GrabbedTwo;
         m_lastTouchId = Category::LastTouchedTwo;
+        m_carryId = Category::CarriedTwo;
     }
 }
 
@@ -293,6 +295,8 @@ void Player::doMovement()
 
     if (m_moveForce != 0.f)
     {
+        m_leftFacing = (m_moveForce < 0.f);
+
         Command c;
         c.action = [&](Node& n, float dt)
         {
@@ -302,7 +306,14 @@ void Player::doMovement()
         c.categoryMask |= m_id | m_grabId;
         m_commandStack.push(c);
 
-        m_leftFacing = (m_moveForce < 0.f);
+        Command d;
+        d.action = [&](Node& n, float dt)
+        {
+            assert(n.getCollisionBody());
+            n.getCollisionBody()->setPosition(m_currentPosition + m_carryVector);
+        };
+        d.categoryMask |= m_carryId;
+        m_commandStack.push(d);
     }
 }
 
@@ -406,14 +417,18 @@ void Player::doPickUp()
                     if (n.getCollisionBody()->contains(point))
                     {
                         //pick it up
-                        game::Event e;
+                        /*game::Event e;
                         e.type = game::Event::Node;
                         e.node.type = Category::Block;
                         e.node.action = game::Event::NodeEvent::Despawn;
                         auto pos = n.getCollisionBody()->getCentre();
                         e.node.positionX = pos.x;
                         e.node.positionY = pos.y;
-                        n.raiseEvent(e);
+                        n.raiseEvent(e);*/
+                        
+                        auto cat = n.getCategory();
+                        cat |= (m_carryId | m_lastTouchId);
+                        n.setCategory(static_cast<Category::Type>(cat));
                         
                         //let everyone know player picked up block
                         game::Event f;
@@ -426,6 +441,10 @@ void Player::doPickUp()
                     }
                 };
                 m_commandStack.push(c);
+
+                m_carryVector = (m_leftFacing) ?
+                    sf::Vector2f(-(m_size.x * 1.5f), -(m_size.y * 0.75f)) :
+                    sf::Vector2f(m_size.x * 0.5f, -(m_size.y * 0.75f));
             }
             else
             {
@@ -455,16 +474,27 @@ void Player::doDrop()
         };
         m_commandStack.push(c);
 
-        //spawn block
-        game::Event e;
-        e.type = game::Event::Node;
-        e.node.action = game::Event::NodeEvent::Spawn;
-        e.node.positionX = (m_leftFacing) ?
-            m_currentPosition.x - (m_size.x * 1.5f) :
-            m_currentPosition.x + (m_size.x / 2.f);
-        e.node.positionY = m_currentPosition.y;// -(m_size.y / 2.f);
-        e.node.type = Category::Block;
-        notify(*this, e);
+        //release block
+        Command d;
+        d.categoryMask |= m_carryId;
+        d.action = [&](Node& n, float dt)
+        {
+            auto cat = n.getCategory();
+            cat &= ~m_carryId;
+            n.setCategory(static_cast<Category::Type>(cat));
+        };
+        m_commandStack.push(d);
+
+        ////spawn block
+        //game::Event e;
+        //e.type = game::Event::Node;
+        //e.node.action = game::Event::NodeEvent::Spawn;
+        //e.node.positionX = (m_leftFacing) ?
+        //    m_currentPosition.x - (m_size.x * 1.5f) :
+        //    m_currentPosition.x + (m_size.x / 2.f);
+        //e.node.positionY = m_currentPosition.y;// -(m_size.y / 2.f);
+        //e.node.type = Category::Block;
+        //notify(*this, e);
 
         m_carryingBlock = false;
     }

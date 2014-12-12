@@ -267,7 +267,7 @@ void NpcStateWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* o
             setVelocity({});
             //m_accumulatedTime = 0.f;
         }
-        else if (manifold.y * manifold.z > 2) //prevent dying when just clipping bottom by making sure there is some depth
+        else if (manifold.y * manifold.z > 5) //prevent dying when just clipping bottom by making sure there is some depth
         {
             //block is above, so crush
             kill();
