@@ -31,11 +31,12 @@ source distribution.
 #include <BodyState.hpp>
 
 #include <cassert>
+#include <iostream>
 
 namespace
 {
     const float sensorSize = 10.f;
-    const float defaultStrength = 60.f;
+    const float defaultStrength = 40.f;
     //TODO fix magic numbers - basically default view size with 100 unit padding
     const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
 }
@@ -49,7 +50,8 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_gravityAmount     (1.f),
     m_friction          (0.86f),
     m_health            (defaultStrength),
-    m_strength          (defaultStrength)
+    m_strength          (defaultStrength),
+    m_parent            (nullptr)
 {
     switch (type)
     {
@@ -82,6 +84,12 @@ CollisionWorld::Body::~Body()
 {
     if (m_node)
         m_node->setCollisionBody(nullptr);
+
+    if (m_parent)
+        m_parent = nullptr;
+
+    for (auto& c : m_children)
+        c.first->m_parent = nullptr;
 }
 
 //public
@@ -149,6 +157,38 @@ bool CollisionWorld::Body::contains(const sf::Vector2f& point) const
     return m_aabb.contains(point);
 }
 
+void CollisionWorld::Body::addChild(CollisionWorld::Body* b, const sf::Vector2f& relPosition)
+{
+    if (b->m_parent != this)
+    {
+        m_children[b] = relPosition;
+        if (b->m_parent)
+        {
+            b->m_parent->removeChild(b);
+        }
+        b->m_parent = this;
+    }
+
+    std::cerr << relPosition.x << ", " << relPosition.y << std::endl;
+}
+
+void CollisionWorld::Body::removeChild(CollisionWorld::Body* b)
+{
+    auto result = m_children.find(b);
+    if (result != m_children.end())
+    {
+        b->m_parent = nullptr;
+        if (b->m_node) b->setPosition(b->m_node->getWorldPosition());
+        m_children.erase(result);
+    }
+}
+
+void CollisionWorld::Body::flipChildren()
+{
+    for (auto& c : m_children)
+        c.second.x = -c.second.x;
+}
+
 //private
 void CollisionWorld::Body::step(float dt)
 {
@@ -178,6 +218,12 @@ void CollisionWorld::Body::step(float dt)
     {
         m_nextState.swap(m_state);
         m_nextState.reset();
+    }
+
+    //update all the child bodies
+    for (auto& c : m_children)
+    {
+        c.first->setPosition(getCentre() + (c.second - (getSize() / 2.f)));
     }
 
     //update strength value or kill if no health

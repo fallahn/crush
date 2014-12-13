@@ -136,8 +136,6 @@ GameState::GameState(StateStack& stack, Context context)
 
     std::function<void(const sf::Vector2f&)> sf = std::bind(&GameState::addBlock, this, std::placeholders::_1);
     m_blockController.setSpawnFunction(sf);
-    m_players[0].addObserver(m_blockController);
-    m_players[1].addObserver(m_blockController);
 
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);

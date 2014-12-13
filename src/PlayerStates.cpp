@@ -28,6 +28,8 @@ source distribution.
 #include <BodyState.hpp>
 #include <Util.hpp>
 
+#include <iostream>
+
 //------------------------------------------
 void PlayerStateAir::update(float dt)
 {
@@ -111,8 +113,8 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
     switch (other->getType())
     {
     case CollisionWorld::Body::Type::Block:
-        if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
-            && manifold.x != 0.f) //prevents shifting vertically
+        if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
+            && */manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});    
@@ -121,6 +123,8 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             //int cat = other->getParentCategory();
             //if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
                 damage(std::fabs(manifold.z * 0.4f), other);
+
+                //std::cerr << manifold.z << std::endl;
         }
         break;
     case CollisionWorld::Body::Type::Solid:

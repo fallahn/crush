@@ -68,6 +68,7 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_canSpawn      (true),
     m_enabled       (false),
     m_leftFacing    (false),
+    m_lastFacing    (false),
     m_carryingBlock (false),
     m_spawnPosition (80.f, 500.f)
 {
@@ -188,6 +189,7 @@ void Player::onNotify(Subject& s, const game::Event& evt)
                 {
                     assert(n.getCollisionBody());
                     n.getCollisionBody()->setFriction(friction);
+                    n.getCollisionBody()->addChild(blockNode->getCollisionBody(), { (m_leftFacing) ? -m_size.x : m_size.x, 0.f });
                 };
                 m_commandStack.push(c);
             }
@@ -196,10 +198,11 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             {
                 Command c;
                 c.categoryMask |= m_id;
-                c.action = [](Node& n, float dt)
+                c.action = [&](Node& n, float dt)
                 {
                     assert(n.getCollisionBody());
                     n.getCollisionBody()->setFriction(friction);
+                    n.getCollisionBody()->removeChild(dynamic_cast<Node*>(&s)->getCollisionBody());
                 };
                 m_commandStack.push(c);
             }
@@ -207,18 +210,12 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             case game::Event::PlayerEvent::PickedUp:
             {
                 //we picked up a block
-                m_carryingBlock = true;
-                Command c;
-                c.categoryMask |= m_id;
-                c.action = [](Node& n, float dt)
-                {
-                    assert(n.getCollisionBody());
-                    n.getCollisionBody()->setFriction(friction * 0.75f);
-                };
-                m_commandStack.push(c);
-
-                m_jumpForce = jumpForce * 0.75f;
+                
             }
+                break;
+            case game::Event::PlayerEvent::Dropped:
+                //something made us drop the block
+                doDrop();
                 break;
             default: break;
             }
@@ -297,23 +294,25 @@ void Player::doMovement()
     {
         m_leftFacing = (m_moveForce < 0.f);
 
+        bool flip = (m_leftFacing != m_lastFacing);
+
         Command c;
-        c.action = [&](Node& n, float dt)
+        c.action = [&, flip](Node& n, float dt)
         {
             assert(n.getCollisionBody());
             n.getCollisionBody()->applyForce({ m_moveForce, 0.f });
+
+            //flip carried blocks
+            if (m_carryingBlock && flip)
+            {
+                n.getCollisionBody()->flipChildren();
+            }
+
         };
         c.categoryMask |= m_id | m_grabId;
         m_commandStack.push(c);
 
-        Command d;
-        d.action = [&](Node& n, float dt)
-        {
-            assert(n.getCollisionBody());
-            n.getCollisionBody()->setPosition(m_currentPosition + m_carryVector);
-        };
-        d.categoryMask |= m_carryId;
-        m_commandStack.push(d);
+        m_lastFacing = m_leftFacing;
     }
 }
 
@@ -403,12 +402,17 @@ void Player::doPickUp()
         {
             if (!m_carryingBlock)
             {
-                //try picking up
-                auto point = m_currentPosition + pickupVec;
+                //try picking up                
+                m_carryVector = (m_leftFacing) ?
+                    sf::Vector2f(-(m_size.x), -(m_size.y * 0.25f)) :
+                    sf::Vector2f(m_size.x , -(m_size.y * 0.25f));
+
                 Command c;
                 c.categoryMask |= Category::Block;
-                c.action = [point, this](Node& n, float dt)
+                c.action = [&](Node& n, float dt)
                 {
+                    auto point = (m_leftFacing) ? m_currentPosition - grabVec : m_currentPosition + grabVec;
+                    
                     auto cat = n.getCategory();
                     if (cat & (Category::GrabbedOne | Category::GrabbedTwo)) //don't pick up blocks being dragged
                         return;
@@ -416,16 +420,7 @@ void Player::doPickUp()
                     assert(n.getCollisionBody());
                     if (n.getCollisionBody()->contains(point))
                     {
-                        //pick it up
-                        /*game::Event e;
-                        e.type = game::Event::Node;
-                        e.node.type = Category::Block;
-                        e.node.action = game::Event::NodeEvent::Despawn;
-                        auto pos = n.getCollisionBody()->getCentre();
-                        e.node.positionX = pos.x;
-                        e.node.positionY = pos.y;
-                        n.raiseEvent(e);*/
-                        
+                        //pick it up                     
                         auto cat = n.getCategory();
                         cat |= (m_carryId | m_lastTouchId);
                         n.setCategory(static_cast<Category::Type>(cat));
@@ -434,17 +429,27 @@ void Player::doPickUp()
                         game::Event f;
                         f.type = game::Event::Player;
                         f.player.action = game::Event::PlayerEvent::PickedUp;
-                        f.player.playerId = this->m_id;
-                        f.player.positionX = this->m_currentPosition.x;
-                        f.player.positionY = this->m_currentPosition.y;
+                        f.player.playerId = m_id;
+                        f.player.positionX = m_currentPosition.x;
+                        f.player.positionY = m_currentPosition.y;
                         n.raiseEvent(f);
+
+                        //place a command to the player node to add this body as a child
+                        Command d;
+                        d.categoryMask |= m_id;
+                        d.action = [&, this](Node& on, float dt)
+                        {
+                            assert(on.getCollisionBody());
+                            on.getCollisionBody()->addChild(n.getCollisionBody(), this->m_carryVector);
+                            on.getCollisionBody()->setFriction(friction * 0.75f);
+                        };
+                        m_commandStack.push(d);
                     }
                 };
-                m_commandStack.push(c);
+                m_commandStack.push(c); 
 
-                m_carryVector = (m_leftFacing) ?
-                    sf::Vector2f(-(m_size.x * 1.5f), -(m_size.y * 0.75f)) :
-                    sf::Vector2f(m_size.x * 0.5f, -(m_size.y * 0.75f));
+                m_carryingBlock = true;
+                m_jumpForce = jumpForce * 0.75f;
             }
             else
             {
@@ -465,36 +470,30 @@ void Player::doDrop()
     if (m_carryingBlock)
     {
         m_jumpForce = jumpForce;
-        Command c;
-        c.categoryMask |= m_id;
-        c.action = [&](Node& n, float dt)
-        {
-            assert(n.getCollisionBody());
-            n.getCollisionBody()->setFriction(friction); 
-        };
-        m_commandStack.push(c);
-
+        
         //release block
-        Command d;
-        d.categoryMask |= m_carryId;
-        d.action = [&](Node& n, float dt)
+        Command c;
+        c.categoryMask |= m_carryId;
+        c.action = [&](Node& n, float dt)
         {
             auto cat = n.getCategory();
             cat &= ~m_carryId;
             n.setCategory(static_cast<Category::Type>(cat));
-        };
-        m_commandStack.push(d);
 
-        ////spawn block
-        //game::Event e;
-        //e.type = game::Event::Node;
-        //e.node.action = game::Event::NodeEvent::Spawn;
-        //e.node.positionX = (m_leftFacing) ?
-        //    m_currentPosition.x - (m_size.x * 1.5f) :
-        //    m_currentPosition.x + (m_size.x / 2.f);
-        //e.node.positionY = m_currentPosition.y;// -(m_size.y / 2.f);
-        //e.node.type = Category::Block;
-        //notify(*this, e);
+            //command player to return friction
+            //and remove child
+            Command d;
+            d.categoryMask |= m_id;
+            d.action = [&](Node& on, float dt)
+            {
+                assert(on.getCollisionBody());
+                on.getCollisionBody()->setFriction(friction);
+                on.getCollisionBody()->removeChild(n.getCollisionBody());
+            };
+            m_commandStack.push(d);
+
+        };
+        m_commandStack.push(c);
 
         m_carryingBlock = false;
     }

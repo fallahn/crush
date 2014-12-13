@@ -276,13 +276,24 @@ void Node::onNotify(Subject& s, const game::Event& evt)
         break;
     case game::Event::Player:
     {
-        game::Event e = evt;
-        e.player.playerId = m_category;
-        assert(m_collisionBody);
-        auto pos = m_collisionBody->getCentre();
-        e.player.positionX = pos.x;
-        e.player.positionY = pos.y;
-        notify(*this, e);
+        switch (evt.player.action)
+        {
+        default:
+        {
+            game::Event e = evt;
+            e.player.playerId = m_category;
+            assert(m_collisionBody);
+            auto pos = m_collisionBody->getCentre();
+            e.player.positionX = pos.x;
+            e.player.positionY = pos.y;
+            notify(*this, e);
+        }
+        break;
+        case game::Event::PlayerEvent::Dropped:
+            //this case come from a block body, so just pass on up
+            notify(*this, evt);
+            break;
+        }
     }
         break;
     default: break;

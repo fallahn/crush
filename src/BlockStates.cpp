@@ -43,9 +43,14 @@ void BlockStateAir::update(float dt)
     sf::Int32 cat = getParentCategory();
     if (cat & (Category::CarriedOne | Category::CarriedTwo))
     {
-        //can't carry blocks which are in the air - TODO how to unset player status?
-        cat &= ~(Category::CarriedOne | Category::CarriedTwo);
-        setParentCategory(static_cast<Category::Type>(cat));
+        //can't carry blocks which are in the air 
+        game::Event e;
+        e.type = game::Event::Player;
+        e.player.action = game::Event::PlayerEvent::Dropped;
+        e.player.playerId = (cat & (Category::CarriedOne)) ? Category::PlayerOne : Category::PlayerTwo;
+        e.player.positionX = 0.f;
+        e.player.positionY = 0.f;
+        raiseEvent(e);
     }
 }
 
@@ -93,9 +98,8 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     switch (other->getType())
     {
     case CollisionWorld::Body::Type::Block:
-    //case CollisionWorld::Body::Type::Player:
-        if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
-            && manifold.x != 0.f) //prevents shifting vertically
+        if ((/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
+            &&*/ manifold.x != 0.f)) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
@@ -108,7 +112,7 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     case CollisionWorld::Body::Type::Player:
         other->applyForce(getVelocity());
 
-        //fall if play pushed block out from underneath
+        //fall ifer play pushed block out from underneath
         if (getFootSenseCount() <= 1u
             && (manifold.y * manifold.z) < 0.f)
         {
@@ -122,10 +126,6 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 //-------------------------------------------
 void BlockStateCarry::update(float dt)
 {
-    //auto vel = getVelocity();
-    //vel.y = 0.f;
-
-    //vel.x *= getFriction(); //TODO equate dt into this
     setVelocity({});
 
     if ((getParentCategory() & (Category::CarriedOne | Category::CarriedTwo)) == 0)
@@ -140,20 +140,23 @@ void BlockStateCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
     switch (other->getType())
     {
     case CollisionWorld::Body::Type::Block:
-        //case CollisionWorld::Body::Type::Player:
-        if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
-            && manifold.x != 0.f) //prevents shifting vertically
+        //if block above then drop block by raising player drop event
+        if (manifold.y != 0)//(manifold.y * manifold.z) > 0.f)
         {
-            move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            setVelocity({});
+            game::Event e;
+            e.type = game::Event::Player;
+            e.player.action = game::Event::PlayerEvent::Dropped;
+            e.player.playerId = (getParentCategory() & (Category::CarriedOne)) ? Category::PlayerOne : Category::PlayerTwo;
+            e.player.positionX = other->getCentre().x;
+            e.player.positionY = other->getCentre().y;
+            raiseEvent(e);
         }
-        break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
         break;
     case CollisionWorld::Body::Type::Player:
-        other->applyForce(getVelocity());
+        //other->applyForce(getVelocity());
 
         //fall if play pushed block out from underneath
         /*if (getFootSenseCount() <= 1u

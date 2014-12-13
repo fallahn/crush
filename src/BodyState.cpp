@@ -54,6 +54,11 @@ void BodyState::setVelocity(const sf::Vector2f& vel)
 void BodyState::move(const sf::Vector2f& amount)
 {
     m_body->move(amount);
+    if (m_body->m_parent)
+    {
+        m_body->m_parent->move(amount);
+        m_body->m_parent->m_velocity = {};
+    }
 }
 
 sf::Uint16 BodyState::getFootSenseCount() const

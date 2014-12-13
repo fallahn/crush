@@ -40,6 +40,7 @@ source distribution.
 #include <memory>
 #include <set>
 #include <vector>
+#include <map>
 
 class Node;
 class BodyState;
@@ -78,6 +79,10 @@ public:
         sf::Vector2f getCentre() const; //centre of body in world coordinates
         bool contains(const sf::Vector2f& point) const;
         
+        void addChild(Body* b, const sf::Vector2f& relPosition);
+        void removeChild(Body* b);
+        void flipChildren();
+
     private:
         Type m_type;
         StatePtr m_state;
@@ -97,6 +102,9 @@ public:
         float m_friction;
         float m_health;
         float m_strength;
+
+        std::map<Body*, sf::Vector2f> m_children;
+        Body* m_parent;
 
         void step(float dt);
         void applyGravity(const sf::Vector2f& gravity);

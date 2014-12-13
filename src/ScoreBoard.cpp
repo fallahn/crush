@@ -32,7 +32,8 @@ source distribution.
 #include <SFML/Graphics/Text.hpp>
 
 #include <sstream>
-#include <assert.h>
+#include <cassert>
+#include <iostream>
 
 namespace
 {
@@ -98,6 +99,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 break;
             case Category::Npc:
                 m_deadNpcs++;
+                std::cout << "Dead NPCs: " << (int)m_deadNpcs << std::endl;
                 if (m_maxNpcs == m_deadNpcs)
                 {
                     //game over, all dead

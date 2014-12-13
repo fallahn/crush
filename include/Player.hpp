@@ -39,7 +39,7 @@ source distribution.
 
 #include <functional>
 
-class Player final : public Observer, public Subject// : private sf::NonCopyable
+class Player final : public Observer// : private sf::NonCopyable
 {
 public:
     struct Keys
@@ -87,6 +87,7 @@ private:
     bool m_canSpawn;
     bool m_enabled;
     bool m_leftFacing;
+    bool m_lastFacing;
     bool m_carryingBlock;
     sf::Vector2f m_carryVector; //position of block relative to player when carrying
 
