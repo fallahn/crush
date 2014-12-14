@@ -58,6 +58,7 @@ protected:
     }
 
     sf::Uint16 getFootSenseCount() const;
+    sf::Uint32 getFootSenseMask() const;
     float getFriction() const;
     Category::Type getParentCategory() const;
     void setParentCategory(Category::Type type);

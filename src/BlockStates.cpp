@@ -126,6 +126,9 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 //-------------------------------------------
 void BlockStateCarry::update(float dt)
 {
+    //auto vel = getVelocity();
+    //vel.y = 0.f; //cancel gravity
+    //setVelocity(vel);
     setVelocity({});
 
     if ((getParentCategory() & (Category::CarriedOne | Category::CarriedTwo)) == 0)

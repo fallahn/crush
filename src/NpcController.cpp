@@ -78,7 +78,6 @@ void NpcController::onNotify(Subject& s, const game::Event& evt)
             case game::Event::NodeEvent::Despawn:
                 m_npcSpawnCount++;
                 m_spawnClock.restart();
-                std::cout << "NPC Spawn count: " << (int)m_npcSpawnCount << std::endl;
                 break;
             case game::Event::NodeEvent::Spawn:
                 //spawn({ Util::Random::value(240.f, 1580.f), -40.f });          
@@ -138,8 +137,6 @@ void NpcController::update(float dt)
         m_npcSpawnCount--;
         m_spawnClock.restart();
         spawn({ Util::Random::value(300.f, 1200.f), -40.f });
-
-        std::cout << "NPC Spawn count: " << (int)m_npcSpawnCount << std::endl;
     }
 }
 

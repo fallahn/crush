@@ -67,6 +67,11 @@ sf::Uint16 BodyState::getFootSenseCount() const
     return m_body->m_footSenseCount;
 }
 
+sf::Uint32 BodyState::getFootSenseMask() const
+{
+    return m_body->m_footSenseMask;
+}
+
 float BodyState::getFriction() const
 {
     return m_body->m_friction;
@@ -86,8 +91,6 @@ void BodyState::setParentCategory(Category::Type type)
 
 void BodyState::kill()
 {
-    std::cout << "Destroyed by kill command" << std::endl;
-
     m_body->destroy();
 }
 

@@ -40,7 +40,6 @@ namespace
     //TODO fix magic numbers - basically default view size with 100 unit padding
     const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
 
-    int npcCount = 0;
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
@@ -49,6 +48,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_node              (nullptr),
     m_aabb              ({}, size),
     m_footSenseCount    (0u),
+    m_footSenseMask     (0u),
     m_gravityAmount     (1.f),
     m_friction          (0.86f),
     m_health            (defaultStrength),
@@ -66,7 +66,6 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         m_state = std::make_unique<NpcStateAir>(this);
         m_gravityAmount = 0.15f;
         m_strength = 70.f;
-        std::cout << "NPC bodies: " << ++npcCount << std::endl;
         break;
     case Type::Player:
         m_state = std::make_unique<PlayerStateAir>(this);

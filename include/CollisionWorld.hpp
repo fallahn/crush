@@ -55,12 +55,12 @@ public:
     public:
         typedef std::unique_ptr<Body> Ptr;
         typedef std::unique_ptr<BodyState> StatePtr;
-        enum class Type
+        enum Type
         {
-            Block,
-            Solid, //ie the ground
-            Player,
-            Npc
+            Block  = (1 << 0),
+            Solid  = (1 << 1), //ie the ground
+            Player = (1 << 2),
+            Npc    = (1 << 3)
         };
 
         Body(Type type, const sf::Vector2f& size);
@@ -97,6 +97,7 @@ public:
 
         sf::FloatRect m_footSensor;
         sf::Uint16 m_footSenseCount;
+        sf::Uint32 m_footSenseMask;
 
         float m_gravityAmount;
         float m_friction;

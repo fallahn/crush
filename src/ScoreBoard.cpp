@@ -27,6 +27,7 @@ source distribution.
 
 #include <ScoreBoard.hpp>
 #include <Game.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -39,6 +40,7 @@ namespace
 {
     sf::Text playerOneText;
     sf::Text playerTwoText;
+    sf::Text npcText;
 
     const sf::Uint16 npcPoints = 50; //points for killing npc
     const sf::Uint16 playerPoints = 100; //points for killing other player
@@ -66,6 +68,8 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     playerTwoText.setFont(*playerOneText.getFont());
     playerTwoText.setString("Press Start");
     playerTwoText.setPosition({ 1400.f, 10.f });
+
+    npcText.setFont(*playerOneText.getFont());
 }
 
 //public
@@ -99,7 +103,6 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 break;
             case Category::Npc:
                 m_deadNpcs++;
-                std::cout << "Dead NPCs: " << (int)m_deadNpcs << std::endl;
                 if (m_maxNpcs == m_deadNpcs)
                 {
                     //game over, all dead
@@ -120,6 +123,8 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             {
             case Category::Npc:
                 m_spawnedNpcs++;
+                updateText(Category::Npc);
+
                 if (m_spawnedNpcs == m_maxNpcs)
                 {
                     //stop spawning
@@ -254,6 +259,7 @@ void ScoreBoard::enablePlayer(Category::Type player)
 void ScoreBoard::setMaxNpcs(sf::Uint8 count)
 {
     m_maxNpcs = count;
+    updateText(Category::Npc);
 }
 
 //private
@@ -274,7 +280,7 @@ void ScoreBoard::updateText(Category::Type type)
         }
         
     }
-    else
+    else if (type == Category::PlayerTwo)
     {
         if (m_playerTwoLives >= 0)
         {
@@ -286,6 +292,13 @@ void ScoreBoard::updateText(Category::Type type)
             ss << "GAME OVER    Score: " << m_playerTwoScore;
             playerTwoText.setString(ss.str());
         }
+    }
+    else if (type == Category::Npc)
+    {
+        ss << "Enemies Remaining: " << (m_maxNpcs - m_spawnedNpcs) << std::endl;
+        npcText.setString(ss.str());
+        Util::Position::centreOrigin(npcText);
+        npcText.setPosition(m_context.defaultView.getCenter() + sf::Vector2f(0.f, 525.f));
     }
 
     if (m_playerOneLives < 0 && m_playerTwoLives < 0)
@@ -316,4 +329,5 @@ void ScoreBoard::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     m_context.renderWindow.draw(playerOneText);
     m_context.renderWindow.draw(playerTwoText);
+    m_context.renderWindow.draw(npcText);
 }

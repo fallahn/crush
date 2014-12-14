@@ -59,6 +59,7 @@ void CollisionWorld::step(float dt)
     for (const auto& poA : m_bodies)
     {
         poA->m_footSenseCount = 0u;
+        poA->m_footSenseMask = 0u;
         for (const auto& poB : m_bodies)
         {           
             if (poA.get() != poB.get())
@@ -75,6 +76,7 @@ void CollisionWorld::step(float dt)
                 if (poA->m_footSensor.intersects(poB->m_aabb))
                 {
                     poA->m_footSenseCount++;
+                    poA->m_footSenseMask |= poB->m_type;
                 }
             }
         }
