@@ -29,6 +29,7 @@ source distribution.
 #include <Node.hpp>
 
 #include <cassert>
+#include <iostream>
 
 BodyState::BodyState(CollisionWorld::Body* b)
     : m_body(b)
@@ -85,6 +86,8 @@ void BodyState::setParentCategory(Category::Type type)
 
 void BodyState::kill()
 {
+    std::cout << "Destroyed by kill command" << std::endl;
+
     m_body->destroy();
 }
 
@@ -96,9 +99,7 @@ void BodyState::damage(float amount, CollisionWorld::Body* damager)
     if (m_body->m_health <= 0)
     {
         //TODO this event sometimes gets raised twice because the
-        //body is killed by two other bodies intersecting it. Currently
-        //this is kludged in Scene.cpp removeChild(), but really needs
-        //fixing to prevent nodes being lised twice for deletion
+        //body is killed by two other bodies intersecting it.
         game::Event e;
         e.node.action = game::Event::NodeEvent::KilledNode;
         e.node.type = damager->getParentCategory();

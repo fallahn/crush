@@ -55,7 +55,7 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_playerTwoScore    (0u),
     m_playerOneExtinct  (false),
     m_playerTwoExtinct  (false),
-    m_maxNpcs           (12u),
+    m_maxNpcs           (2u),
     m_spawnedNpcs       (0u),
     m_deadNpcs          (0u)
 {

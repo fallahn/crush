@@ -39,6 +39,8 @@ namespace
     const float defaultStrength = 40.f;
     //TODO fix magic numbers - basically default view size with 100 unit padding
     const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
+
+    int npcCount = 0;
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
@@ -51,7 +53,8 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_friction          (0.86f),
     m_health            (defaultStrength),
     m_strength          (defaultStrength),
-    m_parent            (nullptr)
+    m_parent            (nullptr),
+    m_dead              (false)
 {
     switch (type)
     {
@@ -63,6 +66,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         m_state = std::make_unique<NpcStateAir>(this);
         m_gravityAmount = 0.15f;
         m_strength = 70.f;
+        std::cout << "NPC bodies: " << ++npcCount << std::endl;
         break;
     case Type::Player:
         m_state = std::make_unique<PlayerStateAir>(this);
@@ -82,14 +86,17 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
 
 CollisionWorld::Body::~Body()
 {
-    if (m_node)
-        m_node->setCollisionBody(nullptr);
+    for (auto& c : m_children)
+        c.first->m_parent = nullptr; 
 
     if (m_parent)
+    {
+        m_parent->removeChild(this);
         m_parent = nullptr;
-
-    for (auto& c : m_children)
-        c.first->m_parent = nullptr;
+    }
+    
+    if (m_node)
+        m_node->setCollisionBody(nullptr);
 }
 
 //public
@@ -169,7 +176,7 @@ void CollisionWorld::Body::addChild(CollisionWorld::Body* b, const sf::Vector2f&
         b->m_parent = this;
     }
 
-    std::cerr << relPosition.x << ", " << relPosition.y << std::endl;
+    //std::cerr << relPosition.x << ", " << relPosition.y << std::endl;
 }
 
 void CollisionWorld::Body::removeChild(CollisionWorld::Body* b)
@@ -255,9 +262,16 @@ void CollisionWorld::Body::applyGravity(const sf::Vector2f& gravity)
 
 void CollisionWorld::Body::destroy()
 {
-    game::Event evt;
-    evt.type = game::Event::Node;
-    evt.node.type = Category::None;
-    evt.node.action = game::Event::NodeEvent::Despawn;
-    notify(*this, evt);
+    //this could possible get called twice on the same body
+    //from both being crushed, and losing all health
+    if (!m_dead)
+    {
+        game::Event evt;
+        evt.type = game::Event::Node;
+        evt.node.type = Category::None;
+        evt.node.action = game::Event::NodeEvent::Despawn;
+        notify(*this, evt);
+        
+        m_dead = true;
+    }
 }

@@ -172,7 +172,7 @@ void NpcStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
             setVelocity({});
             m_accumulatedTime = 0.f;
         }
-        else if (manifold.y * manifold.z > 0)
+        else if (manifold.y * manifold.z > 6)
         {
             //block is above, so crush
             kill();

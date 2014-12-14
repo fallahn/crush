@@ -67,15 +67,13 @@ Node::Ptr Scene::removeNode(Node& node)
         return (p.get() == &node);
     });
 
-    if (result != m_children.end())
+    assert(result != m_children.end());
     {
         Node::Ptr found = std::move(*result);
         found->setScene(nullptr);
         m_children.erase(result);
         return found;
     }
-    else //TODO hmm.. kludgy kludgy? See BodyState::damage (approx line 93, BodyState.cpp)
-        return nullptr;
 }
 
 void Scene::setActiveCamera(Camera* camera)
@@ -121,7 +119,7 @@ void Scene::onNotify(Subject& s, const game::Event& evt)
     {
     case game::Event::Node:
         if (evt.node.action == game::Event::NodeEvent::Despawn)
-            m_deletedList.push_back(dynamic_cast<Node*>(&s)); //HAH! ok...
+            m_deletedList.insert(dynamic_cast<Node*>(&s)); //HAH! ok...
         break;
     default: break;
     }
@@ -137,6 +135,7 @@ void Scene::flush()
         m_deletedList.clear();
     }
 }
+
 
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const

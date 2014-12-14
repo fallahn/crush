@@ -106,6 +106,8 @@ public:
         std::map<Body*, sf::Vector2f> m_children;
         Body* m_parent;
 
+        bool m_dead;
+
         void step(float dt);
         void applyGravity(const sf::Vector2f& gravity);
         void move(const sf::Vector2f& distance);

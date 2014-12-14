@@ -32,7 +32,7 @@ source distribution.
 
 #include <Node.hpp>
 
-#include <list>
+#include <set>
 
 class Scene final : public sf::Drawable, private sf::NonCopyable, public Observer, public Subject
 {
@@ -60,7 +60,8 @@ private:
     std::vector<Node::Ptr> m_children;
     Camera* m_activeCamera;
 
-    std::list<Node*> m_deletedList;
+    //we want to make sure each node is only entered once
+    std::set<Node*> m_deletedList;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };

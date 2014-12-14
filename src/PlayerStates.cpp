@@ -65,6 +65,11 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
         {
             setVelocity({ -vel.x, vel.y });
         }
+        else if (manifold.y * manifold.z < 0)
+        {
+            //bounce off players below
+            setVelocity({ vel.x, -vel.y * getFriction() });
+        }
     }
         break;
     case CollisionWorld::Body::Type::Npc:
@@ -119,11 +124,14 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});    
         }
-        {//sometimes this means we can pass through blocks?
-            //int cat = other->getParentCategory();
-            //if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
-                damage(std::fabs(manifold.z * 0.4f), other);
-
+        {
+            int cat = other->getParentCategory();
+            if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0) //don't take damage from blocks being carried
+                damage(std::fabs(manifold.z * 0.3f), other);
+            else
+            {
+                //drop block?
+            }
                 //std::cerr << manifold.z << std::endl;
         }
         break;
@@ -141,19 +149,19 @@ void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
         }
-        else if (manifold.y * manifold.z > 0.f)
-        {
-            //else squish when from above
-            kill();
+        //else if (manifold.y * manifold.z > 0.f)
+        //{
+        //    //else squish when from above
+        //    kill();
 
-            //raise event to say player killed us
-            game::Event e;
-            e.node.action = game::Event::NodeEvent::KilledNode;
-            e.node.type = other->getParentCategory();
-            e.node.target = getParentCategory();
-            e.type = game::Event::Node;
-            raiseEvent(e, other); //this should reference the other body as the sender not the NPC
-        }
+        //    //raise event to say player killed us
+        //    game::Event e;
+        //    e.node.action = game::Event::NodeEvent::KilledNode;
+        //    e.node.type = other->getParentCategory();
+        //    e.node.target = getParentCategory();
+        //    e.type = game::Event::Node;
+        //    raiseEvent(e, other); //this should reference the other body as the sender not the NPC
+        //}
         break;
     case CollisionWorld::Body::Type::Npc:
         //always die

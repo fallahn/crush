@@ -38,7 +38,7 @@ namespace
         auto rn = Util::Random::value(1, 4);
         if (rn == 1)
         {
-            auto rf = Util::Random::value(600.f, 1000.f);
+            auto rf = Util::Random::value(400.f, 500.f);
             rn = Util::Random::value(0, 1);
             if (rn == 1) rf = -rf;
 
@@ -78,7 +78,7 @@ void NpcController::onNotify(Subject& s, const game::Event& evt)
             case game::Event::NodeEvent::Despawn:
                 m_npcSpawnCount++;
                 m_spawnClock.restart();
-                std::cout << (int)m_npcSpawnCount << std::endl;
+                std::cout << "NPC Spawn count: " << (int)m_npcSpawnCount << std::endl;
                 break;
             case game::Event::NodeEvent::Spawn:
                 //spawn({ Util::Random::value(240.f, 1580.f), -40.f });          
@@ -139,7 +139,7 @@ void NpcController::update(float dt)
         m_spawnClock.restart();
         spawn({ Util::Random::value(300.f, 1200.f), -40.f });
 
-        std::cout << (int)m_npcSpawnCount << std::endl;
+        std::cout << "NPC Spawn count: " << (int)m_npcSpawnCount << std::endl;
     }
 }
 

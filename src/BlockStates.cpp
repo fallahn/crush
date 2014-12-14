@@ -156,15 +156,9 @@ void BlockStateCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         setVelocity({});
         break;
     case CollisionWorld::Body::Type::Player:
-        //other->applyForce(getVelocity());
-
-        //fall if play pushed block out from underneath
-        /*if (getFootSenseCount() <= 1u
-            && (manifold.y * manifold.z) < 0.f)
-        {
-            setState<BlockStateAir>();
-            setParentCategory(Category::Block);
-        }*/
+    case CollisionWorld::Body::Type::Npc:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({});
         break;
     default: break;
     }
