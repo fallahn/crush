@@ -25,42 +25,44 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef GAME_STATE_H_
-#define GAME_STATE_H_
+//defines behaviour of NPC bodies
 
-#include <State.hpp>
-#include <Scene.hpp>
-#include <CollisionWorld.hpp>
-#include <Player.hpp>
-#include <NpcController.hpp>
-#include <ScoreBoard.hpp>
-#include <ParticleController.hpp>
-#include <MapController.hpp>
+#ifndef NPC_BEHAVIOUR_H_
+#define NPC_BEHAVIOUR_H_
 
-class GameState final : public State
+#include <BodyBehaviour.hpp>
+
+class NpcBehaviourAir final : public BodyBehaviour
 {
 public:
-    GameState(StateStack& stack, Context context);
-    ~GameState() = default;
-
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
-
-private:
-
-    Scene m_scene;
-    CommandStack m_commandStack;
-    CollisionWorld m_collisionWorld;
-    std::vector<Player> m_players;
-    NpcController m_npcController;
-    ScoreBoard m_scoreBoard;
-    ParticleController m_particleController;
-    MapController m_mapController;
-
-    void addBlock(const sf::Vector2f& position);
-    void addPlayer(const sf::Vector2f& position, Player& player);
-    void addNpc(const sf::Vector2f& position);
+    explicit NpcBehaviourAir(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
-#endif //GAME_STATE_H_
+class NpcBehaviourGround final : public BodyBehaviour
+{
+public:
+    explicit NpcBehaviourGround(CollisionWorld::Body* b);
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    float m_changeDelay;
+    float m_accumulatedTime;
+};
+
+class NpcBehaviourWalk final : public BodyBehaviour
+{
+public:
+    explicit NpcBehaviourWalk(CollisionWorld::Body* b);
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    float m_changeDelay;
+    float m_accumulatedTime;
+    float m_moveForce;
+};
+
+#endif //NPC_BEHAVIOUR_H_

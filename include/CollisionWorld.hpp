@@ -43,7 +43,7 @@ source distribution.
 #include <map>
 
 class Node;
-class BodyState;
+class BodyBehaviour;
 class CollisionWorld final : sf::NonCopyable
 {
 public:
@@ -51,16 +51,17 @@ public:
     {
         friend class Node;
         friend class CollisionWorld;
-        friend class BodyState;
+        friend class BodyBehaviour;
     public:
         typedef std::unique_ptr<Body> Ptr;
-        typedef std::unique_ptr<BodyState> StatePtr;
+        typedef std::unique_ptr<BodyBehaviour> BehaviourPtr;
         enum Type
         {
             Block  = (1 << 0),
             Solid  = (1 << 1), //ie the ground
             Player = (1 << 2),
-            Npc    = (1 << 3)
+            Npc    = (1 << 3),
+            Item   = (1 << 4)
         };
 
         Body(Type type, const sf::Vector2f& size);
@@ -85,8 +86,8 @@ public:
 
     private:
         Type m_type;
-        StatePtr m_state;
-        StatePtr m_nextState;
+        BehaviourPtr m_behaviour;
+        BehaviourPtr m_nextBehaviour;
        
         sf::Vector2f m_velocity;
         sf::Vector2f m_position;

@@ -28,7 +28,7 @@ source distribution.
 #include <GameState.hpp>
 #include <Game.hpp>
 #include <DebugShape.hpp>
-#include <BodyState.hpp>
+#include <BodyBehaviour.hpp>
 #include <Util.hpp>
 #include <Particles.hpp>
 #include <Map.hpp>
@@ -64,7 +64,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_npcController     (m_commandStack),
     m_scoreBoard        (stack, context),
     m_particleController(textureResource),
-    m_blockController   (m_commandStack)
+    m_mapController     (m_commandStack)
 {
     //build world
     getContext().renderWindow.setTitle("Game Screen");
@@ -133,9 +133,6 @@ GameState::GameState(StateStack& stack, Context context)
 
     std::function<void(const sf::Vector2f&)> f = std::bind(&GameState::addNpc, this, std::placeholders::_1);
     m_npcController.setSpawnFunction(f);
-
-    std::function<void(const sf::Vector2f&)> sf = std::bind(&GameState::addBlock, this, std::placeholders::_1);
-    m_blockController.setSpawnFunction(sf);
 
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);

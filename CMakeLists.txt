@@ -43,9 +43,8 @@ link_libraries(
 add_executable(
 	CRUSH src/main.cpp
 	src/Affectors.cpp
-	src/BlockController.cpp
-	src/BlockStates.cpp
-	src/BodyState.cpp
+	src/BlockBehaviour.cpp
+	src/BodyBehaviour.cpp
 	src/Camera.cpp
 	src/CollisionBody.cpp
 	src/CollisionWorld.cpp
@@ -56,15 +55,16 @@ add_executable(
 	src/GameState.cpp
 	src/GameOverState.cpp
 	src/Map.cpp
+	src/MapController.cpp
 	src/MenuState.cpp
 	src/Node.cpp
+	src/NpcBehaviour.cpp	
 	src/NpcController.cpp
-	src/NpcStates.cpp
 	src/ParticleController.cpp
 	src/Particles.cpp
 	src/PauseState.cpp
 	src/Player.cpp
-	src/PlayerStates.cpp
+	src/PlayerBehaviour.cpp
 	src/Scene.cpp
 	src/ScoreBoard.cpp
 	src/State.cpp

@@ -25,10 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//controls spawning of solid / block items in world
+//controls spawning of solid / block / collectable items in world
 
-#ifndef BLOCK_CONTROLLER_H_
-#define BLOCK_CONTROLLER_H_
+#ifndef MAP_CONTROLLER_H_
+#define MAP_CONTROLLER_H_
 
 #include <Observer.hpp>
 #include <CommandStack.hpp>
@@ -38,20 +38,21 @@ source distribution.
 
 #include <functional>
 
-class BlockController final : public Observer, private sf::NonCopyable
+class Map;
+class MapController final : public Observer, private sf::NonCopyable
 {
 public:
-    explicit BlockController(CommandStack& cs);
-    ~BlockController() = default;
+    explicit MapController(CommandStack& cs);
+    ~MapController() = default;
 
     void onNotify(Subject& s, const game::Event& e) override;
+    void setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func);
 
-    void setSpawnFunction(std::function<void(const sf::Vector2f&)>& func);
-
+    void loadMap(const Map& map);
 private:
     CommandStack& m_commandStack;
 
-    std::function<void(const sf::Vector2f&)> spawn;
+    std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> spawn;
 };
 
-#endif //BLOCK_CONTROLLER_H_
+#endif //MAP_CONTROLLER_H_

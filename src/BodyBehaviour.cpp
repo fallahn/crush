@@ -25,34 +25,34 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <BodyState.hpp>
+#include <BodyBehaviour.hpp>
 #include <Node.hpp>
 
 #include <cassert>
 #include <iostream>
 
-BodyState::BodyState(CollisionWorld::Body* b)
+BodyBehaviour::BodyBehaviour(CollisionWorld::Body* b)
     : m_body(b)
 {
     assert(b);
 }
 
-CollisionWorld::Body* BodyState::getBody() const
+CollisionWorld::Body* BodyBehaviour::getBody() const
 {
     return m_body;
 }
 
-const sf::Vector2f& BodyState::getVelocity() const
+const sf::Vector2f& BodyBehaviour::getVelocity() const
 {
     return m_body->m_velocity;
 }
 
-void BodyState::setVelocity(const sf::Vector2f& vel)
+void BodyBehaviour::setVelocity(const sf::Vector2f& vel)
 {
     m_body->m_velocity = vel;
 }
 
-void BodyState::move(const sf::Vector2f& amount)
+void BodyBehaviour::move(const sf::Vector2f& amount)
 {
     m_body->move(amount);
     if (m_body->m_parent)
@@ -62,39 +62,39 @@ void BodyState::move(const sf::Vector2f& amount)
     }
 }
 
-sf::Uint16 BodyState::getFootSenseCount() const
+sf::Uint16 BodyBehaviour::getFootSenseCount() const
 {
     return m_body->m_footSenseCount;
 }
 
-sf::Uint32 BodyState::getFootSenseMask() const
+sf::Uint32 BodyBehaviour::getFootSenseMask() const
 {
     return m_body->m_footSenseMask;
 }
 
-float BodyState::getFriction() const
+float BodyBehaviour::getFriction() const
 {
     return m_body->m_friction;
 }
 
-Category::Type BodyState::getParentCategory() const
+Category::Type BodyBehaviour::getParentCategory() const
 {
     if (m_body->m_node)
         return static_cast<Category::Type>(m_body->m_node->getCategory());
     else return Category::None;
 }
 
-void BodyState::setParentCategory(Category::Type type)
+void BodyBehaviour::setParentCategory(Category::Type type)
 {
     if (m_body->m_node) m_body->m_node->setCategory(type);
 }
 
-void BodyState::kill()
+void BodyBehaviour::kill()
 {
     m_body->destroy();
 }
 
-void BodyState::damage(float amount, CollisionWorld::Body* damager)
+void BodyBehaviour::damage(float amount, CollisionWorld::Body* damager)
 {
     m_body->m_health -= amount;
 
@@ -128,7 +128,7 @@ void BodyState::damage(float amount, CollisionWorld::Body* damager)
     }
 }
 
-void BodyState::raiseEvent(const game::Event& evt, CollisionWorld::Body* target)
+void BodyBehaviour::raiseEvent(const game::Event& evt, CollisionWorld::Body* target)
 {
     if(!target) m_body->notify(*m_body, evt);
     else target->notify(*target, evt);

@@ -28,7 +28,9 @@ source distribution.
 #include <Node.hpp>
 #include <CollisionWorld.hpp>
 #include <Util.hpp>
-#include <BodyState.hpp>
+#include <BlockBehaviour.hpp>
+#include <NpcBehaviour.hpp>
+#include <PlayerBehaviour.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -59,23 +61,23 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     switch (type)
     {
     case Type::Block:
-        m_state = std::make_unique<BlockStateAir>(this);
+        m_behaviour = std::make_unique<BlockBehaviourAir>(this);
         m_friction = 0.8f;
         break;
     case Type::Npc:
-        m_state = std::make_unique<NpcStateAir>(this);
+        m_behaviour = std::make_unique<NpcBehaviourAir>(this);
         m_gravityAmount = 0.15f;
         m_strength = 70.f;
         break;
     case Type::Player:
-        m_state = std::make_unique<PlayerStateAir>(this);
+        m_behaviour = std::make_unique<PlayerBehaviourAir>(this);
         break;
     case Type::Solid:
-        m_state = std::make_unique<SolidState>(this);
+        m_behaviour = std::make_unique<SolidBehaviour>(this);
         break;
     default: break;
     }
-    assert(m_state);
+    assert(m_behaviour);
 
     //set up perepheral sensor boxes
     m_footSensor.width = size.x;
@@ -111,7 +113,7 @@ void CollisionWorld::Body::setPosition(const sf::Vector2f& position)
 
 void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
 {
-    m_velocity += m_state->vetForce(force);
+    m_velocity += m_behaviour->vetForce(force);
 }
 
 void CollisionWorld::Body::setGravityAmount(float amount)
@@ -199,7 +201,7 @@ void CollisionWorld::Body::flipChildren()
 void CollisionWorld::Body::step(float dt)
 {
     //state controls the actual force amount
-    m_state->update(dt);
+    m_behaviour->update(dt);
 
     //then we apply whatever force there is
     //-------------------------
@@ -220,10 +222,10 @@ void CollisionWorld::Body::step(float dt)
     //--------------------------
 
     //check to see if a collision has resulted in a new state
-    if (m_nextState)
+    if (m_nextBehaviour)
     {
-        m_nextState.swap(m_state);
-        m_nextState.reset();
+        m_nextBehaviour.swap(m_behaviour);
+        m_nextBehaviour.reset();
     }
 
     //update all the child bodies

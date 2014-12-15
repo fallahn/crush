@@ -25,11 +25,11 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <BodyState.hpp>
+#include <NpcBehaviour.hpp>
 #include <Util.hpp>
 
 //------------------------------------------
-void NpcStateAir::update(float dt)
+void NpcBehaviourAir::update(float dt)
 {
     //reduce lateral velocity so sideways movement is minimal
     auto vel = getVelocity();
@@ -37,7 +37,7 @@ void NpcStateAir::update(float dt)
     setVelocity(vel);
 }
 
-void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {
@@ -69,11 +69,11 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
         {//set state at random
             if (Util::Random::value(0, 1))
             {
-                setState<NpcStateWalk>();
+                setState<NpcBehaviourWalk>();
             }
             else
             {
-                setState<NpcStateGround>();
+                setState<NpcBehaviourGround>();
             }
         }
 
@@ -125,15 +125,15 @@ void NpcStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* ot
 
 //-------------------------------------------
 
-NpcStateGround::NpcStateGround(CollisionWorld::Body* b)
-    : BodyState         (b),
+NpcBehaviourGround::NpcBehaviourGround(CollisionWorld::Body* b)
+    : BodyBehaviour     (b),
     m_changeDelay       (Util::Random::value(1.f, 2.f)),
     m_accumulatedTime   (0.f)
 {
     setVelocity({});
 }
 
-void NpcStateGround::update(float dt)
+void NpcBehaviourGround::update(float dt)
 {
     auto vel = getVelocity();
     if(getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) vel.y = 0.f;
@@ -147,18 +147,18 @@ void NpcStateGround::update(float dt)
         if (Util::Random::value(0, 1))
         {
             vel.y = -900.f;
-            setState<NpcStateAir>();
+            setState<NpcBehaviourAir>();
         }
         else
         {
-            setState<NpcStateWalk>();
+            setState<NpcBehaviourWalk>();
         }
     }
 
     setVelocity(vel);
 }
 
-void NpcStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {
@@ -215,8 +215,8 @@ void NpcStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
 
 //-------------------------------------------
 
-NpcStateWalk::NpcStateWalk(CollisionWorld::Body* b)
-    : BodyState         (b),
+NpcBehaviourWalk::NpcBehaviourWalk(CollisionWorld::Body* b)
+    : BodyBehaviour     (b),
     m_changeDelay       (Util::Random::value(3.f, 5.f)),
     m_accumulatedTime   (0.f),
     m_moveForce         (Util::Random::value(28.f, 40.f))
@@ -224,7 +224,7 @@ NpcStateWalk::NpcStateWalk(CollisionWorld::Body* b)
     setVelocity({m_moveForce, 0.f});
 }
 
-void NpcStateWalk::update(float dt)
+void NpcBehaviourWalk::update(float dt)
 {
 
     auto vel = getVelocity();
@@ -241,18 +241,18 @@ void NpcStateWalk::update(float dt)
         if (Util::Random::value(0, 1) == 0)
         {
             vel.y = -900.f;
-            setState<NpcStateAir>();
+            setState<NpcBehaviourAir>();
         }
         else
         {
-            setState<NpcStateGround>();
+            setState<NpcBehaviourGround>();
         }
     }
 
     setVelocity(vel);
 }
 
-void NpcStateWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {

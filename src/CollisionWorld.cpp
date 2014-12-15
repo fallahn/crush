@@ -28,7 +28,7 @@ source distribution.
 #include <CollisionWorld.hpp>
 #include <Node.hpp>
 #include <Util.hpp>
-#include <BodyState.hpp>
+#include <BodyBehaviour.hpp>
 
 CollisionWorld::CollisionWorld(float gravity)
     : m_gravity(0.f, gravity)
@@ -87,9 +87,9 @@ void CollisionWorld::step(float dt)
     {
         //call state resolve
         auto man = getManifold(pair);
-        pair.second->m_state->resolve(man, pair.first);
+        pair.second->m_behaviour->resolve(man, pair.first);
         man.z = -man.z;
-        pair.first->m_state->resolve(man, pair.second);
+        pair.first->m_behaviour->resolve(man, pair.second);
     }
 
     //update any parent node positions

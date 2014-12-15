@@ -25,20 +25,20 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <BodyState.hpp>
+#include <PlayerBehaviour.hpp>
 #include <Util.hpp>
 
 #include <iostream>
 
 //------------------------------------------
-void PlayerStateAir::update(float dt)
+void PlayerBehaviourAir::update(float dt)
 {
     auto vel = getVelocity();
     vel.x *= 0.8f; //this should always be <= ground friction?
     setVelocity(vel);
 }
 
-void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {
@@ -48,7 +48,7 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
         if (manifold.y * manifold.z < 0) //contact is below so must be standing on something
         {
             setVelocity({ getVelocity().x, 0.f });
-            setState<PlayerStateGround>();
+            setState<PlayerBehaviourGround>();
 
             game::Event playerEvent;
             playerEvent.type = game::Event::Player;
@@ -91,14 +91,14 @@ void PlayerStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body*
     }
 }
 
-sf::Vector2f PlayerStateAir::vetForce(const sf::Vector2f& force)
+sf::Vector2f PlayerBehaviourAir::vetForce(const sf::Vector2f& force)
 {
     //basically prevent jumping infinitely, while retaining air control
     return (getFootSenseCount() == 0u) ? sf::Vector2f(force.x, 0.f) : force;
 }
 
 //-------------------------------------------
-void PlayerStateGround::update(float dt)
+void PlayerBehaviourGround::update(float dt)
 {
     auto vel = getVelocity();
     if(vel.y > 0.f) vel.y = 0.f;
@@ -109,11 +109,11 @@ void PlayerStateGround::update(float dt)
     if (getFootSenseCount() == 0u)
     {
         //nothing underneath so should be falling / jumping
-        setState<PlayerStateAir>();
+        setState<PlayerBehaviourAir>();
     }
 }
 
-void PlayerStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {

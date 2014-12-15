@@ -25,37 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <BlockController.hpp>
+//defines behaviour of player bodies
 
-BlockController::BlockController(CommandStack& cs)
-    : m_commandStack(cs)
+#ifndef PLAYER_BEHAVIOUR_H_
+#define PLAYER_BEHAVIOUR_H_
+
+#include <BodyBehaviour.hpp>
+
+class PlayerBehaviourAir final : public BodyBehaviour
 {
+public:
+    explicit PlayerBehaviourAir(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+    sf::Vector2f vetForce(const sf::Vector2f& force) override;
+};
 
-}
-
-//public
-void BlockController::onNotify(Subject& s, const game::Event& evt)
+class PlayerBehaviourGround final : public BodyBehaviour
 {
-    switch (evt.type)
-    {
-    case game::Event::Node:
-        switch (evt.node.action)
-        {
-        case game::Event::NodeEvent::Spawn:
-            if (evt.node.type == Category::Block)
-            {
-                spawn({ evt.node.positionX, evt.node.positionY });
-            }
-            //TODO spawn solids?
-            break;
-        default: break;
-        }
-        break;
-    default: break;
-    }
-}
+public:
+    explicit PlayerBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+};
 
-void BlockController::setSpawnFunction(std::function<void(const sf::Vector2f&)>& func)
-{
-    spawn = func;
-}
+#endif // PLAYER_BEHAVIOUR_H_

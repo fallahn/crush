@@ -27,13 +27,13 @@ source distribution.
 
 //state class definitions for block objects
 
-#include <BodyState.hpp>
+#include <BlockBehaviour.hpp>
 #include <Util.hpp>
 
 #include <iostream>
 
 //------------------------------------------
-void BlockStateAir::update(float dt)
+void BlockBehaviourAir::update(float dt)
 {
     //simply negate sideways movement and allow gravity to do its thing
     auto vel = getVelocity();
@@ -54,7 +54,7 @@ void BlockStateAir::update(float dt)
     }
 }
 
-void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {
@@ -62,7 +62,7 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* 
     case CollisionWorld::Body::Type::Block:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
-        setState<BlockStateGround>();
+        setState<BlockBehaviourGround>();
         setParentCategory(Category::Block); //reset any previous owners
         break;
 
@@ -70,7 +70,7 @@ void BlockStateAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* 
     }
 }
 //-------------------------------------------
-void BlockStateGround::update(float dt)
+void BlockBehaviourGround::update(float dt)
 {  
     auto vel = getVelocity();
     vel.y = 0.f;
@@ -81,7 +81,7 @@ void BlockStateGround::update(float dt)
     if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
     {
         //nothing underneath so should be falling
-        setState<BlockStateAir>();
+        setState<BlockBehaviourAir>();
 
         //TODO should set this to not grabbed, but previously owned
     }
@@ -89,11 +89,11 @@ void BlockStateGround::update(float dt)
     sf::Int32 cat = getParentCategory();
     if (cat & (Category::CarriedOne | Category::CarriedTwo))
     {
-        setState<BlockStateCarry>();
+        setState<BlockBehaviourCarry>();
     }
 }
 
-void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {
@@ -116,7 +116,7 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         if (getFootSenseCount() <= 1u
             && (manifold.y * manifold.z) < 0.f)
         {
-            setState<BlockStateAir>();
+            setState<BlockBehaviourAir>();
             setParentCategory(Category::Block);
         }
         break;
@@ -124,7 +124,7 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     }
 }
 //-------------------------------------------
-void BlockStateCarry::update(float dt)
+void BlockBehaviourCarry::update(float dt)
 {
     //auto vel = getVelocity();
     //vel.y = 0.f; //cancel gravity
@@ -134,11 +134,11 @@ void BlockStateCarry::update(float dt)
     if ((getParentCategory() & (Category::CarriedOne | Category::CarriedTwo)) == 0)
     {
         //no longer being carried
-        setState<BlockStateAir>();
+        setState<BlockBehaviourAir>();
     }
 }
 
-void BlockStateCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
     switch (other->getType())
     {
@@ -169,12 +169,12 @@ void BlockStateCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
     }
 }
 //-------------------------------------------
-void SolidState::update(float dt)
+void SolidBehaviour::update(float dt)
 {
     setVelocity({});
 }
 
-void SolidState::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+void SolidBehaviour::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
 
 }

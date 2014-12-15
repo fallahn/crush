@@ -25,31 +25,34 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//category for node targets
+#include <MapController.hpp>
 
-#ifndef COMMAND_CAT_H_
-#define COMMAND_CAT_H_
-
-namespace Category
+MapController::MapController(CommandStack& cs)
+    : m_commandStack(cs)
 {
-    enum Type
-    {
-        None            = 0,
-        PlayerOne       = (1 << 0), //don't rely on these actually being '1' and '2' respectively
-        PlayerTwo       = (1 << 1),
-        Block           = (1 << 2),
-        Npc             = (1 << 3),
-        GrabbedOne      = (1 << 4), //for dragging
-        GrabbedTwo      = (1 << 5),
-        LastTouchedOne  = (1 << 6),
-        LastTouchedTwo  = (1 << 7),
-        Solid           = (1 << 8),
-        CarriedOne      = (1 << 9), //for carrying
-        CarriedTwo      = (1 << 10),
-        BonusPoints     = (1 << 11),
-        ExtraLife       = (1 << 12),
-        HardHat         = (1 << 13)
-    };
+
 }
 
-#endif //COMMAND_CAT_H_
+//public
+void MapController::onNotify(Subject& s, const game::Event& evt)
+{
+    switch (evt.type)
+    {
+    case game::Event::Node:
+        switch (evt.node.action)
+        {
+        case game::Event::NodeEvent::Spawn:
+
+            //TODO spawn solids?
+            break;
+        default: break;
+        }
+        break;
+    default: break;
+    }
+}
+
+void MapController::setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func)
+{
+    spawn = func;
+}

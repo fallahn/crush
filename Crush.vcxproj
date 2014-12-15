@@ -71,10 +71,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
-    <ClCompile Include="src\BlockController.cpp" />
+    <ClCompile Include="src\MapController.cpp" />
     <ClCompile Include="src\NpcController.cpp" />
-    <ClCompile Include="src\BlockStates.cpp" />
-    <ClCompile Include="src\BodyState.cpp" />
+    <ClCompile Include="src\BlockBehaviour.cpp" />
+    <ClCompile Include="src\BodyBehaviour.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\CollisionBody.cpp" />
     <ClCompile Include="src\CollisionWorld.cpp" />
@@ -91,10 +91,10 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MenuState.cpp" />
     <ClCompile Include="src\Node.cpp" />
-    <ClCompile Include="src\NpcStates.cpp" />
+    <ClCompile Include="src\NpcBehaviour.cpp" />
     <ClCompile Include="src\PauseState.cpp" />
     <ClCompile Include="src\Player.cpp" />
-    <ClCompile Include="src\PlayerStates.cpp" />
+    <ClCompile Include="src\PlayerBehaviour.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
@@ -102,10 +102,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
-    <ClInclude Include="include\BlockController.hpp" />
+    <ClInclude Include="include\BlockBehaviour.hpp" />
+    <ClInclude Include="include\MapController.hpp" />
+    <ClInclude Include="include\NpcBehaviour.hpp" />
     <ClInclude Include="include\NpcController.hpp" />
     <ClInclude Include="include\Camera.hpp" />
-    <ClInclude Include="include\BodyState.hpp" />
+    <ClInclude Include="include\BodyBehaviour.hpp" />
     <ClInclude Include="include\CollisionWorld.hpp" />
     <ClInclude Include="include\CommandCategories.hpp" />
     <ClInclude Include="include\CommandStack.hpp" />
@@ -115,6 +117,7 @@
     <ClInclude Include="include\Map.hpp" />
     <ClInclude Include="include\ParticleController.hpp" />
     <ClInclude Include="include\Particles.hpp" />
+    <ClInclude Include="include\PlayerBehaviour.hpp" />
     <ClInclude Include="include\ScoreBoard.hpp" />
     <ClInclude Include="include\GameOverState.hpp" />
     <ClInclude Include="include\GameState.hpp" />
