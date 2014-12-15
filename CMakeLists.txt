@@ -72,7 +72,7 @@ add_executable(
 	src/TitleState.cpp)
 
 #copy reources to output directory
-install(DIRECTORY res/
-	DESTINATION res)
+#install(DIRECTORY res/
+#	DESTINATION res)
 		
 

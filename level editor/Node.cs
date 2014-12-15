@@ -66,8 +66,8 @@ namespace Level_editor
                 case BodyType.Bonus:
                     m_type = "Bonus";
                     break;
-                case BodyType.HardHat:
-                    m_type = "HardHat";
+                case BodyType.Water:
+                    m_type = "Water";
                     break;
                 default: break;
             }
@@ -89,7 +89,7 @@ namespace Level_editor
             PlayerTwo,
             ExtraLife,
             Bonus,
-            HardHat
+            Water
         }
 
         private Point m_position;

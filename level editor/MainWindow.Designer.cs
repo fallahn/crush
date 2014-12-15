@@ -220,7 +220,10 @@
             this.comboBoxAddNode.FormattingEnabled = true;
             this.comboBoxAddNode.Items.AddRange(new object[] {
             "Block",
-            "Solid"});
+            "Solid",
+            "Extra Life",
+            "Bonus",
+            "Water"});
             this.comboBoxAddNode.Location = new System.Drawing.Point(9, 12);
             this.comboBoxAddNode.Name = "comboBoxAddNode";
             this.comboBoxAddNode.Size = new System.Drawing.Size(121, 21);

@@ -49,11 +49,15 @@ namespace Level_editor
         private Panel m_selectedNode = null;
 
         private Size blockSize = new Size(100, 70);
+        private Size itemSize = new Size(40, 60);
         private const int scale = 2;// ui is half the size of the actual game world
         private Color playerOneColour = Color.DodgerBlue;
         private Color playerTwoColour = Color.Gold;
         private Color blockColour = Color.Firebrick;
         private Color solidColour = Color.IndianRed;
+        private Color bonusColour = Color.Yellow;
+        private Color lifeColour = Color.ForestGreen;
+        private Color waterColour = Color.Aqua;
 
         ContextMenuStrip m_nodeMenu = new ContextMenuStrip();
 
@@ -271,16 +275,32 @@ namespace Level_editor
         private void buttonAddNode_Click(object sender, EventArgs e)
         {
             Node.BodyType type = Node.BodyType.Block;
-            if(comboBoxAddNode.Text == "Block")
+            Size size = blockSize;
+            //if(comboBoxAddNode.Text == "Block")
+            //{
+            //    type = Node.BodyType.Block;
+            //}
+            //else
+            switch(comboBoxAddNode.Text)   
             {
-                type = Node.BodyType.Block;
-            }
-            else if(comboBoxAddNode.Text == "Solid")
-            {
-                type = Node.BodyType.Solid;
+                case "Solid":
+                    type = Node.BodyType.Solid;
+                    break;
+                case "Extra Life":            
+                    type = Node.BodyType.ExtraLife;
+                    size = itemSize;
+                    break;
+                case "Bonus":            
+                    type = Node.BodyType.Bonus;
+                    size = itemSize;
+                    break;
+                case "Water":
+                    type = Node.BodyType.Water;
+                    break;
+                default: break;
             }
 
-            selectNode(addNode(type, new Point(960, 540), blockSize));
+            selectNode(addNode(type, new Point(960, 540), size));
         }
 
         //player panel movement

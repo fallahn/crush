@@ -72,8 +72,7 @@ namespace Level_editor
             p.MouseUp += mouseUp;
             p.MouseMove += mouseMove;
 
-            p.Tag = type; //TODO this should probably be a reference to the map object property for this node
-            
+            p.Tag = type;            
 
             switch (type)
             {
@@ -92,6 +91,21 @@ namespace Level_editor
                     break;
                 case Node.BodyType.Solid:
                     p.BackColor = solidColour;
+                    p.Move += node_Move;
+                    p.ContextMenuStrip = m_nodeMenu;
+                    break;
+                case Node.BodyType.Bonus:
+                    p.BackColor = bonusColour;
+                    p.Move += node_Move;
+                    p.ContextMenuStrip = m_nodeMenu;
+                    break;
+                case Node.BodyType.ExtraLife:
+                    p.BackColor = lifeColour;
+                    p.Move += node_Move;
+                    p.ContextMenuStrip = m_nodeMenu;
+                    break;
+                case Node.BodyType.Water:
+                    p.BackColor = waterColour;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
                     break;
@@ -118,16 +132,16 @@ namespace Level_editor
             numericUpDownNodePropertySizeX.Value = (decimal)m_selectedNode.Width * scale;
             numericUpDownNodePropertySizeY.Value = (decimal)m_selectedNode.Height * scale;
 
-            //TODO these tags are likely to change
+
             var tag = (Node.BodyType)p.Tag;
-            if(tag == Node.BodyType.Solid)
+            if(tag == Node.BodyType.Solid || tag == Node.BodyType.Water)
             {
                 numericUpDownNodePropertySizeX.Enabled = true;
                 numericUpDownNodePropertySizeY.Enabled = true;
 
                 comboBoxNodePropertyType.SelectedIndex = 1;
             }
-            else if(tag == Node.BodyType.Block)
+            else// if(tag == Node.BodyType.Block)
             {
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;

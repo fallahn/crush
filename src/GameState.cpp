@@ -291,7 +291,6 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         break;
     case Category::Bonus:
     case Category::ExtraLife:
-    case Category::HardHat:
         break;
     default: break;
     }
