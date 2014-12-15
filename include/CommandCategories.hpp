@@ -46,7 +46,7 @@ namespace Category
         Solid           = (1 << 8),
         CarriedOne      = (1 << 9), //for carrying
         CarriedTwo      = (1 << 10),
-        BonusPoints     = (1 << 11),
+        Bonus           = (1 << 11),
         ExtraLife       = (1 << 12),
         HardHat         = (1 << 13)
     };

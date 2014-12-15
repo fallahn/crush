@@ -26,6 +26,16 @@ source distribution.
 *********************************************************************/
 
 #include <MapController.hpp>
+#include <Map.hpp>
+
+#include <SFML/Graphics/RectangleShape.hpp>
+
+#include <map>
+
+namespace
+{
+
+}
 
 MapController::MapController(CommandStack& cs)
     : m_commandStack(cs)
@@ -43,7 +53,6 @@ void MapController::onNotify(Subject& s, const game::Event& evt)
         {
         case game::Event::NodeEvent::Spawn:
 
-            //TODO spawn solids?
             break;
         default: break;
         }
@@ -55,4 +64,11 @@ void MapController::onNotify(Subject& s, const game::Event& evt)
 void MapController::setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func)
 {
     spawn = func;
+}
+
+void MapController::loadMap(const Map& map)
+{
+    const auto& nodes = map.getNodes();
+    for (const auto& n : nodes) //TODO we want to skip items
+        spawn(n.type, n.position, n.size);
 }

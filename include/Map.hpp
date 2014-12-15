@@ -60,7 +60,13 @@ public:
 
     const std::vector<Node>& getNodes() const;
 
+    const sf::Vector2f& getPlayerOneSpawn() const;
+    const sf::Vector2f& getPlayerTwoSpawn() const;
+
 private:
+
+    sf::Vector2f m_playerOneSpawn;
+    sf::Vector2f m_playerTwoSpawn;
 
     sf::Uint8 m_npcCount;
     sf::Uint8 m_npcTotal;

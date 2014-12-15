@@ -57,6 +57,7 @@ Map::Map(const std::string& path)
         return;
     }
 
+    //map data
     if (v.get("NpcCount").is<double>())
         m_npcCount = static_cast<sf::Uint8>(v.get("NpcCount").get<double>());
     else
@@ -71,7 +72,21 @@ Map::Map(const std::string& path)
         m_mapName = v.get("MapName").get<std::string>();
     else
         std::cerr << "Map Parse: missing MapName value." << std::endl;
+    //---
+    //TODO load texture info
+    //---
+    if (v.get("PlayerOneSpawn").is<std::string>())
+        m_playerOneSpawn = Util::Vector::vec2FromString(v.get("PlayerOneSpawn").get<std::string>());
+    else
+        std::cerr << "Map Parse: missing Player One spawn position." << std::endl;
 
+
+    if (v.get("PlayerTwoSpawn").is<std::string>())
+        m_playerTwoSpawn = Util::Vector::vec2FromString(v.get("PlayerTwoSpawn").get<std::string>());
+    else
+        std::cerr << "Map Parse: missing Player Two spawn position." << std::endl;
+
+    //node array
     if (v.get("Nodes").is<picojson::array>())
     {
         auto nodes = v.get("Nodes").get<picojson::array>();
@@ -125,6 +140,15 @@ const std::vector<Map::Node>& Map::getNodes() const
     return m_nodes;
 }
 
+const sf::Vector2f& Map::getPlayerOneSpawn() const
+{
+    return m_playerOneSpawn;
+}
+
+const sf::Vector2f& Map::getPlayerTwoSpawn() const
+{
+    return m_playerTwoSpawn;
+}
 
 //node ctor
 Map::Node::Node(const std::string& position, const std::string& size, const std::string& type)
@@ -148,5 +172,16 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     {
         this->type = Category::PlayerTwo;
     }
-
+    else if (type == "HardHat")
+    {
+        this->type = Category::HardHat;
+    }
+    else if (type == "Bonus")
+    {
+        this->type = Category::Bonus;
+    }
+    else if (type == "ExtraLife")
+    {
+        this->type = Category::ExtraLife;
+    }
 }

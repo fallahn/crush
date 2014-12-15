@@ -60,6 +60,15 @@ namespace Level_editor
                 case BodyType.PlayerTwo:
                     m_type = "PlayerTwo";
                     break;
+                case BodyType.ExtraLife:
+                    m_type = "ExtraLife";
+                    break;
+                case BodyType.Bonus:
+                    m_type = "Bonus";
+                    break;
+                case BodyType.HardHat:
+                    m_type = "HardHat";
+                    break;
                 default: break;
             }
         }
@@ -77,7 +86,10 @@ namespace Level_editor
             Block,
             Solid,
             PlayerOne,
-            PlayerTwo
+            PlayerTwo,
+            ExtraLife,
+            Bonus,
+            HardHat
         }
 
         private Point m_position;

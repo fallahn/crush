@@ -27,6 +27,7 @@ source distribution.
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,6 +62,20 @@ namespace Level_editor
         {
             get { return m_mapName; }
             set { m_mapName = value; }
+        }
+
+        private Point m_playerOneSpawn;
+        public Point PlayerOneSpawn
+        {
+            get { return m_playerOneSpawn; }
+            set { m_playerOneSpawn = value; }
+        }
+
+        private Point m_playerTwoSpawn;
+        public Point PlayerTwoSpawn
+        {
+            get { return m_playerTwoSpawn; }
+            set { m_playerTwoSpawn = value; }
         }
 
         private List<Node> m_nodes;

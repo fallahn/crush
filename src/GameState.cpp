@@ -38,13 +38,14 @@ source distribution.
 
 #include <iostream>
 
+
 namespace
 {
     Camera sceneCam;
 
-    sf::RectangleShape groundShape;
-    sf::RectangleShape wallShape;
-    sf::RectangleShape shelfShape;
+    //temporary just to hold solid shapes until sprite / texturing is implemented
+    std::vector<sf::RectangleShape> shapes; //so we can reuse shapes
+    sf::RectangleShape solidShape;
 
     DebugShape blockShape;
     DebugShape playerShape;
@@ -71,12 +72,11 @@ GameState::GameState(StateStack& stack, Context context)
     
     Scene::defaultCamera.setView(getContext().defaultView);
 
-    groundShape.setFillColor(sf::Color::Transparent);
-    groundShape.setOutlineColor(sf::Color::Red);
-    groundShape.setOutlineThickness(-3.f);
-
-    wallShape = groundShape;
-    shelfShape = groundShape;
+    //TODO remove shapes for sprites managed by controllers
+    shapes.reserve(50); //TODO temp stuffs
+    solidShape.setFillColor(sf::Color::Transparent);
+    solidShape.setOutlineColor(sf::Color(205u, 92u, 92u));
+    solidShape.setOutlineThickness(-3.f);
 
     blockShape.setSize(blockSize);
     blockShape.setColour(sf::Color::Red);
@@ -87,52 +87,20 @@ GameState::GameState(StateStack& stack, Context context)
     npcShape.setSize(blockSize);
     npcShape.setColour(sf::Color::Green);
 
-    groundShape.setSize({ 1920.f, 50.f });
-    auto groundNode = std::make_unique<Node>("groundNode");
-    groundNode->setDrawable(&groundShape);
-    groundNode->setPosition(0.f, 1030.f);
-    auto gb = m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, groundShape.getSize());
-    groundNode->setCollisionBody(gb);
-    m_scene.addNode(groundNode);
-
-    wallShape.setSize({ 150.f, 1030.f });
-    auto leftWallNode = std::make_unique<Node>("leftWall");
-    leftWallNode->setDrawable(&wallShape);
-    leftWallNode->setPosition(-100.0f, 0.f);
-    leftWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
-    m_scene.addNode(leftWallNode);
-
-    auto rightWallNode = std::make_unique<Node>("rightWall");
-    rightWallNode->setDrawable(&wallShape);
-    rightWallNode->setPosition(1880.f, 0.f);
-    rightWallNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, wallShape.getSize()));
-    m_scene.addNode(rightWallNode);
-
-    shelfShape.setSize({ 200.f, 16.f });
-    auto leftShelfNode = std::make_unique<Node>("leftShelf");
-    leftShelfNode->setDrawable(&shelfShape);
-    leftShelfNode->setPosition({ 50.f, 600.f });
-    leftShelfNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, shelfShape.getSize()));
-    m_scene.addNode(leftShelfNode);
-
-    auto rightShelfNode = std::make_unique<Node>("rightShelf");
-    rightShelfNode->setDrawable(&shelfShape);
-    rightShelfNode->setPosition({ 1680.f, 600.f });
-    rightShelfNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, shelfShape.getSize()));
-    m_scene.addNode(rightShelfNode);
-
-
     //set up controllers
     m_players.reserve(2);
     m_players.emplace_back(m_commandStack, Category::PlayerOne);
     m_players.emplace_back(m_commandStack, Category::PlayerTwo);
 
-    std::function<void(const sf::Vector2f&, Player&)> spawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
-    m_players[0].setSpawnFunction(spawnFunc);
-    m_players[1].setSpawnFunction(spawnFunc);
+    std::function<void(const sf::Vector2f&, Player&)> playerSpawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
+    m_players[0].setSpawnFunction(playerSpawnFunc);
+    m_players[1].setSpawnFunction(playerSpawnFunc);
 
-    std::function<void(const sf::Vector2f&)> f = std::bind(&GameState::addNpc, this, std::placeholders::_1);
-    m_npcController.setSpawnFunction(f);
+    std::function<void(const sf::Vector2f&)> npcSpawnFunc = std::bind(&GameState::addNpc, this, std::placeholders::_1);
+    m_npcController.setSpawnFunction(npcSpawnFunc);
+
+    std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> mapSpawnFunc = std::bind(&GameState::addMapBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    m_mapController.setSpawnFunction(mapSpawnFunc);
 
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);
@@ -144,29 +112,29 @@ GameState::GameState(StateStack& stack, Context context)
 
     //must be done after controllers are initialised
     Map map("res/maps/testmap.crm");
+    m_players[0].setSpawnPosition(map.getPlayerOneSpawn());
+    m_players[1].setSpawnPosition(map.getPlayerTwoSpawn());
     m_npcController.setNpcCount(map.getNpcCount());
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
+    m_mapController.loadMap(map);
 
     //TODO properly parse map with sprites / textures
-    const auto& nodes = map.getNodes();
-    for (const auto& n : nodes)
-    {
-        switch (n.type)
-        {
-        case Category::Block:
-            addBlock(n.position);
-            break;
-        case Category::PlayerOne:
-            //set spawn point
-            m_players[0].setSpawnPosition(n.position);
-            break;
-        case Category::PlayerTwo:
-            //set spawn point
-            m_players[1].setSpawnPosition(n.position);
-            break;
-        default: break;
-        }
-    }
+    //const auto& nodes = map.getNodes();
+    //for (const auto& n : nodes)
+    //{
+    //    switch (n.type)
+    //    {
+    //    case Category::PlayerOne:
+    //        //set spawn point
+    //        m_players[0].setSpawnPosition(n.position);
+    //        break;
+    //    case Category::PlayerTwo:
+    //        //set spawn point
+    //        m_players[1].setSpawnPosition(n.position);
+    //        break;
+    //    default: break;
+    //    }
+    //}
 }
 
 bool GameState::update(float dt)
@@ -285,4 +253,46 @@ void GameState::addNpc(const sf::Vector2f& position)
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
     m_scene.addNode(npcNode);
+}
+
+void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, const sf::Vector2f& size)
+{
+    switch (type)
+    {
+    case Category::Block:
+        addBlock(position);
+        break;
+    case Category::Solid:
+    {
+        auto node = std::make_unique<Node>();
+        node->setPosition(position);
+
+        //check if we have a shape  the right size
+        auto result = std::find_if(shapes.begin(), shapes.end(),[size](const sf::RectangleShape& rs)
+        {
+            auto s = rs.getSize();
+            return (s == size);
+        });
+        if (result != shapes.end())
+        {
+            //use this shape
+            node->setDrawable(&(*result));
+        }
+        else
+        {
+            //copy base shape into vector
+            shapes.emplace_back(solidShape);
+            shapes.back().setSize(size);
+            node->setDrawable(&shapes.back());
+        }
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Solid, size));
+        m_scene.addNode(node);
+    }
+        break;
+    case Category::Bonus:
+    case Category::ExtraLife:
+    case Category::HardHat:
+        break;
+    default: break;
+    }
 }

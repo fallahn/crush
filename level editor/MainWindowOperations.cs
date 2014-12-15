@@ -144,6 +144,8 @@ namespace Level_editor
         {
             m_currentMap.NpcCount = (int)numericUpDownNpcCount.Value;
             m_currentMap.NpcTotal = (int)numericUpDownNpcTotal.Value;
+            m_currentMap.PlayerOneSpawn = new Point((int)numericUpDownPlayerOneX.Value, (int)numericUpDownPlayerOneY.Value);
+            m_currentMap.PlayerTwoSpawn = new Point((int)numericUpDownPlayerTwoX.Value, (int)numericUpDownPlayerTwoY.Value);
             m_currentMap.Nodes.Clear();
 
             foreach(Panel p in panelEditorInner.Controls)
