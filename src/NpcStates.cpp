@@ -135,15 +135,13 @@ NpcStateGround::NpcStateGround(CollisionWorld::Body* b)
 
 void NpcStateGround::update(float dt)
 {
-    auto fsc = getFootSenseCount();
-    
     auto vel = getVelocity();
-    if(fsc > 0) vel.y = 0.f;
+    if(getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) vel.y = 0.f;
     vel.x *= getFriction();
        
     m_accumulatedTime += dt;
     if (m_accumulatedTime > m_changeDelay
-        && fsc > 0)
+        && getFootSenseCount() > 0)
     {
         //random between this and walking
         if (Util::Random::value(0, 1))
@@ -228,16 +226,16 @@ NpcStateWalk::NpcStateWalk(CollisionWorld::Body* b)
 
 void NpcStateWalk::update(float dt)
 {
-    auto fsc = getFootSenseCount();
 
     auto vel = getVelocity();
-    if (fsc > 0) vel.y = 0.f;
+    //only apply gravity when not on block / solid
+    if (getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) vel.y = 0.f;
     vel.x += m_moveForce;
     vel.x *= getFriction();
 
     m_accumulatedTime += dt;
     if (m_accumulatedTime > m_changeDelay
-        && fsc > 0)
+        && getFootSenseCount() > 0)
     {
         //random between this and ground state
         if (Util::Random::value(0, 1) == 0)

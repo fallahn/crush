@@ -78,7 +78,7 @@ void BlockStateGround::update(float dt)
     vel.x *= getFriction(); //TODO equate dt into this
     setVelocity(vel);
 
-    if (getFootSenseCount() == 0u)
+    if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
     {
         //nothing underneath so should be falling
         setState<BlockStateAir>();
@@ -112,7 +112,7 @@ void BlockStateGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     case CollisionWorld::Body::Type::Player:
         other->applyForce(getVelocity());
 
-        //fall ifer play pushed block out from underneath
+        //fall if player pushed block out from underneath
         if (getFootSenseCount() <= 1u
             && (manifold.y * manifold.z) < 0.f)
         {
@@ -155,13 +155,15 @@ void BlockStateCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             raiseEvent(e);
         }
     case CollisionWorld::Body::Type::Solid:
-        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({});
-        break;
+        //move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        //setVelocity({});
+
+        //break;
     case CollisionWorld::Body::Type::Player:
     case CollisionWorld::Body::Type::Npc:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
+
         break;
     default: break;
     }

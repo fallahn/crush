@@ -28,7 +28,7 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 find_package(SFML 2 REQUIRED system window graphics)
-#optional package manager
+#optional package manager on arch (PKGBUILD script currently missing)
 #include (FindPkgConfig)
 #PKG_SEARCH_MODULE(SFML 2 REQUIRED system window graphics)
 
@@ -72,10 +72,7 @@ add_executable(
 	src/TitleState.cpp)
 
 #copy reources to output directory
-add_custom_command(
-	TARGET CRUSH POST_BUILD
-	COMMAND {$CMAKE_COMMAND} -E copy_directory
-	${CMAKE_SOURCE_DIR}/res
-	$<TARGET_FILE_DIR:CRUSH>)
+install(DIRECTORY res/
+	DESTINATION res)
 		
 

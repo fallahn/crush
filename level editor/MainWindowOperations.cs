@@ -134,6 +134,7 @@ namespace Level_editor
 
                 comboBoxNodePropertyType.SelectedIndex = 0;
             }
+            comboBoxNodePropertyType.Enabled = true;
         }
 
         /// <summary>

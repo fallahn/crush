@@ -81,7 +81,10 @@ namespace Level_editor
                 if(MessageBox.Show("Do you wish to save changes?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
                     //save changes
-                    saveFile();
+                    if (m_mapPath != null)
+                        saveFile();
+                    else
+                        saveAsToolStripMenuItem_Click(sender, EventArgs.Empty);
                 }
             }
         }
@@ -392,7 +395,22 @@ namespace Level_editor
                 m_modified = true;
             }
         }
+        private void panelEditorInner_Click(object sender, EventArgs e)
+        {
+            //deselect panel if clicking on background
+            if(m_selectedNode != null)
+            {
+                m_selectedNode.BorderStyle = BorderStyle.None;
+                m_selectedNode = null;
 
+                numericUpDownNodePropertyPosX.Enabled = false;
+                numericUpDownNodePropertyPosY.Enabled = false;
+                numericUpDownNodePropertySizeX.Enabled = false;
+                numericUpDownNodePropertySizeY.Enabled = false;
+
+                comboBoxNodePropertyType.Enabled = false;
+            }
+        }
 
         //node context menu
         void cloneItem_MouseDown(object sender, MouseEventArgs e)
@@ -404,5 +422,6 @@ namespace Level_editor
                     new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale));
             }
         }
+
     }
 }

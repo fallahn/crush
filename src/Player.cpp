@@ -41,8 +41,7 @@ namespace
 
     const float friction = 0.86f;
 
-    const sf::Vector2f pickupVec(0.f, 37.f); //TODO this needs to link to player height
-    const sf::Vector2f grabVec(70.f, 0.f); //TODO this ought ot be tied to body size (just over half width)
+    const sf::Vector2f grabVec(70.f, 0.f); //TODO this ought to be tied to body size (just over half width)
 }
 
 Player::Keys::Keys()
@@ -402,10 +401,10 @@ void Player::doPickUp()
         {
             if (!m_carryingBlock)
             {
-                //try picking up                
-                m_carryVector = (m_leftFacing) ?
-                    sf::Vector2f(-(m_size.x), -(m_size.y * 0.25f)) :
-                    sf::Vector2f(m_size.x , -(m_size.y * 0.25f));
+                //try picking up - TODO dekludge these consts    
+                m_carryVector = (m_leftFacing) ? //we add 4 here to stop the player and block overlapping (and causing collision problems)
+                    sf::Vector2f(-(m_size.x + 4.f), -(m_size.y * 0.25f)) :
+                    sf::Vector2f(m_size.x + 4.f, -(m_size.y * 0.25f));
 
                 Command c;
                 c.categoryMask |= Category::Block;

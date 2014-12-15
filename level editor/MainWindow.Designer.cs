@@ -33,6 +33,9 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.panelEditorOuter = new System.Windows.Forms.Panel();
             this.panelEditorInner = new System.Windows.Forms.Panel();
+            this.label10 = new System.Windows.Forms.Label();
+            this.numericUpDownSnap = new System.Windows.Forms.NumericUpDown();
+            this.checkBoxSnap = new System.Windows.Forms.CheckBox();
             this.buttonAddNode = new System.Windows.Forms.Button();
             this.comboBoxAddNode = new System.Windows.Forms.ComboBox();
             this.groupBoxNodeProperties = new System.Windows.Forms.GroupBox();
@@ -68,9 +71,6 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.checkBoxSnap = new System.Windows.Forms.CheckBox();
-            this.numericUpDownSnap = new System.Windows.Forms.NumericUpDown();
-            this.label10 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -80,6 +80,7 @@
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
             this.panelEditorOuter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSnap)).BeginInit();
             this.groupBoxNodeProperties.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNodePropertySizeY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNodePropertySizeX)).BeginInit();
@@ -94,7 +95,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxNpc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNpcCount)).BeginInit();
             this.menuStrip1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSnap)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -158,7 +158,51 @@
             this.panelEditorInner.Name = "panelEditorInner";
             this.panelEditorInner.Size = new System.Drawing.Size(960, 540);
             this.panelEditorInner.TabIndex = 0;
+            this.panelEditorInner.Click += new System.EventHandler(this.panelEditorInner_Click);
             this.panelEditorInner.Paint += new System.Windows.Forms.PaintEventHandler(this.panelEditorInner_Paint);
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(157, 50);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(31, 13);
+            this.label10.TabIndex = 4;
+            this.label10.Text = "Units";
+            // 
+            // numericUpDownSnap
+            // 
+            this.numericUpDownSnap.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownSnap.Location = new System.Drawing.Point(100, 48);
+            this.numericUpDownSnap.Minimum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownSnap.Name = "numericUpDownSnap";
+            this.numericUpDownSnap.Size = new System.Drawing.Size(51, 20);
+            this.numericUpDownSnap.TabIndex = 3;
+            this.numericUpDownSnap.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.numericUpDownSnap.ValueChanged += new System.EventHandler(this.numericUpDownSnap_ValueChanged);
+            // 
+            // checkBoxSnap
+            // 
+            this.checkBoxSnap.AutoSize = true;
+            this.checkBoxSnap.Location = new System.Drawing.Point(9, 49);
+            this.checkBoxSnap.Name = "checkBoxSnap";
+            this.checkBoxSnap.Size = new System.Drawing.Size(85, 17);
+            this.checkBoxSnap.TabIndex = 2;
+            this.checkBoxSnap.Text = "Snap to Grid";
+            this.checkBoxSnap.UseVisualStyleBackColor = true;
+            this.checkBoxSnap.CheckedChanged += new System.EventHandler(this.checkBoxSnap_CheckedChanged);
             // 
             // buttonAddNode
             // 
@@ -579,49 +623,6 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // checkBoxSnap
-            // 
-            this.checkBoxSnap.AutoSize = true;
-            this.checkBoxSnap.Location = new System.Drawing.Point(9, 49);
-            this.checkBoxSnap.Name = "checkBoxSnap";
-            this.checkBoxSnap.Size = new System.Drawing.Size(85, 17);
-            this.checkBoxSnap.TabIndex = 2;
-            this.checkBoxSnap.Text = "Snap to Grid";
-            this.checkBoxSnap.UseVisualStyleBackColor = true;
-            this.checkBoxSnap.CheckedChanged += new System.EventHandler(this.checkBoxSnap_CheckedChanged);
-            // 
-            // numericUpDownSnap
-            // 
-            this.numericUpDownSnap.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownSnap.Location = new System.Drawing.Point(100, 48);
-            this.numericUpDownSnap.Minimum = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownSnap.Name = "numericUpDownSnap";
-            this.numericUpDownSnap.Size = new System.Drawing.Size(51, 20);
-            this.numericUpDownSnap.TabIndex = 3;
-            this.numericUpDownSnap.Value = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-            this.numericUpDownSnap.ValueChanged += new System.EventHandler(this.numericUpDownSnap_ValueChanged);
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(157, 50);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(31, 13);
-            this.label10.TabIndex = 4;
-            this.label10.Text = "Units";
-            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -645,6 +646,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.panelEditorOuter.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSnap)).EndInit();
             this.groupBoxNodeProperties.ResumeLayout(false);
             this.groupBoxNodeProperties.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNodePropertySizeY)).EndInit();
@@ -662,7 +664,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNpcCount)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownSnap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
