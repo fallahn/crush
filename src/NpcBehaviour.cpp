@@ -28,7 +28,7 @@ source distribution.
 #include <NpcBehaviour.hpp>
 #include <Util.hpp>
 
-//------------------------------------------
+//-------------------------------------------
 void NpcBehaviourAir::update(float dt)
 {
     //reduce lateral velocity so sideways movement is minimal
@@ -41,6 +41,18 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
 {
     switch (other->getType())
     {
+    case CollisionWorld::Body::Water:
+        //jump away
+    {
+        auto vel = getVelocity();
+        if (vel.y >= 0) //only jump if moving down
+        {
+            vel.y -= 1100.f;
+            setVelocity(vel);
+            //setState<NpcBehaviourAir>();
+        }
+    }
+    break;
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
         //kill if block above and NPC is touching the ground
@@ -162,6 +174,15 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
 {
     switch (other->getType())
     {
+    case CollisionWorld::Body::Water:
+        //jump away
+    {
+        auto vel = getVelocity();
+        vel.y -= 1100.f;
+        setVelocity(vel);
+        setState<NpcBehaviourAir>();
+    }
+    break;
     case CollisionWorld::Body::Type::Block:
         if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && */(manifold.x != 0.f || (manifold.y * manifold.z < 0))) //prevents shifting vertically down
@@ -256,6 +277,15 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 {
     switch (other->getType())
     {
+    case CollisionWorld::Body::Water:
+        //jump away
+    {
+        auto vel = getVelocity();
+        vel.y -= 1100.f;
+        setVelocity(vel);
+        setState<NpcBehaviourAir>();
+    }
+        break;
     case CollisionWorld::Body::Type::Block:
         if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && */(manifold.x != 0.f || (manifold.y * manifold.z < 0))) //prevents shifting vertically down
@@ -309,3 +339,18 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     default: break;
     }
 }
+
+//------------------------------------------
+
+//void NpcBehaviourWater::update(float dt)
+//{
+//    if ((getFootSenseMask() & CollisionWorld::Body::Water) == 0)
+//    {
+//        setState<NpcBehaviourAir>();
+//    }
+//}
+//
+//void NpcBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+//{
+//
+//}

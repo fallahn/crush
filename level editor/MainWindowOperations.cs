@@ -138,16 +138,13 @@ namespace Level_editor
             {
                 numericUpDownNodePropertySizeX.Enabled = true;
                 numericUpDownNodePropertySizeY.Enabled = true;
-
-                comboBoxNodePropertyType.SelectedIndex = 1;
             }
             else// if(tag == Node.BodyType.Block)
             {
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;
-
-                comboBoxNodePropertyType.SelectedIndex = 0;
             }
+            comboBoxNodePropertyType.SelectedValue = tag;
             comboBoxNodePropertyType.Enabled = true;
         }
 
@@ -243,6 +240,15 @@ namespace Level_editor
                         break;
                     case "PlayerTwo":
                         m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, n.Position, n.Size);
+                        break;
+                    case "Water":
+                        addNode(Node.BodyType.Water, n.Position, n.Size);
+                        break;
+                    case "Bonus":
+                        addNode(Node.BodyType.Bonus, n.Position, n.Size);
+                        break;
+                    case "ExtraLife":
+                        addNode(Node.BodyType.ExtraLife, n.Position, n.Size);
                         break;
                 }
             }

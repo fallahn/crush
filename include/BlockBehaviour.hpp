@@ -56,6 +56,14 @@ public:
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
+class BlockBehaviourWater final : public BodyBehaviour
+{
+public:
+    explicit BlockBehaviourWater(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+};
+
 class SolidBehaviour final : public BodyBehaviour
 {
 public:

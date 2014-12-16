@@ -289,6 +289,19 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         m_scene.addNode(node);
     }
         break;
+    case Category::Water:
+    {
+        //TODO switch for custom water drawable
+        auto node = std::make_unique<Node>();
+        node->setPosition(position);
+        shapes.emplace_back(solidShape);
+        shapes.back().setOutlineColor(sf::Color::Cyan);
+        shapes.back().setSize(size);
+        node->setDrawable(&shapes.back());
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
+        m_scene.addNode(node);
+    }
+        break;
     case Category::Bonus:
     case Category::ExtraLife:
         break;

@@ -93,9 +93,7 @@ namespace Level_editor
             }
         }
         private void MainWindow_Load(object sender, EventArgs e)
-        {
-            newFile();
-
+        {     
             toolTips.SetToolTip(numericUpDownNpcCount, "Minimum number of NPCs on screen");
             toolTips.SetToolTip(numericUpDownNpcTotal, "Total number of NPCs for this map");
             toolTips.SetToolTip(buttonNpcTexture, "Select the texture to use for this map's NPCs");
@@ -107,6 +105,32 @@ namespace Level_editor
             ToolStripMenuItem deleteItem = new ToolStripMenuItem("Delete");
             deleteItem.MouseDown += buttonDeleteNode_Click;
             m_nodeMenu.Items.Add(deleteItem);
+
+            //bind node types to comboboxes
+            bindComboboxValues(comboBoxAddNode);
+            bindComboboxValues(comboBoxNodePropertyType);
+
+            newFile();
+        }
+        private void bindComboboxValues(ComboBox cb)
+        {
+            var data = Enum.GetValues(typeof(Node.BodyType))
+                            .Cast<Enum>()
+                            .Select(value => new
+                            {
+                                (Attribute.GetCustomAttribute(value.GetType().GetField(value.ToString()), typeof(DescriptionAttribute)) as DescriptionAttribute).Description,
+                                value
+                            }).OrderBy(item => item.value).ToList();
+
+            //remove player one and two
+            var result = data.Find(r => r.Description == "Player One");
+            data.Remove(result);
+            result = data.Find(r => r.Description == "Player Two");
+            data.Remove(result);
+
+            cb.DataSource = data;
+            cb.DisplayMember = "Description";
+            cb.ValueMember = "value";
         }
 
         //toolstrip---
@@ -233,28 +257,44 @@ namespace Level_editor
         {
             if (m_selectedNode != null)
             {
-                var text = comboBoxNodePropertyType.Text;
-                switch (text)
+                Node.BodyType type = (Node.BodyType)comboBoxNodePropertyType.SelectedValue;
+                m_selectedNode.Tag = type;
+                switch(type)
                 {
-                    case "Block":
-                        //restore size to block size
+                    case Node.BodyType.Block:
+                        m_selectedNode.BackColor = blockColour;
                         m_selectedNode.Width = blockSize.Width / scale;
                         m_selectedNode.Height = blockSize.Height / scale;
-
-                        m_selectedNode.Tag = Node.BodyType.Block;
-                        m_selectedNode.BackColor = blockColour;
-
-                        numericUpDownNodePropertySizeX.Enabled = false;
-                        numericUpDownNodePropertySizeY.Enabled = false;
                         break;
-                    case "Solid":
-                        m_selectedNode.Tag = Node.BodyType.Solid;
+                    case Node.BodyType.Bonus:
+                        m_selectedNode.BackColor = bonusColour;
+                        m_selectedNode.Width = itemSize.Width / scale;
+                        m_selectedNode.Height = itemSize.Height / scale;
+                        break;
+                    case Node.BodyType.ExtraLife:
+                        m_selectedNode.BackColor = lifeColour;
+                        m_selectedNode.Width = itemSize.Width / scale;
+                        m_selectedNode.Height = itemSize.Height / scale;
+                        break;
+                    case Node.BodyType.Solid:
                         m_selectedNode.BackColor = solidColour;
-
-                        numericUpDownNodePropertySizeX.Enabled = true;
-                        numericUpDownNodePropertySizeY.Enabled = true;
+                        break;
+                    case Node.BodyType.Water:
+                        m_selectedNode.BackColor = waterColour;
                         break;
                     default: break;
+                }
+                
+                if(type == Node.BodyType.Solid
+                    || type == Node.BodyType.Water)
+                {
+                    numericUpDownNodePropertySizeX.Enabled = true;
+                    numericUpDownNodePropertySizeY.Enabled = true;
+                }
+                else
+                {
+                    numericUpDownNodePropertySizeX.Enabled = false;
+                    numericUpDownNodePropertySizeY.Enabled = false;
                 }
             }
         }
@@ -356,11 +396,28 @@ namespace Level_editor
         private void checkBoxSnap_CheckedChanged(object sender, EventArgs e)
         {
             panelEditorInner.Invalidate();
+            setIncrements((checkBoxSnap.Checked) ? numericUpDownSnap.Value : 1);
         }
         private void numericUpDownSnap_ValueChanged(object sender, EventArgs e)
         {
             panelEditorInner.Invalidate();
+            setIncrements((checkBoxSnap.Checked) ? numericUpDownSnap.Value : 1);
         }
+        private void setIncrements(decimal value)
+        {
+            numericUpDownPlayerOneX.Increment = value;
+            numericUpDownPlayerOneY.Increment = value;
+
+            numericUpDownPlayerTwoX.Increment = value;
+            numericUpDownPlayerTwoY.Increment = value;
+
+            numericUpDownNodePropertyPosX.Increment = value;
+            numericUpDownNodePropertyPosY.Increment = value;
+
+            numericUpDownNodePropertySizeX.Increment = value;
+            numericUpDownNodePropertySizeY.Increment = value;
+        }
+
 
         //drag events for panels
         private bool mousePressed = false;

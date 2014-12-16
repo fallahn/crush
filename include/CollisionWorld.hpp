@@ -61,7 +61,8 @@ public:
             Solid  = (1 << 1), //ie the ground
             Player = (1 << 2),
             Npc    = (1 << 3),
-            Item   = (1 << 4)
+            Item   = (1 << 4),
+            Water  = (1 << 5)
         };
 
         Body(Type type, const sf::Vector2f& size);

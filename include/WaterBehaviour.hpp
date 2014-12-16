@@ -25,39 +25,27 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//defines behaviour of player bodies
+//defines behaviour of water bodies
 
-#ifndef PLAYER_BEHAVIOUR_H_
-#define PLAYER_BEHAVIOUR_H_
+#ifndef WATER_BEHAVIOUR_H_
+#define WATER_BEHAVIOR_H_
 
 #include <BodyBehaviour.hpp>
 
-class PlayerBehaviourAir final : public BodyBehaviour
+class WaterBehaviourAir final : public BodyBehaviour
 {
 public:
-    explicit PlayerBehaviourAir(CollisionWorld::Body* b) : BodyBehaviour(b){};
-    void update(float dt) override;
-    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
-    sf::Vector2f vetForce(const sf::Vector2f& force) override;
-};
-
-class PlayerBehaviourGround final : public BodyBehaviour
-{
-public:
-    explicit PlayerBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    explicit WaterBehaviourAir(CollisionWorld::Body* b) : BodyBehaviour(b){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
-class PlayerBehaviourWater final : public BodyBehaviour
+class WaterBehaviourGround final : public BodyBehaviour
 {
 public:
-    explicit PlayerBehaviourWater(CollisionWorld::Body* b);
+    explicit WaterBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
-private:
-    float m_sinkTime;
-    float m_currentTime;
 };
 
-#endif // PLAYER_BEHAVIOUR_H_
+#endif //WATER_BEHAVIOUR_H_

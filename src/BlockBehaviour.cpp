@@ -32,7 +32,7 @@ source distribution.
 
 #include <iostream>
 
-//------------------------------------------
+//-------------------------------------------
 void BlockBehaviourAir::update(float dt)
 {
     //simply negate sideways movement and allow gravity to do its thing
@@ -51,6 +51,11 @@ void BlockBehaviourAir::update(float dt)
         e.player.positionX = 0.f;
         e.player.positionY = 0.f;
         raiseEvent(e);
+    }
+
+    if (getFootSenseMask() == CollisionWorld::Body::Type::Water) //touches water only
+    {
+        setState<BlockBehaviourWater>();
     }
 }
 
@@ -168,6 +173,29 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
     default: break;
     }
 }
+//-------------------------------------------
+void BlockBehaviourWater::update(float dt)
+{
+    auto vel = getVelocity();
+    vel *= 0.45f; //sink slowly
+    setVelocity(vel);
+}
+
+void BlockBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    switch (other->getType())
+    {
+    case CollisionWorld::Body::Type::Block:
+    case CollisionWorld::Body::Type::Solid:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({});
+        setState<BlockBehaviourGround>();
+        break;
+    default: break;
+    }
+}
+
+
 //-------------------------------------------
 void SolidBehaviour::update(float dt)
 {

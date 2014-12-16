@@ -27,6 +27,7 @@ source distribution.
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -83,12 +84,19 @@ namespace Level_editor
         
         public enum BodyType
         {
-            Block,
+            [Description("Block")]
+            Block = 0,
+            [Description("Solid")]
             Solid,
+            [Description("Player One")]
             PlayerOne,
+            [Description("Player Two")]
             PlayerTwo,
+            [Description("Extra Life")]
             ExtraLife,
+            [Description("Bonus")]
             Bonus,
+            [Description("Water")]
             Water
         }
 

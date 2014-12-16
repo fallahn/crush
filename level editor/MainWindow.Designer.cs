@@ -218,12 +218,6 @@
             // 
             this.comboBoxAddNode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxAddNode.FormattingEnabled = true;
-            this.comboBoxAddNode.Items.AddRange(new object[] {
-            "Block",
-            "Solid",
-            "Extra Life",
-            "Bonus",
-            "Water"});
             this.comboBoxAddNode.Location = new System.Drawing.Point(9, 12);
             this.comboBoxAddNode.Name = "comboBoxAddNode";
             this.comboBoxAddNode.Size = new System.Drawing.Size(121, 21);
@@ -351,9 +345,6 @@
             // 
             this.comboBoxNodePropertyType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxNodePropertyType.FormattingEnabled = true;
-            this.comboBoxNodePropertyType.Items.AddRange(new object[] {
-            "Block",
-            "Solid"});
             this.comboBoxNodePropertyType.Location = new System.Drawing.Point(90, 35);
             this.comboBoxNodePropertyType.Name = "comboBoxNodePropertyType";
             this.comboBoxNodePropertyType.Size = new System.Drawing.Size(119, 21);

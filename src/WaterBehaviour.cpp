@@ -25,31 +25,39 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//category for node targets
+#include <WaterBehaviour.hpp>
 
-#ifndef COMMAND_CAT_H_
-#define COMMAND_CAT_H_
-
-namespace Category
+void WaterBehaviourAir::update(float dt)
 {
-    enum Type
-    {
-        None            = 0,
-        PlayerOne       = (1 << 0), //don't rely on these actually being '1' and '2' respectively
-        PlayerTwo       = (1 << 1),
-        Block           = (1 << 2),
-        Npc             = (1 << 3),
-        GrabbedOne      = (1 << 4), //for dragging
-        GrabbedTwo      = (1 << 5),
-        LastTouchedOne  = (1 << 6),
-        LastTouchedTwo  = (1 << 7),
-        Solid           = (1 << 8),
-        CarriedOne      = (1 << 9), //for carrying
-        CarriedTwo      = (1 << 10),
-        Bonus           = (1 << 11),
-        ExtraLife       = (1 << 12),
-        Water           = (1 << 13)
-    };
+    //water shouldn't really be in this state long, it's just
+    //to make sure it 'settles' properly when the map is created
+
+    auto vel = getVelocity();
+    vel.x = 0.f;
+    setVelocity(vel);
 }
 
-#endif //COMMAND_CAT_H_
+void WaterBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    //switch to idle state when meeting a solid object
+    if (other->getType() == CollisionWorld::Body::Type::Solid)
+    {
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({});
+        setState<WaterBehaviourGround>();
+    }
+}
+
+//-------------------
+
+void WaterBehaviourGround::update(float dt)
+{
+    setVelocity({});
+    //just kill gravity effects
+}
+
+void WaterBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    //nothing to do for now
+    //maybe later go splish.
+}

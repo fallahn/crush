@@ -31,6 +31,7 @@ source distribution.
 #include <BlockBehaviour.hpp>
 #include <NpcBehaviour.hpp>
 #include <PlayerBehaviour.hpp>
+#include <WaterBehaviour.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -74,6 +75,9 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::Solid:
         m_behaviour = std::make_unique<SolidBehaviour>(this);
+        break;
+    case Type::Water:
+        m_behaviour = std::make_unique<WaterBehaviourAir>(this);
         break;
     default: break;
     }

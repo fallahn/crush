@@ -42,6 +42,9 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
 {
     switch (other->getType())
     {
+    case CollisionWorld::Body::Type::Water:
+        setState<PlayerBehaviourWater>();
+        break;
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
@@ -117,6 +120,9 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
 {
     switch (other->getType())
     {
+    case CollisionWorld::Body::Type::Water:
+        setState<PlayerBehaviourWater>();
+        break;
     case CollisionWorld::Body::Type::Block:
         if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && */manifold.x != 0.f) //prevents shifting vertically
@@ -170,3 +176,22 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
     default: break;
     }
 }
+
+//-------------------------------------------
+PlayerBehaviourWater::PlayerBehaviourWater(CollisionWorld::Body* b)
+    : BodyBehaviour(b), m_sinkTime(1.5f), m_currentTime(0.f){}
+
+void PlayerBehaviourWater::update(float dt)
+{
+    auto vel = getVelocity();
+    vel.x = 0.f;
+    vel.y *= 0.4f; //sink slowly - TODO raise event to stop jumping in this state?
+    setVelocity(vel);
+
+    m_currentTime += dt;
+    if (m_currentTime > m_sinkTime)
+        kill();
+}
+
+void PlayerBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{}

@@ -69,7 +69,8 @@ add_executable(
 	src/ScoreBoard.cpp
 	src/State.cpp
 	src/StateStack.cpp
-	src/TitleState.cpp)
+	src/TitleState.cpp
+	src/WaterBehaviour.cpp)
 
 #copy reources to output directory
 #install(DIRECTORY res/
