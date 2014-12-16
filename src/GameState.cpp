@@ -32,6 +32,7 @@ source distribution.
 #include <Util.hpp>
 #include <Particles.hpp>
 #include <Map.hpp>
+#include <WaterDrawable.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -50,6 +51,8 @@ namespace
     DebugShape blockShape;
     DebugShape playerShape;
     DebugShape npcShape;
+
+    WaterDrawable waterDrawable;
 
     const sf::Uint8 maxPlayers = 2u;
 
@@ -139,6 +142,8 @@ GameState::GameState(StateStack& stack, Context context)
 
 bool GameState::update(float dt)
 {
+    waterDrawable.update(dt);
+    
     while (!m_commandStack.empty())
         m_scene.executeCommand(m_commandStack.pop(), dt);
 
@@ -189,7 +194,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Num1:
-            
+            waterDrawable.splash(140.f, 420.f);
             break;
         case sf::Keyboard::Num2:
             m_scoreBoard.enablePlayer(Category::PlayerTwo);
@@ -294,10 +299,12 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         //TODO switch for custom water drawable
         auto node = std::make_unique<Node>();
         node->setPosition(position);
-        shapes.emplace_back(solidShape);
+        /*shapes.emplace_back(solidShape);
         shapes.back().setOutlineColor(sf::Color::Cyan);
         shapes.back().setSize(size);
-        node->setDrawable(&shapes.back());
+        node->setDrawable(&shapes.back());*/
+        waterDrawable.setSize(size);
+        node->setDrawable(&waterDrawable);
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
         m_scene.addNode(node);
     }

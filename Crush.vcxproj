@@ -100,6 +100,7 @@
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\TitleState.cpp" />
     <ClCompile Include="src\WaterBehaviour.cpp" />
+    <ClCompile Include="src\WaterDrawable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="include\TitleState.hpp" />
     <ClInclude Include="include\Util.hpp" />
     <ClInclude Include="include\WaterBehaviour.hpp" />
+    <ClInclude Include="include\WaterDrawable.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

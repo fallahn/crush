@@ -70,7 +70,8 @@ add_executable(
 	src/State.cpp
 	src/StateStack.cpp
 	src/TitleState.cpp
-	src/WaterBehaviour.cpp)
+	src/WaterBehaviour.cpp
+	src/WaterDrawable.cpp)
 
 #copy reources to output directory
 #install(DIRECTORY res/

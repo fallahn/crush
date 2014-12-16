@@ -406,10 +406,14 @@ namespace Level_editor
         private void setIncrements(decimal value)
         {
             numericUpDownPlayerOneX.Increment = value;
+            //numericUpDownPlayerOneX.Value = (decimal)Math.Round((double)numericUpDownPlayerOneX.Value / (double)value) * value;
             numericUpDownPlayerOneY.Increment = value;
+            //numericUpDownPlayerOneY.Value = (decimal)Math.Round((double)numericUpDownPlayerOneY.Value / (double)value) * value;
 
             numericUpDownPlayerTwoX.Increment = value;
+            //numericUpDownPlayerTwoX.Value = (decimal)Math.Round((double)numericUpDownPlayerTwoX.Value / (double)value) * value;
             numericUpDownPlayerTwoY.Increment = value;
+            //numericUpDownPlayerTwoY.Value = (decimal)Math.Round((double)numericUpDownPlayerTwoY.Value / (double)value) * value;
 
             numericUpDownNodePropertyPosX.Increment = value;
             numericUpDownNodePropertyPosY.Increment = value;
