@@ -104,6 +104,19 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         particleSystem.addAffector(sa);
         particleSystem.setTexture(m_textureResource.get("res/textures/particle.png"));
     }
+    else if (type == Particle::Type::Splash)
+    {
+        particleSystem.setRandomInitialVelocity(true);
+        ForceAffector fa({ 0.f, 4000.f });
+        particleSystem.addAffector(fa);
+        RotateAffector ra(380.f);
+        particleSystem.addAffector(ra);
+        ScaleAffector sa({ 5.5f, 5.5f });
+        particleSystem.addAffector(sa);
+        particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
+        //TODO set blendmode to add
+        //TODO use shader to discard alpha to crop falloff
+    }
     return particleSystem;
 }
 

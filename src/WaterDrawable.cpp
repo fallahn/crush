@@ -43,8 +43,8 @@ namespace
 
 WaterDrawable::WaterDrawable(const sf::Vector2f& size)
     : m_size        (size),
-    m_lightColour   (0u, 204u, 255u, 180u),
-    m_darkColour    (68u, 112u, 255u, 195u),
+    m_lightColour   (0u, 204u, 255u, 140u),
+    m_darkColour    (68u, 112u, 255u, 155u),
     m_vertices      (sf::TrianglesStrip)
 {
     resize();
@@ -122,45 +122,28 @@ void WaterDrawable::resize()
     m_columns.clear();
     auto count = static_cast<sf::Uint32>(std::ceil(m_size.x / pixelsPerColumn)) + 1u;
     for (auto i = 0u; i < count; ++i)
-        m_columns.emplace_back(0.f, 0.f, 0.f);
+        m_columns.emplace_back();
 }
 
 void WaterDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     //rebuild vert array - TODO flag rebuild only when necessary
     m_vertices.clear();
-    for (auto i = 1u; i < m_columns.size(); ++i)
+    for (auto i = 0u; i < m_columns.size(); ++i)
     {
-        //sf::Vertex v;
-        //v.color = m_colour;
-        //v.position.x = static_cast<float>(i * pixelsPerColumn);
-        //v.position.y = m_columns[i].height;
-        //m_vertices.append(v);
+        auto offset = static_cast<float>(i * pixelsPerColumn);
 
-        sf::Vector2f v1(static_cast<float>((i - 1) * pixelsPerColumn), m_columns[i - 1].height);
-        sf::Vector2f v2(static_cast<float>(i * pixelsPerColumn), m_columns[i].height);
-        sf::Vector2f v3(v2.x, m_size.y);
-        sf::Vector2f v4(v1.x, m_size.y);
-
-        m_vertices.append(sf::Vertex(v1, m_lightColour));
-        m_vertices.append(sf::Vertex(v2, m_lightColour));
-        m_vertices.append(sf::Vertex(v4, m_darkColour));
-        m_vertices.append(sf::Vertex(v3, m_darkColour));
-
-        //first quad ^^ then add two more each time to end
-
-        //m_vertices.append(sf::Vertex(v2, m_lightColour));
-        
-        //m_vertices.append(sf::Vertex(v4, m_darkColour));
+        m_vertices.append(sf::Vertex({ offset, m_size.y }, m_darkColour));
+        m_vertices.append(sf::Vertex({ offset, m_columns[i].height }, m_lightColour));
     }
     
     rt.draw(m_vertices, states);
 }
 
-WaterDrawable::Column::Column(float th, float h, float s)
-    : targetHeight  (th),
-    height          (h),
-    speed           (s){}
+WaterDrawable::Column::Column()
+    : targetHeight  (0.f),
+    height          (0.f),
+    speed           (0.f){}
 
 void WaterDrawable::Column::update(float dt)
 {

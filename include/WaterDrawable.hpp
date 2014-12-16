@@ -51,7 +51,7 @@ public:
 private:
     struct Column
     {
-        Column(float targetHeight, float height, float speed);
+        Column();
         void update(float dt);
 
         float targetHeight;

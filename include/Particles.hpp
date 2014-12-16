@@ -45,7 +45,8 @@ struct Particle final : public sf::Transformable
 {    
     enum class Type
     {
-        Splat
+        Splat,
+        Splash
     };
 
     //sf::Vector2f position;
@@ -64,11 +65,16 @@ public:
 
     void setTexture(const sf::Texture& t);
     void setColour(const sf::Color& colour);
+    void setBlendMode(sf::BlendMode mode);
+    void setShader(sf::Shader& shader);
+
     void setPosition(const sf::Vector2f& position);
     void move(const sf::Vector2f& amount);
+
     void setParticleLifetime(float time);
     void setInitialVelocity(const sf::Vector2f& vel);
     void setRandomInitialVelocity(bool b);
+
     void addAffector(Affector& a);
     template <typename T>
     void addAffector(T& affector);
@@ -80,6 +86,7 @@ public:
     
     Particle::Type getType() const;
     sf::Uint32 getParticleCount() const;
+
 
 private:
     std::deque<Particle> m_particles;
@@ -105,6 +112,9 @@ private:
     sf::Clock m_durationClock;
     float m_duration;
     sf::Uint8 m_releaseCount;
+
+    sf::BlendMode m_blendMode;
+    sf::Shader* m_shader;
 
     void emit(float dt);
     void addParticle(const sf::Vector2f& position);

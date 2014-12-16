@@ -63,7 +63,9 @@ ParticleSystem::ParticleSystem(Particle::Type type)
     m_vertices          (sf::Quads),
     m_needsUpdate       (true),
     m_duration          (0.f),
-    m_releaseCount      (1u)
+    m_releaseCount      (1u),
+    m_blendMode         (sf::BlendAdd),
+    m_shader            (nullptr)
 {
 
 }
@@ -78,6 +80,16 @@ void ParticleSystem::setTexture(const sf::Texture& t)
 void ParticleSystem::setColour(const sf::Color& colour)
 {
     m_colour = colour;
+}
+
+void ParticleSystem::setBlendMode(sf::BlendMode mode)
+{
+    m_blendMode = mode;
+}
+
+void ParticleSystem::setShader(sf::Shader& shader)
+{
+    m_shader = &shader;
 }
 
 void ParticleSystem::setPosition(const sf::Vector2f& position)
@@ -243,5 +255,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     }
 
     states.texture = m_texture;
+    states.shader = m_shader;
+    states.blendMode = m_blendMode;
     rt.draw(m_vertices, states);
 }
