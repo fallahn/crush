@@ -25,37 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//in charge of particle systems used throughout the world
+//shaders used in particle effects
 
-#ifndef PARTICLE_CONTROLLER_H_
-#define PARTICLE_CONTROLLER_H_
+#ifndef PARTICLE_SHADERS_H_
+#define PARTICLE_SHADERS_H_
 
-#include <Observer.hpp>
-#include <Particles.hpp>
-#include <Resource.hpp>
+#include <string>
 
-#include <SFML/System/NonCopyable.hpp>
-#include <SFML/Graphics/Drawable.hpp>
-
-#include <vector>
-
-class ParticleController final : public Observer, private sf::NonCopyable, public sf::Drawable
+namespace Shaders
 {
-public:
-    explicit ParticleController(TextureResource& tr);
-    ~ParticleController() = default;
+    static std::string waterGlob =
+        "#version 120\n" \
+        "const float alphaCutoff = 0.4;\n" \
+        "const float finalAlpha = 0.55;\n" \
+        "uniform sampler2D u_diffuse;\n" \
+        "void main()\n" \
+        "{\n" \
+        "   vec4 textureColour = texture2D(u_diffuse, gl_TexCoord[0].xy);\n" \
+        "   if(textureColour.a < alphaCutoff) discard;\n" \
+        "   textureColour *= gl_Color;\n" \
+        "   textureColour.a *= finalAlpha;\n" \
+        "   gl_FragColor = textureColour;\n" \
+        "}";
+}
 
-    void update(float dt);
-
-    void onNotify(Subject& s, const game::Event& evt) override;
-
-private:
-    std::vector<ParticleSystem> m_systems;
-    TextureResource& m_textureResource;
-
-    ParticleSystem& addSystem(Particle::Type type);
-    ParticleSystem& findSystem(Particle::Type type);
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
-};
-
-#endif //PARTICLE_CONTROLLER_H_
+#endif // PARTICLE_SHADERS_H_

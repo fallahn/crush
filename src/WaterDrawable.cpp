@@ -34,7 +34,7 @@ source distribution.
 namespace
 {
     const float tension = 2.9f;
-    const float dampening = 0.005f;
+    const float dampening = 0.009f;
     const float spread = 35.f;
 
     const sf::Uint16 pixelsPerColumn = 15u;

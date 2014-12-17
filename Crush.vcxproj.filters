@@ -212,5 +212,8 @@
     <ClInclude Include="include\WaterDrawable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\ParticleShaders.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

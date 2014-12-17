@@ -45,13 +45,15 @@ namespace game
             Category::Type type;
             enum Action
             {
-                Spawn,
-                Despawn,
-                KilledNode
+                Spawn, //placed into scene
+                Despawn, //removed from scene
+                KilledNode, //killed another node in scene
+                HitWater //this node landed in water
             }action;
             Category::Type target; //node type which was target of deathness
             Category::Type owner; //if this is a block, who last owned it
             float positionX, positionY;
+            float speed; //speed at which the entity was travelling when event raised
         };
 
         //when players do stuff

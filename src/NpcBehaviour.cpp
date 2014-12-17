@@ -47,9 +47,9 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         auto vel = getVelocity();
         if (vel.y >= 0) //only jump if moving down
         {
-            vel.y -= 1100.f;
-            setVelocity(vel);
-            //setState<NpcBehaviourAir>();
+            //vel.y -= 1100.f;
+            //setVelocity(vel);
+            setState<NpcBehaviourWater>();
         }
     }
     break;
@@ -177,10 +177,10 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     case CollisionWorld::Body::Water:
         //jump away
     {
-        auto vel = getVelocity();
-        vel.y -= 1100.f;
-        setVelocity(vel);
-        setState<NpcBehaviourAir>();
+        //auto vel = getVelocity();
+        //vel.y -= 1100.f;
+        //setVelocity(vel);
+        setState<NpcBehaviourWater>();
     }
     break;
     case CollisionWorld::Body::Type::Block:
@@ -247,7 +247,6 @@ NpcBehaviourWalk::NpcBehaviourWalk(CollisionWorld::Body* b)
 
 void NpcBehaviourWalk::update(float dt)
 {
-
     auto vel = getVelocity();
     //only apply gravity when not on block / solid
     if (getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) vel.y = 0.f;
@@ -280,10 +279,10 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     case CollisionWorld::Body::Water:
         //jump away
     {
-        auto vel = getVelocity();
-        vel.y -= 1100.f;
-        setVelocity(vel);
-        setState<NpcBehaviourAir>();
+        //auto vel = getVelocity();
+        //vel.y -= 1100.f;
+        //setVelocity(vel);
+        setState<NpcBehaviourWater>();
     }
         break;
     case CollisionWorld::Body::Type::Block:
@@ -342,15 +341,36 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 
 //------------------------------------------
 
-//void NpcBehaviourWater::update(float dt)
-//{
-//    if ((getFootSenseMask() & CollisionWorld::Body::Water) == 0)
-//    {
-//        setState<NpcBehaviourAir>();
-//    }
-//}
-//
-//void NpcBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
-//{
-//
-//}
+void NpcBehaviourWater::update(float dt)
+{
+    auto vel = getVelocity();
+    vel.x = 0.f;
+    vel.y *= getFriction();
+    setVelocity(vel);
+
+    m_currentTime += dt;
+    if (m_currentTime > m_timeout
+        || (getFootSenseMask() & CollisionWorld::Body::Type::Solid))
+    {
+        getBody()->setPosition({ -100.f, Util::Random::value(300.f, 1200.f) });
+        setState<NpcBehaviourAir>();
+    }
+}
+
+void NpcBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    if (!m_splashed && other->getType() == CollisionWorld::Body::Type::Water)
+    {
+        //raise splash event
+        game::Event evt;
+        evt.type = game::Event::Node;
+        evt.node.type = Category::Water;
+        evt.node.action = game::Event::NodeEvent::HitWater;
+        evt.node.positionX = getBody()->getCentre().x;
+        evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
+        evt.node.speed = getVelocity().y;
+        raiseEvent(evt, other);
+
+        m_splashed = true;
+    }
+}

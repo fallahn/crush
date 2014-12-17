@@ -191,6 +191,22 @@ void BlockBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::
         setVelocity({});
         setState<BlockBehaviourGround>();
         break;
+    case CollisionWorld::Body::Type::Water:
+        if(!m_splashed)
+        {
+            //raise splash event
+            game::Event evt;
+            evt.type = game::Event::Node;
+            evt.node.type = Category::Water;
+            evt.node.action = game::Event::NodeEvent::HitWater;
+            evt.node.positionX = getBody()->getCentre().x;
+            evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
+            evt.node.speed = getVelocity().y;
+            raiseEvent(evt, other);
+
+            m_splashed = true;
+        }
+        break;
     default: break;
     }
 }

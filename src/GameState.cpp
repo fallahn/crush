@@ -296,16 +296,12 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         break;
     case Category::Water:
     {
-        //TODO switch for custom water drawable
         auto node = std::make_unique<Node>();
         node->setPosition(position);
-        /*shapes.emplace_back(solidShape);
-        shapes.back().setOutlineColor(sf::Color::Cyan);
-        shapes.back().setSize(size);
-        node->setDrawable(&shapes.back());*/
         waterDrawable.setSize(size);
         node->setDrawable(&waterDrawable);
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
+        node->addObserver(m_particleController);
         m_scene.addNode(node);
     }
         break;

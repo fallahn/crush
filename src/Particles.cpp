@@ -29,26 +29,12 @@ source distribution.
 #include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
 namespace
 {
-    //actually looks better to pick one of these at random
-    //rather than trying to get random floats in such a large range
-    std::vector<sf::Vector2f> randVelocities = 
-    {
-        { -200.f, -500.f },
-        { 0.f, -400.f },
-        { -250.f, -600.f },
-        { -100.f, -1000.f },
-        { 70.f, -900.f },
-        { 200.f, -500.f },
-        { -300.f, -400.f },
-        { 50.f, -450.f },
-        { -200.f, -350.f },
-        { -174.f, -1050.f },
-        { 380.f, -900.f },
-    };
+
 }
 
 ParticleSystem::ParticleSystem(Particle::Type type)
@@ -92,6 +78,11 @@ void ParticleSystem::setShader(sf::Shader& shader)
     m_shader = &shader;
 }
 
+void ParticleSystem::setParticleSize(const sf::Vector2f& size)
+{
+    m_particleSize = size;
+}
+
 void ParticleSystem::setPosition(const sf::Vector2f& position)
 {
     m_position = position;
@@ -112,9 +103,11 @@ void ParticleSystem::setInitialVelocity(const sf::Vector2f& vel)
     m_initialVelocity = vel;
 }
 
-void ParticleSystem::setRandomInitialVelocity(bool b)
+void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& randVelocities)
 {
-    m_randVelocity = b;
+    assert(randVelocities.size());
+    m_randVelocities = randVelocities;
+    m_randVelocity = true;
 }
 
 void ParticleSystem::addAffector(Affector& a)
@@ -208,7 +201,7 @@ void ParticleSystem::addParticle(const sf::Vector2f& position)
     p.colour = m_colour;
     p.lifetime = m_particleLifetime;
     p.velocity = (m_randVelocity) ? 
-        randVelocities[Util::Random::value(0, randVelocities.size() - 1)] :
+        m_randVelocities[Util::Random::value(0, m_randVelocities.size() - 1)] :
         m_initialVelocity;
 
     m_particles.push_back(p);
@@ -253,6 +246,8 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         updateVertices();
         m_needsUpdate = false;
     }
+
+    if (m_shader) m_shader->setParameter("u_diffuse", sf::Shader::CurrentTexture);
 
     states.texture = m_texture;
     states.shader = m_shader;

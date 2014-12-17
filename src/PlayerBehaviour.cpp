@@ -179,7 +179,7 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
 
 //-------------------------------------------
 PlayerBehaviourWater::PlayerBehaviourWater(CollisionWorld::Body* b)
-    : BodyBehaviour(b), m_sinkTime(1.5f), m_currentTime(0.f){}
+    : BodyBehaviour(b), m_sinkTime(1.5f), m_currentTime(0.f), m_splashed(false){}
 
 void PlayerBehaviourWater::update(float dt)
 {
@@ -189,9 +189,24 @@ void PlayerBehaviourWater::update(float dt)
     setVelocity(vel);
 
     m_currentTime += dt;
-    if (m_currentTime > m_sinkTime)
+    if (m_currentTime > m_sinkTime || (getFootSenseMask() & CollisionWorld::Body::Type::Solid))
         kill();
 }
 
 void PlayerBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
-{}
+{
+    if (!m_splashed && other->getType() == CollisionWorld::Body::Type::Water)
+    {
+        //raise splash event
+        game::Event evt;
+        evt.type = game::Event::Node;
+        evt.node.type = Category::Water;
+        evt.node.action = game::Event::NodeEvent::HitWater;
+        evt.node.positionX = getBody()->getCentre().x;
+        evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
+        evt.node.speed = getVelocity().y;
+        raiseEvent(evt, other);
+
+        m_splashed = true;
+    }
+}

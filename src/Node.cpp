@@ -28,8 +28,10 @@ source distribution.
 
 #include <Node.hpp>
 #include <Scene.hpp>
+#include <WaterDrawable.hpp>
 
 #include <cassert>
+#include <iostream>
 
 Node::Node(const std::string& name)
     : m_parent      (nullptr),
@@ -242,12 +244,14 @@ void Node::onNotify(Subject& s, const game::Event& evt)
     {
     case game::Event::Node:
     {
-        if (evt.node.action == game::Event::NodeEvent::Despawn)
+        switch (evt.node.action)
+        {
+        case game::Event::NodeEvent::Despawn:
         {
             //let our observers know it's time to die
             game::Event e = evt;
             e.node.type = m_category;
-            
+
             auto pos = m_collisionBody->getCentre();
             e.node.positionX = pos.x;
             e.node.positionY = pos.y;
@@ -262,15 +266,31 @@ void Node::onNotify(Subject& s, const game::Event& evt)
                 playerEvent.player.playerId = m_category;
                 playerEvent.player.action = game::Event::PlayerEvent::Died;
                 assert(m_collisionBody);
-                
+
                 playerEvent.player.positionX = pos.x;
                 playerEvent.player.positionY = pos.y;
                 notify(*this, playerEvent);
             }
         }
-        else if (evt.node.action == game::Event::NodeEvent::KilledNode)
+        break;
+        case game::Event::NodeEvent::KilledNode:
+        
         {
             notify(*this, evt);
+        }
+        break;
+        case game::Event::NodeEvent::HitWater:
+        {
+            //notify particle system
+            notify(*this, evt);
+            //splash drawable
+            //TODO HAAAX - this assumes because we have awater event we have a water drawble
+            //attached and we call an upcast :/
+            assert(m_drawable);
+            auto water = dynamic_cast<WaterDrawable*>(m_drawable);
+            water->splash(evt.node.positionX - getWorldPosition().x, std::min(500.f, std::fabs(evt.node.speed)));
+        }
+        default: break;
         }
     }
         break;

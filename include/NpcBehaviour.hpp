@@ -65,12 +65,18 @@ private:
     float m_moveForce;
 };
 
-//class NpcBehaviourWater final : public BodyBehaviour
-//{
-//public:
-//    explicit NpcBehaviourWater(CollisionWorld::Body* b) : BodyBehaviour(b){};
-//    void update(float dt) override;
-//    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
-//};
+class NpcBehaviourWater final : public BodyBehaviour
+{
+public:
+    explicit NpcBehaviourWater(CollisionWorld::Body* b) : BodyBehaviour(b),
+    m_timeout(1.4f), m_currentTime(0.f), m_splashed(false){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    float m_timeout;
+    float m_currentTime;
+    bool m_splashed;
+};
 
 #endif //NPC_BEHAVIOUR_H_

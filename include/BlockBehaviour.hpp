@@ -59,9 +59,12 @@ public:
 class BlockBehaviourWater final : public BodyBehaviour
 {
 public:
-    explicit BlockBehaviourWater(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    explicit BlockBehaviourWater(CollisionWorld::Body* b) : BodyBehaviour(b), m_splashed(false){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    bool m_splashed;
 };
 
 class SolidBehaviour final : public BodyBehaviour

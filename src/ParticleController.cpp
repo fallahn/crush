@@ -26,13 +26,50 @@ source distribution.
 *********************************************************************/
 
 #include <ParticleController.hpp>
+#include <ParticleShaders.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
+
+namespace
+{
+    //actually looks better to pick one of these at random
+    //rather than trying to get random floats in such a large range
+    std::vector<sf::Vector2f> splatVelocities =
+    {
+        { -200.f, -500.f },
+        { 0.f, -400.f },
+        { -250.f, -600.f },
+        { -100.f, -1000.f },
+        { 70.f, -900.f },
+        { 200.f, -500.f },
+        { -300.f, -400.f },
+        { 50.f, -450.f },
+        { -200.f, -350.f },
+        { -174.f, -1050.f },
+        { 380.f, -900.f },
+    };
+
+    std::vector<sf::Vector2f> splashVelocities = 
+    {
+        {-25.f, -600.f},
+        {-14.f, -700.f},
+        {-8.f, -640.f},
+        {0.f, -1080.f},
+        {7.f, -720.f},
+        {18.f, -670.f},
+        {29.f, -680.f}
+    };
+
+    sf::Shader waterShader;
+}
 
 ParticleController::ParticleController(TextureResource& tr)
     : m_textureResource (tr)
 {
     m_systems.reserve(50);
+
+    waterShader.loadFromMemory(Shaders::waterGlob, sf::Shader::Fragment);
 }
 
 //public
@@ -44,80 +81,101 @@ void ParticleController::update(float dt)
 
 void ParticleController::onNotify(Subject& s, const game::Event& evt)
 {
-    if (evt.type == game::Event::Node
-        && evt.node.action == game::Event::NodeEvent::Despawn)
+    if (evt.type == game::Event::Node)
+        //&& evt.node.action == game::Event::NodeEvent::Despawn)
     {
-        //raise a 'splat' effect
-        sf::Vector2f evtPosition(evt.node.positionX, evt.node.positionY);
-        sf::Color colour;
-        switch (evt.node.type)
+        switch (evt.node.action)
         {
-        case Category::PlayerOne:
-        case Category::PlayerTwo:
-            colour = sf::Color::Blue;
+        case game::Event::NodeEvent::Despawn:
+        {
+            //raise a 'splat' effect
+            sf::Color colour;
+            switch (evt.node.type)
+            {
+            case Category::PlayerOne:
+            case Category::PlayerTwo:
+                colour = sf::Color::Blue;
+                break;
+            case Category::Npc:
+                colour = sf::Color::Green;
+                break;
+            default: break;
+            }
+
+            auto& ps = findSystem(Particle::Type::Splat);
+            ps.setColour(colour);
+            ps.setPosition({ evt.node.positionX, evt.node.positionY });
+            ps.start(6u, 0.1f);
+
             break;
-        case Category::Npc:
-            colour = sf::Color::Green;
-            break;
+        }
+        case game::Event::NodeEvent::HitWater:
+        {
+            auto& ps = findSystem(Particle::Type::Splash);
+            ps.setPosition({ evt.node.positionX, evt.node.positionY });
+            ps.start(4u, 0.02f);
+        }
         default: break;
         }
-
-        //find and idle system and use it
-        auto result = std::find_if(m_systems.begin(), m_systems.end(),
-            [](const ParticleSystem& ps)
-        {
-            return (ps.getType() == Particle::Type::Splat && !ps.started());
-        });
-
-        if (result != m_systems.end())
-        {
-            result->setColour(colour);
-            result->setPosition(evtPosition);
-            result->start(6u, 0.1f);
-        }
-
-        //else append a new system
-        else
-        {
-            auto& particleSystem = addSystem(Particle::Type::Splat);
-            particleSystem.setColour(colour);
-            particleSystem.setPosition(evtPosition);
-            particleSystem.start(6u, 0.1f);
-        } 
     }
 }
 
 //private
 ParticleSystem& ParticleController::addSystem(Particle::Type type)
 {
-    //TODO other system types
     m_systems.emplace_back(type);
     ParticleSystem& particleSystem = m_systems.back();
     if (type == Particle::Type::Splat)
     {
-        particleSystem.setRandomInitialVelocity(true);
-        ForceAffector fa({ 0.f, 4000.f });
+        particleSystem.setTexture(m_textureResource.get("res/textures/particle.png"));
+        particleSystem.setRandomInitialVelocity(splatVelocities);
+
+        ForceAffector fa({ 0.f, 4000.f }); //gravity
         particleSystem.addAffector(fa);
         RotateAffector ra(380.f);
         particleSystem.addAffector(ra);
         ScaleAffector sa({ 5.5f, 5.5f });
-        particleSystem.addAffector(sa);
-        particleSystem.setTexture(m_textureResource.get("res/textures/particle.png"));
+        particleSystem.addAffector(sa); 
     }
     else if (type == Particle::Type::Splash)
     {
-        particleSystem.setRandomInitialVelocity(true);
-        ForceAffector fa({ 0.f, 4000.f });
-        particleSystem.addAffector(fa);
-        RotateAffector ra(380.f);
-        particleSystem.addAffector(ra);
-        ScaleAffector sa({ 5.5f, 5.5f });
-        particleSystem.addAffector(sa);
         particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
-        //TODO set blendmode to add
-        //TODO use shader to discard alpha to crop falloff
+        particleSystem.setColour({ 3u, 109u, 141u });
+        particleSystem.setParticleLifetime(1.2f);
+        particleSystem.setParticleSize({4.f, 9.f});
+        particleSystem.setRandomInitialVelocity(splashVelocities);
+
+        ForceAffector fa({ 0.f, 1500.f }); //gravity
+        particleSystem.addAffector(fa);
+
+        ScaleAffector sa({ 1.f, 8.5f });
+        particleSystem.addAffector(sa);
+
+        //particleSystem.setShader(waterShader);
+        particleSystem.setBlendMode(sf::BlendAlpha);
     }
     return particleSystem;
+}
+
+ParticleSystem& ParticleController::findSystem(Particle::Type type)
+{
+    //find and idle system and use it
+    auto result = std::find_if(m_systems.begin(), m_systems.end(),
+        [type](const ParticleSystem& ps)
+    {
+        return (ps.getType() == type && !ps.started());
+    });
+
+    if (result != m_systems.end())
+    {
+        return (*result); 
+    }
+
+    //else append a new system
+    else
+    {
+        return addSystem(type);
+    }
 }
 
 void ParticleController::draw(sf::RenderTarget& rt, sf::RenderStates states) const

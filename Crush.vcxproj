@@ -119,6 +119,7 @@
     <ClInclude Include="include\Map.hpp" />
     <ClInclude Include="include\ParticleController.hpp" />
     <ClInclude Include="include\Particles.hpp" />
+    <ClInclude Include="include\ParticleShaders.hpp" />
     <ClInclude Include="include\PlayerBehaviour.hpp" />
     <ClInclude Include="include\ScoreBoard.hpp" />
     <ClInclude Include="include\GameOverState.hpp" />

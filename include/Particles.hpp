@@ -68,12 +68,13 @@ public:
     void setBlendMode(sf::BlendMode mode);
     void setShader(sf::Shader& shader);
 
+    void setParticleSize(const sf::Vector2f& size);
     void setPosition(const sf::Vector2f& position);
     void move(const sf::Vector2f& amount);
 
     void setParticleLifetime(float time);
     void setInitialVelocity(const sf::Vector2f& vel);
-    void setRandomInitialVelocity(bool b);
+    void setRandomInitialVelocity(const std::vector<sf::Vector2f>& randValues);
 
     void addAffector(Affector& a);
     template <typename T>
@@ -100,6 +101,7 @@ private:
 
     sf::Vector2f m_initialVelocity;
     bool m_randVelocity;
+    std::vector<sf::Vector2f> m_randVelocities;
 
     bool m_started;
     float m_accumulator;

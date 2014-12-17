@@ -58,6 +58,7 @@ public:
 private:
     float m_sinkTime;
     float m_currentTime;
+    bool m_splashed;
 };
 
 #endif // PLAYER_BEHAVIOUR_H_
