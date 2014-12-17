@@ -32,6 +32,7 @@ source distribution.
 #include <NpcBehaviour.hpp>
 #include <PlayerBehaviour.hpp>
 #include <WaterBehaviour.hpp>
+#include <ItemBehaviour.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -39,7 +40,7 @@ source distribution.
 namespace
 {
     const float sensorSize = 10.f;
-    const float defaultStrength = 40.f;
+    const float defaultStrength = 35.f;
     //TODO fix magic numbers - basically default view size with 100 unit padding
     const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
 
@@ -78,6 +79,9 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::Water:
         m_behaviour = std::make_unique<WaterBehaviourAir>(this);
+        break;
+    case Type::Item:
+        m_behaviour = std::make_unique<ItemBehaviourAir>(this);
         break;
     default: break;
     }

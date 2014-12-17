@@ -196,6 +196,8 @@
             // checkBoxSnap
             // 
             this.checkBoxSnap.AutoSize = true;
+            this.checkBoxSnap.Checked = true;
+            this.checkBoxSnap.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxSnap.Location = new System.Drawing.Point(9, 49);
             this.checkBoxSnap.Name = "checkBoxSnap";
             this.checkBoxSnap.Size = new System.Drawing.Size(85, 17);

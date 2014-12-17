@@ -54,6 +54,7 @@ add_executable(
 	src/Game.cpp
 	src/GameState.cpp
 	src/GameOverState.cpp
+	src/ItemBehaviour.cpp
 	src/Map.cpp
 	src/MapController.cpp
 	src/MenuState.cpp

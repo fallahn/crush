@@ -37,9 +37,9 @@ namespace
     const float joyDeadZone = 25.f;
     
     const float maxMoveForce = 160.f;
-    const float jumpForce = 1050.f;
+    const float jumpForce = 1180.f;
 
-    const float friction = 0.86f;
+    const float friction = 0.83f;
 
     const sf::Vector2f grabVec(40.f, 0.f); //TODO this ought to be tied to body size (just over half width)
 }

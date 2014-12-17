@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
+    <ClCompile Include="src\ItemBehaviour.cpp" />
     <ClCompile Include="src\MapController.cpp" />
     <ClCompile Include="src\NpcController.cpp" />
     <ClCompile Include="src\BlockBehaviour.cpp" />
@@ -105,6 +106,7 @@
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
+    <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\MapController.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />
     <ClInclude Include="include\NpcController.hpp" />

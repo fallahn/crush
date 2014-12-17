@@ -321,7 +321,7 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         shapes.back().setSize(size);
         shapes.back().setOutlineColor(sf::Color::Yellow);
         node->setDrawable(&shapes.back());
-        //TODO set collision body
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, size));
         //TODO add particle controller as observer so we can do sooper effects when picking up / spawning
         //TODO add scoreboard observer so we can add points
         m_scene.addNode(node);
