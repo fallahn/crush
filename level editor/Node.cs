@@ -61,9 +61,6 @@ namespace Level_editor
                 case BodyType.PlayerTwo:
                     m_type = "PlayerTwo";
                     break;
-                case BodyType.ExtraLife:
-                    m_type = "ExtraLife";
-                    break;
                 case BodyType.Bonus:
                     m_type = "Bonus";
                     break;
@@ -92,8 +89,6 @@ namespace Level_editor
             PlayerOne,
             [Description("Player Two")]
             PlayerTwo,
-            [Description("Extra Life")]
-            ExtraLife,
             [Description("Bonus")]
             Bonus,
             [Description("Water")]

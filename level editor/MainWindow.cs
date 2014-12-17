@@ -48,15 +48,14 @@ namespace Level_editor
         private Panel m_playerTwoPanel = null;
         private Panel m_selectedNode = null;
 
-        private Size blockSize = new Size(100, 70);
-        private Size itemSize = new Size(40, 60);
+        private Size blockSize = new Size(60, 40);
+        private Size itemSize = new Size(30, 50);
         private const int scale = 2;// ui is half the size of the actual game world
         private Color playerOneColour = Color.DodgerBlue;
         private Color playerTwoColour = Color.Gold;
         private Color blockColour = Color.Firebrick;
         private Color solidColour = Color.IndianRed;
         private Color bonusColour = Color.Yellow;
-        private Color lifeColour = Color.ForestGreen;
         private Color waterColour = Color.Aqua;
 
         ContextMenuStrip m_nodeMenu = new ContextMenuStrip();
@@ -64,7 +63,7 @@ namespace Level_editor
         public MainWindow()
         {
             InitializeComponent();
-            WindowState = FormWindowState.Maximized;
+            //WindowState = FormWindowState.Maximized;
         }
 
 
@@ -271,11 +270,6 @@ namespace Level_editor
                         m_selectedNode.Width = itemSize.Width / scale;
                         m_selectedNode.Height = itemSize.Height / scale;
                         break;
-                    case Node.BodyType.ExtraLife:
-                        m_selectedNode.BackColor = lifeColour;
-                        m_selectedNode.Width = itemSize.Width / scale;
-                        m_selectedNode.Height = itemSize.Height / scale;
-                        break;
                     case Node.BodyType.Solid:
                         m_selectedNode.BackColor = solidColour;
                         break;
@@ -325,10 +319,6 @@ namespace Level_editor
             {
                 case "Solid":
                     type = Node.BodyType.Solid;
-                    break;
-                case "Extra Life":            
-                    type = Node.BodyType.ExtraLife;
-                    size = itemSize;
                     break;
                 case "Bonus":            
                     type = Node.BodyType.Bonus;

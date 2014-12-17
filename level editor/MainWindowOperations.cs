@@ -99,11 +99,6 @@ namespace Level_editor
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
                     break;
-                case Node.BodyType.ExtraLife:
-                    p.BackColor = lifeColour;
-                    p.Move += node_Move;
-                    p.ContextMenuStrip = m_nodeMenu;
-                    break;
                 case Node.BodyType.Water:
                     p.BackColor = waterColour;
                     p.Move += node_Move;
@@ -246,9 +241,6 @@ namespace Level_editor
                         break;
                     case "Bonus":
                         addNode(Node.BodyType.Bonus, n.Position, n.Size);
-                        break;
-                    case "ExtraLife":
-                        addNode(Node.BodyType.ExtraLife, n.Position, n.Size);
                         break;
                 }
             }

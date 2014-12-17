@@ -47,8 +47,7 @@ namespace Category
         CarriedOne      = (1 << 9), //for carrying
         CarriedTwo      = (1 << 10),
         Bonus           = (1 << 11),
-        ExtraLife       = (1 << 12),
-        Water           = (1 << 13)
+        Water           = (1 << 12)
     };
 }
 

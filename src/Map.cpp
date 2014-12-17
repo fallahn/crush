@@ -176,10 +176,6 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     {
         this->type = Category::Bonus;
     }
-    else if (type == "ExtraLife")
-    {
-        this->type = Category::ExtraLife;
-    }
     else if (type == "Water")
     {
         this->type = Category::Water;

@@ -38,7 +38,7 @@ source distribution.
 #include <SFML/Graphics/RectangleShape.hpp>
 
 #include <iostream>
-
+#include <list>
 
 namespace
 {
@@ -52,11 +52,11 @@ namespace
     DebugShape playerShape;
     DebugShape npcShape;
 
-    WaterDrawable waterDrawable;
+    std::list<WaterDrawable> waterDrawables;
 
     const sf::Uint8 maxPlayers = 2u;
 
-    sf::Vector2f blockSize(100.f, 70.f);
+    sf::Vector2f blockSize(60.f, 40.f);
  
     TextureResource textureResource;
 
@@ -114,7 +114,7 @@ GameState::GameState(StateStack& stack, Context context)
     
 
     //must be done after controllers are initialised
-    Map map("res/maps/testmap.crm");
+    Map map("res/maps/testmap2.crm");
     m_players[0].setSpawnPosition(map.getPlayerOneSpawn());
     m_players[1].setSpawnPosition(map.getPlayerTwoSpawn());
     m_npcController.setNpcCount(map.getNpcCount());
@@ -141,9 +141,7 @@ GameState::GameState(StateStack& stack, Context context)
 }
 
 bool GameState::update(float dt)
-{
-    waterDrawable.update(dt);
-    
+{    
     while (!m_commandStack.empty())
         m_scene.executeCommand(m_commandStack.pop(), dt);
 
@@ -159,6 +157,13 @@ bool GameState::update(float dt)
 
     //update particles
     m_particleController.update(dt);
+
+    //update water effects
+    for (auto& w : waterDrawables)
+        w.update(dt);
+
+    //map controller (bonuses etc)
+    m_mapController.update(dt);
 
     m_scene.flush();
     return true;
@@ -181,7 +186,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.mouseButton.button)
         {
         case sf::Mouse::Left:
-            addBlock(position);
+            addBlock(position, blockSize);
             break;
         case sf::Mouse::Right:
             addNpc(position);
@@ -194,7 +199,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.key.code)
         {
         case sf::Keyboard::Num1:
-            waterDrawable.splash(140.f, 420.f);
+
             break;
         case sf::Keyboard::Num2:
             m_scoreBoard.enablePlayer(Category::PlayerTwo);
@@ -214,13 +219,13 @@ bool GameState::handleEvent(const sf::Event& evt)
 
 
 //private
-void GameState::addBlock(const sf::Vector2f& position)
+void GameState::addBlock(const sf::Vector2f& position, const sf::Vector2f& size)
 {
     auto blockNode = std::make_unique<Node>("blockNode");
     blockNode->setPosition(position);
     blockNode->setDrawable(&blockShape);
     blockNode->setCategory(Category::Block);
-    blockNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, blockShape.getSize()));
+    blockNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, size));
     blockNode->addObserver(m_players[0]);
     blockNode->addObserver(m_players[1]);
     blockNode->addObserver(m_scoreBoard);
@@ -265,7 +270,7 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
     switch (type)
     {
     case Category::Block:
-        addBlock(position);
+        addBlock(position, size);
         break;
     case Category::Solid:
     {
@@ -298,16 +303,31 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
     {
         auto node = std::make_unique<Node>();
         node->setPosition(position);
-        waterDrawable.setSize(size);
-        node->setDrawable(&waterDrawable);
+        waterDrawables.emplace_back(size);
+        node->setDrawable(&waterDrawables.back());
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
         node->addObserver(m_particleController);
         m_scene.addNode(node);
     }
         break;
     case Category::Bonus:
-    case Category::ExtraLife:
+    {
+        auto node = std::make_unique<Node>();
+        node->setPosition(position);
+        node->setCategory(Category::Bonus);
+        //TODO this is still temp so we may end up cloning shapes instead of reusing them
+        //eventually the item controllers will manage drawable resources
+        shapes.emplace_back(solidShape);
+        shapes.back().setSize(size);
+        shapes.back().setOutlineColor(sf::Color::Yellow);
+        node->setDrawable(&shapes.back());
+        //TODO set collision body
+        //TODO add particle controller as observer so we can do sooper effects when picking up / spawning
+        //TODO add scoreboard observer so we can add points
+        m_scene.addNode(node);
+    }
         break;
+
     default: break;
     }
 }

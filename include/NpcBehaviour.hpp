@@ -63,6 +63,7 @@ private:
     float m_changeDelay;
     float m_accumulatedTime;
     float m_moveForce;
+    bool m_applyGravity;
 };
 
 class NpcBehaviourWater final : public BodyBehaviour

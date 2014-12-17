@@ -58,7 +58,7 @@ private:
     ParticleController m_particleController;
     MapController m_mapController;
 
-    void addBlock(const sf::Vector2f& position);
+    void addBlock(const sf::Vector2f& position, const sf::Vector2f& size);
     void addPlayer(const sf::Vector2f& position, Player& player);
     void addNpc(const sf::Vector2f& position);
     void addMapBody(Category::Type type, const sf::Vector2f& position, const sf::Vector2f& size = sf::Vector2f());

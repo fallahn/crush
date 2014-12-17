@@ -131,7 +131,7 @@ void WaterDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_vertices.clear();
     for (auto i = 0u; i < m_columns.size(); ++i)
     {
-        auto offset = static_cast<float>(i * pixelsPerColumn);
+        auto offset = std::min(static_cast<float>(i * pixelsPerColumn), m_size.x);
 
         m_vertices.append(sf::Vertex({ offset, m_size.y }, m_darkColour));
         m_vertices.append(sf::Vertex({ offset, m_columns[i].height }, m_lightColour));

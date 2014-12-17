@@ -36,12 +36,12 @@ namespace
     const float spawnTime = 1.f;
     const float joyDeadZone = 25.f;
     
-    const float maxMoveForce = 200.f;
-    const float jumpForce = 1650.f;
+    const float maxMoveForce = 160.f;
+    const float jumpForce = 1050.f;
 
     const float friction = 0.86f;
 
-    const sf::Vector2f grabVec(70.f, 0.f); //TODO this ought to be tied to body size (just over half width)
+    const sf::Vector2f grabVec(40.f, 0.f); //TODO this ought to be tied to body size (just over half width)
 }
 
 Player::Keys::Keys()
@@ -82,7 +82,6 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_keyBinds.pickUp = sf::Keyboard::Down;
 
         m_leftFacing = true;
-        m_spawnPosition = { 1680.f, 500.f };
         m_grabId = Category::GrabbedTwo;
         m_lastTouchId = Category::LastTouchedTwo;
         m_carryId = Category::CarriedTwo;

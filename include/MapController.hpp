@@ -39,18 +39,33 @@ source distribution.
 #include <functional>
 
 class Map;
-class MapController final : public Observer, private sf::NonCopyable
+class MapController final : public Observer, public Subject, private sf::NonCopyable
 {
 public:
     explicit MapController(CommandStack& cs);
     ~MapController() = default;
+
+    void update(float dt);
 
     void onNotify(Subject& s, const game::Event& e) override;
     void setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func);
 
     void loadMap(const Map& map);
 private:
+    struct Item
+    {
+        Item(const sf::Vector2f& pos, const sf::Vector2f& s, float lt)
+            : position(pos), size(s), lifeTime(lt){}
+        sf::Vector2f position;
+        sf::Vector2f size;
+        float lifeTime;
+    };
+
     CommandStack& m_commandStack;
+
+    std::vector<Item> m_items;
+    float m_itemTime;
+    bool m_itemActive;
 
     std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> spawn;
 };

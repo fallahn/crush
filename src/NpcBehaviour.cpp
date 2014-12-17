@@ -28,6 +28,11 @@ source distribution.
 #include <NpcBehaviour.hpp>
 #include <Util.hpp>
 
+namespace
+{
+    const float initialJumpSpeed = 700.f;
+}
+
 //-------------------------------------------
 void NpcBehaviourAir::update(float dt)
 {
@@ -47,8 +52,6 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         auto vel = getVelocity();
         if (vel.y >= 0) //only jump if moving down
         {
-            //vel.y -= 1100.f;
-            //setVelocity(vel);
             setState<NpcBehaviourWater>();
         }
     }
@@ -158,7 +161,7 @@ void NpcBehaviourGround::update(float dt)
         //random between this and walking
         if (Util::Random::value(0, 1))
         {
-            vel.y = -900.f;
+            vel.y = -initialJumpSpeed;
             setState<NpcBehaviourAir>();
         }
         else
@@ -177,9 +180,6 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     case CollisionWorld::Body::Water:
         //jump away
     {
-        //auto vel = getVelocity();
-        //vel.y -= 1100.f;
-        //setVelocity(vel);
         setState<NpcBehaviourWater>();
     }
     break;
@@ -240,16 +240,20 @@ NpcBehaviourWalk::NpcBehaviourWalk(CollisionWorld::Body* b)
     : BodyBehaviour     (b),
     m_changeDelay       (Util::Random::value(3.f, 5.f)),
     m_accumulatedTime   (0.f),
-    m_moveForce         (Util::Random::value(28.f, 40.f))
+    m_moveForce         (Util::Random::value(28.f, 40.f)),
+    m_applyGravity      (false)
 {
     setVelocity({m_moveForce, 0.f});
 }
 
 void NpcBehaviourWalk::update(float dt)
 {
+    if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
+        m_applyGravity = true;
+
     auto vel = getVelocity();
     //only apply gravity when not on block / solid
-    if (getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) vel.y = 0.f;
+    if(!m_applyGravity) vel.y = 0.f;
     vel.x += m_moveForce;
     vel.x *= getFriction();
 
@@ -260,7 +264,7 @@ void NpcBehaviourWalk::update(float dt)
         //random between this and ground state
         if (Util::Random::value(0, 1) == 0)
         {
-            vel.y = -900.f;
+            vel.y = -initialJumpSpeed;
             setState<NpcBehaviourAir>();
         }
         else
@@ -277,11 +281,7 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     switch (other->getType())
     {
     case CollisionWorld::Body::Water:
-        //jump away
     {
-        //auto vel = getVelocity();
-        //vel.y -= 1100.f;
-        //setVelocity(vel);
         setState<NpcBehaviourWater>();
     }
         break;
@@ -292,6 +292,7 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             m_moveForce = -m_moveForce;
             setVelocity({});
+            m_applyGravity = false;
             //m_accumulatedTime = 0.f;
         }
         else if (manifold.y * manifold.z > 5) //prevent dying when just clipping bottom by making sure there is some depth
@@ -322,6 +323,7 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         m_moveForce = -m_moveForce;
         setVelocity({});
+        m_applyGravity = false;
         break;
     case CollisionWorld::Body::Type::Player:
         break;

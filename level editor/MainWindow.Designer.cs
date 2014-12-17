@@ -112,8 +112,8 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.groupBoxNodeProperties);
             this.splitContainer1.Panel2.Controls.Add(this.groupBoxMapProperties);
-            this.splitContainer1.Size = new System.Drawing.Size(971, 596);
-            this.splitContainer1.SplitterDistance = 722;
+            this.splitContainer1.Size = new System.Drawing.Size(1333, 673);
+            this.splitContainer1.SplitterDistance = 1052;
             this.splitContainer1.TabIndex = 0;
             // 
             // splitContainer2
@@ -137,8 +137,8 @@
             this.splitContainer2.Panel2.Controls.Add(this.checkBoxSnap);
             this.splitContainer2.Panel2.Controls.Add(this.buttonAddNode);
             this.splitContainer2.Panel2.Controls.Add(this.comboBoxAddNode);
-            this.splitContainer2.Size = new System.Drawing.Size(720, 594);
-            this.splitContainer2.SplitterDistance = 447;
+            this.splitContainer2.Size = new System.Drawing.Size(1050, 671);
+            this.splitContainer2.SplitterDistance = 566;
             this.splitContainer2.TabIndex = 0;
             // 
             // panelEditorOuter
@@ -148,7 +148,7 @@
             this.panelEditorOuter.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelEditorOuter.Location = new System.Drawing.Point(0, 0);
             this.panelEditorOuter.Name = "panelEditorOuter";
-            this.panelEditorOuter.Size = new System.Drawing.Size(716, 443);
+            this.panelEditorOuter.Size = new System.Drawing.Size(1046, 562);
             this.panelEditorOuter.TabIndex = 0;
             // 
             // panelEditorInner
@@ -560,7 +560,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(971, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1333, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -621,7 +621,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(971, 620);
+            this.ClientSize = new System.Drawing.Size(1333, 697);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
