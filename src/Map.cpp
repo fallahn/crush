@@ -172,9 +172,9 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     {
         this->type = Category::PlayerTwo;
     }
-    else if (type == "Bonus")
+    else if (type == "Item")
     {
-        this->type = Category::Bonus;
+        this->type = Category::Item;
     }
     else if (type == "Water")
     {

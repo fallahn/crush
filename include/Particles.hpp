@@ -45,6 +45,7 @@ struct Particle final : public sf::Transformable
 {    
     enum class Type
     {
+        Puff,
         Splat,
         Splash
     };

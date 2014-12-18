@@ -54,7 +54,7 @@ void ItemBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         }
         break;
     case CollisionWorld::Body::Player:
-        //TODO let player collect
+        kill();
         break;
     default: break; //NPCs don't do anything
     }
@@ -69,7 +69,7 @@ void ItemBehaviourGround::update(float dt)
     vel.y = 0.f;
     setVelocity(vel);
 
-    if (getFootSenseCount() == 0)
+    if ((getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block)) == 0)
         setBehaviour<ItemBehaviourAir>();
 }
 
@@ -85,7 +85,7 @@ void ItemBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::
         break;
 
     case CollisionWorld::Body::Player:
-        //TODO let player collect
+        kill();
         break;
     default: break; //NPCs don't do anything
     }

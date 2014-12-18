@@ -111,6 +111,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_scoreBoard.enablePlayer(Category::PlayerOne);
 
     m_scene.addObserver(m_scoreBoard);
+    m_scene.addObserver(m_particleController);
     
 
     //must be done after controllers are initialised
@@ -310,11 +311,11 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         m_scene.addNode(node, Scene::Water);
     }
         break;
-    case Category::Bonus:
+    case Category::Item:
     {
         auto node = std::make_unique<Node>();
         node->setPosition(position);
-        node->setCategory(Category::Bonus);
+        node->setCategory(Category::Item);
         //TODO this is still temp so we may end up cloning shapes instead of reusing them
         //eventually the item controllers will manage drawable resources
         shapes.emplace_back(solidShape);
@@ -322,7 +323,8 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         shapes.back().setOutlineColor(sf::Color::Yellow);
         node->setDrawable(&shapes.back());
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, size));
-        //TODO add particle controller as observer so we can do sooper effects when picking up / spawning
+        node->addObserver(m_mapController);
+        node->addObserver(m_particleController);
         //TODO add scoreboard observer so we can add points
         m_scene.addNode(node, Scene::Dynamic);
     }

@@ -265,7 +265,7 @@ namespace Level_editor
                         m_selectedNode.Width = blockSize.Width / scale;
                         m_selectedNode.Height = blockSize.Height / scale;
                         break;
-                    case Node.BodyType.Bonus:
+                    case Node.BodyType.Item:
                         m_selectedNode.BackColor = bonusColour;
                         m_selectedNode.Width = itemSize.Width / scale;
                         m_selectedNode.Height = itemSize.Height / scale;
@@ -321,7 +321,7 @@ namespace Level_editor
                     type = Node.BodyType.Solid;
                     break;
                 case "Bonus":            
-                    type = Node.BodyType.Bonus;
+                    type = Node.BodyType.Item;
                     size = itemSize;
                     break;
                 case "Water":

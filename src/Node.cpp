@@ -75,14 +75,24 @@ Node::Ptr Node::removeChild(Node& child)
     {
         return(p.get() == &child);
     });
-    assert(result != m_children.end());
+    if (result != m_children.end())
+    {
+        Ptr found = std::move(*result);
+        found->m_parent = nullptr;
+        found->m_scene = nullptr;
+        m_children.erase(result);
+        return found;
+    }
 
-    Ptr found = std::move(*result);
-    found->m_parent = nullptr;
-    found->m_scene = nullptr;
-    m_children.erase(result);
-    return found;
+    //search recursively
+    Node::Ptr np;
+    for (auto& c : m_children)
+    {
+        np = removeChild(child);
+        if (np) return np;
+    }
 
+    return std::move(np);
 }
 
 Node* Node::findChild(const std::string& name, bool recursive)
@@ -287,7 +297,7 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             //TODO HAAAX - this assumes because we have awater event we have a water drawble
             //attached and we call an upcast :/
             assert(m_drawable);
-            auto water = dynamic_cast<WaterDrawable*>(m_drawable);
+            auto water = static_cast<WaterDrawable*>(m_drawable);
             water->splash(evt.node.positionX - getWorldPosition().x, std::min(500.f, std::fabs(evt.node.speed)));
         }
         default: break;

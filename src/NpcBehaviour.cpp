@@ -352,7 +352,7 @@ void NpcBehaviourWater::update(float dt)
 
     m_currentTime += dt;
     if (m_currentTime > m_timeout
-        || (getFootSenseMask() & CollisionWorld::Body::Type::Solid))
+        || (getFootSenseMask() & (CollisionWorld::Body::Type::Solid || CollisionWorld::Body::Block)))
     {
         getBody()->setPosition({ Util::Random::value(300.f, 1600.f), -80.f });
         setBehaviour<NpcBehaviourAir>();

@@ -46,7 +46,7 @@ namespace Category
         Solid           = (1 << 8),
         CarriedOne      = (1 << 9), //for carrying
         CarriedTwo      = (1 << 10),
-        Bonus           = (1 << 11),
+        Item            = (1 << 11),
         Water           = (1 << 12)
     };
 }

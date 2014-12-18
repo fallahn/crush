@@ -52,7 +52,7 @@ Player::Keys::Keys()
     pickUp          (sf::Keyboard::S),
     joyButtonJump   (0u),
     joyButtonGrab   (1u),
-    joyButtonPickUp (3u){}
+    joyButtonPickUp (2u){}
 
 Player::Player(CommandStack& cs, Category::Type type)
     : m_moveForce   (0.f),

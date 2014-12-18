@@ -61,6 +61,22 @@ namespace
         {29.f, -680.f}
     };
 
+    std::vector<sf::Vector2f> puffVelocities = 
+    {
+        {-80.5f, 0.f},
+        {-60.f, -8.9f},
+        {-20.f, -24.f},
+        {0.f, -40.5f},
+        {28.5f, -24.6f},
+        {64.f, -8.5f},
+        {80.9f, 0.f},
+        {64.f, 9.5f},
+        {28.f, 27.5f},
+        {0.7f, 40.4f},
+        {-20.f, 29.6f},
+        {-60.f, 9.5f}
+    };
+
     sf::Shader waterShader;
 }
 
@@ -88,25 +104,34 @@ void ParticleController::onNotify(Subject& s, const game::Event& evt)
         {
         case game::Event::NodeEvent::Despawn:
         {
-            //raise a 'splat' effect
-            sf::Color colour;
-            switch (evt.node.type)
+            if (evt.node.type == Category::Item)
             {
-            case Category::PlayerOne:
-            case Category::PlayerTwo:
-                colour = sf::Color::Blue;
-                break;
-            case Category::Npc:
-                colour = sf::Color::Green;
-                break;
-            default: break;
+                //do dust puff
+                auto& ps = findSystem(Particle::Type::Puff);
+                ps.setPosition({ evt.node.positionX, evt.node.positionY });
+                ps.start(5u, 0.1f);
             }
+            else
+            {
+                //raise a 'splat' effect
+                sf::Color colour;
+                switch (evt.node.type)
+                {
+                case Category::PlayerOne:
+                case Category::PlayerTwo:
+                    colour = sf::Color::Blue;
+                    break;
+                case Category::Npc:
+                    colour = sf::Color::Green;
+                    break;
+                default: break;
+                }
 
-            auto& ps = findSystem(Particle::Type::Splat);
-            ps.setColour(colour);
-            ps.setPosition({ evt.node.positionX, evt.node.positionY });
-            ps.start(6u, 0.1f);
-
+                auto& ps = findSystem(Particle::Type::Splat);
+                ps.setColour(colour);
+                ps.setPosition({ evt.node.positionX, evt.node.positionY });
+                ps.start(6u, 0.1f);
+            }
             break;
         }
         case game::Event::NodeEvent::HitWater:
@@ -115,6 +140,17 @@ void ParticleController::onNotify(Subject& s, const game::Event& evt)
             ps.setPosition({ evt.node.positionX, evt.node.positionY });
             ps.start(4u, 0.02f);
         }
+        case game::Event::NodeEvent::Spawn:
+        {
+            if (evt.node.type == Category::Item)
+            {
+                //do dust puff
+                auto& ps = findSystem(Particle::Type::Puff);
+                ps.setPosition({ evt.node.positionX, evt.node.positionY });
+                ps.start(5u, 0.1f);
+            }
+        }
+        break;
         default: break;
         }
     }
@@ -125,34 +161,56 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
 {
     m_systems.emplace_back(type);
     ParticleSystem& particleSystem = m_systems.back();
-    if (type == Particle::Type::Splat)
+    switch (type)
     {
-        particleSystem.setTexture(m_textureResource.get("res/textures/particle.png"));
-        particleSystem.setRandomInitialVelocity(splatVelocities);
+    case Particle::Type::Splat:
+        {
+            particleSystem.setTexture(m_textureResource.get("res/textures/particle.png"));
+            particleSystem.setRandomInitialVelocity(splatVelocities);
 
-        ForceAffector fa({ 0.f, 4000.f }); //gravity
-        particleSystem.addAffector(fa);
-        RotateAffector ra(380.f);
-        particleSystem.addAffector(ra);
-        ScaleAffector sa({ 5.5f, 5.5f });
-        particleSystem.addAffector(sa); 
-    }
-    else if (type == Particle::Type::Splash)
-    {
-        particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
-        particleSystem.setColour({ 3u, 109u, 141u });
-        particleSystem.setParticleLifetime(1.2f);
-        particleSystem.setParticleSize({4.f, 9.f});
-        particleSystem.setRandomInitialVelocity(splashVelocities);
+            ForceAffector fa({ 0.f, 4000.f }); //gravity
+            particleSystem.addAffector(fa);
+            RotateAffector ra(380.f);
+            particleSystem.addAffector(ra);
+            ScaleAffector sa({ 5.5f, 5.5f });
+            particleSystem.addAffector(sa);
+        }
+        break;
+    case  Particle::Type::Splash:
+        {
+            particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
+            particleSystem.setColour({ 3u, 109u, 141u });
+            particleSystem.setParticleLifetime(1.2f);
+            particleSystem.setParticleSize({ 4.f, 9.f });
+            particleSystem.setRandomInitialVelocity(splashVelocities);
 
-        ForceAffector fa({ 0.f, 1500.f }); //gravity
-        particleSystem.addAffector(fa);
+            ForceAffector fa({ 0.f, 1500.f }); //gravity
+            particleSystem.addAffector(fa);
 
-        ScaleAffector sa({ 1.f, 8.5f });
-        particleSystem.addAffector(sa);
+            ScaleAffector sa({ 1.f, 8.5f });
+            particleSystem.addAffector(sa);
 
-        //particleSystem.setShader(waterShader);
-        particleSystem.setBlendMode(sf::BlendAlpha);
+            //particleSystem.setShader(waterShader);
+            particleSystem.setBlendMode(sf::BlendAlpha);
+        }
+        break;
+    case Particle::Type::Puff:
+        particleSystem.setTexture(m_textureResource.get("res/textures/dust_puff.png"));
+        particleSystem.setParticleLifetime(1.f);
+        particleSystem.setParticleSize({ 10.f, 10.f });
+        particleSystem.setRandomInitialVelocity(puffVelocities);
+        {
+            ForceAffector fa({ 0.f, -20.f });
+            particleSystem.addAffector(fa);
+
+            ScaleAffector sa({ 9.f, 5.f });
+            particleSystem.addAffector(sa);
+
+            RotateAffector ra(10.f);
+            particleSystem.addAffector(ra);
+        }
+        break;
+    default: break;
     }
     return particleSystem;
 }

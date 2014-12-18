@@ -298,7 +298,7 @@ void ScoreBoard::updateText(Category::Type type)
         ss << "Enemies Remaining: " << (m_maxNpcs - m_spawnedNpcs) << std::endl;
         npcText.setString(ss.str());
         Util::Position::centreOrigin(npcText);
-        npcText.setPosition(m_context.defaultView.getCenter() + sf::Vector2f(0.f, 525.f));
+        npcText.setPosition(m_context.defaultView.getCenter() + sf::Vector2f(0.f, -500.f));
     }
 
     if (m_playerOneLives < 0 && m_playerTwoLives < 0)

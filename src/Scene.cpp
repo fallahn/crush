@@ -58,6 +58,9 @@ void Scene::addNode(Node::Ptr& node)
     e.node.type = static_cast<Category::Type>(node->getCategory());
     e.node.target = Category::None;
     e.node.owner = Category::None;
+    auto pos = (node->getCollisionBody()) ? node->getCollisionBody()->getCentre() : node->getWorldPosition();
+    e.node.positionX = pos.x;
+    e.node.positionY = pos.y;
     notify(*this, e);
 
     m_children.push_back(std::move(node));
@@ -74,6 +77,9 @@ void Scene::addNode(Node::Ptr& node, Layer layer)
     e.node.type = static_cast<Category::Type>(node->getCategory());
     e.node.target = Category::None;
     e.node.owner = Category::None;
+    auto pos = (node->getCollisionBody()) ? node->getCollisionBody()->getCentre() : node->getWorldPosition();
+    e.node.positionX = pos.x;
+    e.node.positionY = pos.y;
     notify(*this, e);
 
     m_children[layer]->addChild(node);
@@ -86,13 +92,21 @@ Node::Ptr Scene::removeNode(Node& node)
         return (p.get() == &node);
     });
 
-    assert(result != m_children.end());
+    if(result != m_children.end())
     {
         Node::Ptr found = std::move(*result);
         found->setScene(nullptr);
         m_children.erase(result);
         return found;
     }
+    //else search recursively
+    Node::Ptr np;
+    for (auto& c : m_children)
+    {
+        np = c->removeChild(node);
+        if (np) return np;
+    }
+    return std::move(np);
 }
 
 void Scene::setActiveCamera(Camera* camera)

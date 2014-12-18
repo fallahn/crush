@@ -57,7 +57,7 @@ void MapController::update(float dt)
         if(!m_itemActive)
         {
             const auto& item = m_items.back();
-            spawn(Category::Bonus, item.position, item.size);
+            spawn(Category::Item, item.position, item.size);
             m_itemTime = item.lifeTime;
             m_items.pop_back();
 
@@ -69,13 +69,13 @@ void MapController::update(float dt)
             //technically this despawns all bonuses - but there should only ever be one
             //present in the scene at a time
             Command c;
-            c.categoryMask |= Category::Bonus;
+            c.categoryMask |= Category::Item;
             c.action = [](Node& n, float dt)
             {
                 game::Event evt;
                 evt.type = game::Event::Node;
                 evt.node.action = game::Event::NodeEvent::Despawn;
-                evt.node.type = Category::Bonus;
+                evt.node.type = Category::Item;
                 auto pos = n.getWorldPosition();
                 evt.node.positionX = pos.x;
                 evt.node.positionY = pos.y;
@@ -97,7 +97,7 @@ void MapController::onNotify(Subject& s, const game::Event& evt)
         switch (evt.node.action)
         {
         case game::Event::NodeEvent::Despawn:
-            //check if item collected and do stuffs
+            
             break;
         default: break;
         }
@@ -116,7 +116,7 @@ void MapController::loadMap(const Map& map)
     const auto& nodes = map.getNodes();
     for (const auto& n : nodes)
     {
-        if (n.type == Category::Bonus)
+        if (n.type == Category::Item)
         {
             m_items.emplace_back(n.position, n.size, Util::Random::value(12.f, 19.f));
         }
