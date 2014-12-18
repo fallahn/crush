@@ -286,7 +286,15 @@ void Node::onNotify(Subject& s, const game::Event& evt)
         case game::Event::NodeEvent::KilledNode:
         
         {
-            notify(*this, evt);
+            if (evt.node.target == Category::Item)
+            {
+                //decide what it is player collected and announce it
+                std::cout << "Player collected some shizzle!" << std::endl;
+            }
+            else //pass on event
+            {
+                notify(*this, evt);
+            }
         }
         break;
         case game::Event::NodeEvent::HitWater:

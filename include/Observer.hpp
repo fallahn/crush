@@ -63,13 +63,21 @@ namespace game
             enum Action
             {
                 Landed,
-                Jumped,
                 Grabbed,
                 Released,
                 Died,
                 PickedUp,
-                Dropped
+                Dropped,
+                GotItem
             }action;
+            enum Item
+            {
+                ExtraLife,
+                ExtraSpeed,
+                JumpIncrease,
+                ReverseControls,
+                Attraction
+            }item;
             float positionX, positionY;
         };
     

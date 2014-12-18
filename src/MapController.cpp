@@ -76,7 +76,7 @@ void MapController::update(float dt)
                 evt.type = game::Event::Node;
                 evt.node.action = game::Event::NodeEvent::Despawn;
                 evt.node.type = Category::Item;
-                auto pos = n.getWorldPosition();
+                auto pos = n.getCollisionBody()->getCentre();
                 evt.node.positionX = pos.x;
                 evt.node.positionY = pos.y;
                 n.raiseEvent(evt);
@@ -91,6 +91,7 @@ void MapController::update(float dt)
 
 void MapController::onNotify(Subject& s, const game::Event& evt)
 {
+    //TODO we can probably remove observancy from this
     switch (evt.type)
     {
     case game::Event::Node:

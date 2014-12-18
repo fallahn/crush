@@ -90,6 +90,14 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         setVelocity(vel);
     }
         break;
+    case CollisionWorld::Body::Item:
+        game::Event e;
+        e.node.action = game::Event::NodeEvent::KilledNode;
+        e.node.type = getParentCategory();
+        e.node.target = Category::Item;
+        e.type = game::Event::Node;
+        raiseEvent(e);
+        break;
     default: break;
     }
 }
@@ -173,6 +181,14 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         //always die
         kill();
         break;
+    case CollisionWorld::Body::Item:
+            game::Event e;
+            e.node.action = game::Event::NodeEvent::KilledNode;
+            e.node.type = getParentCategory();
+            e.node.target = Category::Item;
+            e.type = game::Event::Node;
+            raiseEvent(e);
+        break;
     default: break;
     }
 }
@@ -189,7 +205,8 @@ void PlayerBehaviourWater::update(float dt)
     setVelocity(vel);
 
     m_currentTime += dt;
-    if (m_currentTime > m_sinkTime || (getFootSenseMask() & CollisionWorld::Body::Type::Solid))
+    if (m_currentTime > m_sinkTime 
+        || (getFootSenseMask() & (CollisionWorld::Body::Type::Solid | CollisionWorld::Body::Block)))
         kill();
 }
 

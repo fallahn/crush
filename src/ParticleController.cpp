@@ -31,6 +31,7 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
+
 namespace
 {
     //actually looks better to pick one of these at random

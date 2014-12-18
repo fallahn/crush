@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <WaterDrawable.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -36,6 +37,7 @@ namespace
     const float tension = 2.9f;
     const float dampening = 0.009f;
     const float spread = 35.f;
+    const float splashTime = 5.f;
 
     const sf::Uint16 pixelsPerColumn = 15u;
     const sf::Uint8 wavePasses = 4u;
@@ -45,6 +47,7 @@ WaterDrawable::WaterDrawable(const sf::Vector2f& size)
     : m_size        (size),
     m_lightColour   (0u, 204u, 255u, 140u),
     m_darkColour    (68u, 112u, 255u, 155u),
+    m_splashTime    (0.f),
     m_vertices      (sf::TrianglesStrip)
 {
     resize();
@@ -92,6 +95,15 @@ void WaterDrawable::update(float dt)
             }
         }
     }
+
+    ////random mini splashes to keep the surface moving
+    //m_splashTime += dt;
+    //if (m_splashTime > splashTime)
+    //{
+    //    splash(Util::Random::value(0.f, m_size.x), 10.f);
+    //    m_splashTime = 0.f;
+    //}
+
 }
 
 void WaterDrawable::splash(float position, float speed)

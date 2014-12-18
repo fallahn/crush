@@ -62,6 +62,8 @@ private:
     sf::Vector2f m_size;
     sf::Color m_lightColour;
     sf::Color m_darkColour;
+    float m_splashTime;
+
     std::vector<Column> m_columns;
     mutable sf::VertexArray m_vertices;
 
