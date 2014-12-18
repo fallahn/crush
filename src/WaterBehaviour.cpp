@@ -44,7 +44,7 @@ void WaterBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
     {
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
-        setState<WaterBehaviourGround>();
+        setBehaviour<WaterBehaviourGround>();
     }
 }
 

@@ -52,7 +52,7 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         auto vel = getVelocity();
         if (vel.y >= 0) //only jump if moving down
         {
-            setState<NpcBehaviourWater>();
+            setBehaviour<NpcBehaviourWater>();
         }
     }
     break;
@@ -84,11 +84,11 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         {//set state at random
             if (Util::Random::value(0, 1))
             {
-                setState<NpcBehaviourWalk>();
+                setBehaviour<NpcBehaviourWalk>();
             }
             else
             {
-                setState<NpcBehaviourGround>();
+                setBehaviour<NpcBehaviourGround>();
             }
         }
 
@@ -162,11 +162,11 @@ void NpcBehaviourGround::update(float dt)
         if (Util::Random::value(0, 1))
         {
             vel.y = -initialJumpSpeed;
-            setState<NpcBehaviourAir>();
+            setBehaviour<NpcBehaviourAir>();
         }
         else
         {
-            setState<NpcBehaviourWalk>();
+            setBehaviour<NpcBehaviourWalk>();
         }
     }
 
@@ -180,7 +180,7 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     case CollisionWorld::Body::Water:
         //jump away
     {
-        setState<NpcBehaviourWater>();
+        setBehaviour<NpcBehaviourWater>();
     }
     break;
     case CollisionWorld::Body::Type::Block:
@@ -265,11 +265,11 @@ void NpcBehaviourWalk::update(float dt)
         if (Util::Random::value(0, 1) == 0)
         {
             vel.y = -initialJumpSpeed;
-            setState<NpcBehaviourAir>();
+            setBehaviour<NpcBehaviourAir>();
         }
         else
         {
-            setState<NpcBehaviourGround>();
+            setBehaviour<NpcBehaviourGround>();
         }
     }
 
@@ -282,7 +282,7 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     {
     case CollisionWorld::Body::Water:
     {
-        setState<NpcBehaviourWater>();
+        setBehaviour<NpcBehaviourWater>();
     }
         break;
     case CollisionWorld::Body::Type::Block:
@@ -354,8 +354,8 @@ void NpcBehaviourWater::update(float dt)
     if (m_currentTime > m_timeout
         || (getFootSenseMask() & CollisionWorld::Body::Type::Solid))
     {
-        getBody()->setPosition({ -100.f, Util::Random::value(300.f, 1200.f) });
-        setState<NpcBehaviourAir>();
+        getBody()->setPosition({ Util::Random::value(300.f, 1600.f), -80.f });
+        setBehaviour<NpcBehaviourAir>();
     }
 }
 

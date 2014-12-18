@@ -43,7 +43,7 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     switch (other->getType())
     {
     case CollisionWorld::Body::Type::Water:
-        setState<PlayerBehaviourWater>();
+        setBehaviour<PlayerBehaviourWater>();
         break;
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
@@ -51,7 +51,7 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         if (manifold.y * manifold.z < 0) //contact is below so must be standing on something
         {
             setVelocity({ getVelocity().x, 0.f });
-            setState<PlayerBehaviourGround>();
+            setBehaviour<PlayerBehaviourGround>();
 
             game::Event playerEvent;
             playerEvent.type = game::Event::Player;
@@ -112,7 +112,7 @@ void PlayerBehaviourGround::update(float dt)
     if (getFootSenseCount() == 0u)
     {
         //nothing underneath so should be falling / jumping
-        setState<PlayerBehaviourAir>();
+        setBehaviour<PlayerBehaviourAir>();
     }
 }
 
@@ -121,7 +121,7 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
     switch (other->getType())
     {
     case CollisionWorld::Body::Type::Water:
-        setState<PlayerBehaviourWater>();
+        setBehaviour<PlayerBehaviourWater>();
         break;
     case CollisionWorld::Body::Type::Block:
         if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f

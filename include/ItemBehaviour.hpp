@@ -48,4 +48,15 @@ public:
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 };
 
+class ItemBehaviourWater final : public BodyBehaviour
+{
+public:
+    explicit ItemBehaviourWater(CollisionWorld::Body* b) : BodyBehaviour(b), m_splashed(false){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+
+private:
+    bool m_splashed;
+};
+
 #endif //ITEM_BEHAVIOUR_H_

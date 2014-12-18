@@ -229,7 +229,7 @@ void GameState::addBlock(const sf::Vector2f& position, const sf::Vector2f& size)
     blockNode->addObserver(m_players[0]);
     blockNode->addObserver(m_players[1]);
     blockNode->addObserver(m_scoreBoard);
-    m_scene.addNode(blockNode);
+    m_scene.addNode(blockNode, Scene::Dynamic);
 }
 
 void GameState::addPlayer(const sf::Vector2f& position, Player& player)
@@ -245,7 +245,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
         playerNode->addObserver(m_npcController);
         playerNode->addObserver(m_scoreBoard);
         playerNode->addObserver(m_particleController);
-        m_scene.addNode(playerNode);
+        m_scene.addNode(playerNode, Scene::Dynamic);
 
         player.setSpawnable(false);
         player.setSize(playerShape.getSize());
@@ -262,7 +262,7 @@ void GameState::addNpc(const sf::Vector2f& position)
     npcNode->addObserver(m_npcController);
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
-    m_scene.addNode(npcNode);
+    m_scene.addNode(npcNode, Scene::Dynamic);
 }
 
 void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, const sf::Vector2f& size)
@@ -296,7 +296,7 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
             node->setDrawable(&shapes.back());
         }
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Solid, size));
-        m_scene.addNode(node);
+        m_scene.addNode(node, Scene::Solid);
     }
         break;
     case Category::Water:
@@ -307,7 +307,7 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         node->setDrawable(&waterDrawables.back());
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
         node->addObserver(m_particleController);
-        m_scene.addNode(node);
+        m_scene.addNode(node, Scene::Water);
     }
         break;
     case Category::Bonus:
@@ -324,7 +324,7 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, size));
         //TODO add particle controller as observer so we can do sooper effects when picking up / spawning
         //TODO add scoreboard observer so we can add points
-        m_scene.addNode(node);
+        m_scene.addNode(node, Scene::Dynamic);
     }
         break;
 

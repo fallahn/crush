@@ -52,7 +52,7 @@ protected:
     void move(const sf::Vector2f& distance);
 
     template <typename T>
-    void setState()
+    void setBehaviour()
     {
         m_body->m_nextBehaviour = std::make_unique<T>(m_body);
     }

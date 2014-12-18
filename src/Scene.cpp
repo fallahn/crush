@@ -37,6 +37,9 @@ Scene::Scene()
     : m_activeCamera(nullptr)
 {
     m_activeCamera = &defaultCamera;
+
+    for (auto i = 0; i < Layer::LayerCount; ++i)
+        addNode(std::make_unique<Node>());
 }
 
 //public
@@ -58,6 +61,22 @@ void Scene::addNode(Node::Ptr& node)
     notify(*this, e);
 
     m_children.push_back(std::move(node));
+}
+
+void Scene::addNode(Node::Ptr& node, Layer layer)
+{
+    node->addObserver(*this);
+
+    //announce our arrival in the scene
+    game::Event e;
+    e.type = game::Event::Node;
+    e.node.action = game::Event::NodeEvent::Spawn;
+    e.node.type = static_cast<Category::Type>(node->getCategory());
+    e.node.target = Category::None;
+    e.node.owner = Category::None;
+    notify(*this, e);
+
+    m_children[layer]->addChild(node);
 }
 
 Node::Ptr Scene::removeNode(Node& node)

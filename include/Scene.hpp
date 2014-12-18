@@ -37,10 +37,19 @@ source distribution.
 class Scene final : public sf::Drawable, private sf::NonCopyable, public Observer, public Subject
 {
 public:
+    enum Layer //this sets the order in which the layers are drawn
+    { 
+        Dynamic, //players / NPCs etc
+        Water,
+        Solid,
+        LayerCount
+    };
+
     Scene();
     ~Scene() = default;
 
     void addNode(Node::Ptr& node);
+    void addNode(Node::Ptr&, Layer layer);
     Node::Ptr removeNode(Node& node);
 
     void setActiveCamera(Camera* node);

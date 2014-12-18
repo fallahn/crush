@@ -235,7 +235,7 @@ void Node::executeCommand(const Command& c, float dt)
         c.action(*this, dt);
 
     for (auto& child : m_children)
-        executeCommand(c, dt);
+        child->executeCommand(c, dt);
 }
 
 void Node::onNotify(Subject& s, const game::Event& evt)

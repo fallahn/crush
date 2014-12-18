@@ -118,7 +118,7 @@ void MapController::loadMap(const Map& map)
     {
         if (n.type == Category::Bonus)
         {
-            m_items.emplace_back(n.position, n.size, Util::Random::value(8.f, 15.f));
+            m_items.emplace_back(n.position, n.size, Util::Random::value(12.f, 19.f));
         }
         else
         {
@@ -126,4 +126,10 @@ void MapController::loadMap(const Map& map)
         }
 
     }
+    //shuffle item order
+    std::random_shuffle(m_items.begin(), m_items.end(),
+        [&](int i)
+    {
+        return Util::Random::value(0, m_items.size()) % i;
+    });
 }

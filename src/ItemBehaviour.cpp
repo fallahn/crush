@@ -32,6 +32,11 @@ void ItemBehaviourAir::update(float dt)
     auto vel = getVelocity();
     vel.x *= 0.9f;
     setVelocity(vel);
+
+    if (getFootSenseMask() == CollisionWorld::Body::Type::Water) //touches water only
+    {
+        setBehaviour<ItemBehaviourWater>();
+    }
 }
 
 void ItemBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -45,7 +50,7 @@ void ItemBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
 
         if (getFootSenseMask() & (CollisionWorld::Body::Block | CollisionWorld::Body::Solid))
         {
-            setState<ItemBehaviourGround>();
+            setBehaviour<ItemBehaviourGround>();
         }
         break;
     case CollisionWorld::Body::Player:
@@ -65,7 +70,7 @@ void ItemBehaviourGround::update(float dt)
     setVelocity(vel);
 
     if (getFootSenseCount() == 0)
-        setState<ItemBehaviourAir>();
+        setBehaviour<ItemBehaviourAir>();
 }
 
 void ItemBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -83,5 +88,44 @@ void ItemBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::
         //TODO let player collect
         break;
     default: break; //NPCs don't do anything
+    }
+}
+
+//--------------------------------------
+
+void ItemBehaviourWater::update(float dt)
+{
+    auto vel = getVelocity();
+    vel *= 0.45f; //sink slowly
+    setVelocity(vel);
+}
+
+void ItemBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    switch (other->getType())
+    {
+    case CollisionWorld::Body::Type::Block:
+    case CollisionWorld::Body::Type::Solid:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity({});
+        setBehaviour<ItemBehaviourGround>();
+        break;
+    case CollisionWorld::Body::Type::Water:
+        if (!m_splashed)
+        {
+            //raise splash event
+            game::Event evt;
+            evt.type = game::Event::Node;
+            evt.node.type = Category::Water;
+            evt.node.action = game::Event::NodeEvent::HitWater;
+            evt.node.positionX = getBody()->getCentre().x;
+            evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
+            evt.node.speed = getVelocity().y;
+            raiseEvent(evt, other);
+
+            m_splashed = true;
+        }
+        break;
+    default: break;
     }
 }

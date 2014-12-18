@@ -402,8 +402,8 @@ void Player::doPickUp()
             {
                 //try picking up - TODO dekludge these consts    
                 m_carryVector = (m_leftFacing) ? //we add 4 here to stop the player and block overlapping (and causing collision problems)
-                    sf::Vector2f(-(m_size.x + 4.f), -(m_size.y * 0.25f)) :
-                    sf::Vector2f(m_size.x + 4.f, -(m_size.y * 0.25f));
+                    sf::Vector2f(-(m_size.x + 4.f), -(m_size.y * 0.35f)) :
+                    sf::Vector2f(m_size.x + 4.f, -(m_size.y * 0.35f));
 
                 Command c;
                 c.categoryMask |= Category::Block;

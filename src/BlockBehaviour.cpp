@@ -55,7 +55,7 @@ void BlockBehaviourAir::update(float dt)
 
     if (getFootSenseMask() == CollisionWorld::Body::Type::Water) //touches water only
     {
-        setState<BlockBehaviourWater>();
+        setBehaviour<BlockBehaviourWater>();
     }
 }
 
@@ -67,7 +67,7 @@ void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
     case CollisionWorld::Body::Type::Block:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
-        setState<BlockBehaviourGround>();
+        setBehaviour<BlockBehaviourGround>();
         setParentCategory(Category::Block); //reset any previous owners
         break;
 
@@ -86,7 +86,7 @@ void BlockBehaviourGround::update(float dt)
     if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
     {
         //nothing underneath so should be falling
-        setState<BlockBehaviourAir>();
+        setBehaviour<BlockBehaviourAir>();
 
         //TODO should set this to not grabbed, but previously owned
     }
@@ -94,7 +94,7 @@ void BlockBehaviourGround::update(float dt)
     sf::Int32 cat = getParentCategory();
     if (cat & (Category::CarriedOne | Category::CarriedTwo))
     {
-        setState<BlockBehaviourCarry>();
+        setBehaviour<BlockBehaviourCarry>();
     }
 }
 
@@ -121,7 +121,7 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
         if (getFootSenseCount() <= 1u
             && (manifold.y * manifold.z) < 0.f)
         {
-            setState<BlockBehaviourAir>();
+            setBehaviour<BlockBehaviourAir>();
             setParentCategory(Category::Block);
         }
         break;
@@ -139,7 +139,7 @@ void BlockBehaviourCarry::update(float dt)
     if ((getParentCategory() & (Category::CarriedOne | Category::CarriedTwo)) == 0)
     {
         //no longer being carried
-        setState<BlockBehaviourAir>();
+        setBehaviour<BlockBehaviourAir>();
     }
 }
 
@@ -148,6 +148,7 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
     switch (other->getType())
     {
     case CollisionWorld::Body::Type::Block:
+    case CollisionWorld::Body::Type::Solid:
         //if block above then drop block by raising player drop event
         if (manifold.y != 0)//(manifold.y * manifold.z) > 0.f)
         {
@@ -159,11 +160,7 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
             e.player.positionY = other->getCentre().y;
             raiseEvent(e);
         }
-    case CollisionWorld::Body::Type::Solid:
-        //move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        //setVelocity({});
-
-        //break;
+    
     case CollisionWorld::Body::Type::Player:
     case CollisionWorld::Body::Type::Npc:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
@@ -189,7 +186,7 @@ void BlockBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
-        setState<BlockBehaviourGround>();
+        setBehaviour<BlockBehaviourGround>();
         break;
     case CollisionWorld::Body::Type::Water:
         if(!m_splashed)

@@ -173,13 +173,13 @@ namespace Level_editor
             comboBoxAddNode.SelectedIndex = 0;
 
             //add the default bounds
-            addNode(Node.BodyType.Solid, new Point(), new Size(50, 1030));
-            addNode(Node.BodyType.Solid, new Point(1870, 0), new Size(50, 1030));
-            addNode(Node.BodyType.Solid, new Point(0, 1030), new Size(1920, 50));
+            addNode(Node.BodyType.Solid, new Point(), new Size(20, 1060));
+            addNode(Node.BodyType.Solid, new Point(1900, 0), new Size(20, 1060));
+            addNode(Node.BodyType.Solid, new Point(0, 1060), new Size(1920, 20));
 
             //add player spawn points
-            m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new Point(80, 500), blockSize);
-            m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new Point(1680, 500), blockSize);
+            m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new Point(40, 500), blockSize);
+            m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new Point(1820, 500), blockSize);
 
             //reset map properties
             numericUpDownNpcCount.Value = 3;
