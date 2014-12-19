@@ -45,7 +45,7 @@ namespace game
             Category::Type type;
             enum Action
             {
-                Spawn, //placed into scene
+                Spawn = 1, //placed into scene
                 Despawn, //removed from scene
                 KilledNode, //killed another node in scene
                 HitWater //this node landed in water
@@ -62,7 +62,7 @@ namespace game
             Category::Type playerId;
             enum Action
             {
-                Landed,
+                Landed = 1,
                 Grabbed,
                 Released,
                 Died,
@@ -76,7 +76,8 @@ namespace game
                 ExtraSpeed,
                 JumpIncrease,
                 ReverseControls,
-                Attraction
+                Attraction,
+                Size
             }item;
             float positionX, positionY;
         };
@@ -85,7 +86,7 @@ namespace game
         {
             enum Action
             {
-                PlayerOneEnable,
+                PlayerOneEnable = 1,
                 PlayerTwoEnable,
                 NpcEnable,
                 PlayerOneDisable,
@@ -96,12 +97,12 @@ namespace game
 
         enum Type
         {
-            Node,
+            Node = 1,
             Player,
             Game
         } type;
 
-        union
+        union 
         {
             NodeEvent node;
             PlayerEvent player;

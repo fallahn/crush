@@ -84,6 +84,9 @@ private:
     Keys m_keyBinds;
     sf::Uint32 m_buttonMask;
 
+    sf::Uint32 m_activeItems;
+    float m_itemDuration;
+
     bool m_canSpawn;
     bool m_enabled;
     bool m_leftFacing;

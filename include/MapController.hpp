@@ -30,7 +30,6 @@ source distribution.
 #ifndef MAP_CONTROLLER_H_
 #define MAP_CONTROLLER_H_
 
-#include <Observer.hpp>
 #include <CommandStack.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
@@ -39,7 +38,7 @@ source distribution.
 #include <functional>
 
 class Map;
-class MapController final : public Observer, public Subject, private sf::NonCopyable
+class MapController final : private sf::NonCopyable
 {
 public:
     explicit MapController(CommandStack& cs);
@@ -47,7 +46,6 @@ public:
 
     void update(float dt);
 
-    void onNotify(Subject& s, const game::Event& e) override;
     void setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func);
 
     void loadMap(const Map& map);
@@ -68,6 +66,8 @@ private:
     bool m_itemActive;
 
     std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> spawn;
+
+    void shuffleItems();
 };
 
 #endif //MAP_CONTROLLER_H_

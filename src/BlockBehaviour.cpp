@@ -63,18 +63,18 @@ void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
 {
     switch (other->getType())
     {
-    case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
+        //setParentCategory(Category::Block); //reset any previous owners
+    case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
         setBehaviour<BlockBehaviourGround>();
-        setParentCategory(Category::Block); //reset any previous owners
         break;
-
     default: break;
     }
 }
 //-------------------------------------------
+
 void BlockBehaviourGround::update(float dt)
 {  
     auto vel = getVelocity();

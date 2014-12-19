@@ -239,7 +239,7 @@ namespace Level_editor
                     case "Water":
                         addNode(Node.BodyType.Water, n.Position, n.Size);
                         break;
-                    case "Bonus":
+                    case "Item":
                         addNode(Node.BodyType.Item, n.Position, n.Size);
                         break;
                 }

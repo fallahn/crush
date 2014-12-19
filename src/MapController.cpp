@@ -59,7 +59,8 @@ void MapController::update(float dt)
             const auto& item = m_items.back();
             spawn(Category::Item, item.position, item.size);
             m_itemTime = item.lifeTime;
-            m_items.pop_back();
+            //m_items.pop_back();
+            shuffleItems();
 
             m_itemActive = true;
         }
@@ -89,24 +90,6 @@ void MapController::update(float dt)
     }
 }
 
-void MapController::onNotify(Subject& s, const game::Event& evt)
-{
-    //TODO we can probably remove observancy from this
-    switch (evt.type)
-    {
-    case game::Event::Node:
-        switch (evt.node.action)
-        {
-        case game::Event::NodeEvent::Despawn:
-            
-            break;
-        default: break;
-        }
-        break;
-    default: break;
-    }
-}
-
 void MapController::setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func)
 {
     spawn = func;
@@ -128,6 +111,12 @@ void MapController::loadMap(const Map& map)
 
     }
     //shuffle item order
+    shuffleItems();
+}
+
+//private
+void MapController::shuffleItems()
+{
     std::random_shuffle(m_items.begin(), m_items.end(),
         [&](int i)
     {

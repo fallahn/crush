@@ -75,6 +75,7 @@ private:
     std::string m_mapName;
 
     std::vector<Node> m_nodes;
+
 };
 
 #endif //MAP_H_

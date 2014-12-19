@@ -29,6 +29,7 @@ source distribution.
 #include <Node.hpp>
 #include <Scene.hpp>
 #include <WaterDrawable.hpp>
+#include <Util.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -290,9 +291,25 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             {
                 //decide what it is player collected and announce it
                 std::cout << "Player collected some shizzle!" << std::endl;
+                game::Event::PlayerEvent::Item itemType 
+                    = static_cast<game::Event::PlayerEvent::Item>(Util::Random::value(0, game::Event::PlayerEvent::Item::Size - 1));
+                std::cout << "item type: " << itemType << std::endl;
+                game::Event e;
+                e.type = game::Event::Player;
+                e.player.action = game::Event::PlayerEvent::GotItem;
+                e.player.item = itemType;
+                e.player.playerId = m_category;
+                assert(m_collisionBody);
+                auto pos = m_collisionBody->getCentre();
+                e.player.positionX = pos.x;
+                e.player.positionY = pos.y;
+                notify(*this, e);
             }
             else //pass on event
             {
+                sf::Int32 cat = m_category;
+                cat &= ~(Category::LastTouchedOne | Category::LastTouchedTwo);
+                m_category = static_cast<Category::Type>(cat);
                 notify(*this, evt);
             }
         }

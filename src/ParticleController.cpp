@@ -207,7 +207,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
             ScaleAffector sa({ 9.f, 5.f });
             particleSystem.addAffector(sa);
 
-            RotateAffector ra(10.f);
+            RotateAffector ra(100.f);
             particleSystem.addAffector(ra);
         }
         break;

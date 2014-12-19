@@ -42,10 +42,10 @@ namespace
     sf::Text playerTwoText;
     sf::Text npcText;
 
-    const sf::Uint16 npcPoints = 50; //points for killing npc
-    const sf::Uint16 playerPoints = 100; //points for killing other player
-    const sf::Uint16 crushPoints = 500; //points for crushing someone
-    const sf::Uint16 suicidePoints = 200; //points deducted for accidentally crushing self
+    const sf::Uint16 playerPoints = 100u; //points for killing other player
+    const sf::Uint16 crushPoints = 500u; //points for crushing someone
+    const sf::Uint16 suicidePoints = 200u; //points deducted for accidentally crushing self
+    const sf::Uint16 itemPoints = 400u; //points for collecting item
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
@@ -143,25 +143,27 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             auto textUpdateTarget = evt.node.type;
             switch (evt.node.type)
             {
+                
             case Category::PlayerOne:
-                if (evt.node.target == Category::Npc)
+                //TODO this is moot now as we can't jump on players / NPCs
+                /*if (evt.node.target == Category::Npc)
                 {
                     m_playerOneScore += npcPoints;
                 }
                 else if (evt.node.target == Category::PlayerTwo)
                 {
                     m_playerOneScore += playerPoints;
-                }
+                }*/
                 break;
             case Category::PlayerTwo:
-                if (evt.node.target == Category::Npc)
+                /*if (evt.node.target == Category::Npc)
                 {
                     m_playerTwoScore += npcPoints;
                 }
                 else if (evt.node.target == Category::PlayerOne)
                 {
                     m_playerTwoScore += playerPoints;
-                }
+                }*/
                 break;
             case Category::Block:
                 if (evt.node.owner == Category::PlayerOne)
@@ -170,6 +172,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                         {
                         case Category::PlayerTwo: //p1 crushed p2
                             m_playerOneLives++;
+                            m_playerOneScore += playerPoints;
                         case Category::Npc: //p1 killed bad guy
                             m_playerOneScore += crushPoints;
                             break;
@@ -187,6 +190,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                         {
                         case Category::PlayerOne: //p2 killed p1  
                             m_playerTwoLives++;
+                            m_playerTwoScore += playerPoints;
                         case Category::Npc: //p2 killed bad guy
                             m_playerTwoScore += crushPoints;
                             break;
@@ -219,12 +223,33 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 break;
             default: break;
             }
-            if (textUpdateTarget != Category::None)
-                updateText(textUpdateTarget);
+            //if (textUpdateTarget != Category::None)
+            updateText(textUpdateTarget);
         }
         break;
     case game::Event::Player:
-
+        switch (evt.player.action)
+        {
+        case game::Event::PlayerEvent::GotItem:
+            switch (evt.player.item)
+            {
+            case game::Event::PlayerEvent::ExtraLife:
+                (evt.player.playerId == Category::PlayerOne) ?
+                    m_playerOneLives++ :
+                    m_playerTwoLives++;
+            case game::Event::PlayerEvent::Attraction:
+            case game::Event::PlayerEvent::ExtraSpeed:
+            case game::Event::PlayerEvent::JumpIncrease:
+            case game::Event::PlayerEvent::ReverseControls:
+                (evt.player.playerId == Category::PlayerOne) ? 
+                    m_playerOneScore += itemPoints :
+                    m_playerTwoScore += itemPoints;
+            default: break;
+            }
+            updateText(evt.player.playerId);
+            break;
+        default:break;
+        }
         break;
     default: break;
     }

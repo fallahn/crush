@@ -161,6 +161,7 @@ void NpcBehaviourGround::update(float dt)
         //random between this and walking
         if (Util::Random::value(0, 1))
         {
+            vel.x = (Util::Random::value(0, 1)) ? -400.f : 380.f;
             vel.y = -initialJumpSpeed;
             setBehaviour<NpcBehaviourAir>();
         }
@@ -178,7 +179,6 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     switch (other->getType())
     {
     case CollisionWorld::Body::Water:
-        //jump away
     {
         setBehaviour<NpcBehaviourWater>();
     }
@@ -264,6 +264,7 @@ void NpcBehaviourWalk::update(float dt)
         //random between this and ground state
         if (Util::Random::value(0, 1) == 0)
         {
+            vel.x = (Util::Random::value(0, 1)) ? -370.f : 390.f;
             vel.y = -initialJumpSpeed;
             setBehaviour<NpcBehaviourAir>();
         }

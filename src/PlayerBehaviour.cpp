@@ -163,19 +163,7 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
         }
-        //else if (manifold.y * manifold.z > 0.f)
-        //{
-        //    //else squish when from above
-        //    kill();
 
-        //    //raise event to say player killed us
-        //    game::Event e;
-        //    e.node.action = game::Event::NodeEvent::KilledNode;
-        //    e.node.type = other->getParentCategory();
-        //    e.node.target = getParentCategory();
-        //    e.type = game::Event::Node;
-        //    raiseEvent(e, other); //this should reference the other body as the sender not the NPC
-        //}
         break;
     case CollisionWorld::Body::Type::Npc:
         //always die

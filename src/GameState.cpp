@@ -323,7 +323,6 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
         shapes.back().setOutlineColor(sf::Color::Yellow);
         node->setDrawable(&shapes.back());
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, size));
-        node->addObserver(m_mapController);
         node->addObserver(m_particleController);
         //TODO add scoreboard observer so we can add points
         m_scene.addNode(node, Scene::Dynamic);

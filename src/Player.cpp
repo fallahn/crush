@@ -42,6 +42,10 @@ namespace
     const float friction = 0.83f;
 
     const sf::Vector2f grabVec(40.f, 0.f); //TODO this ought to be tied to body size (just over half width)
+
+    const float itemDuration = 16.f;
+    const float speedIncrease = 1.8f;
+    const float jumpIncrease = 1.5f;
 }
 
 Player::Keys::Keys()
@@ -64,6 +68,8 @@ Player::Player(CommandStack& cs, Category::Type type)
     m_carryId       (Category::CarriedOne),
     m_joyId         (0u),
     m_buttonMask    (0u),
+    m_activeItems   (0u),
+    m_itemDuration  (0.f),
     m_canSpawn      (true),
     m_enabled       (false),
     m_leftFacing    (false),
@@ -110,6 +116,18 @@ void Player::update(float dt)
     };
     m_commandStack.push(c);
 
+    //check active itms for expiry
+    if (m_activeItems)
+    {
+        m_itemDuration += dt;
+        if (m_itemDuration > itemDuration)
+        {
+            m_activeItems = 0u;
+            m_itemDuration = 0.f;
+            m_jumpForce = jumpForce;
+            std::cout << "item expired" << std::endl;
+        }
+    }
 
     //spawn a new player
     if (m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
@@ -215,6 +233,28 @@ void Player::onNotify(Subject& s, const game::Event& evt)
                 //something made us drop the block
                 doDrop();
                 break;
+            case game::Event::PlayerEvent::GotItem:
+                switch (evt.player.item)
+                {
+                case game::Event::PlayerEvent::ExtraSpeed:
+                    m_activeItems |= (1 << game::Event::PlayerEvent::ExtraSpeed);
+                    std::cout << "increase player speed" << std::endl;
+                    break;
+                case game::Event::PlayerEvent::JumpIncrease:
+                    m_activeItems |= (1 << game::Event::PlayerEvent::JumpIncrease);
+                    m_jumpForce = jumpForce * jumpIncrease;
+                    std::cout << "increase player jump" << std::endl;
+                    break;
+                case game::Event::PlayerEvent::ReverseControls:
+                    m_activeItems |= (1 << game::Event::PlayerEvent::ReverseControls);
+                    std::cout << "reverse player controls" << std::endl;
+                    break;
+                case game::Event::PlayerEvent::Attraction:
+                    std::cout << "NPC attraction not yet implemented" << std::endl;
+                    break;
+                default: break;
+                }
+                break;
             default: break;
             }
         }
@@ -288,9 +328,17 @@ void Player::doMovement()
             m_moveForce += maxMoveForce;
     }
 
+    //add speed increase if active
+    if (m_activeItems & (1 << game::Event::PlayerEvent::ExtraSpeed))
+        m_moveForce *= speedIncrease;
+    //invert movement if reverse active
+    if (m_activeItems & (1 << game::Event::PlayerEvent::ReverseControls))
+        m_moveForce = -m_moveForce;
+
     if (m_moveForce != 0.f)
     {
-        m_leftFacing = (m_moveForce < 0.f);
+        if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)) == 0)
+            m_leftFacing = (m_moveForce < 0.f); //only switch direction when not dragging
 
         bool flip = (m_leftFacing != m_lastFacing);
 
@@ -412,7 +460,7 @@ void Player::doPickUp()
                     auto point = (m_leftFacing) ? m_currentPosition - grabVec : m_currentPosition + grabVec;
                     
                     auto cat = n.getCategory();
-                    if (cat & (Category::GrabbedOne | Category::GrabbedTwo)) //don't pick up blocks being dragged
+                    if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::CarriedOne | Category::CarriedTwo)) //don't pick up blocks being dragged
                         return;
 
                     assert(n.getCollisionBody());
@@ -420,7 +468,9 @@ void Player::doPickUp()
                     {
                         //pick it up                     
                         auto cat = n.getCategory();
-                        cat |= (m_carryId | m_lastTouchId);
+                        //unset previous touches
+                        cat &= ~(Category::LastTouchedOne | Category::LastTouchedTwo);
+                        cat |= (m_carryId);
                         n.setCategory(static_cast<Category::Type>(cat));
                         
                         //let everyone know player picked up block
@@ -468,6 +518,8 @@ void Player::doDrop()
     if (m_carryingBlock)
     {
         m_jumpForce = jumpForce;
+        if (m_activeItems & (1 << game::Event::PlayerEvent::ExtraSpeed))
+            m_jumpForce *= jumpIncrease;
         
         //release block
         Command c;
@@ -476,6 +528,7 @@ void Player::doDrop()
         {
             auto cat = n.getCategory();
             cat &= ~m_carryId;
+            cat |= m_lastTouchId;
             n.setCategory(static_cast<Category::Type>(cat));
 
             //command player to return friction

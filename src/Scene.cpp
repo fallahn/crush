@@ -39,7 +39,10 @@ Scene::Scene()
     m_activeCamera = &defaultCamera;
 
     for (auto i = 0; i < Layer::LayerCount; ++i)
-        addNode(std::make_unique<Node>());
+    {
+        auto n = std::make_unique<Node>();
+        addNode(n);
+    }
 }
 
 //public
