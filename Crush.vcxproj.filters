@@ -221,5 +221,8 @@
     <ClInclude Include="include\ItemBehaviour.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\NormalMapping.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

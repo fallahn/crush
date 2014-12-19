@@ -112,6 +112,11 @@ Node::Ptr Scene::removeNode(Node& node)
     return std::move(np);
 }
 
+void Scene::setLayerDrawable(sf::Drawable* d, Layer layer)
+{
+    m_children[layer]->setDrawable(d);
+}
+
 void Scene::setActiveCamera(Camera* camera)
 {
     m_activeCamera = camera;

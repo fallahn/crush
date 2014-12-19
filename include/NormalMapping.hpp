@@ -25,28 +25,20 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//shaders used in particle effects
+//normal mapping shaders for sprites
 
-#ifndef PARTICLE_SHADERS_H_
-#define PARTICLE_SHADERS_H_
+#ifndef NORMAL_MAPPING_H_
+#define NORMAL_MAPPING_H_
 
 #include <string>
 
 namespace Shaders
 {
-    static const std::string waterGlob =
-        "#version 120\n" \
-        "const float alphaCutoff = 0.4;\n" \
-        "const float finalAlpha = 0.55;\n" \
-        "uniform sampler2D u_diffuse;\n" \
-        "void main()\n" \
-        "{\n" \
-        "   vec4 textureColour = texture2D(u_diffuse, gl_TexCoord[0].xy);\n" \
-        "   if(textureColour.a < alphaCutoff) discard;\n" \
-        "   textureColour *= gl_Color;\n" \
-        "   textureColour.a *= finalAlpha;\n" \
-        "   gl_FragColor = textureColour;\n" \
-        "}";
+    static const std::string normalVertex =
+        "";
+
+    static const std::string normalFragment =
+        "";
 }
 
-#endif // PARTICLE_SHADERS_H_
+#endif //NORMAL_MAPPING_H_

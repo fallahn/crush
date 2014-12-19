@@ -59,7 +59,6 @@ namespace
     sf::Vector2f blockSize(60.f, 40.f);
  
     TextureResource textureResource;
-
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -68,7 +67,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_npcController     (m_commandStack),
     m_scoreBoard        (stack, context),
     m_particleController(textureResource),
-    m_mapController     (m_commandStack)
+    m_mapController     (m_commandStack, textureResource)
 {
     //build world
     getContext().renderWindow.setTitle("Game Screen");
@@ -121,24 +120,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_npcController.setNpcCount(map.getNpcCount());
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
     m_mapController.loadMap(map);
-
-    //TODO properly parse map with sprites / textures
-    //const auto& nodes = map.getNodes();
-    //for (const auto& n : nodes)
-    //{
-    //    switch (n.type)
-    //    {
-    //    case Category::PlayerOne:
-    //        //set spawn point
-    //        m_players[0].setSpawnPosition(n.position);
-    //        break;
-    //    case Category::PlayerTwo:
-    //        //set spawn point
-    //        m_players[1].setSpawnPosition(n.position);
-    //        break;
-    //    default: break;
-    //    }
-    //}
+    m_scene.setLayerDrawable(m_mapController.getDrawable(), Scene::Solid);
 }
 
 bool GameState::update(float dt)
@@ -277,25 +259,6 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
     {
         auto node = std::make_unique<Node>();
         node->setPosition(position);
-
-        //check if we have a shape  the right size
-        auto result = std::find_if(shapes.begin(), shapes.end(),[size](const sf::RectangleShape& rs)
-        {
-            auto s = rs.getSize();
-            return (s == size);
-        });
-        if (result != shapes.end())
-        {
-            //use this shape
-            node->setDrawable(&(*result));
-        }
-        else
-        {
-            //copy base shape into vector
-            shapes.emplace_back(solidShape);
-            shapes.back().setSize(size);
-            node->setDrawable(&shapes.back());
-        }
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Solid, size));
         m_scene.addNode(node, Scene::Solid);
     }

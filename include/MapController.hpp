@@ -31,9 +31,12 @@ source distribution.
 #define MAP_CONTROLLER_H_
 
 #include <CommandStack.hpp>
+#include <Resource.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 
 #include <functional>
 
@@ -41,14 +44,15 @@ class Map;
 class MapController final : private sf::NonCopyable
 {
 public:
-    explicit MapController(CommandStack& cs);
+    MapController(CommandStack& cs, TextureResource& tr);
     ~MapController() = default;
 
     void update(float dt);
 
     void setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func);
-
     void loadMap(const Map& map);
+
+    sf::Drawable* getDrawable();
 private:
     struct Item
     {
@@ -66,8 +70,24 @@ private:
     bool m_itemActive;
 
     std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> spawn;
-
     void shuffleItems();
+
+    class SolidDrawable : public sf::Drawable, private sf::NonCopyable
+    {
+    public:
+        explicit SolidDrawable(TextureResource& tr);
+        ~SolidDrawable() = default;
+
+        void addSolid(const sf::Vector2f& position, const sf::Vector2f& size);
+    private:
+        sf::Texture m_diffuseTexture;
+        //TODO normal map
+        //TODO shader
+
+        sf::VertexArray m_vertexArray;
+
+        void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    } m_drawable;
 };
 
 #endif //MAP_CONTROLLER_H_

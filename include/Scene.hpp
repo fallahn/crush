@@ -52,6 +52,8 @@ public:
     void addNode(Node::Ptr&, Layer layer);
     Node::Ptr removeNode(Node& node);
 
+    void setLayerDrawable(sf::Drawable* d, Layer layer);
+
     void setActiveCamera(Camera* node);
     Camera* getActiveCamera() const;
     static Camera defaultCamera;
