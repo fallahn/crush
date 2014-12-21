@@ -27,6 +27,7 @@ source distribution.
 
 #include <State.hpp>
 #include <StateStack.hpp>
+#include <Resource.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 

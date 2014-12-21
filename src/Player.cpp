@@ -36,7 +36,8 @@ namespace
     const float spawnTime = 1.f;
     const float joyDeadZone = 25.f;
     
-    const float maxMoveForce = 160.f;
+    //large value because they are reduced by delta time
+    const float maxMoveForce = 9600.f;
     const float jumpForce = 1180.f;
 
     const float friction = 0.83f;
@@ -99,7 +100,7 @@ void Player::update(float dt)
 {
     if(!m_enabled) return;
 
-    doMovement();
+    doMovement(dt);
 
     doJump();
 
@@ -303,7 +304,7 @@ void Player::enable()
     spawn(m_spawnPosition, *this);
 }
 
-void Player::doMovement()
+void Player::doMovement(float dt)
 {
     //calc movement
     m_moveForce = 0;
@@ -312,20 +313,20 @@ void Player::doMovement()
         auto axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::PovX);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            m_moveForce = maxMoveForce * (axisPos / 100.f);
+            m_moveForce = maxMoveForce * (axisPos / 100.f) * dt;
         }
         axisPos = sf::Joystick::getAxisPosition(m_joyId, sf::Joystick::X);
         if (axisPos < -joyDeadZone || axisPos > joyDeadZone)
         {
-            m_moveForce = maxMoveForce * (axisPos / 100.f);
+            m_moveForce = maxMoveForce * (axisPos / 100.f) * dt;
         }
     }
     //else
     {
         if (sf::Keyboard::isKeyPressed(m_keyBinds.left))
-            m_moveForce -= maxMoveForce;
+            m_moveForce -= maxMoveForce * dt;
         if (sf::Keyboard::isKeyPressed(m_keyBinds.right))
-            m_moveForce += maxMoveForce;
+            m_moveForce += maxMoveForce * dt;
     }
 
     //add speed increase if active

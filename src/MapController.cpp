@@ -32,6 +32,7 @@ source distribution.
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <map>
 
@@ -40,11 +41,11 @@ namespace
     const float spawnGapTime = 22.f;//time between spawns
 }
 
-MapController::MapController(CommandStack& cs, TextureResource& tr)
+MapController::MapController(CommandStack& cs, TextureResource& tr, sf::Shader& shader)
     : m_commandStack    (cs),
     m_itemTime          (spawnGapTime),
     m_itemActive        (false),
-    m_drawable          (tr)
+    m_drawable          (tr, shader)
 {
     //TODO load texture based on map data
 }
@@ -135,11 +136,15 @@ void MapController::shuffleItems()
 
 
 //--------------drawable--------------
-MapController::SolidDrawable::SolidDrawable(TextureResource& tr)
-    : m_vertexArray       (sf::Quads)
+MapController::SolidDrawable::SolidDrawable(TextureResource& tr, sf::Shader& shader)
+    : m_vertexArray     (sf::Quads),
+    m_shader            (shader)
 {
     m_diffuseTexture = tr.get("res/textures/brick_diffuse.png");
     m_diffuseTexture.setRepeated(true);
+
+    m_normalTexture = tr.get("res/textures/brick_normal.png");
+    m_normalTexture.setRepeated(true);
 }
 
 void MapController::SolidDrawable::addSolid(const sf::Vector2f& pos, const sf::Vector2f& size)
@@ -155,6 +160,10 @@ void MapController::SolidDrawable::addSolid(const sf::Vector2f& pos, const sf::V
 
 void MapController::SolidDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    m_shader.setParameter("u_diffuseMap", m_diffuseTexture);
+    m_shader.setParameter("u_normalMap", m_normalTexture);
+
     states.texture = &m_diffuseTexture;
+    states.shader = &m_shader;
     rt.draw(m_vertexArray, states);
 }

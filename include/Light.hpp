@@ -25,49 +25,46 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main game class
+//describes a point light used for scene lighting
 
-#ifndef GAME_H_
-#define GAME_H_
+#ifndef LIGHT_H_
+#define LIGHT_H_
 
-#include <StateStack.hpp>
-#include <Resource.hpp>
-#include <ShaderResource.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-
-class Game final : private sf::NonCopyable
+class Node;
+class Light final
 {
+    friend class Node;
 public:
-    Game();
-    ~Game() = default;
+    Light();
+    Light(const sf::Vector3f& position, const sf::Vector3f& colour, float range);
+    Light(const Light& copy) = default;
+    ~Light() = default;
 
-    void run();
+    void setPosition(const sf::Vector2f& position);
+    void setPosition(const sf::Vector3f& position);
+    const sf::Vector3f& getPosition() const;
+    void setDepth(float zDepth);
+    float getDepth() const;
 
-    void setClearColour(sf::Color c);
-    sf::Font& getFont(const std::string& path);
+    void setColour(const sf::Vector3f& colour);
+    const sf::Vector3f& getColour() const;
 
-    TextureResource& getTextureResource();
-    sf::Shader& getShader(Shader::Type type);
+    void setRange(float range);
+    float getRange() const;
+    float getRangeInverse() const;
 
-private: 
+    void setNode(Node* n);
 
-    static const float m_timePerFrame;
+private:
+    mutable sf::Vector3f m_position;
+    sf::Vector3f m_colour;
+    float m_range;
+    float m_rangeInverse;
 
-    sf::RenderWindow m_renderWindow;
-    sf::Color m_clearColour;
-
-    StateStack m_stateStack;
-
-    FontResource m_fontResource;
-    TextureResource m_textureResource;
-    ShaderResource m_shaderResource;
-
-    void handleEvents();
-    void update(float dt);
-    void draw();
-
-    void registerStates();
+    Node* m_node;
 };
 
-#endif //GAME_H_
+#endif // LIGHT_H_

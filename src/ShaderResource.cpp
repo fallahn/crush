@@ -25,49 +25,24 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main game class
-
-#ifndef GAME_H_
-#define GAME_H_
-
-#include <StateStack.hpp>
-#include <Resource.hpp>
 #include <ShaderResource.hpp>
+#include <NormalMapping.hpp>
+#include <ParticleShaders.hpp>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-
-class Game final : private sf::NonCopyable
+sf::Shader& ShaderResource::get(Shader::Type type)
 {
-public:
-    Game();
-    ~Game() = default;
+    auto result = m_shaders.find(type);
+    if (result != m_shaders.end())
+    {
+        return *result->second;
+    }
 
-    void run();
-
-    void setClearColour(sf::Color c);
-    sf::Font& getFont(const std::string& path);
-
-    TextureResource& getTextureResource();
-    sf::Shader& getShader(Shader::Type type);
-
-private: 
-
-    static const float m_timePerFrame;
-
-    sf::RenderWindow m_renderWindow;
-    sf::Color m_clearColour;
-
-    StateStack m_stateStack;
-
-    FontResource m_fontResource;
-    TextureResource m_textureResource;
-    ShaderResource m_shaderResource;
-
-    void handleEvents();
-    void update(float dt);
-    void draw();
-
-    void registerStates();
-};
-
-#endif //GAME_H_
+    switch (type)
+    {
+    case Shader::Type::NormalMap:
+        Shader::Ptr shader = std::make_unique<sf::Shader>();
+        shader->loadFromMemory(Shader::normalVertex, Shader::normalFragment);
+        m_shaders.insert(std::make_pair(Shader::Type::NormalMap, std::move(shader)));
+        return *m_shaders[Shader::Type::NormalMap];
+    }
+}

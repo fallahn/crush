@@ -30,6 +30,11 @@ source distribution.
 
 #include <iostream>
 
+namespace
+{
+    const float damageMultiplier = 0.3f;
+}
+
 //------------------------------------------
 void PlayerBehaviourAir::update(float dt)
 {
@@ -141,7 +146,7 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         {
             int cat = other->getParentCategory();
             if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0) //don't take damage from blocks being carried
-                damage(std::fabs(manifold.z * 0.3f), other);
+                damage(std::fabs(manifold.z * (damageMultiplier / getFootSenseCount())), other); //always take same damage regardless of blocks touching
             else
             {
                 //drop block?

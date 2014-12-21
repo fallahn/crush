@@ -32,7 +32,7 @@ source distribution.
 
 #include <string>
 
-namespace Shaders
+namespace Shader
 {
     static const std::string waterGlob =
         "#version 120\n" \

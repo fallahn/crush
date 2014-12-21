@@ -44,6 +44,7 @@ namespace sf
 
 class StateStack;
 class Game;
+class TextureResource;
 class State
 {
 public:

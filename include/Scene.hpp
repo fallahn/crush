@@ -31,8 +31,12 @@ source distribution.
 #define SCENE_H_
 
 #include <Node.hpp>
+#include <Light.hpp>
+
+#include <SFML/Graphics/Color.hpp>
 
 #include <set>
+
 
 class Scene final : public sf::Drawable, private sf::NonCopyable, public Observer, public Subject
 {
@@ -58,6 +62,11 @@ public:
     Camera* getActiveCamera() const;
     static Camera defaultCamera;
 
+    Light* addLight(const sf::Vector3f& colour, float range);
+    void setSunlight(const Light& light);
+    void addShader(sf::Shader& shader);
+    void setAmbientColour(const sf::Color& colour);
+
     Node* findNode(const std::string& name, bool recursive = true);
 
     void executeCommand(const Command& command, float dt);
@@ -70,6 +79,12 @@ public:
 private:
     std::vector<Node::Ptr> m_children;
     Camera* m_activeCamera;
+
+    Light m_sunLight;
+    sf::Vector3f m_sunDirection;
+    std::vector<Light> m_lights;
+    std::vector<sf::Shader*> m_shaders;
+    sf::Vector3f m_ambientColour;
 
     //we want to make sure each node is only entered once
     std::set<Node*> m_deletedList;

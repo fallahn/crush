@@ -25,49 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//main game class
+//shaders are handle a little differently to other resources, so have their own manager
 
-#ifndef GAME_H_
-#define GAME_H_
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
-#include <StateStack.hpp>
-#include <Resource.hpp>
-#include <ShaderResource.hpp>
+#include <memory>
+#include <map>
 
-#include <SFML/Graphics/RenderWindow.hpp>
+namespace Shader
+{
+    enum class Type
+    {
+        NormalMap
+    };
 
-class Game final : private sf::NonCopyable
+    typedef std::unique_ptr<sf::Shader> Ptr;
+}
+
+class ShaderResource final : private sf::NonCopyable
 {
 public:
-    Game();
-    ~Game() = default;
 
-    void run();
+    ShaderResource() = default;
+    ~ShaderResource() = default;
 
-    void setClearColour(sf::Color c);
-    sf::Font& getFont(const std::string& path);
+    sf::Shader& get(Shader::Type type);
 
-    TextureResource& getTextureResource();
-    sf::Shader& getShader(Shader::Type type);
-
-private: 
-
-    static const float m_timePerFrame;
-
-    sf::RenderWindow m_renderWindow;
-    sf::Color m_clearColour;
-
-    StateStack m_stateStack;
-
-    FontResource m_fontResource;
-    TextureResource m_textureResource;
-    ShaderResource m_shaderResource;
-
-    void handleEvents();
-    void update(float dt);
-    void draw();
-
-    void registerStates();
+private:
+    std::map<Shader::Type, Shader::Ptr> m_shaders;
 };
-
-#endif //GAME_H_

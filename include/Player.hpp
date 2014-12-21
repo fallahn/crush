@@ -102,7 +102,7 @@ private:
 
     void enable();
 
-    void doMovement();
+    void doMovement(float dt);
     void doJump();
     void doGrab();
     void doPickUp();

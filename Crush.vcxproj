@@ -72,6 +72,7 @@
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
+    <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\MapController.cpp" />
     <ClCompile Include="src\NpcController.cpp" />
     <ClCompile Include="src\BlockBehaviour.cpp" />
@@ -97,6 +98,7 @@
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\PlayerBehaviour.cpp" />
     <ClCompile Include="src\Scene.cpp" />
+    <ClCompile Include="src\ShaderResource.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\TitleState.cpp" />
@@ -107,6 +109,7 @@
     <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
+    <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\MapController.hpp" />
     <ClInclude Include="include\NormalMapping.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />
@@ -134,6 +137,7 @@
     <ClInclude Include="include\Player.hpp" />
     <ClInclude Include="include\Resource.hpp" />
     <ClInclude Include="include\Scene.hpp" />
+    <ClInclude Include="include\ShaderResource.hpp" />
     <ClInclude Include="include\State.hpp" />
     <ClInclude Include="include\StateIds.hpp" />
     <ClInclude Include="include\StateStack.hpp" />

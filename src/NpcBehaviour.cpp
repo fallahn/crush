@@ -31,6 +31,7 @@ source distribution.
 namespace
 {
     const float initialJumpSpeed = 700.f;
+    const float damageMultiplier = 0.4f;
 }
 
 //-------------------------------------------
@@ -202,8 +203,9 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
             e.node.type = Category::Block;
             e.node.target = Category::Npc;
 
-            if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
-            else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
+            int cat = other->getParentCategory();
+            if (cat & (Category::LastTouchedOne | Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+            else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
             else e.node.owner = Category::None;
 
             e.type = game::Event::Node;
@@ -212,7 +214,7 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         {
             int cat = other->getParentCategory();
             if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
-                damage(std::fabs(manifold.z * 0.3f), other);
+                damage(std::fabs(manifold.z * damageMultiplier), other);
         }
         break;
     case CollisionWorld::Body::Type::Solid:
@@ -307,8 +309,9 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             e.node.type = Category::Block;
             e.node.target = Category::Npc;
 
-            if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
-            else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
+            int cat = other->getParentCategory();
+            if (cat & (Category::LastTouchedOne | Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+            else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
             else e.node.owner = Category::None;
 
             e.type = game::Event::Node;
@@ -317,7 +320,7 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         {
             int cat = other->getParentCategory();
             if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
-                damage(std::fabs(manifold.z * 0.3f), other);
+                damage(std::fabs(manifold.z * damageMultiplier), other);
         }
         break;
     case CollisionWorld::Body::Type::Solid:

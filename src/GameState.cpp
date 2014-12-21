@@ -33,9 +33,13 @@ source distribution.
 #include <Particles.hpp>
 #include <Map.hpp>
 #include <WaterDrawable.hpp>
+#include <Light.hpp>
+#include <NormalMapping.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <iostream>
 #include <list>
@@ -57,22 +61,36 @@ namespace
     const sf::Uint8 maxPlayers = 2u;
 
     sf::Vector2f blockSize(60.f, 40.f);
- 
-    TextureResource textureResource;
+
+    Node* testNode = nullptr;
+    sf::CircleShape lightShape(20.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
+    m_textureResource   (context.gameInstance.getTextureResource()),
     m_collisionWorld    (70.f),
     m_npcController     (m_commandStack),
     m_scoreBoard        (stack, context),
-    m_particleController(textureResource),
-    m_mapController     (m_commandStack, textureResource)
+    m_particleController(m_textureResource),
+    m_mapController     (m_commandStack, m_textureResource, context.gameInstance.getShader(Shader::Type::NormalMap))
 {
     //build world
     getContext().renderWindow.setTitle("Game Screen");
     
     Scene::defaultCamera.setView(getContext().defaultView);
+
+    //test lighting
+    lightShape.setOrigin(lightShape.getRadius(), lightShape.getRadius());
+    auto light = m_scene.addLight({ 1.f, 1.f, 1.f }, 500.f);
+    light->setDepth(250.f);
+    auto lightNode = std::make_unique<Node>();
+    lightNode->setDrawable(&lightShape);
+    lightNode->setLight(light);
+    testNode = lightNode.get();
+    m_scene.addNode(lightNode);
+
+    m_scene.addShader(context.gameInstance.getShader(Shader::Type::NormalMap));
 
     //TODO remove shapes for sprites managed by controllers
     shapes.reserve(50); //TODO temp stuffs
@@ -194,6 +212,11 @@ bool GameState::handleEvent(const sf::Event& evt)
         }
         break;
     default: break;
+    case sf::Event::MouseMoved:
+    {
+        auto position = getContext().renderWindow.mapPixelToCoords(sf::Mouse::getPosition(getContext().renderWindow));
+        testNode->setWorldPosition(position);
+    }
     }
     
     return true;

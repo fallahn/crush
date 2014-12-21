@@ -46,6 +46,7 @@ source distribution.
 
 
 class Scene;
+class Light;
 class Node final : public sf::Transformable, public sf::Drawable, private sf::NonCopyable, public Subject, public Observer
 {
     friend class CollisionWorld::Body;
@@ -68,10 +69,11 @@ public:
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
     void setCollisionBody(CollisionWorld::Body* body);
-    CollisionWorld::Body* getCollisionBody() const;
+    void setLight(Light* light);
 
     Scene* getScene() const;
     Camera* getCamera() const;
+    CollisionWorld::Body* getCollisionBody() const;
 
     const std::string& getName() const;
 

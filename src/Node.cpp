@@ -30,6 +30,7 @@ source distribution.
 #include <Scene.hpp>
 #include <WaterDrawable.hpp>
 #include <Util.hpp>
+#include <Light.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -168,9 +169,9 @@ void Node::setCollisionBody(CollisionWorld::Body* b)
     }
 }
 
-CollisionWorld::Body* Node::getCollisionBody() const
+void Node::setLight(Light* l)
 {
-    return m_collisionBody;
+    l->setNode(this);
 }
 
 Scene* Node::getScene() const
@@ -181,6 +182,11 @@ Scene* Node::getScene() const
 Camera* Node::getCamera() const
 {
     return m_camera;
+}
+
+CollisionWorld::Body* Node::getCollisionBody() const
+{
+    return m_collisionBody;
 }
 
 const std::string& Node::getName() const

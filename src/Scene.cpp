@@ -26,15 +26,24 @@ source distribution.
 *********************************************************************/
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <Scene.hpp>
 
 #include <cassert>
 
+namespace
+{
+    const sf::Uint8 maxLights = 3;
+    const sf::Vector3f sunTarget(960.f, 540.f, 0.f);
+}
+
 Camera Scene::defaultCamera;
 
 Scene::Scene()
-    : m_activeCamera(nullptr)
+    : m_activeCamera    (nullptr),
+    m_ambientColour     ({0.2f, 0.2f, 0.2f}),
+    m_sunLight          ({ 960.f, 500.f, 30.f }, {1.f, 0.99f, 0.9f}, 1.f)
 {
     m_activeCamera = &defaultCamera;
 
@@ -43,6 +52,9 @@ Scene::Scene()
         auto n = std::make_unique<Node>();
         addNode(n);
     }
+
+    m_lights.reserve(maxLights);
+    m_sunDirection = m_sunLight.getPosition() - sunTarget;
 }
 
 //public
@@ -127,6 +139,31 @@ Camera* Scene::getActiveCamera() const
     return m_activeCamera;
 }
 
+Light* Scene::addLight(const sf::Vector3f& colour, float range)
+{
+    assert(m_lights.size() <= maxLights);
+    m_lights.emplace_back(sf::Vector3f(0.f, 0.f, 20.f), colour, range);
+    return &m_lights.back();
+}
+
+void Scene::setSunlight(const Light& light)
+{
+    m_sunLight = light;
+    m_sunDirection = m_sunLight.getPosition() - sunTarget;
+}
+
+void Scene::addShader(sf::Shader& shader)
+{
+    m_shaders.push_back(&shader);
+}
+
+void Scene::setAmbientColour(const sf::Color& colour)
+{
+    m_ambientColour.x = static_cast<float>(colour.r) / 255.f;
+    m_ambientColour.y = static_cast<float>(colour.g) / 255.f;
+    m_ambientColour.z = static_cast<float>(colour.b) / 255.f;
+}
+
 Node* Scene::findNode(const std::string& name, bool recursive)
 {
     auto result = std::find_if(m_children.begin(), m_children.end(), [&name](const Node::Ptr& p)
@@ -181,6 +218,23 @@ void Scene::flush()
 //private
 void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    //this assumes all shaders require light data updating
+    //ready for use by any nodes
+
+    for (auto& s : m_shaders)
+    {
+        s->setParameter("u_directionalLightDirection", m_sunDirection);
+        s->setParameter("u_directionalLightColour", m_sunLight.getColour());
+        s->setParameter("u_ambientColour", m_ambientColour);
+        for (auto& l : m_lights)
+        {            
+            s->setParameter("u_pointLightPosition", l.getPosition());
+            s->setParameter("u_pointLightColour", l.getColour());
+            s->setParameter("u_rangeInverse", l.getRangeInverse());
+            
+        }
+    }
+
     rt.setView(m_activeCamera->getView());
     for (const auto& c : m_children)
         rt.draw(*c);

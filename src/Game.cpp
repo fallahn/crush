@@ -81,6 +81,16 @@ sf::Font& Game::getFont(const std::string& path)
     return m_fontResource.get(path);
 }
 
+TextureResource& Game::getTextureResource()
+{
+    return m_textureResource;
+}
+
+sf::Shader& Game::getShader(Shader::Type type)
+{
+    return m_shaderResource.get(type);
+}
+
 //private
 void Game::handleEvents()
 {

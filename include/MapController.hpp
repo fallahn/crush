@@ -44,7 +44,7 @@ class Map;
 class MapController final : private sf::NonCopyable
 {
 public:
-    MapController(CommandStack& cs, TextureResource& tr);
+    MapController(CommandStack& cs, TextureResource& tr, sf::Shader& shader);
     ~MapController() = default;
 
     void update(float dt);
@@ -75,14 +75,14 @@ private:
     class SolidDrawable : public sf::Drawable, private sf::NonCopyable
     {
     public:
-        explicit SolidDrawable(TextureResource& tr);
+        explicit SolidDrawable(TextureResource& tr, sf::Shader& shader);
         ~SolidDrawable() = default;
 
         void addSolid(const sf::Vector2f& position, const sf::Vector2f& size);
     private:
         sf::Texture m_diffuseTexture;
-        //TODO normal map
-        //TODO shader
+        sf::Texture m_normalTexture;
+        sf::Shader& m_shader;
 
         sf::VertexArray m_vertexArray;
 

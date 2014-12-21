@@ -49,6 +49,8 @@ public:
 
 private:
 
+    TextureResource& m_textureResource;
+
     Scene m_scene;
     CommandStack m_commandStack;
     CollisionWorld m_collisionWorld;

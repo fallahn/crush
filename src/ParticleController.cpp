@@ -77,16 +77,12 @@ namespace
         {-20.f, 29.6f},
         {-60.f, 9.5f}
     };
-
-    sf::Shader waterShader;
 }
 
 ParticleController::ParticleController(TextureResource& tr)
     : m_textureResource (tr)
 {
     m_systems.reserve(50);
-
-    waterShader.loadFromMemory(Shaders::waterGlob, sf::Shader::Fragment);
 }
 
 //public
