@@ -54,7 +54,7 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, sf::Shader& 
 void MapController::update(float dt)
 {
     m_itemTime -= dt;
-    if (m_itemTime < 0)
+    if (m_items.size() && m_itemTime < 0)
     {
         //spawn a new item if none active
         if(!m_itemActive)

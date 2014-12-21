@@ -82,12 +82,29 @@ GameState::GameState(StateStack& stack, Context context)
 
     //test lighting
     lightShape.setOrigin(lightShape.getRadius(), lightShape.getRadius());
-    auto light = m_scene.addLight({ 1.f, 1.f, 1.f }, 500.f);
-    light->setDepth(250.f);
+    auto light = m_scene.addLight({ 0.f, 0.9f, 0.2f }, 200.f);
+    light->setDepth(150.f);
     auto lightNode = std::make_unique<Node>();
     lightNode->setDrawable(&lightShape);
     lightNode->setLight(light);
     testNode = lightNode.get();
+
+    auto subNodeA = std::make_unique<Node>();
+    subNodeA->setDrawable(&lightShape);
+    subNodeA->move(300.f, 0.f);
+    light = m_scene.addLight({ 1.f, 0.2f, 0.f }, 300.f);
+    light->setDepth(150.f);
+    subNodeA->setLight(light);
+    lightNode->addChild(subNodeA);
+
+    auto subNodeB = std::make_unique<Node>();
+    subNodeB->setDrawable(&lightShape);
+    subNodeB->setPosition(-300.f, 0.f);
+    light = m_scene.addLight({ 0.f, 0.8f, 1.f }, 680.f);
+    light->setDepth(300.f);
+    subNodeB->setLight(light);
+    lightNode->addChild(subNodeB);
+
     m_scene.addNode(lightNode);
 
     m_scene.addShader(context.gameInstance.getShader(Shader::Type::NormalMap));
@@ -166,7 +183,8 @@ bool GameState::update(float dt)
     //map controller (bonuses etc)
     m_mapController.update(dt);
 
-    m_scene.flush();
+    //updates the scene lighting
+    m_scene.update(dt);
     return true;
 }
 

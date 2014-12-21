@@ -68,7 +68,7 @@ const sf::Vector3f& Light::getPosition() const
 {
     if (m_node)
     {
-        auto p = m_node->getPosition();
+        auto p = m_node->getWorldPosition();
         m_position.x = p.x;
         m_position.y = p.y;
     }

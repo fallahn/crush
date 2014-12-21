@@ -73,8 +73,9 @@ public:
 
     void onNotify(Subject& s, const game::Event& evt) override;
 
-    //delete any nodes waiting
-    void flush();
+    void update(float dt);
+
+
 
 private:
     std::vector<Node::Ptr> m_children;
@@ -90,6 +91,8 @@ private:
     std::set<Node*> m_deletedList;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    //delete any nodes waiting
+    void flush();
 };
 
 #endif //SCENE_H_

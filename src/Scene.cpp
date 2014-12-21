@@ -31,6 +31,7 @@ source distribution.
 #include <Scene.hpp>
 
 #include <cassert>
+#include <array>
 
 namespace
 {
@@ -203,6 +204,54 @@ void Scene::onNotify(Subject& s, const game::Event& evt)
     }
 }
 
+void Scene::update(float dt)
+{
+    //this assumes all shaders require light data updating
+    //ready for use by any nodes
+
+    //sfml doesn't support array uniforms so this is fudged by using the
+    //underlying array of the transform class
+    std::array<sf::Vector3f, maxLights> positions;
+    std::array<sf::Vector3f, maxLights> colours;
+    std::array<float, maxLights> ranges = { 1.f, 1.f, 1.f };
+
+    for (auto i = 0u; i < m_lights.size(); ++i)
+    {
+        positions[i] = m_lights[i].getPosition();
+        colours[i] = m_lights[i].getColour();
+        ranges[i] = m_lights[i].getRangeInverse();
+    }
+
+    sf::Transform lightPositions(positions[0].x, positions[0].y, positions[0].z,
+                                positions[1].x, positions[1].y, positions[1].z, 
+                                positions[2].x, positions[2].y, positions[2].z);
+
+    sf::Transform lightColours(colours[0].x, colours[0].y, colours[0].z,
+                                colours[1].x, colours[1].y, colours[1].z,
+                                colours[2].x, colours[2].y, colours[2].z);
+
+    for (auto& s : m_shaders)
+    {
+        s->setParameter("u_directionalLightDirection", m_sunDirection);
+        s->setParameter("u_directionalLightColour", m_sunLight.getColour());
+        s->setParameter("u_ambientColour", m_ambientColour);
+
+        s->setParameter("u_pointLightColours", lightColours);
+        s->setParameter("u_inverseRanges", sf::Vector3f(ranges[0], ranges[1], ranges[2]));
+        s->setParameter("u_pointLightPositions", lightPositions);
+    }
+
+    flush();
+}
+
+//private
+void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.setView(m_activeCamera->getView());
+    for (const auto& c : m_children)
+        rt.draw(*c);
+}
+
 void Scene::flush()
 {
     if (m_deletedList.size())
@@ -212,30 +261,4 @@ void Scene::flush()
 
         m_deletedList.clear();
     }
-}
-
-
-//private
-void Scene::draw(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    //this assumes all shaders require light data updating
-    //ready for use by any nodes
-
-    for (auto& s : m_shaders)
-    {
-        s->setParameter("u_directionalLightDirection", m_sunDirection);
-        s->setParameter("u_directionalLightColour", m_sunLight.getColour());
-        s->setParameter("u_ambientColour", m_ambientColour);
-        for (auto& l : m_lights)
-        {            
-            s->setParameter("u_pointLightPosition", l.getPosition());
-            s->setParameter("u_pointLightColour", l.getColour());
-            s->setParameter("u_rangeInverse", l.getRangeInverse());
-            
-        }
-    }
-
-    rt.setView(m_activeCamera->getView());
-    for (const auto& c : m_children)
-        rt.draw(*c);
 }
