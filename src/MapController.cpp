@@ -60,7 +60,7 @@ void MapController::update(float dt)
         if(!m_itemActive)
         {
             const auto& item = m_items.back();
-            spawn(Category::Item, item.position, item.size);
+            spawn(item.node);
             m_itemTime = item.lifeTime;
             //m_items.pop_back();
             shuffleItems();
@@ -93,7 +93,7 @@ void MapController::update(float dt)
     }
 }
 
-void MapController::setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func)
+void MapController::setSpawnFunction(std::function<void(const Map::Node&)>& func)
 {
     spawn = func;
 }
@@ -105,11 +105,11 @@ void MapController::loadMap(const Map& map)
     {
         if (n.type == Category::Item)
         {
-            m_items.emplace_back(n.position, n.size, Util::Random::value(12.f, 19.f));
+            m_items.emplace_back(n, Util::Random::value(12.f, 19.f));
         }
         else
         {
-            spawn(n.type, n.position, n.size);
+            spawn(n);
             if (n.type == Category::Solid)
                 m_drawable.addSolid(n.position, n.size);
         }

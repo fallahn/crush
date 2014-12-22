@@ -78,6 +78,20 @@ namespace Level_editor
             set { m_playerTwoSpawn = value; }
         }
 
+        private Int32 m_ambientColour;
+        public Int32 AmbientColour
+        {
+            get { return m_ambientColour; }
+            set { m_ambientColour = value; }
+        }
+
+        private Int32 m_sunColour;
+        public Int32 SunColour
+        {
+            get { return m_sunColour; }
+            set { m_sunColour = value; }
+        }
+
         private List<Node> m_nodes;
         public List<Node> Nodes
         {

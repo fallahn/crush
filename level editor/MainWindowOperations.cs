@@ -34,6 +34,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,6 +45,9 @@ namespace Level_editor
 {
     public partial class MainWindow : Form
     {
+        private int m_lightCount = 0;
+        private const int m_maxLights = 3;
+        
         //------------others---------------//
 
         private void centreEditor()
@@ -58,7 +62,7 @@ namespace Level_editor
         /// </summary>
         /// <param name="type">Type of node</param>
         /// <param name="position">Position of node</param>
-        /// <param name="size">size of node</param>
+        /// <param name="size">Size of node</param>
         private Panel addNode(Node.BodyType type, Point position, Size size)
         {
             //divide by two as UI is half world game world size
@@ -104,6 +108,21 @@ namespace Level_editor
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
                     break;
+                case Node.BodyType.Light:
+                    if(m_lightCount < m_maxLights)
+                    {
+                        m_lightCount++;
+                        p.BackColor = sunColour;
+                        p.Move += node_Move;
+                        p.ContextMenuStrip = m_nodeMenu;
+                        p.BackgroundImage = Image.FromFile(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\icons\bulb.png"); 
+                    }
+                    else
+                    {
+                        MessageBox.Show("Maps cannot contain more than 3 dynamic lights");
+                        return null;
+                    }
+                    break;
                 default: break;
             }
 
@@ -114,7 +133,18 @@ namespace Level_editor
 
         private void selectNode(Panel p)
         {
-            if (m_selectedNode != null) m_selectedNode.BorderStyle = BorderStyle.None;
+            if (p == null) return;
+
+            if (m_selectedNode != null)
+            {
+                m_selectedNode.BorderStyle = BorderStyle.None;
+                if((Node.BodyType)m_selectedNode.Tag == Node.BodyType.Light)
+                {
+                    //remove colour picker
+                    panelNodeColour.Click -= pickLightColour;
+                    panelNodeColour.BackColor = Color.DarkGray;
+                }
+            }
             m_selectedNode = p;
             m_selectedNode.BorderStyle = BorderStyle.Fixed3D;
 
@@ -141,6 +171,13 @@ namespace Level_editor
             }
             comboBoxNodePropertyType.SelectedValue = tag;
             comboBoxNodePropertyType.Enabled = true;
+
+            if(tag == Node.BodyType.Light)
+            {
+                //add event handler and set colour
+                panelNodeColour.Click += pickLightColour;
+                panelNodeColour.BackColor = m_selectedNode.BackColor;
+            }
         }
 
         /// <summary>
@@ -152,6 +189,8 @@ namespace Level_editor
             m_currentMap.NpcTotal = (int)numericUpDownNpcTotal.Value;
             m_currentMap.PlayerOneSpawn = new Point((int)numericUpDownPlayerOneX.Value, (int)numericUpDownPlayerOneY.Value);
             m_currentMap.PlayerTwoSpawn = new Point((int)numericUpDownPlayerTwoX.Value, (int)numericUpDownPlayerTwoY.Value);
+            m_currentMap.AmbientColour = panelAmbientColour.BackColor.ToArgb();
+            m_currentMap.SunColour = panelSunColour.BackColor.ToArgb();
             m_currentMap.Nodes.Clear();
 
             foreach(Panel p in panelEditorInner.Controls)
@@ -191,6 +230,9 @@ namespace Level_editor
             numericUpDownPlayerTwoX.Value = 1680;
             numericUpDownPlayerTwoY.Value = 500;
 
+            panelAmbientColour.BackColor = ambientColour;
+            panelSunColour.BackColor = sunColour;
+
             numericUpDownNodePropertyPosX.Enabled = false;
             numericUpDownNodePropertyPosY.Enabled = false;
             numericUpDownNodePropertySizeX.Enabled = false;
@@ -214,6 +256,9 @@ namespace Level_editor
             //update UI from object
             numericUpDownNpcCount.Value = (decimal)m_currentMap.NpcCount;
             numericUpDownNpcTotal.Value = (decimal)m_currentMap.NpcTotal;
+
+            panelAmbientColour.BackColor = Color.FromArgb(m_currentMap.AmbientColour);
+            panelSunColour.BackColor = Color.FromArgb(m_currentMap.SunColour);
 
             panelEditorInner.Controls.Clear();
             m_selectedNode = null;
@@ -241,6 +286,9 @@ namespace Level_editor
                         break;
                     case "Item":
                         addNode(Node.BodyType.Item, n.Position, n.Size);
+                        break;
+                    case "Light":
+                        addNode(Node.BodyType.Light, n.Position, n.Size).BackColor = Color.FromArgb(n.Colour);
                         break;
                 }
             }

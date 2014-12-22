@@ -63,7 +63,7 @@ private:
     void addBlock(const sf::Vector2f& position, const sf::Vector2f& size);
     void addPlayer(const sf::Vector2f& position, Player& player);
     void addNpc(const sf::Vector2f& position);
-    void addMapBody(Category::Type type, const sf::Vector2f& position, const sf::Vector2f& size = sf::Vector2f());
+    void addMapBody(const Map::Node& n); 
 };
 
 #endif //GAME_STATE_H_

@@ -165,6 +165,13 @@ void Scene::setAmbientColour(const sf::Color& colour)
     m_ambientColour.z = static_cast<float>(colour.b) / 255.f;
 }
 
+void Scene::setSunLightColour(const sf::Color& colour)
+{
+    m_sunLight.setColour({ static_cast<float>(colour.r) / 255.f,
+                            static_cast<float>(colour.g) / 255.f,
+                            static_cast<float>(colour.b) / 255.f });
+}
+
 Node* Scene::findNode(const std::string& name, bool recursive)
 {
     auto result = std::find_if(m_children.begin(), m_children.end(), [&name](const Node::Ptr& p)

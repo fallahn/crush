@@ -66,6 +66,7 @@ public:
     void setSunlight(const Light& light);
     void addShader(sf::Shader& shader);
     void setAmbientColour(const sf::Color& colour);
+    void setSunLightColour(const sf::Color& colour);
 
     Node* findNode(const std::string& name, bool recursive = true);
 

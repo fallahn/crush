@@ -71,6 +71,12 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.label11 = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.panelSunColour = new System.Windows.Forms.Panel();
+            this.panelAmbientColour = new System.Windows.Forms.Panel();
+            this.label13 = new System.Windows.Forms.Label();
+            this.panelNodeColour = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -227,6 +233,8 @@
             // 
             // groupBoxNodeProperties
             // 
+            this.groupBoxNodeProperties.Controls.Add(this.panelNodeColour);
+            this.groupBoxNodeProperties.Controls.Add(this.label13);
             this.groupBoxNodeProperties.Controls.Add(this.buttonDeleteNode);
             this.groupBoxNodeProperties.Controls.Add(this.numericUpDownNodePropertySizeY);
             this.groupBoxNodeProperties.Controls.Add(this.numericUpDownNodePropertySizeX);
@@ -236,7 +244,7 @@
             this.groupBoxNodeProperties.Controls.Add(this.label5);
             this.groupBoxNodeProperties.Controls.Add(this.comboBoxNodePropertyType);
             this.groupBoxNodeProperties.Controls.Add(this.label4);
-            this.groupBoxNodeProperties.Location = new System.Drawing.Point(3, 371);
+            this.groupBoxNodeProperties.Location = new System.Drawing.Point(3, 448);
             this.groupBoxNodeProperties.Name = "groupBoxNodeProperties";
             this.groupBoxNodeProperties.Size = new System.Drawing.Size(233, 212);
             this.groupBoxNodeProperties.TabIndex = 1;
@@ -245,7 +253,7 @@
             // 
             // buttonDeleteNode
             // 
-            this.buttonDeleteNode.Location = new System.Drawing.Point(134, 151);
+            this.buttonDeleteNode.Location = new System.Drawing.Point(134, 164);
             this.buttonDeleteNode.Name = "buttonDeleteNode";
             this.buttonDeleteNode.Size = new System.Drawing.Size(75, 23);
             this.buttonDeleteNode.TabIndex = 8;
@@ -255,7 +263,7 @@
             // 
             // numericUpDownNodePropertySizeY
             // 
-            this.numericUpDownNodePropertySizeY.Location = new System.Drawing.Point(152, 119);
+            this.numericUpDownNodePropertySizeY.Location = new System.Drawing.Point(152, 101);
             this.numericUpDownNodePropertySizeY.Maximum = new decimal(new int[] {
             1080,
             0,
@@ -278,7 +286,7 @@
             // 
             // numericUpDownNodePropertySizeX
             // 
-            this.numericUpDownNodePropertySizeX.Location = new System.Drawing.Point(89, 119);
+            this.numericUpDownNodePropertySizeX.Location = new System.Drawing.Point(89, 101);
             this.numericUpDownNodePropertySizeX.Maximum = new decimal(new int[] {
             1920,
             0,
@@ -302,7 +310,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 121);
+            this.label6.Location = new System.Drawing.Point(15, 103);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(30, 13);
             this.label6.TabIndex = 5;
@@ -310,7 +318,7 @@
             // 
             // numericUpDownNodePropertyPosY
             // 
-            this.numericUpDownNodePropertyPosY.Location = new System.Drawing.Point(152, 90);
+            this.numericUpDownNodePropertyPosY.Location = new System.Drawing.Point(152, 72);
             this.numericUpDownNodePropertyPosY.Maximum = new decimal(new int[] {
             1070,
             0,
@@ -323,7 +331,7 @@
             // 
             // numericUpDownNodePropertyPosX
             // 
-            this.numericUpDownNodePropertyPosX.Location = new System.Drawing.Point(89, 90);
+            this.numericUpDownNodePropertyPosX.Location = new System.Drawing.Point(89, 72);
             this.numericUpDownNodePropertyPosX.Maximum = new decimal(new int[] {
             1910,
             0,
@@ -337,7 +345,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 92);
+            this.label5.Location = new System.Drawing.Point(15, 74);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(47, 13);
             this.label5.TabIndex = 2;
@@ -364,6 +372,10 @@
             // 
             // groupBoxMapProperties
             // 
+            this.groupBoxMapProperties.Controls.Add(this.panelAmbientColour);
+            this.groupBoxMapProperties.Controls.Add(this.panelSunColour);
+            this.groupBoxMapProperties.Controls.Add(this.label12);
+            this.groupBoxMapProperties.Controls.Add(this.label11);
             this.groupBoxMapProperties.Controls.Add(this.label9);
             this.groupBoxMapProperties.Controls.Add(this.numericUpDownPlayerTwoY);
             this.groupBoxMapProperties.Controls.Add(this.numericUpDownPlayerTwoX);
@@ -380,7 +392,7 @@
             this.groupBoxMapProperties.Controls.Add(this.numericUpDownNpcCount);
             this.groupBoxMapProperties.Location = new System.Drawing.Point(3, 8);
             this.groupBoxMapProperties.Name = "groupBoxMapProperties";
-            this.groupBoxMapProperties.Size = new System.Drawing.Size(233, 357);
+            this.groupBoxMapProperties.Size = new System.Drawing.Size(233, 434);
             this.groupBoxMapProperties.TabIndex = 0;
             this.groupBoxMapProperties.TabStop = false;
             this.groupBoxMapProperties.Text = "Map Properties";
@@ -423,7 +435,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(13, 321);
+            this.label8.Location = new System.Drawing.Point(16, 321);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(63, 13);
             this.label8.TabIndex = 10;
@@ -458,7 +470,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 292);
+            this.label7.Location = new System.Drawing.Point(16, 292);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(62, 13);
             this.label7.TabIndex = 7;
@@ -619,6 +631,57 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(16, 376);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(62, 13);
+            this.label11.TabIndex = 14;
+            this.label11.Text = "Sun Colour:";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(15, 408);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(81, 13);
+            this.label12.TabIndex = 15;
+            this.label12.Text = "Ambient Colour:";
+            // 
+            // panelSunColour
+            // 
+            this.panelSunColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(252)))), ((int)(((byte)(230)))));
+            this.panelSunColour.Location = new System.Drawing.Point(134, 365);
+            this.panelSunColour.Name = "panelSunColour";
+            this.panelSunColour.Size = new System.Drawing.Size(75, 24);
+            this.panelSunColour.TabIndex = 16;
+            // 
+            // panelAmbientColour
+            // 
+            this.panelAmbientColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.panelAmbientColour.Location = new System.Drawing.Point(134, 396);
+            this.panelAmbientColour.Name = "panelAmbientColour";
+            this.panelAmbientColour.Size = new System.Drawing.Size(75, 25);
+            this.panelAmbientColour.TabIndex = 17;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(15, 141);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(95, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "Colour (lights only):";
+            // 
+            // panelNodeColour
+            // 
+            this.panelNodeColour.BackColor = System.Drawing.Color.DarkGray;
+            this.panelNodeColour.Location = new System.Drawing.Point(134, 129);
+            this.panelNodeColour.Name = "panelNodeColour";
+            this.panelNodeColour.Size = new System.Drawing.Size(75, 25);
+            this.panelNodeColour.TabIndex = 10;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -709,6 +772,12 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.NumericUpDown numericUpDownSnap;
         private System.Windows.Forms.CheckBox checkBoxSnap;
+        private System.Windows.Forms.Panel panelSunColour;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Panel panelAmbientColour;
+        private System.Windows.Forms.Panel panelNodeColour;
+        private System.Windows.Forms.Label label13;
     }
 }
 

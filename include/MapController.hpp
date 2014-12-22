@@ -32,6 +32,7 @@ source distribution.
 
 #include <CommandStack.hpp>
 #include <Resource.hpp>
+#include <MAp.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -49,17 +50,16 @@ public:
 
     void update(float dt);
 
-    void setSpawnFunction(std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)>& func);
+    void setSpawnFunction(std::function<void(const Map::Node&)>& func);
     void loadMap(const Map& map);
 
     sf::Drawable* getDrawable();
 private:
     struct Item
     {
-        Item(const sf::Vector2f& pos, const sf::Vector2f& s, float lt)
-            : position(pos), size(s), lifeTime(lt){}
-        sf::Vector2f position;
-        sf::Vector2f size;
+        Item(const Map::Node& pos, float lt)
+            : node(pos), lifeTime(lt){}
+        Map::Node node;
         float lifeTime;
     };
 
@@ -69,7 +69,7 @@ private:
     float m_itemTime;
     bool m_itemActive;
 
-    std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> spawn;
+    std::function<void(const Map::Node&)> spawn;
     void shuffleItems();
 
     class SolidDrawable : public sf::Drawable, private sf::NonCopyable

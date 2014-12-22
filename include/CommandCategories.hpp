@@ -47,7 +47,8 @@ namespace Category
         CarriedOne      = (1 << 9), //for carrying
         CarriedTwo      = (1 << 10),
         Item            = (1 << 11),
-        Water           = (1 << 12)
+        Water           = (1 << 12),
+        Light           = (1 << 13)
     };
 }
 

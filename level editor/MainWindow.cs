@@ -58,6 +58,9 @@ namespace Level_editor
         private Color bonusColour = Color.Yellow;
         private Color waterColour = Color.Aqua;
 
+        private Color sunColour = Color.FromArgb(255, 255, 252, 230);
+        private Color ambientColour = Color.FromArgb(255, 64, 64, 64);
+
         ContextMenuStrip m_nodeMenu = new ContextMenuStrip();
 
         public MainWindow()
@@ -108,6 +111,13 @@ namespace Level_editor
             //bind node types to comboboxes
             bindComboboxValues(comboBoxAddNode);
             bindComboboxValues(comboBoxNodePropertyType);
+
+            //colour picker handlers
+            panelAmbientColour.Click += pickColour;
+            panelSunColour.Click += pickColour;
+
+            //enable numeric box snapping
+            checkBoxSnap_CheckedChanged(null, EventArgs.Empty);
 
             newFile();
         }
@@ -218,6 +228,29 @@ namespace Level_editor
             m_playerTwoPanel.Top = (int)numericUpDownPlayerTwoY.Value / scale;
             m_modified = true;
         }
+        private void pickColour(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            if(cd.ShowDialog() == DialogResult.OK)
+            {
+                var p = (Panel)sender;
+                p.BackColor = cd.Color;
+            }
+        }
+        private void pickLightColour(object sender, EventArgs e)
+        {
+            ColorDialog cd = new ColorDialog();
+            if (cd.ShowDialog() == DialogResult.OK)
+            {
+                var p = (Panel)sender;
+                p.BackColor = cd.Color;
+                if(m_selectedNode != null
+                    && (Node.BodyType)m_selectedNode.Tag == Node.BodyType.Light)
+                {
+                    m_selectedNode.BackColor = cd.Color;
+                }
+            }
+        }
 
         //node properties
         private void numericUpDownNodePropertyPosX_ValueChanged(object sender, EventArgs e)
@@ -300,6 +333,14 @@ namespace Level_editor
                 numericUpDownNodePropertyPosY.Enabled = false;
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;
+
+                panelNodeColour.BackColor = Color.DarkGray;
+                panelNodeColour.Click -= pickColour;
+                if((Node.BodyType)m_selectedNode.Tag == Node.BodyType.Light)
+                {
+                    m_lightCount--;
+                }
+
                 panelEditorInner.Controls.Remove(m_selectedNode);
                 m_selectedNode = null;
             }
@@ -326,6 +367,10 @@ namespace Level_editor
                     break;
                 case "Water":
                     type = Node.BodyType.Water;
+                    break;
+                case "Light":
+                    type = Node.BodyType.Light;
+                    size = new Size(60, 60);
                     break;
                 default: break;
             }

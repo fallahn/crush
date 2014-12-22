@@ -34,6 +34,7 @@ source distribution.
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Config.hpp>
+#include <SFML/Graphics/Color.hpp>
 
 #include <string>
 #include <vector>
@@ -44,10 +45,11 @@ public:
 
     struct Node final
     {
-        Node(const std::string& position, const std::string& size, const std::string& type);
+        Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& colour);
         sf::Vector2f position;
         sf::Vector2f size;
         Category::Type type;
+        sf::Color colour;
     };
 
     explicit Map(const std::string& path);
@@ -57,11 +59,14 @@ public:
     sf::Uint8 getNpcTotal() const;
     const std::string& getNpcTexture() const;
     std::string getMapName() const;
+    const sf::Color& getAmbientColour() const;
+    const sf::Color& getSunlightColour() const;
 
     const std::vector<Node>& getNodes() const;
 
     const sf::Vector2f& getPlayerOneSpawn() const;
     const sf::Vector2f& getPlayerTwoSpawn() const;
+
 
 private:
 
@@ -73,9 +78,12 @@ private:
     std::string m_npcTexture;
 
     std::string m_mapName;
+    sf::Color m_ambientColour;
+    sf::Color m_sunlightColour;
 
     std::vector<Node> m_nodes;
 
+    sf::Color colourFromInt(sf::Int32 value);
 };
 
 #endif //MAP_H_

@@ -67,16 +67,21 @@ namespace Level_editor
                 case BodyType.Water:
                     m_type = "Water";
                     break;
+                case BodyType.Light:
+                    m_type = "Light";
+                    m_colour = p.BackColor.ToArgb();
+                    break;
                 default: break;
             }
         }
 
         [JsonConstructor]
-        public Node(Point position, Size size, string type)
+        public Node(Point position, Size size, string type, Int32 colour = 0)
         {
             m_position = position;
             m_size = size;
             m_type = type;
+            m_colour = colour;
         }
         
         public enum BodyType
@@ -92,7 +97,9 @@ namespace Level_editor
             [Description("Item")]
             Item,
             [Description("Water")]
-            Water
+            Water,
+            [Description("Light")]
+            Light
         }
 
         private Point m_position;
@@ -116,6 +123,13 @@ namespace Level_editor
         {
             get { return m_type; }
             set { m_type = value; }
+        }
+
+        private Int32 m_colour;
+        public Int32 Colour
+        {
+            get { return m_colour; }
+            set { m_colour = value; }
         }
     }
 }

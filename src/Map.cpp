@@ -80,11 +80,21 @@ Map::Map(const std::string& path)
     else
         std::cerr << "Map Parse: missing Player One spawn position." << std::endl;
 
-
     if (v.get("PlayerTwoSpawn").is<std::string>())
         m_playerTwoSpawn = Util::Vector::vec2FromString(v.get("PlayerTwoSpawn").get<std::string>());
     else
         std::cerr << "Map Parse: missing Player Two spawn position." << std::endl;
+
+    if (v.get("AmbientColour").is<double>())
+        m_ambientColour = colourFromInt(static_cast<int>(v.get("AmbientColour").get<double>()));
+    else
+        std::cerr << "Map Parse: missing ambient lighting colour." << std::endl;
+
+    if (v.get("SunColour").is<double>())
+        m_sunlightColour = colourFromInt(static_cast<int>(v.get("SunColour").get<double>()));
+    else
+        std::cerr << "Map Parse: missing sun light colour." << std::endl;
+
 
     //node array
     if (v.get("Nodes").is<picojson::array>())
@@ -94,11 +104,13 @@ Map::Map(const std::string& path)
         {
             if (n.get("Position").is<std::string>()
                 && n.get("Size").is<std::string>()
-                && n.get("Type").is<std::string>())
+                && n.get("Type").is<std::string>()
+                && n.get("Colour").is<double>())
             {
                 m_nodes.emplace_back(n.get("Position").get<std::string>(),
                     n.get("Size").get<std::string>(),
-                    n.get("Type").get<std::string>());
+                    n.get("Type").get<std::string>(),
+                    colourFromInt(static_cast<int>(n.get("Colour").get<double>())));
             }
             else
             {
@@ -135,6 +147,16 @@ std::string Map::getMapName() const
     return m_mapName.substr(pos);
 }
 
+const sf::Color& Map::getAmbientColour() const
+{
+    return m_ambientColour;
+}
+
+const sf::Color& Map::getSunlightColour() const
+{
+    return m_sunlightColour;
+}
+
 const std::vector<Map::Node>& Map::getNodes() const
 {
     return m_nodes;
@@ -150,11 +172,24 @@ const sf::Vector2f& Map::getPlayerTwoSpawn() const
     return m_playerTwoSpawn;
 }
 
+//private
+sf::Color Map::colourFromInt(sf::Int32 value)
+{
+    sf::Color c;
+    c.r = (value & 0x00ff0000) >> 16;
+    c.g = (value & 0x0000ff00) >> 8;
+    c.b = (value & 0x000000ff);
+    c.a = (value & 0xff000000) >> 24;
+
+    return c;
+}
+
 //node ctor
-Map::Node::Node(const std::string& position, const std::string& size, const std::string& type)
+Map::Node::Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& c)
     : position  (Util::Vector::vec2FromString(position)),
     size        (Util::Vector::vec2FromString(size)),
-    type        (Category::None)
+    type        (Category::None),
+    colour      (c)
 {
     if (type == "Block")
     {
@@ -179,5 +214,9 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     else if (type == "Water")
     {
         this->type = Category::Water;
+    }
+    else if (type == "Light")
+    {
+        this->type = Category::Light;
     }
 }

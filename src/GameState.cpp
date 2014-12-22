@@ -62,8 +62,13 @@ namespace
 
     sf::Vector2f blockSize(60.f, 40.f);
 
-    Node* testNode = nullptr;
-    sf::CircleShape lightShape(20.f);
+    sf::Vector3f colourToVec3(const sf::Color& c)
+    {
+        return{ static_cast<float>(c.r) / 255.f,
+            static_cast<float>(c.g) / 255.f,
+            static_cast<float>(c.b) / 255.f };
+    }
+
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -77,36 +82,9 @@ GameState::GameState(StateStack& stack, Context context)
 {
     //build world
     context.renderWindow.setTitle("Game Screen");
-    context.gameInstance.setClearColour({ 189u, 222u, 237u });
+    //context.gameInstance.setClearColour({ 189u, 222u, 237u });
     
     Scene::defaultCamera.setView(getContext().defaultView);
-
-    //test lighting
-    lightShape.setOrigin(lightShape.getRadius(), lightShape.getRadius());
-    auto light = m_scene.addLight({ 0.f, 0.9f, 0.2f }, 200.f);
-    light->setDepth(150.f);
-    auto lightNode = std::make_unique<Node>();
-    lightNode->setDrawable(&lightShape);
-    lightNode->setLight(light);
-    testNode = lightNode.get();
-
-    auto subNodeA = std::make_unique<Node>();
-    subNodeA->setDrawable(&lightShape);
-    subNodeA->move(300.f, 0.f);
-    light = m_scene.addLight({ 1.f, 0.2f, 0.f }, 300.f);
-    light->setDepth(150.f);
-    subNodeA->setLight(light);
-    lightNode->addChild(subNodeA);
-
-    auto subNodeB = std::make_unique<Node>();
-    subNodeB->setDrawable(&lightShape);
-    subNodeB->setPosition(-300.f, 0.f);
-    light = m_scene.addLight({ 0.f, 0.8f, 1.f }, 680.f);
-    light->setDepth(300.f);
-    subNodeB->setLight(light);
-    lightNode->addChild(subNodeB);
-
-    m_scene.addNode(lightNode);
 
     m_scene.addShader(context.gameInstance.getShader(Shader::Type::NormalMap));
     m_scene.addShader(context.gameInstance.getShader(Shader::Type::Water));
@@ -138,7 +116,7 @@ GameState::GameState(StateStack& stack, Context context)
     std::function<void(const sf::Vector2f&)> npcSpawnFunc = std::bind(&GameState::addNpc, this, std::placeholders::_1);
     m_npcController.setSpawnFunction(npcSpawnFunc);
 
-    std::function<void(Category::Type, const sf::Vector2f&, const sf::Vector2f&)> mapSpawnFunc = std::bind(&GameState::addMapBody, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+    std::function<void(const Map::Node&)> mapSpawnFunc = std::bind(&GameState::addMapBody, this, std::placeholders::_1);
     m_mapController.setSpawnFunction(mapSpawnFunc);
 
     m_scoreBoard.addObserver(m_players[0]);
@@ -158,6 +136,9 @@ GameState::GameState(StateStack& stack, Context context)
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
     m_mapController.loadMap(map);
     m_scene.setLayerDrawable(m_mapController.getDrawable(), Scene::Solid);
+    m_scene.setAmbientColour(map.getAmbientColour());
+    m_scene.setSunLightColour(map.getSunlightColour());
+    context.gameInstance.setClearColour(map.getAmbientColour());
 }
 
 bool GameState::update(float dt)
@@ -232,11 +213,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         }
         break;
     default: break;
-    case sf::Event::MouseMoved:
-    {
-        auto position = getContext().renderWindow.mapPixelToCoords(sf::Mouse::getPosition(getContext().renderWindow));
-        testNode->setWorldPosition(position);
-    }
+
     }
     
     return true;
@@ -291,28 +268,28 @@ void GameState::addNpc(const sf::Vector2f& position)
     m_scene.addNode(npcNode, Scene::Dynamic);
 }
 
-void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, const sf::Vector2f& size)
+void GameState::addMapBody(const Map::Node& n)
 {
-    switch (type)
+    switch (n.type)
     {
     case Category::Block:
-        addBlock(position, size);
+        addBlock(n.position, n.size);
         break;
     case Category::Solid:
     {
         auto node = std::make_unique<Node>();
-        node->setPosition(position);
-        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Solid, size));
+        node->setPosition(n.position);
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Solid, n.size));
         m_scene.addNode(node, Scene::Solid);
     }
         break;
     case Category::Water:
     {
         auto node = std::make_unique<Node>();
-        node->setPosition(position);
-        waterDrawables.emplace_back(getContext().gameInstance.getTextureResource(), getContext().gameInstance.getShader(Shader::Type::Water), size);
+        node->setPosition(n.position);
+        waterDrawables.emplace_back(getContext().gameInstance.getTextureResource(), getContext().gameInstance.getShader(Shader::Type::Water), n.size);
         node->setDrawable(&waterDrawables.back());
-        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, n.size));
         node->addObserver(m_particleController);
         m_scene.addNode(node, Scene::Water);
     }
@@ -320,21 +297,31 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
     case Category::Item:
     {
         auto node = std::make_unique<Node>();
-        node->setPosition(position);
+        node->setPosition(n.position);
         node->setCategory(Category::Item);
         //TODO this is still temp so we may end up cloning shapes instead of reusing them
         //eventually the item controllers will manage drawable resources
         shapes.emplace_back(solidShape);
-        shapes.back().setSize(size);
+        shapes.back().setSize(n.size);
         shapes.back().setOutlineColor(sf::Color::Yellow);
         node->setDrawable(&shapes.back());
-        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, size));
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, n.size));
         node->addObserver(m_particleController);
-        //TODO add scoreboard observer so we can add points
+
         m_scene.addNode(node, Scene::Dynamic);
     }
         break;
-
+    case Category::Light:
+    {
+        auto node = std::make_unique<Node>();
+        node->setCategory(Category::Light);
+        //TODO magix0r numb0rz
+        auto light = m_scene.addLight(colourToVec3(n.colour), 500.f);
+        light->setDepth(150.f);
+        node->setLight(light);
+        node->setPosition(n.position);
+        m_scene.addNode(node);
+    }
     default: break;
     }
 }
