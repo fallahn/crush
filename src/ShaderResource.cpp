@@ -29,6 +29,16 @@ source distribution.
 #include <NormalMapping.hpp>
 #include <ParticleShaders.hpp>
 
+namespace Shader
+{
+    namespace Defines
+    {
+        static const std::string version = "#version 120\n";
+        static const std::string diffuseMap = version + "#define DIFFUSE_MAP\n";
+        static const std::string vertColour = version + "#define VERTEX_COLOUR\n";
+    }
+}
+
 sf::Shader& ShaderResource::get(Shader::Type type)
 {
     auto result = m_shaders.find(type);
@@ -37,12 +47,18 @@ sf::Shader& ShaderResource::get(Shader::Type type)
         return *result->second;
     }
 
+    Shader::Ptr shader = std::make_unique<sf::Shader>();
     switch (type)
     {
-    case Shader::Type::NormalMap:
-        Shader::Ptr shader = std::make_unique<sf::Shader>();
-        shader->loadFromMemory(Shader::normalVertex, Shader::normalFragment);
-        m_shaders.insert(std::make_pair(Shader::Type::NormalMap, std::move(shader)));
-        return *m_shaders[Shader::Type::NormalMap];
+    case Shader::Type::NormalMap:        
+        shader->loadFromMemory(Shader::Defines::version + Shader::normalVertex, Shader::Defines::diffuseMap + Shader::normalFragment);      
+        break;
+    case Shader::Type::Water:
+        shader->loadFromMemory(Shader::Defines::vertColour + Shader::normalVertex, Shader::Defines::version + Shader::normalFragment);
+        break;
+    default: break;
     }
+
+    m_shaders.insert(std::make_pair(type, std::move(shader)));
+    return *m_shaders[type];
 }

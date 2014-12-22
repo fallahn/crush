@@ -29,6 +29,7 @@ source distribution.
 #include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Shader.hpp>
 
 #include <cassert>
 
@@ -37,20 +38,29 @@ namespace
     const float tension = 2.9f;
     const float dampening = 0.009f;
     const float spread = 35.f;
-    const float splashTime = 5.f;
 
     const sf::Uint16 pixelsPerColumn = 15u;
     const sf::Uint8 wavePasses = 4u;
+
+    const std::vector<float> waveTable = { 0.f, 0.19f, 0.38f, 0.56f, 0.71f, 0.84f, 0.93f, 0.98f, 0.99f, 0.97f, 0.9f, 0.8f, 0.67f, 0.51f, 0.33f, 0.14f,
+                                            0.f, -0.38f, -0.71f, -0.93f, -0.99f, -0.9f, -0.67f, -0.33f };
+
 }
 
-WaterDrawable::WaterDrawable(const sf::Vector2f& size)
+WaterDrawable::WaterDrawable(TextureResource& tr, sf::Shader& shader, const sf::Vector2f& size)
     : m_size        (size),
-    m_lightColour   (0u, 204u, 255u, 140u),
-    m_darkColour    (68u, 112u, 255u, 155u),
-    m_splashTime    (0.f),
-    m_vertices      (sf::TrianglesStrip)
+    m_lightColour   (64u, 72u, 45u, 130u),
+    m_darkColour    (43u, 34u, 24u, 155u),
+    m_vertices      (sf::TrianglesStrip),
+    m_normalTexture (tr.get("res/textures/water_normal.png")),
+    m_texHeight     (static_cast<float>(m_normalTexture.getSize().y)),
+    m_shader        (&shader),
+    m_waveIndex     (0u),
+    m_waveTime      (0.f)
 {
     resize();
+
+    m_normalTexture.setRepeated(true);
 }
 
 //public
@@ -96,14 +106,13 @@ void WaterDrawable::update(float dt)
         }
     }
 
-    ////random mini splashes to keep the surface moving
-    //m_splashTime += dt;
-    //if (m_splashTime > splashTime)
-    //{
-    //    splash(Util::Random::value(0.f, m_size.x), 10.f);
-    //    m_splashTime = 0.f;
-    //}
+    //keep the surface moving
+    m_columns[0].height = waveTable[m_waveIndex++] * Util::Random::value(1.2f, 2.4f);
+    m_columns.back().height = -m_columns[0].height;
+    if (m_waveIndex == waveTable.size()) m_waveIndex = 0u;
 
+    //update time to send to shader
+    m_waveTime += (dt * 0.1f);
 }
 
 void WaterDrawable::splash(float position, float speed)
@@ -145,10 +154,16 @@ void WaterDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     {
         auto offset = std::min(static_cast<float>(i * pixelsPerColumn), m_size.x);
 
-        m_vertices.append(sf::Vertex({ offset, m_size.y }, m_darkColour));
-        m_vertices.append(sf::Vertex({ offset, m_columns[i].height }, m_lightColour));
+        m_vertices.append(sf::Vertex({ offset, m_size.y }, m_darkColour, { offset, m_texHeight }));
+        m_vertices.append(sf::Vertex({ offset, m_columns[i].height }, m_lightColour, { offset, 0.f }));
     }
     
+    m_shader->setParameter("u_normalMap", sf::Shader::CurrentTexture); //need to do this so tex coords are correct
+    m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
+    m_shader->setParameter("u_textureOffset", m_waveTime);
+    states.shader = m_shader;
+    states.texture = &m_normalTexture;
+    //states.blendMode = sf::BlendMultiply;
     rt.draw(m_vertices, states);
 }
 

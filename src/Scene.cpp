@@ -44,7 +44,7 @@ Camera Scene::defaultCamera;
 Scene::Scene()
     : m_activeCamera    (nullptr),
     m_ambientColour     ({0.2f, 0.2f, 0.2f}),
-    m_sunLight          ({ 960.f, 500.f, 30.f }, {1.f, 0.99f, 0.9f}, 1.f)
+    m_sunLight          ({ 980.f, 500.f, 30.f }, {1.f, 0.99f, 0.9f}, 1.f)
 {
     m_activeCamera = &defaultCamera;
 

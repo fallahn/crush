@@ -37,7 +37,8 @@ namespace Shader
 {
     enum class Type
     {
-        NormalMap
+        NormalMap,
+        Water
     };
 
     typedef std::unique_ptr<sf::Shader> Ptr;

@@ -77,12 +77,12 @@ const sf::Vector3f& Light::getPosition() const
 
 void Light::setDepth(float depth)
 {
-    m_position.z = std::fabsf(depth);
+    m_position.z = std::fabs(depth);
 }
 
 float Light::getDepth() const
 {
-    return std::fabsf(m_position.z);
+    return std::fabs(m_position.z);
 }
 
 void Light::setColour(const sf::Vector3f& colour)

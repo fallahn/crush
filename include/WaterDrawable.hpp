@@ -30,6 +30,8 @@ source distribution.
 #ifndef WATER_DRAWABLE_H_
 #define WATER_DRAWABLE_H_
 
+#include <Resource.hpp>
+
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/NonCopyable.hpp>
@@ -39,7 +41,7 @@ source distribution.
 class WaterDrawable final : public sf::Drawable, private sf::NonCopyable
 {
 public:
-    explicit WaterDrawable(const sf::Vector2f& size = sf::Vector2f(20.f, 20.f));
+    explicit WaterDrawable(TextureResource& tr, sf::Shader& shader, const sf::Vector2f& size = sf::Vector2f(20.f, 20.f));
     ~WaterDrawable() = default;
 
     void splash(float position, float speed);
@@ -62,10 +64,16 @@ private:
     sf::Vector2f m_size;
     sf::Color m_lightColour;
     sf::Color m_darkColour;
-    float m_splashTime;
 
     std::vector<Column> m_columns;
     mutable sf::VertexArray m_vertices;
+
+    sf::Texture m_normalTexture;
+    float m_texHeight;
+    sf::Shader* m_shader;
+
+    sf::Uint8 m_waveIndex;
+    float m_waveTime;
 
     void resize();
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;

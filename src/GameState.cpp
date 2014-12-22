@@ -76,7 +76,8 @@ GameState::GameState(StateStack& stack, Context context)
     m_mapController     (m_commandStack, m_textureResource, context.gameInstance.getShader(Shader::Type::NormalMap))
 {
     //build world
-    getContext().renderWindow.setTitle("Game Screen");
+    context.renderWindow.setTitle("Game Screen");
+    context.gameInstance.setClearColour({ 189u, 222u, 237u });
     
     Scene::defaultCamera.setView(getContext().defaultView);
 
@@ -108,6 +109,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addNode(lightNode);
 
     m_scene.addShader(context.gameInstance.getShader(Shader::Type::NormalMap));
+    m_scene.addShader(context.gameInstance.getShader(Shader::Type::Water));
 
     //TODO remove shapes for sprites managed by controllers
     shapes.reserve(50); //TODO temp stuffs
@@ -308,7 +310,7 @@ void GameState::addMapBody(Category::Type type, const sf::Vector2f& position, co
     {
         auto node = std::make_unique<Node>();
         node->setPosition(position);
-        waterDrawables.emplace_back(size);
+        waterDrawables.emplace_back(getContext().gameInstance.getTextureResource(), getContext().gameInstance.getShader(Shader::Type::Water), size);
         node->setDrawable(&waterDrawables.back());
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, size));
         node->addObserver(m_particleController);

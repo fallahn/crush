@@ -162,6 +162,7 @@ void MapController::SolidDrawable::draw(sf::RenderTarget& rt, sf::RenderStates s
 {
     m_shader.setParameter("u_diffuseMap", m_diffuseTexture);
     m_shader.setParameter("u_normalMap", m_normalTexture);
+    m_shader.setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
 
     states.texture = &m_diffuseTexture;
     states.shader = &m_shader;

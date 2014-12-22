@@ -176,7 +176,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
     case  Particle::Type::Splash:
         {
             particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
-            particleSystem.setColour({ 3u, 109u, 141u });
+            particleSystem.setColour({ 64u, 72u, 45u, 130u });
             particleSystem.setParticleLifetime(1.2f);
             particleSystem.setParticleSize({ 4.f, 9.f });
             particleSystem.setRandomInitialVelocity(splashVelocities);
