@@ -48,7 +48,7 @@ public:
     sf::Font& getFont(const std::string& path);
 
     TextureResource& getTextureResource();
-    sf::Shader& getShader(Shader::Type type);
+    ShaderResource& getShaderResource();
 
 private: 
 

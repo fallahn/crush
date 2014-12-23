@@ -42,7 +42,8 @@ Node::Node(const std::string& name)
     m_camera        (nullptr),
     m_drawable      (nullptr),
     m_collisionBody (nullptr),
-    m_category      (Category::None)
+    m_category      (Category::None),
+    m_blendMode     (sf::BlendAlpha)
 {
 
 }
@@ -156,6 +157,11 @@ void Node::setDrawable(sf::Drawable* drawable)
     m_drawable = drawable;
 }
 
+void Node::setBlendMode(sf::BlendMode mode)
+{
+    m_blendMode = mode;
+}
+
 void Node::setCollisionBody(CollisionWorld::Body* b)
 {
     if (m_collisionBody) m_collisionBody->deleteObject();
@@ -172,6 +178,8 @@ void Node::setCollisionBody(CollisionWorld::Body* b)
 void Node::setLight(Light* l)
 {
     l->setNode(this);
+    //TODO we still need to reference this so we can update
+    //a light's parent if it is destroyed, without getting recprocal feedback
 }
 
 Scene* Node::getScene() const
@@ -378,7 +386,10 @@ void Node::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 void Node::drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     if (m_drawable)
+    {
+        states.blendMode = m_blendMode;
         rt.draw(*m_drawable, states);
+    }
 }
 
 void Node::drawChildren(sf::RenderTarget& rt, sf::RenderStates states) const

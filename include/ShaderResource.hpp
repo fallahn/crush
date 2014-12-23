@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 //shaders are handle a little differently to other resources, so have their own manager
+#ifndef SHADER_RESOURCE_H_
+#define SHADER_RESOURCE_H_
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -38,6 +40,7 @@ namespace Shader
     enum class Type
     {
         NormalMap,
+        NormalMapSpecular,
         Water
     };
 
@@ -56,3 +59,5 @@ public:
 private:
     std::map<Shader::Type, Shader::Ptr> m_shaders;
 };
+
+#endif //SHADER_RESOURCE_H_

@@ -41,13 +41,23 @@ namespace
     const float spawnGapTime = 22.f;//time between spawns
 }
 
-MapController::MapController(CommandStack& cs, TextureResource& tr, sf::Shader& shader)
+MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr)
     : m_commandStack    (cs),
     m_itemTime          (spawnGapTime),
     m_itemActive        (false),
-    m_drawable          (tr, shader)
+    m_itemSprite        (tr.get("res/textures/item.png")),
+    m_drawable          (tr, sr.get(Shader::Type::NormalMapSpecular))
 {
-    //TODO load texture based on map data
+    //TODO load textures based on map data
+
+    
+    m_itemSprite.setFrameCount(16u);
+    m_itemSprite.setFrameRate(18.f);
+    m_itemSprite.setFrameSize({ 64, 64 });
+    m_itemSprite.setLooped(true);
+    m_itemSprite.setNormalMap(tr.get("res/textures/item_normal.png"));
+    m_itemSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
+    m_itemSprite.play();
 }
 
 //public
@@ -91,6 +101,9 @@ void MapController::update(float dt)
             m_itemActive = false;
         }
     }
+
+    //update animations
+    m_itemSprite.update(dt);
 }
 
 void MapController::setSpawnFunction(std::function<void(const Map::Node&)>& func)
@@ -119,9 +132,17 @@ void MapController::loadMap(const Map& map)
     shuffleItems();
 }
 
-sf::Drawable* MapController::getDrawable()
+sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
 {
-    return static_cast<sf::Drawable*>(&m_drawable);
+    switch (type)
+    {
+    case MapDrawable::Platforms:
+        return static_cast<sf::Drawable*>(&m_drawable);
+    case MapDrawable::Item:
+        return static_cast<sf::Drawable*>(&m_itemSprite);
+    default: break;
+    }
+    return nullptr;
 }
 
 //private

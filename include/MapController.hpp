@@ -32,7 +32,9 @@ source distribution.
 
 #include <CommandStack.hpp>
 #include <Resource.hpp>
-#include <MAp.hpp>
+#include <ShaderResource.hpp>
+#include <Map.hpp>
+#include <AnimatedSprite.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -45,7 +47,13 @@ class Map;
 class MapController final : private sf::NonCopyable
 {
 public:
-    MapController(CommandStack& cs, TextureResource& tr, sf::Shader& shader);
+    enum class MapDrawable
+    {
+        Item,
+        Platforms
+    };
+
+    MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr);
     ~MapController() = default;
 
     void update(float dt);
@@ -53,7 +61,7 @@ public:
     void setSpawnFunction(std::function<void(const Map::Node&)>& func);
     void loadMap(const Map& map);
 
-    sf::Drawable* getDrawable();
+    sf::Drawable* getDrawable(MapDrawable type);
 private:
     struct Item
     {
@@ -72,6 +80,9 @@ private:
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();
 
+    AnimatedSprite m_itemSprite;
+
+    //TODO rename this as we'll recycle it for other layers of the map
     class SolidDrawable : public sf::Drawable, private sf::NonCopyable
     {
     public:

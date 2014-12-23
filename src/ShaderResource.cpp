@@ -34,8 +34,9 @@ namespace Shader
     namespace Defines
     {
         static const std::string version = "#version 120\n";
-        static const std::string diffuseMap = version + "#define DIFFUSE_MAP\n";
-        static const std::string vertColour = version + "#define VERTEX_COLOUR\n";
+        static const std::string diffuseMap = "#define DIFFUSE_MAP\n";
+        static const std::string vertColour = "#define VERTEX_COLOUR\n";
+        static const std::string specular = "#define SPECULAR\n";
     }
 }
 
@@ -50,11 +51,17 @@ sf::Shader& ShaderResource::get(Shader::Type type)
     Shader::Ptr shader = std::make_unique<sf::Shader>();
     switch (type)
     {
-    case Shader::Type::NormalMap:        
-        shader->loadFromMemory(Shader::Defines::version + Shader::normalVertex, Shader::Defines::diffuseMap + Shader::normalFragment);      
+    case Shader::Type::NormalMap:
+        shader->loadFromMemory(Shader::Defines::version + Shader::normalVertex,
+                                Shader::Defines::version + Shader::Defines::diffuseMap + Shader::normalFragment);
+        break;
+    case Shader::Type::NormalMapSpecular:        
+        shader->loadFromMemory(Shader::Defines::version + Shader::normalVertex,
+                                Shader::Defines::version + Shader::Defines::diffuseMap + Shader::Defines::specular + Shader::normalFragment);      
         break;
     case Shader::Type::Water:
-        shader->loadFromMemory(Shader::Defines::vertColour + Shader::normalVertex, Shader::Defines::version + Shader::normalFragment);
+        shader->loadFromMemory(Shader::Defines::version + Shader::Defines::vertColour + Shader::normalVertex,
+                                Shader::Defines::version + Shader::Defines::specular + Shader::normalFragment);
         break;
     default: break;
     }

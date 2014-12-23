@@ -36,6 +36,7 @@ source distribution.
 #include <ScoreBoard.hpp>
 #include <ParticleController.hpp>
 #include <MapController.hpp>
+#include <ShaderResource.hpp>
 
 class GameState final : public State
 {
@@ -50,6 +51,7 @@ public:
 private:
 
     TextureResource& m_textureResource;
+    ShaderResource& m_shaderResource;
 
     Scene m_scene;
     CommandStack m_commandStack;

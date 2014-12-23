@@ -68,6 +68,7 @@ public:
     void setScene(Scene* scene); //this should only be accessable by Scene
     void setCamera(Camera* camera);
     void setDrawable(sf::Drawable* drawable);
+    void setBlendMode(sf::BlendMode mode);
     void setCollisionBody(CollisionWorld::Body* body);
     void setLight(Light* light);
 
@@ -99,6 +100,7 @@ private:
 
     Category::Type m_category;
 
+    sf::BlendMode m_blendMode;
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     void drawSelf(sf::RenderTarget& rt, sf::RenderStates states) const;
     void drawChildren(sf::RenderTarget& rt, sf::RenderStates states) const;

@@ -39,7 +39,7 @@ source distribution.
 const float Game::m_timePerFrame = 1.f / 60.f;
 
 Game::Game()
-    : m_renderWindow(sf::VideoMode(1280, 720), "Crush", sf::Style::Close), //1024, 576
+    : m_renderWindow(sf::VideoMode(1920, 1080), "Crush", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this))
 {
     registerStates();
@@ -86,9 +86,9 @@ TextureResource& Game::getTextureResource()
     return m_textureResource;
 }
 
-sf::Shader& Game::getShader(Shader::Type type)
+ShaderResource& Game::getShaderResource()
 {
-    return m_shaderResource.get(type);
+    return m_shaderResource;
 }
 
 //private

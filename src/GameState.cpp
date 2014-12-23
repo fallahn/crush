@@ -34,7 +34,7 @@ source distribution.
 #include <Map.hpp>
 #include <WaterDrawable.hpp>
 #include <Light.hpp>
-#include <NormalMapping.hpp>
+
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -46,7 +46,6 @@ source distribution.
 
 namespace
 {
-    Camera sceneCam;
 
     //temporary just to hold solid shapes until sprite / texturing is implemented
     std::vector<sf::RectangleShape> shapes; //so we can reuse shapes
@@ -57,6 +56,7 @@ namespace
     DebugShape npcShape;
 
     std::list<WaterDrawable> waterDrawables;
+    std::list<sf::CircleShape> lightDrawables;
 
     const sf::Uint8 maxPlayers = 2u;
 
@@ -74,20 +74,22 @@ namespace
 GameState::GameState(StateStack& stack, Context context)
     : State             (stack, context),
     m_textureResource   (context.gameInstance.getTextureResource()),
+    m_shaderResource    (context.gameInstance.getShaderResource()),
     m_collisionWorld    (70.f),
     m_npcController     (m_commandStack),
     m_scoreBoard        (stack, context),
     m_particleController(m_textureResource),
-    m_mapController     (m_commandStack, m_textureResource, context.gameInstance.getShader(Shader::Type::NormalMap))
+    m_mapController     (m_commandStack, m_textureResource, m_shaderResource)
 {
     //build world
     context.renderWindow.setTitle("Game Screen");
     //context.gameInstance.setClearColour({ 189u, 222u, 237u });
     
     Scene::defaultCamera.setView(getContext().defaultView);
+    //m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMap));
+    m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
+    m_scene.addShader(m_shaderResource.get(Shader::Type::Water));
 
-    m_scene.addShader(context.gameInstance.getShader(Shader::Type::NormalMap));
-    m_scene.addShader(context.gameInstance.getShader(Shader::Type::Water));
 
     //TODO remove shapes for sprites managed by controllers
     shapes.reserve(50); //TODO temp stuffs
@@ -135,7 +137,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_npcController.setNpcCount(map.getNpcCount());
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
     m_mapController.loadMap(map);
-    m_scene.setLayerDrawable(m_mapController.getDrawable(), Scene::Solid);
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Platforms), Scene::Solid);
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
     context.gameInstance.setClearColour(map.getAmbientColour());
@@ -287,7 +289,7 @@ void GameState::addMapBody(const Map::Node& n)
     {
         auto node = std::make_unique<Node>();
         node->setPosition(n.position);
-        waterDrawables.emplace_back(getContext().gameInstance.getTextureResource(), getContext().gameInstance.getShader(Shader::Type::Water), n.size);
+        waterDrawables.emplace_back(m_textureResource, m_shaderResource.get(Shader::Type::Water), n.size);
         node->setDrawable(&waterDrawables.back());
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, n.size));
         node->addObserver(m_particleController);
@@ -299,12 +301,7 @@ void GameState::addMapBody(const Map::Node& n)
         auto node = std::make_unique<Node>();
         node->setPosition(n.position);
         node->setCategory(Category::Item);
-        //TODO this is still temp so we may end up cloning shapes instead of reusing them
-        //eventually the item controllers will manage drawable resources
-        shapes.emplace_back(solidShape);
-        shapes.back().setSize(n.size);
-        shapes.back().setOutlineColor(sf::Color::Yellow);
-        node->setDrawable(&shapes.back());
+        node->setDrawable(m_mapController.getDrawable(MapController::MapDrawable::Item));
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, n.size));
         node->addObserver(m_particleController);
 
@@ -320,6 +317,15 @@ void GameState::addMapBody(const Map::Node& n)
         light->setDepth(150.f);
         node->setLight(light);
         node->setPosition(n.position);
+
+        //lightDrawables.emplace_back(10.f);
+        //auto& ld = lightDrawables.back();
+        //ld.setOrigin(10.f, 10.f);
+        //ld.setOutlineColor({ n.colour.r, n.colour.g, n.colour.b, 20u });
+        //ld.setOutlineThickness(500.f);
+        //node->setDrawable(&ld);
+        //node->setBlendMode(sf::BlendAlpha);
+
         m_scene.addNode(node);
     }
     default: break;

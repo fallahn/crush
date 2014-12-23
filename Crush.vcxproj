@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
+    <ClCompile Include="src\AnimatedSprite.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\MapController.cpp" />
@@ -107,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
+    <ClInclude Include="include\AnimatedSprite.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />

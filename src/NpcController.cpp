@@ -53,7 +53,7 @@ namespace
 NpcController::NpcController(CommandStack& c)
     : m_commandStack    (c),
     m_randTime          (10.f),
-    m_enabled           (false),
+    m_enabled           (true),
     m_npcSpawnCount     (0u){}
 
 void NpcController::onNotify(Subject& s, const game::Event& evt)

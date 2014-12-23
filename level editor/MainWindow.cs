@@ -49,7 +49,7 @@ namespace Level_editor
         private Panel m_selectedNode = null;
 
         private Size blockSize = new Size(60, 40);
-        private Size itemSize = new Size(30, 50);
+        private Size itemSize = new Size(64, 64);
         private const int scale = 2;// ui is half the size of the actual game world
         private Color playerOneColour = Color.DodgerBlue;
         private Color playerTwoColour = Color.Gold;
