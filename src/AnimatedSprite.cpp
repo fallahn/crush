@@ -166,9 +166,9 @@ bool AnimatedSprite::playing() const
     return m_playing;
 }
 
-void AnimatedSprite::pause()
+void AnimatedSprite::setPaused(bool paused)
 {
-    m_playing = false;
+    m_playing = !paused;
 }
 
 sf::FloatRect AnimatedSprite::getLocalBounds() const

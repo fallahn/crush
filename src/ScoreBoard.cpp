@@ -73,12 +73,12 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
 }
 
 //public
-void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
+void ScoreBoard::onNotify(Subject& s, const Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Node:
-        if (evt.node.action == game::Event::NodeEvent::Despawn)
+    case Event::Node:
+        if (evt.node.action == Event::NodeEvent::Despawn)
         {
             switch (evt.node.type)
             {
@@ -117,7 +117,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             default: break;
             }
         }
-        else if (evt.node.action == game::Event::NodeEvent::Spawn)
+        else if (evt.node.action == Event::NodeEvent::Spawn)
         {
             switch (evt.node.type)
             {
@@ -128,9 +128,9 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
                 if (m_spawnedNpcs == m_maxNpcs)
                 {
                     //stop spawning
-                    game::Event e;
-                    e.type = game::Event::Game;
-                    e.game.action = game::Event::GameEvent::NpcDisable;
+                    Event e;
+                    e.type = Event::Game;
+                    e.game.action = Event::GameEvent::NpcDisable;
                     notify(*this, e);
                 }
                 
@@ -138,7 +138,7 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             default: break;
             }
         }
-        else if(evt.node.action == game::Event::NodeEvent::KilledNode)
+        else if(evt.node.action == Event::NodeEvent::KilledNode)
         {
             auto textUpdateTarget = evt.node.type;
             switch (evt.node.type)
@@ -227,20 +227,20 @@ void ScoreBoard::onNotify(Subject& s, const game::Event& evt)
             updateText(textUpdateTarget);
         }
         break;
-    case game::Event::Player:
+    case Event::Player:
         switch (evt.player.action)
         {
-        case game::Event::PlayerEvent::GotItem:
+        case Event::PlayerEvent::GotItem:
             switch (evt.player.item)
             {
-            case game::Event::PlayerEvent::ExtraLife:
+            case Event::PlayerEvent::ExtraLife:
                 (evt.player.playerId == Category::PlayerOne) ?
                     m_playerOneLives++ :
                     m_playerTwoLives++;
-            case game::Event::PlayerEvent::Attraction:
-            case game::Event::PlayerEvent::ExtraSpeed:
-            case game::Event::PlayerEvent::JumpIncrease:
-            case game::Event::PlayerEvent::ReverseControls:
+            case Event::PlayerEvent::Attraction:
+            case Event::PlayerEvent::ExtraSpeed:
+            case Event::PlayerEvent::JumpIncrease:
+            case Event::PlayerEvent::ReverseControls:
                 (evt.player.playerId == Category::PlayerOne) ? 
                     m_playerOneScore += itemPoints :
                     m_playerTwoScore += itemPoints;
@@ -266,11 +266,11 @@ void ScoreBoard::enablePlayer(Category::Type player)
         return;
     }
 
-    game::Event e;
-    e.type = game::Event::Game;
+    Event e;
+    e.type = Event::Game;
     e.game.action = (player == Category::PlayerOne) ? 
-        game::Event::GameEvent::PlayerOneEnable : 
-        game::Event::GameEvent::PlayerTwoEnable;
+        Event::GameEvent::PlayerOneEnable : 
+        Event::GameEvent::PlayerTwoEnable;
 
     notify(*this, e);
 
@@ -337,11 +337,11 @@ void ScoreBoard::disablePlayer(Category::Type player)
 {
     assert(player == Category::PlayerOne || player == Category::PlayerTwo);
 
-    game::Event e;
-    e.type = game::Event::Game;
+    Event e;
+    e.type = Event::Game;
     e.game.action = (player == Category::PlayerOne) ? 
-        game::Event::GameEvent::PlayerOneDisable :
-        game::Event::GameEvent::PlayerTwoDisable;
+        Event::GameEvent::PlayerOneDisable :
+        Event::GameEvent::PlayerTwoDisable;
     notify(*this, e);
 
     if (player == Category::PlayerOne)

@@ -44,9 +44,9 @@ void BlockBehaviourAir::update(float dt)
     if (cat & (Category::CarriedOne | Category::CarriedTwo))
     {
         //can't carry blocks which are in the air 
-        game::Event e;
-        e.type = game::Event::Player;
-        e.player.action = game::Event::PlayerEvent::Dropped;
+        Event e;
+        e.type = Event::Player;
+        e.player.action = Event::PlayerEvent::Dropped;
         e.player.playerId = (cat & (Category::CarriedOne)) ? Category::PlayerOne : Category::PlayerTwo;
         e.player.positionX = 0.f;
         e.player.positionY = 0.f;
@@ -152,9 +152,9 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
         //if block above then drop block by raising player drop event
         if (manifold.y != 0)//(manifold.y * manifold.z) > 0.f)
         {
-            game::Event e;
-            e.type = game::Event::Player;
-            e.player.action = game::Event::PlayerEvent::Dropped;
+            Event e;
+            e.type = Event::Player;
+            e.player.action = Event::PlayerEvent::Dropped;
             e.player.playerId = (getParentCategory() & (Category::CarriedOne)) ? Category::PlayerOne : Category::PlayerTwo;
             e.player.positionX = other->getCentre().x;
             e.player.positionY = other->getCentre().y;
@@ -192,10 +192,10 @@ void BlockBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::
         if(!m_splashed)
         {
             //raise splash event
-            game::Event evt;
-            evt.type = game::Event::Node;
+            Event evt;
+            evt.type = Event::Node;
             evt.node.type = Category::Water;
-            evt.node.action = game::Event::NodeEvent::HitWater;
+            evt.node.action = Event::NodeEvent::HitWater;
             evt.node.positionX = getBody()->getCentre().x;
             evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
             evt.node.speed = getVelocity().y;

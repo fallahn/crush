@@ -34,8 +34,8 @@ source distribution.
 
 #include <vector>
 
-namespace game
-{
+//namespace game
+//{
     class Event
     {
     public:
@@ -82,6 +82,20 @@ namespace game
             float positionX, positionY;
         };
     
+        struct NpcEvent
+        {
+            enum Action
+            {
+                Jumped,
+                Landed,
+                TurnedLeft,
+                TurnedRight,
+                HitWater,
+                Stopped,
+                Started
+            }action;
+        };
+
         struct GameEvent
         {
             enum Action
@@ -99,6 +113,7 @@ namespace game
         {
             Node = 1,
             Player,
+            Npc,
             Game
         } type;
 
@@ -106,10 +121,11 @@ namespace game
         {
             NodeEvent node;
             PlayerEvent player;
+            NpcEvent npc;
             GameEvent game;
         };
     };
-}
+//}
 
 class Subject;
 class Observer
@@ -118,7 +134,7 @@ public:
     virtual ~Observer() = default;
     //when implementing this either deal with event directly, or
     //add to an event list in the inheriting class for deferred handling
-    virtual void onNotify(Subject&, const game::Event& evt) = 0;
+    virtual void onNotify(Subject&, const Event& evt) = 0;
 };
 
 class Subject
@@ -132,7 +148,7 @@ public:
     }
 
 protected:
-    void notify(Subject& s, game::Event evt)
+    void notify(Subject& s, Event evt)
     {
         for (auto& o : m_observers)
             o->onNotify(s, evt);

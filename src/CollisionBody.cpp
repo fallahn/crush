@@ -275,10 +275,10 @@ void CollisionWorld::Body::destroy()
     //from both being crushed, and losing all health
     if (!m_dead)
     {
-        game::Event evt;
-        evt.type = game::Event::Node;
+        Event evt;
+        evt.type = Event::Node;
         evt.node.type = Category::None;
-        evt.node.action = game::Event::NodeEvent::Despawn;
+        evt.node.action = Event::NodeEvent::Despawn;
         notify(*this, evt);
         
         m_dead = true;

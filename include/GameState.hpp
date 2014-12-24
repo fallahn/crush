@@ -64,7 +64,7 @@ private:
 
     void addBlock(const sf::Vector2f& position, const sf::Vector2f& size);
     void addPlayer(const sf::Vector2f& position, Player& player);
-    void addNpc(const sf::Vector2f& position);
+    void addNpc(const sf::Vector2f& position, const sf::Vector2f& size);
     void addMapBody(const Map::Node& n); 
 };
 

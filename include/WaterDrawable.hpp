@@ -41,7 +41,7 @@ source distribution.
 class WaterDrawable final : public sf::Drawable, private sf::NonCopyable
 {
 public:
-    explicit WaterDrawable(TextureResource& tr, sf::Shader& shader, const sf::Vector2f& size = sf::Vector2f(20.f, 20.f));
+    WaterDrawable(sf::Texture& normalMap, sf::Shader& shader, const sf::Vector2f& size = sf::Vector2f(20.f, 20.f));
     ~WaterDrawable() = default;
 
     void splash(float position, float speed);

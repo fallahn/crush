@@ -67,7 +67,7 @@ public:
     bool canSpawn() const;
     void setSpawnable(bool spawnable);
 
-    void onNotify(Subject& s, const game::Event& evt) override;
+    void onNotify(Subject& s, const Event& evt) override;
 
     void setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>& func);
     void setSpawnPosition(const sf::Vector2f& position);
@@ -93,6 +93,7 @@ private:
     bool m_lastFacing;
     bool m_carryingBlock;
     sf::Vector2f m_carryVector; //position of block relative to player when carrying
+    sf::Vector2f m_grabVector; //point from centre of body to detect grabbing range
 
     std::function<void(const sf::Vector2f&, Player&)> spawn;
     sf::Clock m_spawnClock;

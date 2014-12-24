@@ -74,6 +74,7 @@ public:
 
     Scene* getScene() const;
     Camera* getCamera() const;
+    sf::Drawable* getDrawable() const;
     CollisionWorld::Body* getCollisionBody() const;
 
     const std::string& getName() const;
@@ -83,9 +84,9 @@ public:
 
     void executeCommand(const Command& c, float dt);
 
-    void onNotify(Subject& s, const game::Event& evt) override;
+    void onNotify(Subject& s, const Event& evt) override;
 
-    void raiseEvent(const game::Event& evt);
+    void raiseEvent(const Event& evt);
 
 private:
     std::vector<Ptr> m_children;

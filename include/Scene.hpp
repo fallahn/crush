@@ -72,7 +72,7 @@ public:
 
     void executeCommand(const Command& command, float dt);
 
-    void onNotify(Subject& s, const game::Event& evt) override;
+    void onNotify(Subject& s, const Event& evt) override;
 
     void update(float dt);
 

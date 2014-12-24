@@ -47,7 +47,7 @@ public:
 
     void update(float dt);
 
-    void onNotify(Subject& s, const game::Event& evt) override;
+    void onNotify(Subject& s, const Event& evt) override;
 
 private:
     std::vector<ParticleSystem> m_systems;

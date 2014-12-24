@@ -46,16 +46,8 @@ source distribution.
 
 namespace
 {
-
-    //temporary just to hold solid shapes until sprite / texturing is implemented
-    std::vector<sf::RectangleShape> shapes; //so we can reuse shapes
-    sf::RectangleShape solidShape;
-
-    DebugShape blockShape;
     DebugShape playerShape;
-    DebugShape npcShape;
 
-    std::list<WaterDrawable> waterDrawables;
     std::list<sf::CircleShape> lightDrawables;
 
     const sf::Uint8 maxPlayers = 2u;
@@ -68,7 +60,6 @@ namespace
             static_cast<float>(c.g) / 255.f,
             static_cast<float>(c.b) / 255.f };
     }
-
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -76,14 +67,13 @@ GameState::GameState(StateStack& stack, Context context)
     m_textureResource   (context.gameInstance.getTextureResource()),
     m_shaderResource    (context.gameInstance.getShaderResource()),
     m_collisionWorld    (70.f),
-    m_npcController     (m_commandStack),
+    m_npcController     (m_commandStack, m_textureResource, m_shaderResource),
     m_scoreBoard        (stack, context),
     m_particleController(m_textureResource),
     m_mapController     (m_commandStack, m_textureResource, m_shaderResource)
 {
     //build world
     context.renderWindow.setTitle("Game Screen");
-    //context.gameInstance.setClearColour({ 189u, 222u, 237u });
     
     Scene::defaultCamera.setView(getContext().defaultView);
     //m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMap));
@@ -92,19 +82,11 @@ GameState::GameState(StateStack& stack, Context context)
 
 
     //TODO remove shapes for sprites managed by controllers
-    shapes.reserve(50); //TODO temp stuffs
-    solidShape.setFillColor(sf::Color::Transparent);
-    solidShape.setOutlineColor(sf::Color(205u, 92u, 92u));
-    solidShape.setOutlineThickness(-3.f);
-
-    blockShape.setSize(blockSize);
-    blockShape.setColour(sf::Color::Red);
-
     playerShape.setSize(blockSize);
     playerShape.setColour(sf::Color::Blue);
 
-    npcShape.setSize(blockSize);
-    npcShape.setColour(sf::Color::Green);
+    //parse map
+    Map map("res/maps/testmap2.crm");
 
     //set up controllers
     m_players.reserve(2);
@@ -114,32 +96,29 @@ GameState::GameState(StateStack& stack, Context context)
     std::function<void(const sf::Vector2f&, Player&)> playerSpawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
     m_players[0].setSpawnFunction(playerSpawnFunc);
     m_players[1].setSpawnFunction(playerSpawnFunc);
+    m_players[0].setSpawnPosition(map.getPlayerOneSpawn());
+    m_players[1].setSpawnPosition(map.getPlayerTwoSpawn());
 
-    std::function<void(const sf::Vector2f&)> npcSpawnFunc = std::bind(&GameState::addNpc, this, std::placeholders::_1);
+    std::function<void(const sf::Vector2f&, const sf::Vector2f&)> npcSpawnFunc = std::bind(&GameState::addNpc, this, std::placeholders::_1, std::placeholders::_2);
     m_npcController.setSpawnFunction(npcSpawnFunc);
+    m_npcController.setNpcCount(map.getNpcCount());
 
     std::function<void(const Map::Node&)> mapSpawnFunc = std::bind(&GameState::addMapBody, this, std::placeholders::_1);
     m_mapController.setSpawnFunction(mapSpawnFunc);
+    m_mapController.loadMap(map);
 
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);
     m_scoreBoard.addObserver(m_npcController);
     m_scoreBoard.enablePlayer(Category::PlayerOne);
+    m_scoreBoard.setMaxNpcs(map.getNpcTotal());
 
     m_scene.addObserver(m_scoreBoard);
     m_scene.addObserver(m_particleController);
-    
-
-    //must be done after controllers are initialised
-    Map map("res/maps/testmap2.crm");
-    m_players[0].setSpawnPosition(map.getPlayerOneSpawn());
-    m_players[1].setSpawnPosition(map.getPlayerTwoSpawn());
-    m_npcController.setNpcCount(map.getNpcCount());
-    m_scoreBoard.setMaxNpcs(map.getNpcTotal());
-    m_mapController.loadMap(map);
-    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Platforms), Scene::Solid);
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Solid), Scene::Solid);
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
+
     context.gameInstance.setClearColour(map.getAmbientColour());
 }
 
@@ -160,10 +139,6 @@ bool GameState::update(float dt)
 
     //update particles
     m_particleController.update(dt);
-
-    //update water effects
-    for (auto& w : waterDrawables)
-        w.update(dt);
 
     //map controller (bonuses etc)
     m_mapController.update(dt);
@@ -190,10 +165,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         switch (evt.mouseButton.button)
         {
         case sf::Mouse::Left:
-            addBlock(position, blockSize);
+            //addBlock(position, blockSize);
             break;
         case sf::Mouse::Right:
-            addNpc(position);
+            //addNpc(position);
             break;
         default: break;
         }
@@ -228,7 +203,7 @@ void GameState::addBlock(const sf::Vector2f& position, const sf::Vector2f& size)
 {
     auto blockNode = std::make_unique<Node>("blockNode");
     blockNode->setPosition(position);
-    blockNode->setDrawable(&blockShape);
+    blockNode->setDrawable(m_mapController.getDrawable(MapController::MapDrawable::Block));
     blockNode->setCategory(Category::Block);
     blockNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, size));
     blockNode->addObserver(m_players[0]);
@@ -257,13 +232,13 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
     }
 }
 
-void GameState::addNpc(const sf::Vector2f& position)
+void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
 {
-    auto npcNode = std::make_unique<Node>("npc");
+    auto npcNode = std::make_unique<Node>();
     npcNode->setPosition(position);
-    npcNode->setDrawable(&npcShape);
+    npcNode->setDrawable(m_npcController.getDrawable());
     npcNode->setCategory(Category::Npc);
-    npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, npcShape.getSize()));
+    npcNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Npc, size));
     npcNode->addObserver(m_npcController);
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
@@ -289,8 +264,9 @@ void GameState::addMapBody(const Map::Node& n)
     {
         auto node = std::make_unique<Node>();
         node->setPosition(n.position);
-        waterDrawables.emplace_back(m_textureResource, m_shaderResource.get(Shader::Type::Water), n.size);
-        node->setDrawable(&waterDrawables.back());
+        auto drawable = static_cast<WaterDrawable*>(m_mapController.getDrawable(MapController::MapDrawable::Water));
+        drawable->setSize(n.size);
+        node->setDrawable(drawable);
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Water, n.size));
         node->addObserver(m_particleController);
         m_scene.addNode(node, Scene::Water);
@@ -313,18 +289,22 @@ void GameState::addMapBody(const Map::Node& n)
         auto node = std::make_unique<Node>();
         node->setCategory(Category::Light);
         //TODO magix0r numb0rz
-        auto light = m_scene.addLight(colourToVec3(n.colour), 500.f);
-        light->setDepth(150.f);
+        auto light = m_scene.addLight(colourToVec3(n.colour), 400.f);
+        light->setDepth(100.f);
         node->setLight(light);
         node->setPosition(n.position);
+        /*node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, {40.f, 40.f}));
+        node->addObserver(m_players[0]);
+        node->addObserver(m_players[1]);
+        node->addObserver(m_scoreBoard);*/
 
-        //lightDrawables.emplace_back(10.f);
-        //auto& ld = lightDrawables.back();
+        lightDrawables.emplace_back(15.f);
+        auto& ld = lightDrawables.back();
         //ld.setOrigin(10.f, 10.f);
         //ld.setOutlineColor({ n.colour.r, n.colour.g, n.colour.b, 20u });
         //ld.setOutlineThickness(500.f);
-        //node->setDrawable(&ld);
-        //node->setBlendMode(sf::BlendAlpha);
+        node->setDrawable(&ld);
+        node->setBlendMode(sf::BlendAlpha);
 
         m_scene.addNode(node);
     }

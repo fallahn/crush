@@ -68,9 +68,9 @@ void Scene::addNode(Node::Ptr& node)
         m_activeCamera = node->getCamera();
 
     //announce our arrival in the scene
-    game::Event e;
-    e.type = game::Event::Node;
-    e.node.action = game::Event::NodeEvent::Spawn;
+    Event e;
+    e.type = Event::Node;
+    e.node.action = Event::NodeEvent::Spawn;
     e.node.type = static_cast<Category::Type>(node->getCategory());
     e.node.target = Category::None;
     e.node.owner = Category::None;
@@ -87,9 +87,9 @@ void Scene::addNode(Node::Ptr& node, Layer layer)
     node->addObserver(*this);
 
     //announce our arrival in the scene
-    game::Event e;
-    e.type = game::Event::Node;
-    e.node.action = game::Event::NodeEvent::Spawn;
+    Event e;
+    e.type = Event::Node;
+    e.node.action = Event::NodeEvent::Spawn;
     e.node.type = static_cast<Category::Type>(node->getCategory());
     e.node.target = Category::None;
     e.node.owner = Category::None;
@@ -199,12 +199,12 @@ void Scene::executeCommand(const Command& command, float dt)
         child->executeCommand(command, dt);
 }
 
-void Scene::onNotify(Subject& s, const game::Event& evt)
+void Scene::onNotify(Subject& s, const Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Node:
-        if (evt.node.action == game::Event::NodeEvent::Despawn)
+    case Event::Node:
+        if (evt.node.action == Event::NodeEvent::Despawn)
             m_deletedList.insert(dynamic_cast<Node*>(&s)); //HAH! ok...
         break;
     default: break;

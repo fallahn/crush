@@ -45,7 +45,10 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     : m_commandStack    (cs),
     m_itemTime          (spawnGapTime),
     m_itemActive        (false),
+    m_textureResource   (tr),
+    m_shaderResource    (sr),
     m_itemSprite        (tr.get("res/textures/item.png")),
+    m_blockSprite       (tr.get("res/textures/steel_crate_diffuse.png")),
     m_drawable          (tr, sr.get(Shader::Type::NormalMapSpecular))
 {
     //TODO load textures based on map data
@@ -58,6 +61,11 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_itemSprite.setNormalMap(tr.get("res/textures/item_normal.png"));
     m_itemSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
     m_itemSprite.play();
+
+    m_blockSprite.setFrameCount(1u);
+    m_blockSprite.setFrameSize({ 256, 256 });
+    m_blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
+    m_blockSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
 }
 
 //public
@@ -86,9 +94,9 @@ void MapController::update(float dt)
             c.categoryMask |= Category::Item;
             c.action = [](Node& n, float dt)
             {
-                game::Event evt;
-                evt.type = game::Event::Node;
-                evt.node.action = game::Event::NodeEvent::Despawn;
+                Event evt;
+                evt.type = Event::Node;
+                evt.node.action = Event::NodeEvent::Despawn;
                 evt.node.type = Category::Item;
                 auto pos = n.getCollisionBody()->getCentre();
                 evt.node.positionX = pos.x;
@@ -104,6 +112,9 @@ void MapController::update(float dt)
 
     //update animations
     m_itemSprite.update(dt);
+
+    for (auto& w : m_waterDrawables)
+        w.update(dt);
 }
 
 void MapController::setSpawnFunction(std::function<void(const Map::Node&)>& func)
@@ -136,10 +147,16 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
 {
     switch (type)
     {
-    case MapDrawable::Platforms:
+    case MapDrawable::Solid:
         return static_cast<sf::Drawable*>(&m_drawable);
     case MapDrawable::Item:
         return static_cast<sf::Drawable*>(&m_itemSprite);
+    case MapDrawable::Block: //TODO random different textures?
+        return static_cast<sf::Drawable*>(&m_blockSprite);
+    case MapDrawable::Water:
+        m_waterDrawables.emplace_back(m_textureResource.get("res/textures/water_normal.png"), m_shaderResource.get(Shader::Type::Water));
+        return static_cast<sf::Drawable*>(&m_waterDrawables.back());
+        break;
     default: break;
     }
     return nullptr;

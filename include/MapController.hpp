@@ -35,6 +35,7 @@ source distribution.
 #include <ShaderResource.hpp>
 #include <Map.hpp>
 #include <AnimatedSprite.hpp>
+#include <WaterDrawable.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -42,6 +43,7 @@ source distribution.
 #include <SFML/Graphics/VertexArray.hpp>
 
 #include <functional>
+#include <list>
 
 class Map;
 class MapController final : private sf::NonCopyable
@@ -50,7 +52,9 @@ public:
     enum class MapDrawable
     {
         Item,
-        Platforms
+        Solid,
+        Block,
+        Water
     };
 
     MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr);
@@ -77,10 +81,17 @@ private:
     float m_itemTime;
     bool m_itemActive;
 
+    TextureResource& m_textureResource;
+    ShaderResource& m_shaderResource;
+    AnimatedSprite m_itemSprite;
+    AnimatedSprite m_blockSprite;
+
+    std::list<WaterDrawable> m_waterDrawables;
+
+
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();
 
-    AnimatedSprite m_itemSprite;
 
     //TODO rename this as we'll recycle it for other layers of the map
     class SolidDrawable : public sf::Drawable, private sf::NonCopyable

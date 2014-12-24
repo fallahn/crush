@@ -192,6 +192,11 @@ Camera* Node::getCamera() const
     return m_camera;
 }
 
+sf::Drawable* Node::getDrawable() const
+{
+    return m_drawable;
+}
+
 CollisionWorld::Body* Node::getCollisionBody() const
 {
     return m_collisionBody;
@@ -206,8 +211,8 @@ void Node::setCategory(Category::Type cat)
 {
     if (m_category != cat)
     {
-        game::Event e;
-        e.type = game::Event::Player;
+        Event e;
+        e.type = Event::Player;
         //TODO there's a better way to see which bit was set / unset but my brain is fried
         //compare states and raise an event   
         if ((m_category & Category::GrabbedOne)
@@ -215,21 +220,21 @@ void Node::setCategory(Category::Type cat)
         {
             //player one released
             e.player.playerId = Category::PlayerOne;
-            e.player.action = game::Event::PlayerEvent::Released;
+            e.player.action = Event::PlayerEvent::Released;
         }
         else if (((m_category & Category::GrabbedOne) == 0)
             && (cat & Category::GrabbedOne))
         {
             //player one grabbed
             e.player.playerId = Category::PlayerOne;
-            e.player.action = game::Event::PlayerEvent::Grabbed;
+            e.player.action = Event::PlayerEvent::Grabbed;
         }
         else if ((m_category & Category::GrabbedTwo)
             && ((cat & Category::GrabbedTwo) == 0))
         {
             //player two released
             e.player.playerId = Category::PlayerTwo;
-            e.player.action = game::Event::PlayerEvent::Released;
+            e.player.action = Event::PlayerEvent::Released;
 
         }
         else if (((m_category & Category::GrabbedTwo) == 0)
@@ -237,7 +242,7 @@ void Node::setCategory(Category::Type cat)
         {
             //player two grabbed
             e.player.playerId = Category::PlayerTwo;
-            e.player.action = game::Event::PlayerEvent::Grabbed;
+            e.player.action = Event::PlayerEvent::Grabbed;
         }
         
         auto pos = getWorldPosition();
@@ -263,18 +268,18 @@ void Node::executeCommand(const Command& c, float dt)
         child->executeCommand(c, dt);
 }
 
-void Node::onNotify(Subject& s, const game::Event& evt)
+void Node::onNotify(Subject& s, const Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Node:
+    case Event::Node:
     {
         switch (evt.node.action)
         {
-        case game::Event::NodeEvent::Despawn:
+        case Event::NodeEvent::Despawn:
         {
             //let our observers know it's time to die
-            game::Event e = evt;
+            Event e = evt;
             e.node.type = m_category;
 
             auto pos = m_collisionBody->getCentre();
@@ -286,10 +291,10 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             if (m_category == Category::PlayerOne
                 || m_category == Category::PlayerTwo)
             {
-                game::Event playerEvent;
-                playerEvent.type = game::Event::Player;
+                Event playerEvent;
+                playerEvent.type = Event::Player;
                 playerEvent.player.playerId = m_category;
-                playerEvent.player.action = game::Event::PlayerEvent::Died;
+                playerEvent.player.action = Event::PlayerEvent::Died;
                 assert(m_collisionBody);
 
                 playerEvent.player.positionX = pos.x;
@@ -298,19 +303,19 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             }
         }
         break;
-        case game::Event::NodeEvent::KilledNode:
+        case Event::NodeEvent::KilledNode:
         
         {
             if (evt.node.target == Category::Item)
             {
                 //decide what it is player collected and announce it
                 std::cout << "Player collected some shizzle!" << std::endl;
-                game::Event::PlayerEvent::Item itemType 
-                    = static_cast<game::Event::PlayerEvent::Item>(Util::Random::value(0, game::Event::PlayerEvent::Item::Size - 1));
+                Event::PlayerEvent::Item itemType 
+                    = static_cast<Event::PlayerEvent::Item>(Util::Random::value(0, Event::PlayerEvent::Item::Size - 1));
                 std::cout << "item type: " << itemType << std::endl;
-                game::Event e;
-                e.type = game::Event::Player;
-                e.player.action = game::Event::PlayerEvent::GotItem;
+                Event e;
+                e.type = Event::Player;
+                e.player.action = Event::PlayerEvent::GotItem;
                 e.player.item = itemType;
                 e.player.playerId = m_category;
                 assert(m_collisionBody);
@@ -328,7 +333,7 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             }
         }
         break;
-        case game::Event::NodeEvent::HitWater:
+        case Event::NodeEvent::HitWater:
         {
             //notify particle system
             notify(*this, evt);
@@ -343,13 +348,13 @@ void Node::onNotify(Subject& s, const game::Event& evt)
         }
     }
         break;
-    case game::Event::Player:
+    case Event::Player:
     {
         switch (evt.player.action)
         {
         default:
         {
-            game::Event e = evt;
+            Event e = evt;
             e.player.playerId = m_category;
             assert(m_collisionBody);
             auto pos = m_collisionBody->getCentre();
@@ -358,19 +363,23 @@ void Node::onNotify(Subject& s, const game::Event& evt)
             notify(*this, e);
         }
         break;
-        case game::Event::PlayerEvent::Dropped:
+        case Event::PlayerEvent::Dropped:
             //this case come from a block body, so just pass on up
             notify(*this, evt);
             break;
         }
     }
         break;
+    case Event::Npc:
+        //pass events straight up
+        notify(*this, evt);
+        break;
     default: break;
     }
    
 }
 
-void Node::raiseEvent(const game::Event& evt)
+void Node::raiseEvent(const Event& evt)
 {
     notify(*this, evt);
 }

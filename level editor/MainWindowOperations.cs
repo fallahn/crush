@@ -217,8 +217,8 @@ namespace Level_editor
             addNode(Node.BodyType.Solid, new Point(0, 1060), new Size(1920, 20));
 
             //add player spawn points
-            m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new Point(40, 500), blockSize);
-            m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new Point(1820, 500), blockSize);
+            m_playerOnePanel = addNode(Node.BodyType.PlayerOne, new Point(40, 500), playerSize);
+            m_playerTwoPanel = addNode(Node.BodyType.PlayerTwo, new Point(1820, 500), playerSize);
 
             //reset map properties
             numericUpDownNpcCount.Value = 3;

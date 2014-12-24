@@ -92,14 +92,14 @@ void ParticleController::update(float dt)
         p.update(dt);
 }
 
-void ParticleController::onNotify(Subject& s, const game::Event& evt)
+void ParticleController::onNotify(Subject& s, const Event& evt)
 {
-    if (evt.type == game::Event::Node)
+    if (evt.type == Event::Node)
         //&& evt.node.action == game::Event::NodeEvent::Despawn)
     {
         switch (evt.node.action)
         {
-        case game::Event::NodeEvent::Despawn:
+        case Event::NodeEvent::Despawn:
         {
             if (evt.node.type == Category::Item)
             {
@@ -110,34 +110,19 @@ void ParticleController::onNotify(Subject& s, const game::Event& evt)
             }
             else
             {
-                //raise a 'splat' effect
-                sf::Color colour;
-                switch (evt.node.type)
-                {
-                case Category::PlayerOne:
-                case Category::PlayerTwo:
-                    colour = sf::Color::Blue;
-                    break;
-                case Category::Npc:
-                    colour = sf::Color::Green;
-                    break;
-                default: break;
-                }
-
                 auto& ps = findSystem(Particle::Type::Splat);
-                ps.setColour(colour);
                 ps.setPosition({ evt.node.positionX, evt.node.positionY });
                 ps.start(6u, 0.1f);
             }
             break;
         }
-        case game::Event::NodeEvent::HitWater:
+        case Event::NodeEvent::HitWater:
         {
             auto& ps = findSystem(Particle::Type::Splash);
             ps.setPosition({ evt.node.positionX, evt.node.positionY });
             ps.start(4u, 0.02f);
         }
-        case game::Event::NodeEvent::Spawn:
+        case Event::NodeEvent::Spawn:
         {
             if (evt.node.type == Category::Item)
             {
@@ -162,10 +147,10 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
     {
     case Particle::Type::Splat:
         {
-            particleSystem.setTexture(m_textureResource.get("res/textures/particle.png"));
+            particleSystem.setTexture(m_textureResource.get("res/textures/gear.png"));
             particleSystem.setRandomInitialVelocity(splatVelocities);
 
-            ForceAffector fa({ 0.f, 4000.f }); //gravity
+            ForceAffector fa({ 0.f, 3500.f }); //gravity
             particleSystem.addAffector(fa);
             RotateAffector ra(380.f);
             particleSystem.addAffector(ra);

@@ -47,12 +47,12 @@ namespace
 
 }
 
-WaterDrawable::WaterDrawable(TextureResource& tr, sf::Shader& shader, const sf::Vector2f& size)
+WaterDrawable::WaterDrawable(sf::Texture& normalMap, sf::Shader& shader, const sf::Vector2f& size)
     : m_size        (size),
     m_lightColour   (64u, 72u, 45u, 130u),
     m_darkColour    (43u, 34u, 24u, 155u),
     m_vertices      (sf::TrianglesStrip),
-    m_normalTexture (tr.get("res/textures/water_normal.png")),
+    m_normalTexture (normalMap),
     m_texHeight     (static_cast<float>(m_normalTexture.getSize().y)),
     m_shader        (&shader),
     m_waveIndex     (0u),

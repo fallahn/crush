@@ -58,10 +58,10 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
             setVelocity({ getVelocity().x, 0.f });
             setBehaviour<PlayerBehaviourGround>();
 
-            game::Event playerEvent;
-            playerEvent.type = game::Event::Player;
+            Event playerEvent;
+            playerEvent.type = Event::Player;
             playerEvent.player.playerId = Category::None;
-            playerEvent.player.action = game::Event::PlayerEvent::Landed;
+            playerEvent.player.action = Event::PlayerEvent::Landed;
             raiseEvent(playerEvent);
         }
         break;
@@ -96,11 +96,11 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     }
         break;
     case CollisionWorld::Body::Item:
-        game::Event e;
-        e.node.action = game::Event::NodeEvent::KilledNode;
+        Event e;
+        e.node.action = Event::NodeEvent::KilledNode;
         e.node.type = getParentCategory();
         e.node.target = Category::Item;
-        e.type = game::Event::Node;
+        e.type = Event::Node;
         raiseEvent(e);
         break;
     default: break;
@@ -122,9 +122,8 @@ void PlayerBehaviourGround::update(float dt)
     vel.x *= getFriction(); //TODO equate dt into this
     setVelocity(vel);
 
-    if (getFootSenseCount() == 0u)
+    if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
     {
-        //nothing underneath so should be falling / jumping
         setBehaviour<PlayerBehaviourAir>();
     }
 }
@@ -175,11 +174,11 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         kill();
         break;
     case CollisionWorld::Body::Item:
-            game::Event e;
-            e.node.action = game::Event::NodeEvent::KilledNode;
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = getParentCategory();
             e.node.target = Category::Item;
-            e.type = game::Event::Node;
+            e.type = Event::Node;
             raiseEvent(e);
         break;
     default: break;
@@ -208,10 +207,10 @@ void PlayerBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld:
     if (!m_splashed && other->getType() == CollisionWorld::Body::Type::Water)
     {
         //raise splash event
-        game::Event evt;
-        evt.type = game::Event::Node;
+        Event evt;
+        evt.type = Event::Node;
         evt.node.type = Category::Water;
-        evt.node.action = game::Event::NodeEvent::HitWater;
+        evt.node.action = Event::NodeEvent::HitWater;
         evt.node.positionX = getBody()->getCentre().x;
         evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
         evt.node.speed = getVelocity().y;

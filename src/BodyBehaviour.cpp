@@ -103,8 +103,8 @@ void BodyBehaviour::damage(float amount, CollisionWorld::Body* damager)
     {
         //TODO this event sometimes gets raised twice because the
         //body is killed by two other bodies intersecting it.
-        game::Event e;
-        e.node.action = game::Event::NodeEvent::KilledNode;
+        Event e;
+        e.node.action = Event::NodeEvent::KilledNode;
         e.node.type = damager->getParentCategory();
         e.node.target = getParentCategory();
 
@@ -123,12 +123,12 @@ void BodyBehaviour::damage(float amount, CollisionWorld::Body* damager)
             e.node.owner = e.node.target;//assume player crushed self
         }
 
-        e.type = game::Event::Node;
+        e.type = Event::Node;
         raiseEvent(e, damager);
     }
 }
 
-void BodyBehaviour::raiseEvent(const game::Event& evt, CollisionWorld::Body* target)
+void BodyBehaviour::raiseEvent(const Event& evt, CollisionWorld::Body* target)
 {
     if(!target) m_body->notify(*m_body, evt);
     else target->notify(*target, evt);

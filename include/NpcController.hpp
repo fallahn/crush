@@ -31,24 +31,30 @@ source distribution.
 
 #include <Observer.hpp>
 #include <CommandStack.hpp>
+#include <AnimatedSprite.hpp>
+#include <Resource.hpp>
+#include <ShaderResource.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <functional>
+#include <list>
 
 class NpcController final : private sf::NonCopyable, public Observer
 {
 public:
-    explicit NpcController(CommandStack& c);
+    explicit NpcController(CommandStack& c, TextureResource& tr, ShaderResource& sr);
     ~NpcController() = default;
 
-    void onNotify(Subject& s, const game::Event& evt) override;
+    void onNotify(Subject& s, const Event& evt) override;
     void update(float dt);
 
-    void setSpawnFunction(std::function<void(const sf::Vector2f&)>& func);
+    void setSpawnFunction(std::function<void(const sf::Vector2f&, const sf::Vector2f&)>& func);
     void setNpcCount(sf::Uint8 count);
+
+    sf::Drawable* getDrawable();
 
 private:
     CommandStack& m_commandStack;
@@ -60,7 +66,13 @@ private:
     bool m_enabled;
     sf::Uint8 m_npcSpawnCount; //how many to have on screen at a time
 
-    std::function<void(const sf::Vector2f&)> spawn;
+    TextureResource& m_textureResource;
+    ShaderResource& m_shaderResource;
+    std::list<AnimatedSprite> m_sprites;
+    std::vector<sf::Drawable*> m_unusedSprites;
+
+
+    std::function<void(const sf::Vector2f&, const sf::Vector2f&)> spawn;
 };
 
 #endif //NPC_CONTROLLER_H_

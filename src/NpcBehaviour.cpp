@@ -54,6 +54,11 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         if (vel.y >= 0) //only jump if moving down
         {
             setBehaviour<NpcBehaviourWater>();
+
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = Event::NpcEvent::HitWater;
+            raiseEvent(e);
         }
     }
     break;
@@ -66,8 +71,8 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             kill();
             
             //raise event to say player killed us
-            game::Event e;
-            e.node.action = game::Event::NodeEvent::KilledNode;
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
             e.node.target = Category::Npc;
 
@@ -75,8 +80,9 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
             else e.node.owner = Category::None;
 
-            e.type = game::Event::Node;
+            e.type = Event::Node;
             raiseEvent(e, other); //this should reference the other body as the sender not the NPC
+            break; //if we should be dead then don't continue to resolve collision
         }
 
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
@@ -92,13 +98,20 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
                 setBehaviour<NpcBehaviourGround>();
             }
         }
+        else
+        {
+            //jump away from walls, or switch to ground sitting
+            auto vel = getVelocity();
+            //if (manifold.x != 0)
+            vel.x = -vel.x;
+            vel.y = 0.f;
+            setVelocity(vel);
 
-        //jump away from walls, or switch to ground sitting
-        auto vel = getVelocity();       
-        //if (manifold.x != 0)
-        vel.x = -vel.x;
-        vel.y = 0.f;
-        setVelocity(vel);
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
+        }
     }
         break;
     case CollisionWorld::Body::Type::Player:
@@ -106,9 +119,17 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         auto vel = getVelocity();
         if (manifold.x != 0)
+        {
             vel.x = -vel.x;
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
+        }
         if (manifold.y != 0)
+        {
             vel.y = -vel.y;
+        }
         vel *= getFriction();
         setVelocity(vel);
     }
@@ -132,6 +153,11 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
                 vel.x = -vel.x;
             }
             setVelocity(vel);
+
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
         }
         break;
 
@@ -147,6 +173,14 @@ NpcBehaviourGround::NpcBehaviourGround(CollisionWorld::Body* b)
     m_accumulatedTime   (0.f)
 {
     setVelocity({});
+
+    Event e;
+    e.type = Event::Npc;
+    e.npc.action = Event::NpcEvent::Landed;
+    raiseEvent(e);
+
+    e.npc.action = Event::NpcEvent::Stopped;
+    raiseEvent(e);
 }
 
 void NpcBehaviourGround::update(float dt)
@@ -165,6 +199,14 @@ void NpcBehaviourGround::update(float dt)
             vel.x = (Util::Random::value(0, 1)) ? -400.f : 380.f;
             vel.y = -initialJumpSpeed;
             setBehaviour<NpcBehaviourAir>();
+
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
+
+            e.npc.action = Event::NpcEvent::Jumped;
+            raiseEvent(e);
         }
         else
         {
@@ -182,6 +224,11 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     case CollisionWorld::Body::Water:
     {
         setBehaviour<NpcBehaviourWater>();
+
+        Event e;
+        e.type = Event::Npc;
+        e.npc.action = Event::NpcEvent::HitWater;
+        raiseEvent(e);
     }
     break;
     case CollisionWorld::Body::Type::Block:
@@ -198,8 +245,8 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
             kill();
 
             //raise event to say player killed us
-            game::Event e;
-            e.node.action = game::Event::NodeEvent::KilledNode;
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
             e.node.target = Category::Npc;
 
@@ -208,7 +255,7 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
             else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
             else e.node.owner = Category::None;
 
-            e.type = game::Event::Node;
+            e.type = Event::Node;
             raiseEvent(e, other);
         }
         {
@@ -246,6 +293,17 @@ NpcBehaviourWalk::NpcBehaviourWalk(CollisionWorld::Body* b)
     m_applyGravity      (false)
 {
     setVelocity({m_moveForce, 0.f});
+
+    Event e;
+    e.type = Event::Npc;
+    e.npc.action= Event::NpcEvent::Landed;
+    raiseEvent(e);
+
+    e.npc.action = Event::NpcEvent::TurnedRight;
+    raiseEvent(e);
+
+    e.npc.action = Event::NpcEvent::Started;
+    raiseEvent(e);
 }
 
 void NpcBehaviourWalk::update(float dt)
@@ -269,6 +327,14 @@ void NpcBehaviourWalk::update(float dt)
             vel.x = (Util::Random::value(0, 1)) ? -370.f : 390.f;
             vel.y = -initialJumpSpeed;
             setBehaviour<NpcBehaviourAir>();
+
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
+
+            e.npc.action =  Event::NpcEvent::Jumped;
+            raiseEvent(e);
         }
         else
         {
@@ -286,6 +352,11 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     case CollisionWorld::Body::Water:
     {
         setBehaviour<NpcBehaviourWater>();
+
+        Event e;
+        e.type = Event::Npc;
+        e.npc.action = Event::NpcEvent::HitWater;
+        raiseEvent(e);
     }
         break;
     case CollisionWorld::Body::Type::Block:
@@ -297,6 +368,11 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             setVelocity({});
             m_applyGravity = false;
             //m_accumulatedTime = 0.f;
+
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
         }
         else if (manifold.y * manifold.z > 5) //prevent dying when just clipping bottom by making sure there is some depth
         {
@@ -304,8 +380,8 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             kill();
 
             //raise event to say player killed us
-            game::Event e;
-            e.node.action = game::Event::NodeEvent::KilledNode;
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
             e.node.target = Category::Npc;
 
@@ -314,7 +390,7 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
             else e.node.owner = Category::None;
 
-            e.type = game::Event::Node;
+            e.type = Event::Node;
             raiseEvent(e, other);
         }
         {
@@ -328,6 +404,12 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         m_moveForce = -m_moveForce;
         setVelocity({});
         m_applyGravity = false;
+
+        Event e;
+        e.type = Event::Npc;
+        e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+        raiseEvent(e);
+
         break;
     case CollisionWorld::Body::Type::Player:
         break;
@@ -339,6 +421,11 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             m_moveForce = -m_moveForce;
             setVelocity({});
+
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            raiseEvent(e);
         }
         break;
     default: break;
@@ -360,6 +447,11 @@ void NpcBehaviourWater::update(float dt)
     {
         getBody()->setPosition({ Util::Random::value(300.f, 1600.f), -80.f });
         setBehaviour<NpcBehaviourAir>();
+
+        Event e;
+        e.type = Event::Npc;
+        e.npc.action = Event::NpcEvent::Jumped;
+        raiseEvent(e);
     }
 }
 
@@ -368,10 +460,10 @@ void NpcBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
     if (!m_splashed && other->getType() == CollisionWorld::Body::Type::Water)
     {
         //raise splash event
-        game::Event evt;
-        evt.type = game::Event::Node;
+        Event evt;
+        evt.type = Event::Node;
         evt.node.type = Category::Water;
-        evt.node.action = game::Event::NodeEvent::HitWater;
+        evt.node.action = Event::NodeEvent::HitWater;
         evt.node.positionX = getBody()->getCentre().x;
         evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
         evt.node.speed = getVelocity().y;

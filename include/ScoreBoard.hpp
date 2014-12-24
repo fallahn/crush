@@ -42,7 +42,7 @@ public:
     ScoreBoard(StateStack& stack, State::Context context);
     ~ScoreBoard() = default;
 
-    void onNotify(Subject& s, const game::Event& evt) override;
+    void onNotify(Subject& s, const Event& evt) override;
 
     void enablePlayer(Category::Type player);
     void setMaxNpcs(sf::Uint8 count);

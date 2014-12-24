@@ -42,8 +42,6 @@ namespace
 
     const float friction = 0.83f;
 
-    const sf::Vector2f grabVec(40.f, 0.f); //TODO this ought to be tied to body size (just over half width)
-
     const float itemDuration = 16.f;
     const float speedIncrease = 1.8f;
     const float jumpIncrease = 1.5f;
@@ -160,13 +158,13 @@ void Player::setSpawnable(bool spawnable)
     m_canSpawn = spawnable;
 }
 
-void Player::onNotify(Subject& s, const game::Event& evt)
+void Player::onNotify(Subject& s, const Event& evt)
 {
     switch (evt.type)
     {
-    case game::Event::Node:
+    case Event::Node:
         if (evt.node.type == m_id
-            && evt.node.action == game::Event::NodeEvent::Despawn)
+            && evt.node.action == Event::NodeEvent::Despawn)
         {
             //oh noes, we died!
             m_canSpawn = true;
@@ -183,35 +181,42 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             };
             m_commandStack.push(c);
 
+            //reset active powerups
+            m_activeItems = 0u;
+
             //and drop anything we were carrying
             doDrop();
         }
         break;
-    case game::Event::Player:
+    case Event::Player:
         if (evt.player.playerId == m_id)
         {
             switch (evt.player.action)
             {
                 //grabbing / releasing the blocks updates the players
                 //friction so that they are slower when dragging
-            case game::Event::PlayerEvent::Grabbed:
+            case Event::PlayerEvent::Grabbed:
             {
                 auto blockNode = dynamic_cast<Node*>(&s);
                 assert(blockNode->getCollisionBody());
-                float friction = blockNode->getCollisionBody()->getFriction();
+                auto blockBody = blockNode->getCollisionBody();
+                float friction = blockBody->getFriction();
 
                 Command c;
                 c.categoryMask |= m_id;
                 c.action = [=](Node& n, float dt)
                 {
                     assert(n.getCollisionBody());
-                    n.getCollisionBody()->setFriction(friction);
-                    n.getCollisionBody()->addChild(blockNode->getCollisionBody(), { (m_leftFacing) ? -m_size.x : m_size.x, 0.f });
+                    auto playerBody = n.getCollisionBody();
+                    playerBody->setFriction(friction);
+                    auto blockSize = blockBody->getSize();
+                    playerBody->addChild(blockBody, { (m_leftFacing) ? -(m_size.x + blockSize.x) * 0.52f : (m_size.x + blockSize.x) * 0.505f,
+                                                    playerBody->getSize().y - blockSize.y }); //kludgy numbers to pad space between bodies^^
                 };
                 m_commandStack.push(c);
             }
                 break;
-            case game::Event::PlayerEvent::Released:
+            case Event::PlayerEvent::Released:
             {
                 Command c;
                 c.categoryMask |= m_id;
@@ -224,33 +229,33 @@ void Player::onNotify(Subject& s, const game::Event& evt)
                 m_commandStack.push(c);
             }
                 break;
-            case game::Event::PlayerEvent::PickedUp:
+            case Event::PlayerEvent::PickedUp:
             {
                 //we picked up a block
                 
             }
                 break;
-            case game::Event::PlayerEvent::Dropped:
+            case Event::PlayerEvent::Dropped:
                 //something made us drop the block
                 doDrop();
                 break;
-            case game::Event::PlayerEvent::GotItem:
+            case Event::PlayerEvent::GotItem:
                 switch (evt.player.item)
                 {
-                case game::Event::PlayerEvent::ExtraSpeed:
-                    m_activeItems |= (1 << game::Event::PlayerEvent::ExtraSpeed);
+                case Event::PlayerEvent::ExtraSpeed:
+                    m_activeItems |= (1 << Event::PlayerEvent::ExtraSpeed);
                     std::cout << "increase player speed" << std::endl;
                     break;
-                case game::Event::PlayerEvent::JumpIncrease:
-                    m_activeItems |= (1 << game::Event::PlayerEvent::JumpIncrease);
+                case Event::PlayerEvent::JumpIncrease:
+                    m_activeItems |= (1 << Event::PlayerEvent::JumpIncrease);
                     m_jumpForce = jumpForce * jumpIncrease;
                     std::cout << "increase player jump" << std::endl;
                     break;
-                case game::Event::PlayerEvent::ReverseControls:
-                    m_activeItems |= (1 << game::Event::PlayerEvent::ReverseControls);
+                case Event::PlayerEvent::ReverseControls:
+                    m_activeItems |= (1 << Event::PlayerEvent::ReverseControls);
                     std::cout << "reverse player controls" << std::endl;
                     break;
-                case game::Event::PlayerEvent::Attraction:
+                case Event::PlayerEvent::Attraction:
                     std::cout << "NPC attraction not yet implemented" << std::endl;
                     break;
                 default: break;
@@ -260,19 +265,19 @@ void Player::onNotify(Subject& s, const game::Event& evt)
             }
         }
         break;
-    case game::Event::Game:
+    case Event::Game:
         switch (evt.game.action)
         {
-        case game::Event::GameEvent::PlayerOneEnable:
+        case Event::GameEvent::PlayerOneEnable:
             if (m_id == Category::PlayerOne) enable();
             break;
-        case game::Event::GameEvent::PlayerOneDisable:
+        case Event::GameEvent::PlayerOneDisable:
             if (m_id == Category::PlayerOne) m_enabled = false;
             break;
-        case game::Event::GameEvent::PlayerTwoEnable:
+        case Event::GameEvent::PlayerTwoEnable:
             if (m_id == Category::PlayerTwo) enable();
             break;
-        case game::Event::GameEvent::PlayerTwoDisable:
+        case Event::GameEvent::PlayerTwoDisable:
             if (m_id == Category::PlayerTwo) m_enabled = false;
             break;
         default: break;
@@ -295,6 +300,7 @@ void Player::setSpawnPosition(const sf::Vector2f& position)
 void Player::setSize(const sf::Vector2f& size)
 {
     m_size = size;
+    m_grabVector.x = size.x * 1.3f;
 }
 
 //private
@@ -330,10 +336,10 @@ void Player::doMovement(float dt)
     }
 
     //add speed increase if active
-    if (m_activeItems & (1 << game::Event::PlayerEvent::ExtraSpeed))
+    if (m_activeItems & (1 << Event::PlayerEvent::ExtraSpeed))
         m_moveForce *= speedIncrease;
     //invert movement if reverse active
-    if (m_activeItems & (1 << game::Event::PlayerEvent::ReverseControls))
+    if (m_activeItems & (1 << Event::PlayerEvent::ReverseControls))
         m_moveForce = -m_moveForce;
 
     if (m_moveForce != 0.f)
@@ -404,7 +410,7 @@ void Player::doGrab()
             c.action = [&](Node& n, float dt)
             {
                 //ask node if it is in grabbing distance               
-                auto point = (m_leftFacing) ? m_currentPosition - grabVec : m_currentPosition + grabVec;
+                auto point = (m_leftFacing) ? m_currentPosition - m_grabVector : m_currentPosition + m_grabVector;
                 //and OR it's type with grabbed
                 //TODO allow both players to grab same box?
                 assert(n.getCollisionBody());
@@ -451,14 +457,14 @@ void Player::doPickUp()
             {
                 //try picking up - TODO dekludge these consts    
                 m_carryVector = (m_leftFacing) ? //we add 4 here to stop the player and block overlapping (and causing collision problems)
-                    sf::Vector2f(-(m_size.x + 4.f), -(m_size.y * 0.35f)) :
-                    sf::Vector2f(m_size.x + 4.f, -(m_size.y * 0.35f));
+                    sf::Vector2f(-(m_size.x + 4.f), 0.f) :
+                    sf::Vector2f(m_size.x + 4.f, 0.f);
 
                 Command c;
                 c.categoryMask |= Category::Block;
                 c.action = [&](Node& n, float dt)
                 {
-                    auto point = (m_leftFacing) ? m_currentPosition - grabVec : m_currentPosition + grabVec;
+                    auto point = (m_leftFacing) ? m_currentPosition - m_grabVector : m_currentPosition + m_grabVector;
                     
                     auto cat = n.getCategory();
                     if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::CarriedOne | Category::CarriedTwo)) //don't pick up blocks being dragged
@@ -475,9 +481,9 @@ void Player::doPickUp()
                         n.setCategory(static_cast<Category::Type>(cat));
                         
                         //let everyone know player picked up block
-                        game::Event f;
-                        f.type = game::Event::Player;
-                        f.player.action = game::Event::PlayerEvent::PickedUp;
+                        Event f;
+                        f.type = Event::Player;
+                        f.player.action = Event::PlayerEvent::PickedUp;
                         f.player.playerId = m_id;
                         f.player.positionX = m_currentPosition.x;
                         f.player.positionY = m_currentPosition.y;
@@ -489,6 +495,8 @@ void Player::doPickUp()
                         d.action = [&, this](Node& on, float dt)
                         {
                             assert(on.getCollisionBody());
+
+                            this->m_carryVector.y = (on.getCollisionBody()->getSize().y - n.getCollisionBody()->getSize().y) * 1.35f;                           
                             on.getCollisionBody()->addChild(n.getCollisionBody(), this->m_carryVector);
                             on.getCollisionBody()->setFriction(friction * 0.75f);
                         };
@@ -519,7 +527,7 @@ void Player::doDrop()
     if (m_carryingBlock)
     {
         m_jumpForce = jumpForce;
-        if (m_activeItems & (1 << game::Event::PlayerEvent::ExtraSpeed))
+        if (m_activeItems & (1 << Event::PlayerEvent::ExtraSpeed))
             m_jumpForce *= jumpIncrease;
         
         //release block

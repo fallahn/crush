@@ -56,7 +56,7 @@ public:
     bool looped() const;
     void play(sf::Int16 start = 0, sf::Int16 end = -1);
     bool playing() const;
-    void pause();
+    void setPaused(bool paused);
 
     sf::FloatRect getLocalBounds() const;
     sf::FloatRect getGlobalBounds() const;
