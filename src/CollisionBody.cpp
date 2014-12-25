@@ -225,6 +225,14 @@ void CollisionWorld::Body::step(float dt)
         m_velocity.y = 0.f;
     }
 
+    //make sure bodies come to complete halt
+    float ls = Util::Vector::lengthSquared(m_velocity);
+    if (ls != 0 && ls < 1.5f)
+    {
+        m_velocity = {};
+        //std::cout << "stopped body" << std::endl;
+    }
+
     if (m_node)
         m_node->setWorldPosition(m_position);
     //--------------------------
@@ -239,7 +247,7 @@ void CollisionWorld::Body::step(float dt)
     //update all the child bodies
     for (auto& c : m_children)
     {
-        c.first->setPosition(getCentre() + (c.second - (getSize() / 2.f)));
+        c.first->setPosition(getCentre() + (c.second - c.first->m_centre));
     }
 
     //update strength value or kill if no health

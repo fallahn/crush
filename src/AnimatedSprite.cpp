@@ -130,8 +130,9 @@ void AnimatedSprite::setFrameCount(sf::Uint8 count)
 
 void AnimatedSprite::setFrameRate(float rate)
 {
-    assert(rate > 0.f);
+    assert(rate >= 0.f);
     m_frameRate = rate;
+    //m_playing = (rate > 0.f);
 }
 
 float AnimatedSprite::getFrameRate() const
@@ -206,5 +207,6 @@ void AnimatedSprite::setFrame(sf::Uint8 index)
     m_subRect.left = x * m_frameSize.x;
     m_subRect.top = y * m_frameSize.y;
 
+    m_sprite.setTextureRect(m_subRect);
     m_currentFrame = index;
 }

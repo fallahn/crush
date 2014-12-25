@@ -39,6 +39,8 @@ public:
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
     sf::Vector2f vetForce(const sf::Vector2f& force) override;
+private:
+    sf::Vector2f m_lastVelocity;
 };
 
 class PlayerBehaviourGround final : public BodyBehaviour
@@ -47,6 +49,8 @@ public:
     explicit PlayerBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+private:
+    sf::Vector2f m_lastVelocity;
 };
 
 class PlayerBehaviourWater final : public BodyBehaviour

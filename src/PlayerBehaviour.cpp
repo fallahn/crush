@@ -41,6 +41,16 @@ void PlayerBehaviourAir::update(float dt)
     auto vel = getVelocity();
     vel.x *= 0.8f; //this should always be <= ground friction?
     setVelocity(vel);
+
+    if (vel.y > 0 && m_lastVelocity.y < 0)
+    {
+        //started falling
+        Event e;
+        e.type = Event::Type::Player;
+        e.player.action = Event::PlayerEvent::Action::StartedFalling;
+        raiseEvent(e);
+    }
+    m_lastVelocity = vel;
 }
 
 void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -121,6 +131,23 @@ void PlayerBehaviourGround::update(float dt)
 
     vel.x *= getFriction(); //TODO equate dt into this
     setVelocity(vel);
+
+    //raise start / stop events
+    if (vel.x != 0 && m_lastVelocity.x == 0)
+    {
+        Event e;
+        e.type = Event::Type::Player;
+        e.player.action = Event::PlayerEvent::Moved;
+        raiseEvent(e);
+    }
+    else if (vel.x == 0 && m_lastVelocity.x != 0)
+    {
+        Event e;
+        e.type = Event::Type::Player;
+        e.player.action = Event::PlayerEvent::Stopped;
+        raiseEvent(e);
+    }
+    m_lastVelocity = vel;
 
     if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
     {

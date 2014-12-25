@@ -101,18 +101,18 @@ void ParticleController::onNotify(Subject& s, const Event& evt)
         {
         case Event::NodeEvent::Despawn:
         {
-            if (evt.node.type == Category::Item)
+            if (evt.node.type == Category::Npc)
             {
                 //do dust puff
-                auto& ps = findSystem(Particle::Type::Puff);
-                ps.setPosition({ evt.node.positionX, evt.node.positionY });
-                ps.start(5u, 0.1f);
-            }
-            else
-            {
                 auto& ps = findSystem(Particle::Type::Splat);
                 ps.setPosition({ evt.node.positionX, evt.node.positionY });
                 ps.start(6u, 0.1f);
+            }
+            else
+            {
+                auto& ps = findSystem(Particle::Type::Puff);
+                ps.setPosition({ evt.node.positionX, evt.node.positionY });
+                ps.start(5u, 0.1f);
             }
             break;
         }

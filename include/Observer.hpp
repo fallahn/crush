@@ -68,11 +68,14 @@ source distribution.
                 Died,
                 PickedUp,
                 Dropped,
-                GotItem
+                GotItem,
+                Moved,
+                Stopped,
+                StartedFalling
             }action;
             enum Item
             {
-                ExtraLife,
+                ExtraLife = 1,
                 ExtraSpeed,
                 JumpIncrease,
                 ReverseControls,

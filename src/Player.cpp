@@ -37,14 +37,19 @@ namespace
     const float joyDeadZone = 25.f;
     
     //large value because they are reduced by delta time
-    const float maxMoveForce = 9600.f;
+    const float maxMoveForce = 8200.f;
     const float jumpForce = 1180.f;
 
     const float friction = 0.83f;
+    const float pickupPadding = 3.2f;
+    const float dragPadding = 0.51f;
+    const float pickupHeight = 14.f;
 
     const float itemDuration = 16.f;
     const float speedIncrease = 1.8f;
     const float jumpIncrease = 1.5f;
+
+    const float maxFrameRate = 12.f;
 }
 
 Player::Keys::Keys()
@@ -57,7 +62,7 @@ Player::Keys::Keys()
     joyButtonGrab   (1u),
     joyButtonPickUp (2u){}
 
-Player::Player(CommandStack& cs, Category::Type type)
+Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::Shader& shader)
     : m_moveForce   (0.f),
     m_jumpForce     (jumpForce),
     m_commandStack  (cs),
@@ -90,7 +95,25 @@ Player::Player(CommandStack& cs, Category::Type type)
         m_grabId = Category::GrabbedTwo;
         m_lastTouchId = Category::LastTouchedTwo;
         m_carryId = Category::CarriedTwo;
+
+        m_sprite.setTexture(tr.get("res/textures/playerTwo_diffuse.png"));
+        m_sprite.setScale(-1.f, 1.f);
+        m_sprite.setOrigin(static_cast<float>(41), 0.f); //uhhh iron this out at some point
     }
+    else
+    {
+        m_sprite.setTexture(tr.get("res/textures/playerOne_diffuse.png"));
+    }
+
+    m_sprite.setNormalMap(tr.get("res/textures/player_normal.png"));
+    m_sprite.setShader(shader);
+    m_sprite.setFrameCount(8u);
+    m_sprite.setFrameRate(maxFrameRate);
+    m_sprite.setFrameSize({ 41, 64 });
+    m_sprite.setLooped(true);
+    m_sprite.play(2, 2);
+
+    setSize(static_cast<sf::Vector2f>(m_sprite.getFrameSize()));
 }
 
 //public
@@ -115,7 +138,7 @@ void Player::update(float dt)
     };
     m_commandStack.push(c);
 
-    //check active itms for expiry
+    //check active items for expiry
     if (m_activeItems)
     {
         m_itemDuration += dt;
@@ -131,6 +154,11 @@ void Player::update(float dt)
     //spawn a new player
     if (m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
         spawn(m_spawnPosition, *this);
+
+    //update sprite
+    float fr = maxFrameRate / 2.f;
+    m_sprite.setFrameRate(fr + (maxFrameRate * abs(m_moveForce / (maxMoveForce * dt))));
+    m_sprite.update(dt);
 }
 
 void Player::handleEvent(const sf::Event& evt)
@@ -193,6 +221,21 @@ void Player::onNotify(Subject& s, const Event& evt)
         {
             switch (evt.player.action)
             {
+            case Event::PlayerEvent::Moved:
+                //std::cout << "player moved" << std::endl;
+                m_sprite.play(0, 5); //TODO organise animation clips so no magic numbers
+                break;
+            case Event::PlayerEvent::StartedFalling:
+                //std::cout << "player falling" << std::endl;
+                m_sprite.play(7, 7);
+                break;
+            case Event::PlayerEvent::Stopped:
+            case Event::PlayerEvent::Landed:
+                //std::cout << "player stopped" << std::endl;
+                //TODO idle animation
+                m_sprite.play(2, 2);
+                break;
+
                 //grabbing / releasing the blocks updates the players
                 //friction so that they are slower when dragging
             case Event::PlayerEvent::Grabbed:
@@ -210,8 +253,11 @@ void Player::onNotify(Subject& s, const Event& evt)
                     auto playerBody = n.getCollisionBody();
                     playerBody->setFriction(friction);
                     auto blockSize = blockBody->getSize();
-                    playerBody->addChild(blockBody, { (m_leftFacing) ? -(m_size.x + blockSize.x) * 0.52f : (m_size.x + blockSize.x) * 0.505f,
-                                                    playerBody->getSize().y - blockSize.y }); //kludgy numbers to pad space between bodies^^
+
+                    sf::Vector2f pickup;
+                    pickup.x = (m_leftFacing) ? -(m_size.x + blockSize.x) * dragPadding : (m_size.x + blockSize.x) * dragPadding;
+                    pickup.y = playerBody->getSize().y - blockSize.y;
+                    playerBody->addChild(blockBody, pickup);
                 };
                 m_commandStack.push(c);
             }
@@ -300,7 +346,19 @@ void Player::setSpawnPosition(const sf::Vector2f& position)
 void Player::setSize(const sf::Vector2f& size)
 {
     m_size = size;
-    m_grabVector.x = size.x * 1.3f;
+    //this ought to size.x + object.x / 2
+    //but how to get the size of objects?
+    m_grabVector.x = (size.x + 64.f) / 2.f;
+}
+
+sf::Drawable* Player::getSprite()
+{
+    return static_cast<sf::Drawable*>(&m_sprite);
+}
+
+const sf::Vector2f& Player::getSize() const
+{
+    return m_size;
 }
 
 //private
@@ -366,6 +424,21 @@ void Player::doMovement(float dt)
         m_commandStack.push(c);
 
         m_lastFacing = m_leftFacing;
+
+        //if changed direction update sprite
+        if (flip)
+        {
+            if (m_leftFacing)
+            {
+                m_sprite.setScale(-1.f, 1.f);
+                m_sprite.setOrigin(static_cast<float>(m_sprite.getFrameSize().x), 0.f);
+            }
+            else
+            {
+                m_sprite.setScale(1.f, 1.f);
+                m_sprite.setOrigin(0.f, 0.f);
+            }
+        }
     }
 }
 
@@ -388,6 +461,9 @@ void Player::doJump()
             m_commandStack.push(c);
             m_buttonMask |= (1 << m_keyBinds.joyButtonJump);
         }
+
+        //jump animation
+        m_sprite.play(6, 6);
     }
     else
     {
@@ -455,10 +531,10 @@ void Player::doPickUp()
         {
             if (!m_carryingBlock)
             {
-                //try picking up - TODO dekludge these consts    
-                m_carryVector = (m_leftFacing) ? //we add 4 here to stop the player and block overlapping (and causing collision problems)
-                    sf::Vector2f(-(m_size.x + 4.f), 0.f) :
-                    sf::Vector2f(m_size.x + 4.f, 0.f);
+                //try picking up
+                m_carryVector = (m_leftFacing) ? //we add padding here to stop the player and block overlapping (and causing collision problems)
+                    sf::Vector2f(-(m_grabVector.x + pickupPadding), 0.f) : //m_size.x
+                    sf::Vector2f(m_grabVector.x + pickupPadding, 0.f);
 
                 Command c;
                 c.categoryMask |= Category::Block;
@@ -496,7 +572,7 @@ void Player::doPickUp()
                         {
                             assert(on.getCollisionBody());
 
-                            this->m_carryVector.y = (on.getCollisionBody()->getSize().y - n.getCollisionBody()->getSize().y) * 1.35f;                           
+                            this->m_carryVector.y = (on.getCollisionBody()->getSize().y - n.getCollisionBody()->getSize().y) - pickupHeight;                           
                             on.getCollisionBody()->addChild(n.getCollisionBody(), this->m_carryVector);
                             on.getCollisionBody()->setFriction(friction * 0.75f);
                         };

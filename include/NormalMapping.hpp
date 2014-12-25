@@ -102,34 +102,34 @@ namespace Shader
             "}\n";
 
     //TODO add specular exponent as uniform
-        static const std::string normalFragment =
-            "uniform sampler2D u_diffuseMap;\n" \
-            "uniform sampler2D u_normalMap;\n" \
-            "uniform vec3 u_inverseRanges;\n" \
-            "uniform mat4 u_pointLightColours;\n" \
-            "uniform vec3 u_directionalLightColour;\n" \
-            "uniform vec3 u_ambientColour;\n" \
-            "uniform float u_textureOffset;\n" \
-            "\n" \
-            "varying vec3 v_directionalLightDirection;\n" \
-            "varying vec3 v_pointLightDirections[3];\n" \
-            "varying vec3 v_eyeDirection;\n" \
-            "\n" \
-            "vec4 diffuseColour;\n" \
-            "vec4 normalColour;"
-            "\n" \
-            "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightColour, float falloff)\n" \
-            "{\n" \
-            "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n" \
-            "    vec3 mixedColour = lightColour * diffuseColour.rgb * diffuseAmount * falloff;\n" \
-            /*Blinn-Phong specular calc - TODO calc specular based on some amount - probably from material settings*/
-            "#if defined(SPECULAR)\n" \
-            "    vec3 eyeDirection = normalize(lightDirection);\n" \
-            "    vec3 halfVec = normalize(lightDirection + eyeDirection);\n" \
-            "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
-            /*TODO switch const exponent for variable*/
-            "    vec3 specularColour = vec3(pow(specularAngle, 168.0)) * falloff;\n" \
-            "    return mixedColour + (specularColour* normalColour.a);\n" \
+    static const std::string normalFragment =
+        "uniform sampler2D u_diffuseMap;\n" \
+        "uniform sampler2D u_normalMap;\n" \
+        "uniform vec3 u_inverseRanges;\n" \
+        "uniform mat4 u_pointLightColours;\n" \
+        "uniform vec3 u_directionalLightColour;\n" \
+        "uniform vec3 u_ambientColour;\n" \
+        "uniform float u_textureOffset;\n" \
+        "\n" \
+        "varying vec3 v_directionalLightDirection;\n" \
+        "varying vec3 v_pointLightDirections[3];\n" \
+        "varying vec3 v_eyeDirection;\n" \
+        "\n" \
+        "vec4 diffuseColour;\n" \
+        "vec4 normalColour;"
+        "\n" \
+        "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightColour, float falloff)\n" \
+        "{\n" \
+        "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n" \
+        "    vec3 mixedColour = lightColour * diffuseColour.rgb * diffuseAmount * falloff;\n" \
+        /*Blinn-Phong specular calc - TODO calc specular based on some amount - probably from material settings*/
+        "#if defined(SPECULAR)\n" \
+        "    vec3 eyeDirection = normalize(lightDirection);\n" \
+        "    vec3 halfVec = normalize(lightDirection + eyeDirection);\n" \
+        "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
+        /*TODO switch const exponent for variable*/
+        "    vec3 specularColour = vec3(pow(specularAngle, 106.0)) * falloff;\n" \
+        "    return mixedColour + (specularColour * normalColour.a);\n" \
             "#else\n" \
             "    return mixedColour;\n" \
             "#endif\n" \

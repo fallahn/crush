@@ -32,6 +32,8 @@ source distribution.
 
 #include <CommandStack.hpp>
 #include <Observer.hpp>
+#include <Resource.hpp>
+#include <AnimatedSprite.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/NonCopyable.hpp>
@@ -55,7 +57,7 @@ public:
         sf::Uint8 joyButtonPickUp;
     };
 
-    Player(CommandStack& commandStack, Category::Type type);
+    Player(CommandStack& commandStack, Category::Type type, TextureResource& tr, sf::Shader& shader);
     ~Player() = default;
 
     void update(float dt);
@@ -71,7 +73,9 @@ public:
 
     void setSpawnFunction(std::function<void(const sf::Vector2f&, Player&)>& func);
     void setSpawnPosition(const sf::Vector2f& position);
-    void setSize(const sf::Vector2f& size);
+
+    sf::Drawable* getSprite();
+    const sf::Vector2f& getSize() const;
 
 private:
     float m_moveForce;
@@ -101,7 +105,11 @@ private:
     sf::Vector2f m_currentPosition;
     sf::Vector2f m_size;
 
+    sf::Texture m_normalTexture;
+    AnimatedSprite m_sprite;
+
     void enable();
+    void setSize(const sf::Vector2f& size);
 
     void doMovement(float dt);
     void doJump();
