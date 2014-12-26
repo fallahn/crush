@@ -29,13 +29,16 @@ source distribution.
 #include <NormalMapping.hpp>
 #include <ParticleShaders.hpp>
 
-namespace Shader
+namespace
 {
+    //TODO rename this somewhat, as it's getting a tad verbose
     namespace Defines
     {
         static const std::string version = "#version 120\n";
         static const std::string diffuseMap = "#define DIFFUSE_MAP\n";
+        static const std::string normalMap = "#define BUMP_MAP\n";
         static const std::string vertColour = "#define VERTEX_COLOUR\n";
+        static const std::string vertMultiply = "#define VERTEX_MULTIPLY\n";
         static const std::string specular = "#define SPECULAR\n";
     }
 }
@@ -51,17 +54,21 @@ sf::Shader& ShaderResource::get(Shader::Type type)
     Shader::Ptr shader = std::make_unique<sf::Shader>();
     switch (type)
     {
+    case Shader::Type::FlatShaded:
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::normalVertex,
+                                Defines::version + Defines::diffuseMap + Defines::specular + Defines::vertMultiply + Shader::normalFragment);
+        break;
     case Shader::Type::NormalMap:
-        shader->loadFromMemory(Shader::Defines::version + Shader::normalVertex,
-                                Shader::Defines::version + Shader::Defines::diffuseMap + Shader::normalFragment);
+        shader->loadFromMemory(Defines::version + Shader::normalVertex,
+                                Defines::version + Defines::diffuseMap + Defines::normalMap + Shader::normalFragment);
         break;
     case Shader::Type::NormalMapSpecular:        
-        shader->loadFromMemory(Shader::Defines::version + Shader::normalVertex,
-                                Shader::Defines::version + Shader::Defines::diffuseMap + Shader::Defines::specular + Shader::normalFragment);      
+        shader->loadFromMemory(Defines::version + Shader::normalVertex,
+                                Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Shader::normalFragment);
         break;
     case Shader::Type::Water:
-        shader->loadFromMemory(Shader::Defines::version + Shader::Defines::vertColour + Shader::normalVertex,
-                                Shader::Defines::version + Shader::Defines::specular + Shader::normalFragment);
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::normalVertex,
+                                Defines::version + Defines::specular + Defines::normalMap + Shader::normalFragment);
         break;
     default: break;
     }

@@ -33,6 +33,7 @@ source distribution.
 #include <Observer.hpp>
 #include <Particles.hpp>
 #include <Resource.hpp>
+#include <ShaderResource.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
@@ -42,7 +43,7 @@ source distribution.
 class ParticleController final : public Observer, private sf::NonCopyable, public sf::Drawable
 {
 public:
-    explicit ParticleController(TextureResource& tr);
+    ParticleController(TextureResource& tr, ShaderResource& sr);
     ~ParticleController() = default;
 
     void update(float dt);
@@ -52,6 +53,7 @@ public:
 private:
     std::vector<ParticleSystem> m_systems;
     TextureResource& m_textureResource;
+    ShaderResource& m_shaderResource;
 
     ParticleSystem& addSystem(Particle::Type type);
     ParticleSystem& findSystem(Particle::Type type);

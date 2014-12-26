@@ -39,17 +39,25 @@ namespace
     //large value because they are reduced by delta time
     const float maxMoveForce = 8200.f;
     const float jumpForce = 1180.f;
-
     const float friction = 0.83f;
+
+    //block interaction
     const float pickupPadding = 3.2f;
     const float dragPadding = 0.51f;
     const float pickupHeight = 14.f;
 
+    //item modifiers
     const float itemDuration = 16.f;
     const float speedIncrease = 1.8f;
     const float jumpIncrease = 1.5f;
 
+    //animation consts
     const float maxFrameRate = 12.f;
+    const sf::Vector2i frameSize(41, 64);
+    Animation idle(2, 2);
+    Animation run(0, 5);
+    Animation jump(6, 6);
+    Animation fall(7, 7);
 }
 
 Player::Keys::Keys()
@@ -98,7 +106,7 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
 
         m_sprite.setTexture(tr.get("res/textures/playerTwo_diffuse.png"));
         m_sprite.setScale(-1.f, 1.f);
-        m_sprite.setOrigin(static_cast<float>(41), 0.f); //uhhh iron this out at some point
+        m_sprite.setOrigin(static_cast<float>(frameSize.x), 0.f); //uhhh iron this out at some point
     }
     else
     {
@@ -109,9 +117,9 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_sprite.setShader(shader);
     m_sprite.setFrameCount(8u);
     m_sprite.setFrameRate(maxFrameRate);
-    m_sprite.setFrameSize({ 41, 64 });
+    m_sprite.setFrameSize(frameSize);
     m_sprite.setLooped(true);
-    m_sprite.play(2, 2);
+    m_sprite.play(idle);
 
     setSize(static_cast<sf::Vector2f>(m_sprite.getFrameSize()));
 }
@@ -222,18 +230,14 @@ void Player::onNotify(Subject& s, const Event& evt)
             switch (evt.player.action)
             {
             case Event::PlayerEvent::Moved:
-                //std::cout << "player moved" << std::endl;
-                m_sprite.play(0, 5); //TODO organise animation clips so no magic numbers
+                m_sprite.play(run);
                 break;
             case Event::PlayerEvent::StartedFalling:
-                //std::cout << "player falling" << std::endl;
-                m_sprite.play(7, 7);
+                m_sprite.play(fall);
                 break;
             case Event::PlayerEvent::Stopped:
             case Event::PlayerEvent::Landed:
-                //std::cout << "player stopped" << std::endl;
-                //TODO idle animation
-                m_sprite.play(2, 2);
+                m_sprite.play(idle);
                 break;
 
                 //grabbing / releasing the blocks updates the players
@@ -463,7 +467,7 @@ void Player::doJump()
         }
 
         //jump animation
-        m_sprite.play(6, 6);
+        m_sprite.play(jump);
     }
     else
     {

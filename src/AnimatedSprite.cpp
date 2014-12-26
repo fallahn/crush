@@ -162,6 +162,12 @@ void AnimatedSprite::play(sf::Int16 start, sf::Int16 end)
     setFrame(start);
 }
 
+void AnimatedSprite::play(Animation animation)
+{
+    setLooped(animation.m_loop);
+    play(animation.m_startFrame, animation.m_endFrame);
+}
+
 bool AnimatedSprite::playing() const
 {
     return m_playing;

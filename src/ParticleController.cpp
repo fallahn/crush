@@ -79,8 +79,9 @@ namespace
     };
 }
 
-ParticleController::ParticleController(TextureResource& tr)
-    : m_textureResource (tr)
+ParticleController::ParticleController(TextureResource& tr, ShaderResource& sr)
+    : m_textureResource (tr),
+    m_shaderResource    (sr)
 {
     m_systems.reserve(50);
 }
@@ -149,6 +150,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         {
             particleSystem.setTexture(m_textureResource.get("res/textures/gear.png"));
             particleSystem.setRandomInitialVelocity(splatVelocities);
+            particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
 
             ForceAffector fa({ 0.f, 3500.f }); //gravity
             particleSystem.addAffector(fa);
@@ -178,6 +180,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         break;
     case Particle::Type::Puff:
         particleSystem.setTexture(m_textureResource.get("res/textures/dust_puff.png"));
+        particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
         particleSystem.setParticleLifetime(1.f);
         particleSystem.setParticleSize({ 10.f, 10.f });
         particleSystem.setRandomInitialVelocity(puffVelocities);

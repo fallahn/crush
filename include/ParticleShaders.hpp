@@ -38,10 +38,10 @@ namespace Shader
         "#version 120\n" \
         "const float alphaCutoff = 0.4;\n" \
         "const float finalAlpha = 0.55;\n" \
-        "uniform sampler2D u_diffuse;\n" \
+        "uniform sampler2D u_diffuseMap;\n" \
         "void main()\n" \
         "{\n" \
-        "   vec4 textureColour = texture2D(u_diffuse, gl_TexCoord[0].xy);\n" \
+        "   vec4 textureColour = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n" \
         "   if(textureColour.a < alphaCutoff) discard;\n" \
         "   textureColour *= gl_Color;\n" \
         "   textureColour.a *= finalAlpha;\n" \

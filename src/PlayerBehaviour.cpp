@@ -32,7 +32,7 @@ source distribution.
 
 namespace
 {
-    const float damageMultiplier = 0.3f;
+    const float damageMultiplier = 0.47f;
 }
 
 //------------------------------------------
@@ -171,7 +171,8 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         }
         {
             int cat = other->getParentCategory();
-            if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0) //don't take damage from blocks being carried
+            auto vel = getVelocity();
+            if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0 && vel.y >= 0.f) //don't take damage from blocks being carried, or by jumping up into them
                 damage(std::fabs(manifold.z * (damageMultiplier / getFootSenseCount())), other); //always take same damage regardless of blocks touching
             else
             {

@@ -145,7 +145,7 @@ void MapController::loadMap(const Map& map)
 
 sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
 {
-    switch (type)
+    switch (type) //TODO scale sprite to match node size
     {
     case MapDrawable::Solid:
         return static_cast<sf::Drawable*>(&m_drawable);

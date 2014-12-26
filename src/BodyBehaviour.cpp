@@ -98,6 +98,8 @@ void BodyBehaviour::damage(float amount, CollisionWorld::Body* damager)
 {
     m_body->m_health -= amount;
 
+    //std::cout << m_body->m_health << std::endl;
+
     //check if health now zero and raise event declaring who did the killing
     if (m_body->m_health <= 0)
     {
@@ -132,4 +134,9 @@ void BodyBehaviour::raiseEvent(const Event& evt, CollisionWorld::Body* target)
 {
     if(!target) m_body->notify(*m_body, evt);
     else target->notify(*target, evt);
+}
+
+bool BodyBehaviour::deleted() const
+{
+    return m_body->deleted();
 }

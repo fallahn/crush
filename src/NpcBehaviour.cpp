@@ -30,8 +30,8 @@ source distribution.
 
 namespace
 {
-    const float initialJumpSpeed = 700.f;
-    const float damageMultiplier = 0.4f;
+    const float initialJumpSpeed = 650.f;
+    const float damageMultiplier = 0.46f;
 }
 
 //-------------------------------------------
@@ -65,25 +65,25 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
     case CollisionWorld::Body::Type::Solid:
     case CollisionWorld::Body::Type::Block:
         //kill if block above and NPC is touching the ground
-        if (manifold.y * manifold.z > 0 && getFootSenseCount() > 0)
-        {
-            //TODO: replace this with taking damage?
-            kill();
-            
-            //raise event to say player killed us
-            Event e;
-            e.node.action = Event::NodeEvent::KilledNode;
-            e.node.type = Category::Block;
-            e.node.target = Category::Npc;
+        //if (manifold.y * manifold.z > 0 && getFootSenseCount() > 0)
+        //{
+        //    //TODO: replace this with taking damage?
+        //    kill();
+        //    
+        //    //raise event to say player killed us
+        //    Event e;
+        //    e.node.action = Event::NodeEvent::KilledNode;
+        //    e.node.type = Category::Block;
+        //    e.node.target = Category::Npc;
 
-            if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
-            else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
-            else e.node.owner = Category::None;
+        //    if ((e.node.type & Category::LastTouchedOne) || (e.node.type & Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+        //    else if ((e.node.type & Category::LastTouchedTwo) || (e.node.type & Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
+        //    else e.node.owner = Category::None;
 
-            e.type = Event::Node;
-            raiseEvent(e, other); //this should reference the other body as the sender not the NPC
-            break; //if we should be dead then don't continue to resolve collision
-        }
+        //    e.type = Event::Node;
+        //    raiseEvent(e, other); //this should reference the other body as the sender not the NPC
+        //    break; //if we should be dead then don't continue to resolve collision
+        //}
 
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
     {   
@@ -174,13 +174,18 @@ NpcBehaviourGround::NpcBehaviourGround(CollisionWorld::Body* b)
 {
     setVelocity({});
 
-    Event e;
-    e.type = Event::Npc;
-    e.npc.action = Event::NpcEvent::Landed;
-    raiseEvent(e);
+    //this can be called once an entity is already queued to be deleted - in which
+    //case none of these events should be raised
+    if (!deleted())
+    {
+        Event e;
+        e.type = Event::Npc;
+        e.npc.action = Event::NpcEvent::Landed;
+        raiseEvent(e);
 
-    e.npc.action = Event::NpcEvent::Stopped;
-    raiseEvent(e);
+        e.npc.action = Event::NpcEvent::Stopped;
+        raiseEvent(e);
+    }
 }
 
 void NpcBehaviourGround::update(float dt)
@@ -294,16 +299,21 @@ NpcBehaviourWalk::NpcBehaviourWalk(CollisionWorld::Body* b)
 {
     setVelocity({m_moveForce, 0.f});
 
-    Event e;
-    e.type = Event::Npc;
-    e.npc.action= Event::NpcEvent::Landed;
-    raiseEvent(e);
+    //this can be called once an entity is already queued to be deleted - in which
+    //case none of these events should be raised
+    if (!deleted())
+    {
+        Event e;
+        e.type = Event::Npc;
+        e.npc.action = Event::NpcEvent::Landed;
+        raiseEvent(e);
 
-    e.npc.action = Event::NpcEvent::TurnedRight;
-    raiseEvent(e);
+        e.npc.action = Event::NpcEvent::TurnedRight;
+        raiseEvent(e);
 
-    e.npc.action = Event::NpcEvent::Started;
-    raiseEvent(e);
+        e.npc.action = Event::NpcEvent::Started;
+        raiseEvent(e);
+    }
 }
 
 void NpcBehaviourWalk::update(float dt)

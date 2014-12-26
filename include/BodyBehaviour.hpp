@@ -68,6 +68,8 @@ protected:
     void damage(float amount, CollisionWorld::Body* damager);
     void raiseEvent(const Event& evt, CollisionWorld::Body* target = nullptr);
 
+    bool deleted() const;
+
 private:
     CollisionWorld::Body* m_body;
 };

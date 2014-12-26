@@ -33,6 +33,19 @@ source distribution.
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+
+struct Animation
+{
+    friend class AnimatedSprite;
+    Animation(sf::Int16 begin, sf::Int16 end, bool loop = true)
+        : m_startFrame(begin), m_endFrame(end), m_loop(loop){}
+
+private:
+    sf::Int16 m_startFrame;
+    sf::Int16 m_endFrame;
+    bool m_loop;
+};
+
 class AnimatedSprite final : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -55,6 +68,7 @@ public:
     void setLooped(bool looped);
     bool looped() const;
     void play(sf::Int16 start = 0, sf::Int16 end = -1);
+    void play(Animation a);
     bool playing() const;
     void setPaused(bool paused);
 

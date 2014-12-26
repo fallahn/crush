@@ -46,8 +46,6 @@ namespace
 
     const sf::Uint8 maxPlayers = 2u;
 
-    sf::Vector2f blockSize(60.f, 40.f);
-
     sf::Vector3f colourToVec3(const sf::Color& c)
     {
         return{ static_cast<float>(c.r) / 255.f,
@@ -63,14 +61,14 @@ GameState::GameState(StateStack& stack, Context context)
     m_collisionWorld    (70.f),
     m_npcController     (m_commandStack, m_textureResource, m_shaderResource),
     m_scoreBoard        (stack, context),
-    m_particleController(m_textureResource),
+    m_particleController(m_textureResource, m_shaderResource),
     m_mapController     (m_commandStack, m_textureResource, m_shaderResource)
 {
     //build world
     context.renderWindow.setTitle("Game Screen");
     
     Scene::defaultCamera.setView(getContext().defaultView);
-    //m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMap));
+    m_scene.addShader(m_shaderResource.get(Shader::Type::FlatShaded));
     m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
     m_scene.addShader(m_shaderResource.get(Shader::Type::Water));
 
@@ -279,7 +277,7 @@ void GameState::addMapBody(const Map::Node& n)
         node->setCategory(Category::Light);
         //TODO magix0r numb0rz
         auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
-        light->setDepth(100.f);
+        light->setDepth(200.f);
         node->setLight(light);
         node->setPosition(n.position);
         /*node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, {40.f, 40.f}));

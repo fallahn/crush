@@ -39,6 +39,7 @@ namespace Shader
 {
     enum class Type
     {
+        FlatShaded,
         NormalMap,
         NormalMapSpecular,
         Water

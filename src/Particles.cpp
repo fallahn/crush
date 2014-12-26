@@ -247,7 +247,7 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         m_needsUpdate = false;
     }
 
-    if (m_shader) m_shader->setParameter("u_diffuse", sf::Shader::CurrentTexture);
+    if (m_shader) m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
 
     states.texture = m_texture;
     states.shader = m_shader;
