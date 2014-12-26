@@ -113,7 +113,7 @@
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\MapController.hpp" />
-    <ClInclude Include="include\NormalMapping.hpp" />
+    <ClInclude Include="include\UberShader.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />
     <ClInclude Include="include\NpcController.hpp" />
     <ClInclude Include="include\Camera.hpp" />

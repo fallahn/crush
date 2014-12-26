@@ -25,10 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//normal mapping shaders for sprites
+//multi purpose shader for game sprite
 
-#ifndef NORMAL_MAPPING_H_
-#define NORMAL_MAPPING_H_
+#ifndef UBER_SHADER_H_
+#define UBER_SHADER_H_
 
 #include <string>
 
@@ -47,7 +47,7 @@ namespace Shader
     again on the GPU. Not ideal, but it works*/
 
 
-    static const std::string normalVertex =
+    static const std::string uberVertex =
         "uniform mat4 u_pointLightPositions;\n" \
         "uniform vec3 u_directionalLightDirection;\n" \
         "uniform mat4 u_inverseWorldViewMatrix;\n" \
@@ -102,7 +102,7 @@ namespace Shader
         "}\n";
 
     //TODO add specular exponent as uniform
-    static const std::string normalFragment =
+    static const std::string uberFragment =
         "uniform sampler2D u_diffuseMap;\n" \
         "uniform sampler2D u_normalMap;\n" \
         "uniform vec3 u_inverseRanges;\n" \
@@ -171,4 +171,4 @@ namespace Shader
         "}\n";
 }
 
-#endif //NORMAL_MAPPING_H_
+#endif //UBER_SHADER_H_

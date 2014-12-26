@@ -230,9 +230,6 @@
     <ClInclude Include="include\WaterDrawable.hpp">
       <Filter>Header Files\Drawables</Filter>
     </ClInclude>
-    <ClInclude Include="include\NormalMapping.hpp">
-      <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
     <ClInclude Include="include\ParticleShaders.hpp">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
@@ -286,6 +283,9 @@
     </ClInclude>
     <ClInclude Include="include\ShaderResource.hpp">
       <Filter>Header Files\Resources</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UberShader.hpp">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

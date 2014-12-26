@@ -101,6 +101,11 @@ void AnimatedSprite::setTexture(const sf::Texture& t)
     m_textureSize = t.getSize();
 }
 
+const sf::Texture* AnimatedSprite::getTexture() const
+{
+    return m_sprite.getTexture();
+}
+
 void AnimatedSprite::setNormalMap(const sf::Texture& t)
 {
     m_normalMap = t;

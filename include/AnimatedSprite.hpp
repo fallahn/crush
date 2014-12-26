@@ -57,6 +57,7 @@ public:
     void update(float dt);
 
     void setTexture(const sf::Texture& t);
+    const sf::Texture* getTexture() const;
     void setNormalMap(const sf::Texture& t);
     void setShader(sf::Shader& shader);
     void setFrameSize(const sf::Vector2i& size);

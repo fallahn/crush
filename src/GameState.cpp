@@ -52,6 +52,8 @@ namespace
             static_cast<float>(c.g) / 255.f,
             static_cast<float>(c.b) / 255.f };
     }
+
+    int id = 0;
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -229,6 +231,14 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
     npcNode->addObserver(m_npcController);
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
+
+    //if (id++ < 3)
+    //{
+        auto light = m_scene.addLight(sf::Vector3f(1.f, 0.88f, 0.55f), 200.f);
+        light->setDepth(90.f);
+        npcNode->setLight(light);
+        npcNode->addObserver(*light);
+    //}
     m_scene.addNode(npcNode, Scene::Dynamic);
 }
 
@@ -273,22 +283,18 @@ void GameState::addMapBody(const Map::Node& n)
         break;
     case Category::Light:
     {
-        auto node = std::make_unique<Node>();
-        node->setCategory(Category::Light);
-        //TODO magix0r numb0rz
-        auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
-        light->setDepth(200.f);
-        node->setLight(light);
-        node->setPosition(n.position);
-        /*node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Block, {40.f, 40.f}));
-        node->addObserver(m_players[0]);
-        node->addObserver(m_players[1]);
-        node->addObserver(m_scoreBoard);*/
+        //auto node = std::make_unique<Node>(std::to_string(id++));
+        //node->setCategory(Category::Light);
+        ////TODO magix0r numb0rz
+        //auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
+        //light->setDepth(200.f);
+        //node->setLight(light);
+        //node->setPosition(n.position);
+        //node->addObserver(*light);
+        //node->setDrawable(&lightDrawable);
+        //node->setBlendMode(sf::BlendAlpha);
 
-        node->setDrawable(&lightDrawable);
-        node->setBlendMode(sf::BlendAlpha);
-
-        m_scene.addNode(node);
+        //m_scene.addNode(node);
     }
     default: break;
     }

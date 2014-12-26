@@ -142,9 +142,22 @@ Camera* Scene::getActiveCamera() const
 
 Light* Scene::addLight(const sf::Vector3f& colour, float range)
 {
-    assert(m_lights.size() <= maxLights);
-    m_lights.emplace_back(sf::Vector3f(0.f, 0.f, 20.f), colour, range);
-    return &m_lights.back();
+    if (m_lights.size() < maxLights)
+    {
+        m_lights.emplace_back(sf::Vector3f(0.f, 0.f, 20.f), colour, range);
+        return &m_lights.back();
+    }
+    else
+    {
+        auto result = std::find_if(m_lights.begin(), m_lights.end(), [](const Light& l){return !l.hasParent(); });
+        if (result != m_lights.end())
+        {
+            result->setColour(colour);
+            result->setRange(range);
+            return &(*result);
+        }
+    }
+    return nullptr;
 }
 
 void Scene::setSunlight(const Light& light)

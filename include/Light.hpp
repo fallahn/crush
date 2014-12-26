@@ -30,11 +30,13 @@ source distribution.
 #ifndef LIGHT_H_
 #define LIGHT_H_
 
+#include <Observer.hpp>
+
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 
 class Node;
-class Light final
+class Light final : public Observer
 {
     friend class Node;
 public:
@@ -57,6 +59,9 @@ public:
     float getRangeInverse() const;
 
     void setNode(Node* n);
+    bool hasParent() const;
+
+    void onNotify(Subject& s, const Event& e) override;
 
 private:
     mutable sf::Vector3f m_position;

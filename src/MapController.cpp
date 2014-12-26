@@ -39,6 +39,7 @@ source distribution.
 namespace
 {
     const float spawnGapTime = 22.f;//time between spawns
+    sf::Vector2f blockTextureSize;
 }
 
 MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr)
@@ -52,7 +53,8 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_drawable          (tr, sr.get(Shader::Type::NormalMapSpecular))
 {
     //TODO load textures based on map data
-
+    //scale sprite to match node size
+    blockTextureSize = sf::Vector2f(m_blockSprite.getTexture()->getSize());
     
     m_itemSprite.setFrameCount(16u);
     m_itemSprite.setFrameRate(18.f);
@@ -63,7 +65,7 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_itemSprite.play();
 
     m_blockSprite.setFrameCount(1u);
-    m_blockSprite.setFrameSize({ 256, 256 });
+    //m_blockSprite.setFrameSize({ 66, 66 });
     m_blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
     m_blockSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
 }
@@ -136,6 +138,8 @@ void MapController::loadMap(const Map& map)
             spawn(n);
             if (n.type == Category::Solid)
                 m_drawable.addSolid(n.position, n.size);
+            else if (n.type == Category::Block)
+                m_blockSprite.setScale(n.size.x / blockTextureSize.x, n.size.y / blockTextureSize.y);
         }
 
     }
@@ -145,7 +149,7 @@ void MapController::loadMap(const Map& map)
 
 sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
 {
-    switch (type) //TODO scale sprite to match node size
+    switch (type) 
     {
     case MapDrawable::Solid:
         return static_cast<sf::Drawable*>(&m_drawable);

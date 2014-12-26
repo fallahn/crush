@@ -26,7 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <ShaderResource.hpp>
-#include <NormalMapping.hpp>
+#include <UberShader.hpp>
 #include <ParticleShaders.hpp>
 
 namespace
@@ -55,20 +55,20 @@ sf::Shader& ShaderResource::get(Shader::Type type)
     switch (type)
     {
     case Shader::Type::FlatShaded:
-        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::normalVertex,
-                                Defines::version + Defines::diffuseMap + Defines::specular + Defines::vertMultiply + Shader::normalFragment);
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::uberVertex,
+            Defines::version + Defines::diffuseMap + Defines::specular + Defines::vertMultiply + Shader::uberFragment);
         break;
     case Shader::Type::NormalMap:
-        shader->loadFromMemory(Defines::version + Shader::normalVertex,
-                                Defines::version + Defines::diffuseMap + Defines::normalMap + Shader::normalFragment);
+        shader->loadFromMemory(Defines::version + Shader::uberVertex,
+            Defines::version + Defines::diffuseMap + Defines::normalMap + Shader::uberFragment);
         break;
     case Shader::Type::NormalMapSpecular:        
-        shader->loadFromMemory(Defines::version + Shader::normalVertex,
-                                Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Shader::normalFragment);
+        shader->loadFromMemory(Defines::version + Shader::uberVertex,
+            Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Shader::uberFragment);
         break;
     case Shader::Type::Water:
-        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::normalVertex,
-                                Defines::version + Defines::specular + Defines::normalMap + Shader::normalFragment);
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::uberVertex,
+            Defines::version + Defines::specular + Defines::normalMap + Shader::uberFragment);
         break;
     default: break;
     }

@@ -120,4 +120,27 @@ void Light::setNode(Node* n)
     } 
 }
 
+bool Light::hasParent() const
+{
+    return (m_node != nullptr);
+}
+
+void Light::onNotify(Subject& s, const Event& e)
+{
+    if (e.type == Event::Node)
+    {
+        switch (e.node.action)
+        {
+        //node was removed so light has no parent
+        case Event::NodeEvent::Despawn:
+            if (static_cast<Node*>(&s) == m_node)
+            {
+                m_node = nullptr;
+                setPosition({ 0.f, -m_range, m_position.z });
+            }
+            break;
+        default: break;
+        }
+    }
+}
 //private

@@ -177,7 +177,7 @@ void Node::setCollisionBody(CollisionWorld::Body* b)
 
 void Node::setLight(Light* l)
 {
-    l->setNode(this);
+    if(l) l->setNode(this);
     //TODO we still need to reference this so we can update
     //a light's parent if it is destroyed, without getting recprocal feedback
 }
