@@ -43,9 +43,12 @@ class Scene final : public sf::Drawable, private sf::NonCopyable, public Observe
 public:
     enum Layer //this sets the order in which the layers are drawn
     { 
+        Background,
+        RearDetail,
         Dynamic, //players / NPCs etc
         Water,
         Solid,
+        FrontDetail,
         LayerCount
     };
 

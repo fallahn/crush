@@ -47,6 +47,10 @@ namespace Level_editor
     {
         private int m_lightCount = 0;
         private const int m_maxLights = 3;
+
+        //prevent initial sorting on loading of a map, until
+        //the final node is added
+        private bool m_canSort = false;
         
         //------------others---------------//
 
@@ -76,7 +80,8 @@ namespace Level_editor
             p.MouseUp += mouseUp;
             p.MouseMove += mouseMove;
 
-            p.Tag = type;            
+            NodeData nd = new NodeData();
+            nd.type = type;
 
             switch (type)
             {
@@ -84,29 +89,39 @@ namespace Level_editor
                     p.BackColor = blockColour;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
+                    p.BackgroundImage = Properties.Resources.block;
+                    nd.layer = Layer.Dynamic;
                     break;
                 case Node.BodyType.PlayerOne:
                     p.BackColor = playerOneColour;
                     p.Move += p1_Move;
+                    p.BackgroundImage = Properties.Resources.player_one;
+                    nd.layer = Layer.Dynamic;
                     break;
                 case Node.BodyType.PlayerTwo:
                     p.BackColor = playerTwoColour;
                     p.Move += p2_Move;
+                    p.BackgroundImage = Properties.Resources.player_two;
+                    nd.layer = Layer.Dynamic;
                     break;
                 case Node.BodyType.Solid:
                     p.BackColor = solidColour;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
+                    nd.layer = Layer.Solid;
                     break;
                 case Node.BodyType.Item:
                     p.BackColor = bonusColour;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
+                    p.BackgroundImage = Properties.Resources.item;
+                    nd.layer = Layer.Dynamic;
                     break;
                 case Node.BodyType.Water:
                     p.BackColor = waterColour;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
+                    nd.layer = Layer.Water;
                     break;
                 case Node.BodyType.Light:
                     if(m_lightCount < m_maxLights)
@@ -115,7 +130,8 @@ namespace Level_editor
                         p.BackColor = sunColour;
                         p.Move += node_Move;
                         p.ContextMenuStrip = m_nodeMenu;
-                        p.BackgroundImage = Image.FromFile(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\icons\bulb.png"); 
+                        p.BackgroundImage = Properties.Resources.bulb;
+                        nd.layer = Layer.FrontDetail;
                     }
                     else
                     {
@@ -126,8 +142,9 @@ namespace Level_editor
                 default: break;
             }
 
+            p.Tag = nd;
             panelEditorInner.Controls.Add(p);
-
+            if(m_canSort) sortNodes();
             return p;
         }
 
@@ -138,7 +155,7 @@ namespace Level_editor
             if (m_selectedNode != null)
             {
                 m_selectedNode.BorderStyle = BorderStyle.None;
-                if((Node.BodyType)m_selectedNode.Tag == Node.BodyType.Light)
+                if(((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
                 {
                     //remove colour picker
                     panelNodeColour.Click -= pickLightColour;
@@ -158,8 +175,9 @@ namespace Level_editor
             numericUpDownNodePropertySizeY.Value = (decimal)m_selectedNode.Height * scale;
 
 
-            var tag = (Node.BodyType)p.Tag;
-            if(tag == Node.BodyType.Solid || tag == Node.BodyType.Water)
+            var tag = ((NodeData)p.Tag);
+            var type = tag.type;
+            if(type == Node.BodyType.Solid || type == Node.BodyType.Water)
             {
                 numericUpDownNodePropertySizeX.Enabled = true;
                 numericUpDownNodePropertySizeY.Enabled = true;
@@ -169,10 +187,10 @@ namespace Level_editor
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;
             }
-            comboBoxNodePropertyType.SelectedValue = tag;
+            comboBoxNodePropertyType.SelectedValue = type;
             comboBoxNodePropertyType.Enabled = true;
 
-            if(tag == Node.BodyType.Light)
+            if(type == Node.BodyType.Light)
             {
                 //add event handler and set colour
                 panelNodeColour.Click += pickLightColour;
@@ -241,6 +259,9 @@ namespace Level_editor
 
         private void openFile(string path)
         {
+            //prevent sorting until load complete
+            m_canSort = false;
+            
             //create new map object and parse data into it
             m_currentMap = new Map();
 
@@ -303,6 +324,10 @@ namespace Level_editor
             //set window title to map name
             this.Text = m_currentMap.MapName;
             m_modified = false;
+
+            //reenable sort and perform inital sorting
+            m_canSort = true;
+            sortNodes();
         }
 
         private void saveFile()
@@ -329,6 +354,33 @@ namespace Level_editor
             //update map object path and save
             m_currentMap.MapName = Path.GetFileName(path);
             saveFile();
+        }
+
+        private void sortNodes()
+        {
+            Control[] controls = new Control[panelEditorInner.Controls.Count];
+            panelEditorInner.Controls.CopyTo(controls, 0);
+
+            Array.Sort(controls, new ControlsComparer());
+
+            panelEditorInner.Controls.Clear();
+            panelEditorInner.Controls.AddRange(controls);
+        }
+
+        private class ControlsComparer : IComparer<Control>
+        {
+            public int Compare(Control a, Control b)
+            {
+                Panel pA = (Panel)a;
+                Panel pB = (Panel)b;
+
+                NodeData ndA = (NodeData)pA.Tag;
+                NodeData ndB = (NodeData)pB.Tag;
+
+                if ((int)ndA.type < (int)ndB.type) return 1;
+                else if ((int)ndA.type > (int)ndB.type) return -1;
+                else return 0;
+            }
         }
 
     }

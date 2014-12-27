@@ -38,6 +38,16 @@ using Newtonsoft.Json;
 
 namespace Level_editor
 {
+    enum Layer
+    {
+        Background,
+        RearDetail,
+        Dynamic,
+        Water,
+        Solid,
+        FrontDetail
+    }
+
     class Node
     {
         public Node(Panel p)
@@ -46,7 +56,8 @@ namespace Level_editor
             //actual game area
             m_position = new Point(p.Left * 2, p.Top * 2);
             m_size = new Size(p.Width * 2, p.Height * 2);
-            var type = (BodyType)p.Tag;
+            var tag = (NodeData)p.Tag;
+            var type = tag.type;
             switch (type)
             {
                 case BodyType.Solid:
@@ -131,5 +142,11 @@ namespace Level_editor
             get { return m_colour; }
             set { m_colour = value; }
         }
+    }
+
+    struct NodeData
+    {
+        public Layer layer;
+        public Node.BodyType type;
     }
 }

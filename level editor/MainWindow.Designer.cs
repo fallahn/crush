@@ -39,6 +39,8 @@
             this.buttonAddNode = new System.Windows.Forms.Button();
             this.comboBoxAddNode = new System.Windows.Forms.ComboBox();
             this.groupBoxNodeProperties = new System.Windows.Forms.GroupBox();
+            this.panelNodeColour = new System.Windows.Forms.Panel();
+            this.label13 = new System.Windows.Forms.Label();
             this.buttonDeleteNode = new System.Windows.Forms.Button();
             this.numericUpDownNodePropertySizeY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownNodePropertySizeX = new System.Windows.Forms.NumericUpDown();
@@ -49,6 +51,10 @@
             this.comboBoxNodePropertyType = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBoxMapProperties = new System.Windows.Forms.GroupBox();
+            this.panelAmbientColour = new System.Windows.Forms.Panel();
+            this.panelSunColour = new System.Windows.Forms.Panel();
+            this.label12 = new System.Windows.Forms.Label();
+            this.label11 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.numericUpDownPlayerTwoY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownPlayerTwoX = new System.Windows.Forms.NumericUpDown();
@@ -71,12 +77,8 @@
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.label11 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.panelSunColour = new System.Windows.Forms.Panel();
-            this.panelAmbientColour = new System.Windows.Forms.Panel();
-            this.label13 = new System.Windows.Forms.Label();
-            this.panelNodeColour = new System.Windows.Forms.Panel();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -251,6 +253,23 @@
             this.groupBoxNodeProperties.TabStop = false;
             this.groupBoxNodeProperties.Text = "Node Properties";
             // 
+            // panelNodeColour
+            // 
+            this.panelNodeColour.BackColor = System.Drawing.Color.DarkGray;
+            this.panelNodeColour.Location = new System.Drawing.Point(134, 129);
+            this.panelNodeColour.Name = "panelNodeColour";
+            this.panelNodeColour.Size = new System.Drawing.Size(75, 25);
+            this.panelNodeColour.TabIndex = 10;
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(15, 141);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(95, 13);
+            this.label13.TabIndex = 9;
+            this.label13.Text = "Colour (lights only):";
+            // 
             // buttonDeleteNode
             // 
             this.buttonDeleteNode.Location = new System.Drawing.Point(134, 164);
@@ -396,6 +415,40 @@
             this.groupBoxMapProperties.TabIndex = 0;
             this.groupBoxMapProperties.TabStop = false;
             this.groupBoxMapProperties.Text = "Map Properties";
+            // 
+            // panelAmbientColour
+            // 
+            this.panelAmbientColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
+            this.panelAmbientColour.Location = new System.Drawing.Point(134, 396);
+            this.panelAmbientColour.Name = "panelAmbientColour";
+            this.panelAmbientColour.Size = new System.Drawing.Size(75, 25);
+            this.panelAmbientColour.TabIndex = 17;
+            // 
+            // panelSunColour
+            // 
+            this.panelSunColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(252)))), ((int)(((byte)(230)))));
+            this.panelSunColour.Location = new System.Drawing.Point(134, 365);
+            this.panelSunColour.Name = "panelSunColour";
+            this.panelSunColour.Size = new System.Drawing.Size(75, 24);
+            this.panelSunColour.TabIndex = 16;
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(15, 408);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(81, 13);
+            this.label12.TabIndex = 15;
+            this.label12.Text = "Ambient Colour:";
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(16, 376);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(62, 13);
+            this.label11.TabIndex = 14;
+            this.label11.Text = "Sun Colour:";
             // 
             // label9
             // 
@@ -571,7 +624,8 @@
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem});
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1333, 24);
@@ -631,56 +685,21 @@
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
-            // label11
+            // editToolStripMenuItem
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(16, 376);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(62, 13);
-            this.label11.TabIndex = 14;
-            this.label11.Text = "Sun Colour:";
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.optionsToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.editToolStripMenuItem.Text = "Edit";
             // 
-            // label12
+            // optionsToolStripMenuItem
             // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(15, 408);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(81, 13);
-            this.label12.TabIndex = 15;
-            this.label12.Text = "Ambient Colour:";
-            // 
-            // panelSunColour
-            // 
-            this.panelSunColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(252)))), ((int)(((byte)(230)))));
-            this.panelSunColour.Location = new System.Drawing.Point(134, 365);
-            this.panelSunColour.Name = "panelSunColour";
-            this.panelSunColour.Size = new System.Drawing.Size(75, 24);
-            this.panelSunColour.TabIndex = 16;
-            // 
-            // panelAmbientColour
-            // 
-            this.panelAmbientColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.panelAmbientColour.Location = new System.Drawing.Point(134, 396);
-            this.panelAmbientColour.Name = "panelAmbientColour";
-            this.panelAmbientColour.Size = new System.Drawing.Size(75, 25);
-            this.panelAmbientColour.TabIndex = 17;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(15, 141);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(95, 13);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "Colour (lights only):";
-            // 
-            // panelNodeColour
-            // 
-            this.panelNodeColour.BackColor = System.Drawing.Color.DarkGray;
-            this.panelNodeColour.Location = new System.Drawing.Point(134, 129);
-            this.panelNodeColour.Name = "panelNodeColour";
-            this.panelNodeColour.Size = new System.Drawing.Size(75, 25);
-            this.panelNodeColour.TabIndex = 10;
+            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Text = "Options";
+            this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
             // MainWindow
             // 
@@ -778,6 +797,8 @@
         private System.Windows.Forms.Panel panelAmbientColour;
         private System.Windows.Forms.Panel panelNodeColour;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
     }
 }
 

@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,7 +50,7 @@ namespace Level_editor
         private Panel m_selectedNode = null;
 
         private Size blockSize = new Size(66, 66);
-        private Size playerSize = new Size(60, 40);
+        private Size playerSize = new Size(41, 64);
         private Size itemSize = new Size(64, 64);
         private const int scale = 2;// ui is half the size of the actual game world
         private Color playerOneColour = Color.DodgerBlue;
@@ -64,10 +65,27 @@ namespace Level_editor
 
         ContextMenuStrip m_nodeMenu = new ContextMenuStrip();
 
+        private string m_textureDirectory;
+        public string TextureDirectory
+        {
+            set { m_textureDirectory = value; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             //WindowState = FormWindowState.Maximized;
+
+            m_textureDirectory = RegKey.read("texture_directory");
+            if(m_textureDirectory == null || !Directory.Exists(m_textureDirectory))
+            {
+                if(MessageBox.Show("No valid texture path found. Click OK to browse\n or Cancel to continue (textures will be unavailable)",
+                    "Warning", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                {
+                    OptionsWindow ow = new OptionsWindow(this);
+                    ow.ShowDialog();
+                }
+            }
         }
 
 
@@ -196,6 +214,11 @@ namespace Level_editor
         {
             this.Close();
         }
+        private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OptionsWindow optionsWindow = new OptionsWindow(this);
+            optionsWindow.ShowDialog();
+        }
 
         //map properties
         private void numericUpDownNpcCount_ValueChanged(object sender, EventArgs e)
@@ -231,22 +254,26 @@ namespace Level_editor
         }
         private void pickColour(object sender, EventArgs e)
         {
+            var p = (Panel)sender;
             ColorDialog cd = new ColorDialog();
+            cd.Color = p.BackColor;
+            cd.FullOpen = true;
             if(cd.ShowDialog() == DialogResult.OK)
             {
-                var p = (Panel)sender;
                 p.BackColor = cd.Color;
             }
         }
         private void pickLightColour(object sender, EventArgs e)
         {
+            var p = (Panel)sender;
             ColorDialog cd = new ColorDialog();
+            cd.Color = p.BackColor;
+            cd.FullOpen = true;
             if (cd.ShowDialog() == DialogResult.OK)
             {
-                var p = (Panel)sender;
                 p.BackColor = cd.Color;
                 if(m_selectedNode != null
-                    && (Node.BodyType)m_selectedNode.Tag == Node.BodyType.Light)
+                    && ((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
                 {
                     m_selectedNode.BackColor = cd.Color;
                 }
@@ -291,7 +318,8 @@ namespace Level_editor
             if (m_selectedNode != null)
             {
                 Node.BodyType type = (Node.BodyType)comboBoxNodePropertyType.SelectedValue;
-                m_selectedNode.Tag = type;
+                var nodeData = (NodeData)m_selectedNode.Tag;
+                nodeData.type = type;
                 switch(type)
                 {
                     case Node.BodyType.Block:
@@ -337,7 +365,7 @@ namespace Level_editor
 
                 panelNodeColour.BackColor = Color.DarkGray;
                 panelNodeColour.Click -= pickColour;
-                if((Node.BodyType)m_selectedNode.Tag == Node.BodyType.Light)
+                if(((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
                 {
                     m_lightCount--;
                 }
@@ -362,7 +390,7 @@ namespace Level_editor
                 case "Solid":
                     type = Node.BodyType.Solid;
                     break;
-                case "Bonus":            
+                case "Item":            
                     type = Node.BodyType.Item;
                     size = itemSize;
                     break;
@@ -472,7 +500,7 @@ namespace Level_editor
             }
 
             var p = (Panel)sender;
-            var t = (Node.BodyType)p.Tag;
+            var t = ((NodeData)p.Tag).type;
             if (t != Node.BodyType.PlayerOne && t != Node.BodyType.PlayerTwo)
             {
                 selectNode(p);
@@ -534,11 +562,10 @@ namespace Level_editor
         {
             if(e.Button == MouseButtons.Left)
             {
-                addNode((Node.BodyType)m_selectedNode.Tag,
+                addNode(((NodeData)m_selectedNode.Tag).type,
                     new Point(960, 540),
                     new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale));
             }
         }
-
     }
 }
