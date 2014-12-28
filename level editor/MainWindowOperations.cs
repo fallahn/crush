@@ -139,6 +139,13 @@ namespace Level_editor
                         return null;
                     }
                     break;
+                case Node.BodyType.Detail:
+                    p.BackColor = Color.Transparent;
+                    p.BackgroundImage = m_selectedFrame.smallImage;
+                    p.Move += node_Move;
+                    p.ContextMenuStrip = m_nodeMenu;
+                    nd.layer = Layer.RearDetail;
+                    break;
                 default: break;
             }
 
@@ -377,8 +384,8 @@ namespace Level_editor
                 NodeData ndA = (NodeData)pA.Tag;
                 NodeData ndB = (NodeData)pB.Tag;
 
-                if ((int)ndA.type < (int)ndB.type) return 1;
-                else if ((int)ndA.type > (int)ndB.type) return -1;
+                if ((int)ndA.layer < (int)ndB.layer) return 1;
+                else if ((int)ndA.layer > (int)ndB.layer) return -1;
                 else return 0;
             }
         }

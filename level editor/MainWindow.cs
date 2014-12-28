@@ -86,6 +86,10 @@ namespace Level_editor
                     ow.ShowDialog();
                 }
             }
+            else
+            {
+                loadTextures();
+            }
         }
 
 
@@ -127,6 +131,10 @@ namespace Level_editor
             deleteItem.MouseDown += buttonDeleteNode_Click;
             m_nodeMenu.Items.Add(deleteItem);
 
+            ToolStripMenuItem propertiesItem = new ToolStripMenuItem("Properties");
+            propertiesItem.Click += propertiesItem_Click;
+            m_nodeMenu.Items.Add(propertiesItem);
+
             //bind node types to comboboxes
             bindComboboxValues(comboBoxAddNode);
             bindComboboxValues(comboBoxNodePropertyType);
@@ -140,6 +148,8 @@ namespace Level_editor
 
             newFile();
         }
+
+
         private void bindComboboxValues(ComboBox cb)
         {
             var data = Enum.GetValues(typeof(Node.BodyType))
@@ -217,7 +227,10 @@ namespace Level_editor
         private void optionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OptionsWindow optionsWindow = new OptionsWindow(this);
-            optionsWindow.ShowDialog();
+            if(optionsWindow.ShowDialog() == DialogResult.OK)
+            {
+                loadTextures();
+            }
         }
 
         //map properties
@@ -374,6 +387,22 @@ namespace Level_editor
                 m_selectedNode = null;
             }
         }
+        private void propertiesItem_Click(object sender, EventArgs e)
+        {
+            var tag = (NodeData)m_selectedNode.Tag;
+            switch (tag.type)
+            {
+                case Node.BodyType.Detail:
+                    BrowseWindow bw = new BrowseWindow(this);
+                    if(bw.ShowDialog() == DialogResult.OK)
+                    {
+                        m_selectedNode.Size = m_selectedFrame.smallImage.Size;
+                        m_selectedNode.BackgroundImage = m_selectedFrame.smallImage;
+                    }
+                    break;
+                default: break;
+            }
+        }
 
         //node addition
         private void buttonAddNode_Click(object sender, EventArgs e)
@@ -401,6 +430,15 @@ namespace Level_editor
                     type = Node.BodyType.Light;
                     size = new Size(60, 60);
                     break;
+                case "Detail":
+                    if(m_spriteSheets.Count > 0)
+                    {
+                        type = Node.BodyType.Detail;
+                        size = m_selectedFrame.largeImage.Size;
+                        break;
+                    }
+                    MessageBox.Show("Details cannot be added when no sprite sheets are loaded");
+                    return;
                 default: break;
             }
 

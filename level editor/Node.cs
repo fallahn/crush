@@ -40,7 +40,7 @@ namespace Level_editor
 {
     enum Layer
     {
-        Background,
+        Background = 0,
         RearDetail,
         Dynamic,
         Water,
@@ -82,6 +82,9 @@ namespace Level_editor
                     m_type = "Light";
                     m_colour = p.BackColor.ToArgb();
                     break;
+                case BodyType.Detail:
+                    m_type = "Detail";
+                    break;
                 default: break;
             }
         }
@@ -110,11 +113,12 @@ namespace Level_editor
             [Description("Water")]
             Water,
             [Description("Light")]
-            Light
+            Light,
+            [Description("Detail")]
+            Detail
         }
 
         private Point m_position;
-
         public Point Position
         {
             get { return m_position; }

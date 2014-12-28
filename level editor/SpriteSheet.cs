@@ -32,48 +32,72 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Forms;
 
-using Newtonsoft.Json;
-
-namespace Level_editor
+namespace Atlas
 {
-    struct FloatRect
+    public class IntRect
     {
-        public float x, y, w, h;
-    }
-    
-    struct Frame
-    {
-        public FloatRect frame;
-        public bool rotated;
-        public bool trimmed;
-        public FloatRect spriteSourceSize;
-        public SizeF pivot;
+        public int x { get; set; }
+        public int y { get; set; }
+        public int w { get; set; }
+        public int h { get; set; }
     }
 
-    class SpriteSheet
+    public class SpriteSourceSize
     {
-        private List<Frame> m_frames;
-        public List<Frame> Frames
-        {
-            get { return m_frames; }
-        }
+        public int x { get; set; }
+        public int y { get; set; }
+        public int w { get; set; }
+        public int h { get; set; }
+    }
 
-        public SpriteSheet()
-        {
-            m_frames = new List<Frame>();
-        }
+    public class SourceSize
+    {
+        public int w { get; set; }
+        public int h { get; set; }
+    }
 
-        public static void LoadFile(string path, SpriteSheet sheet)
-        {
-            JsonSerializer js = new JsonSerializer();
-            js.NullValueHandling = NullValueHandling.Ignore;
+    public class Pivot
+    {
+        public float x { get; set; }
+        public float y { get; set; }
+    }
 
-            using (StreamReader sr = new StreamReader(path))
-            using (JsonReader jr = new JsonTextReader(sr))
-            {
-                sheet = js.Deserialize<SpriteSheet>(jr);
-            }
-        }
+    public class Frame
+    {
+        public string filename { get; set; }
+        public IntRect frame { get; set; }
+        public bool rotated { get; set; }
+        public bool trimmed { get; set; }
+        public SpriteSourceSize spriteSourceSize { get; set; }
+        public SourceSize sourceSize { get; set; }
+        public Pivot pivot { get; set; }
+        public Bitmap largeImage { get; set; }
+        public Bitmap smallImage { get; set; }
+        public SpriteSheet parentSheet { get; set; }
+    }
+
+    public class Size
+    {
+        public int w { get; set; }
+        public int h { get; set; }
+    }
+
+    public class Meta
+    {
+        public string app { get; set; }
+        public string version { get; set; }
+        public string image { get; set; }
+        public string format { get; set; }
+        public Size size { get; set; }
+        public string scale { get; set; }
+        public string smartupdate { get; set; }
+    }
+
+    public class SpriteSheet
+    {
+        public List<Frame> frames { get; set; }
+        public Meta meta { get; set; }
     }
 }
