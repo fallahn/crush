@@ -71,6 +71,7 @@ add_executable(
 	src/Scene.cpp
 	src/ScoreBoard.cpp
 	src/ShaderResource.cpp
+	src/SpriteSheet.cpp
 	src/State.cpp
 	src/StateStack.cpp
 	src/TitleState.cpp

@@ -44,14 +44,6 @@ namespace Atlas
         public int h { get; set; }
     }
 
-    public class SpriteSourceSize
-    {
-        public int x { get; set; }
-        public int y { get; set; }
-        public int w { get; set; }
-        public int h { get; set; }
-    }
-
     public class SourceSize
     {
         public int w { get; set; }
@@ -70,7 +62,7 @@ namespace Atlas
         public IntRect frame { get; set; }
         public bool rotated { get; set; }
         public bool trimmed { get; set; }
-        public SpriteSourceSize spriteSourceSize { get; set; }
+        public IntRect spriteSourceSize { get; set; }
         public SourceSize sourceSize { get; set; }
         public Pivot pivot { get; set; }
         public Bitmap largeImage { get; set; }

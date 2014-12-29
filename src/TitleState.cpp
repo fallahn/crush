@@ -34,6 +34,7 @@ source distribution.
 #include <Resource.hpp>
 #include <Util.hpp>
 
+
 namespace
 {
     sf::Text titleText;

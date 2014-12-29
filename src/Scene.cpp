@@ -119,10 +119,10 @@ Node::Ptr Scene::removeNode(Node& node)
     Node::Ptr np;
     for (auto& c : m_children)
     {
-        np = c->removeChild(node);
+        np = std::move(c->removeChild(node));
         if (np) return np;
     }
-    return std::move(np);
+    return np;
 }
 
 void Scene::setLayerDrawable(sf::Drawable* d, Layer layer)

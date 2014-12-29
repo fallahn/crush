@@ -87,15 +87,15 @@ Node::Ptr Node::removeChild(Node& child)
         return found;
     }
 
-    //search recursively
+    //search recursively - TODO why does this get stuck in infinite loop in some cases?
     Node::Ptr np;
-    for (auto& c : m_children)
+    /*for (auto& c : m_children)
     {
-        np = removeChild(child);
+        np = std::move(removeChild(child));
         if (np) return np;
-    }
+    }*/
 
-    return std::move(np);
+    return np;
 }
 
 Node* Node::findChild(const std::string& name, bool recursive)

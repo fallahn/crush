@@ -36,6 +36,7 @@ source distribution.
 #include <Map.hpp>
 #include <AnimatedSprite.hpp>
 #include <WaterDrawable.hpp>
+#include <SpriteSheet.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -54,7 +55,9 @@ public:
         Item,
         Solid,
         Block,
-        Water
+        Water,
+        RearDrawable,
+        FrontDrawable
     };
 
     MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr);
@@ -93,20 +96,26 @@ private:
     void shuffleItems();
 
 
-    //TODO rename this as we'll recycle it for other layers of the map
-    class SolidDrawable : public sf::Drawable, private sf::NonCopyable
+
+    class LayerDrawable : public sf::Drawable, private sf::NonCopyable
     {
     public:
-        explicit SolidDrawable(TextureResource& tr, sf::Shader& shader);
-        ~SolidDrawable() = default;
+        LayerDrawable(TextureResource& tr, sf::Shader& shader);
+        ~LayerDrawable() = default;
 
-        void addSolid(const sf::Vector2f& position, const sf::Vector2f& size);
+        void addPart(const sf::Vector2f& position, const sf::Vector2f& size, const std::string& textureName);
+        void addSprite(/*frrrrgnlnlne*/);
     private:
-        sf::Texture m_diffuseTexture;
-        sf::Texture m_normalTexture;
-        sf::Shader& m_shader;
+        struct LayerData
+        {
+            sf::Texture diffuseTexture;
+            sf::Texture normalTexture;
+            sf::VertexArray vertexArray;
+        };
 
-        sf::VertexArray m_vertexArray;
+        sf::Shader& m_shader;
+        std::map<std::string, LayerData> m_layerData;
+        TextureResource& m_textureResource;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     } m_drawable;

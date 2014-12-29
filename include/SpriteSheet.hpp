@@ -25,32 +25,46 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//category for node targets
+//class for parsing json files describing texture packer atlases.
+//not related to animated sprites.
 
-#ifndef COMMAND_CAT_H_
-#define COMMAND_CAT_H_
+#ifndef SPRITE_SHEET_H_
+#define SPRITE_SHEET_H_
 
-namespace Category
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics/Rect.hpp>
+
+#include <string>
+#include <array>
+#include <vector>
+
+class SpriteSheet final
 {
-    enum Type
-    {
-        None            = 0,
-        PlayerOne       = (1 << 0), //don't rely on these actually being '1' and '2' respectively
-        PlayerTwo       = (1 << 1),
-        Block           = (1 << 2),
-        Npc             = (1 << 3),
-        GrabbedOne      = (1 << 4), //for dragging
-        GrabbedTwo      = (1 << 5),
-        LastTouchedOne  = (1 << 6),
-        LastTouchedTwo  = (1 << 7),
-        Solid           = (1 << 8),
-        CarriedOne      = (1 << 9), //for carrying
-        CarriedTwo      = (1 << 10),
-        Item            = (1 << 11),
-        Water           = (1 << 12),
-        Light           = (1 << 13),
-        Detail          = (1 << 14)
-    };
-}
+public:
+    typedef std::array<sf::Vertex, 4u> Quad;
 
-#endif //COMMAND_CAT_H_
+    SpriteSheet(const std::string& path);
+    SpriteSheet(const SpriteSheet& copy) = default;
+    ~SpriteSheet() = default;
+
+    const std::string& getName() const;
+    Quad getFrame(const std::string& name, const sf::Vector2f& position);
+
+private:
+    struct Frame
+    {
+        Frame() : rotated(false), trimmed(false){}
+        std::string filename;
+        sf::FloatRect frame;
+        bool rotated;
+        bool trimmed;
+        sf::FloatRect spriteSourceSize;
+        sf::Vector2f sourceSize;
+        sf::Vector2f pivot;
+    };
+
+    std::string m_name;
+    std::vector<Frame> m_frames;
+};
+
+#endif //SPRITE_SHEET_H_

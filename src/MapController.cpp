@@ -137,7 +137,7 @@ void MapController::loadMap(const Map& map)
         {
             spawn(n);
             if (n.type == Category::Solid)
-                m_drawable.addSolid(n.position, n.size);
+                m_drawable.addPart(n.position, n.size, "funt");
             else if (n.type == Category::Block)
                 m_blockSprite.setScale(n.size.x / blockTextureSize.x, n.size.y / blockTextureSize.y);
         }
@@ -178,35 +178,46 @@ void MapController::shuffleItems()
 
 
 //--------------drawable--------------
-MapController::SolidDrawable::SolidDrawable(TextureResource& tr, sf::Shader& shader)
-    : m_vertexArray     (sf::Quads),
+MapController::LayerDrawable::LayerDrawable(TextureResource& tr, sf::Shader& shader)
+    : m_textureResource (tr),
     m_shader            (shader)
 {
-    m_diffuseTexture = tr.get("res/textures/brick_diffuse.png");
-    m_diffuseTexture.setRepeated(true);
 
-    m_normalTexture = tr.get("res/textures/brick_normal.png");
-    m_normalTexture.setRepeated(true);
 }
 
-void MapController::SolidDrawable::addSolid(const sf::Vector2f& pos, const sf::Vector2f& size)
+void MapController::LayerDrawable::addPart(const sf::Vector2f& pos, const sf::Vector2f& size, const std::string& textureName)
 {
-    m_vertexArray.append({ pos, pos });
+    if (m_layerData.find(textureName) == m_layerData.end())
+    {
+        m_layerData.insert(std::make_pair(textureName, LayerData()));
+        //TODO how to decide which normal map to load, if at all?
+        m_layerData[textureName].diffuseTexture = m_textureResource.get("res/textures/brick_diffuse.png");
+        m_layerData[textureName].diffuseTexture.setRepeated(true);
+        m_layerData[textureName].normalTexture = m_textureResource.get("res/textures/brick_normal.png");
+        m_layerData[textureName].normalTexture.setRepeated(true);
+        m_layerData[textureName].vertexArray.setPrimitiveType(sf::Quads);
+    }
+    
+    auto& vertexArray = m_layerData[textureName].vertexArray;
+    vertexArray.append({ pos, pos });
     sf::Vector2f p(pos.x + size.x, pos.y);
-    m_vertexArray.append({ p, p });
+    vertexArray.append({ p, p });
     p.y += size.y;
-    m_vertexArray.append({ p, p });
+    vertexArray.append({ p, p });
     p.x -= size.x;
-    m_vertexArray.append({ p, p });
+    vertexArray.append({ p, p });
 }
 
-void MapController::SolidDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+void MapController::LayerDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-    m_shader.setParameter("u_diffuseMap", m_diffuseTexture);
-    m_shader.setParameter("u_normalMap", m_normalTexture);
     m_shader.setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
-
-    states.texture = &m_diffuseTexture;
     states.shader = &m_shader;
-    rt.draw(m_vertexArray, states);
+
+    for (const auto& layer : m_layerData)
+    {
+        m_shader.setParameter("u_diffuseMap", layer.second.diffuseTexture);
+        m_shader.setParameter("u_normalMap", layer.second.normalTexture);
+        states.texture = &layer.second.diffuseTexture;
+        rt.draw(layer.second.vertexArray, states);
+    }
 }

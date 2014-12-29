@@ -99,18 +99,27 @@ Map::Map(const std::string& path)
     //node array
     if (v.get("Nodes").is<picojson::array>())
     {
-        auto nodes = v.get("Nodes").get<picojson::array>();
+        const auto& nodes = v.get("Nodes").get<picojson::array>();
         for (const auto& n : nodes)
         {
             if (n.get("Position").is<std::string>()
                 && n.get("Size").is<std::string>()
                 && n.get("Type").is<std::string>()
-                && n.get("Colour").is<double>())
+                && n.get("Colour").is<double>()
+                && n.get("Layer").is<std::string>())
             {
                 m_nodes.emplace_back(n.get("Position").get<std::string>(),
                     n.get("Size").get<std::string>(),
                     n.get("Type").get<std::string>(),
-                    colourFromInt(static_cast<int>(n.get("Colour").get<double>())));
+                    colourFromInt(static_cast<int>(n.get("Colour").get<double>())),
+                    n.get("Layer").get<std::string>());
+
+                //sprite sheets and file names are optional
+                if (n.get("SpriteSheet").is<std::string>())
+                    m_nodes.back().spriteSheet = n.get("SpriteSheet").get<std::string>();
+
+                if (n.get("FileName").is<std::string>())
+                    m_nodes.back().image = n.get("FileName").get<std::string>();
             }
             else
             {
@@ -185,7 +194,7 @@ sf::Color Map::colourFromInt(sf::Int32 value)
 }
 
 //node ctor
-Map::Node::Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& c)
+Map::Node::Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& c, const std::string& layer)
     : position  (Util::Vector::vec2FromString(position)),
     size        (Util::Vector::vec2FromString(size)),
     type        (Category::None),
@@ -218,5 +227,32 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     else if (type == "Light")
     {
         this->type = Category::Light;
+    }
+    else if (type == "Detail")
+    {
+        this->type = Category::Detail;
+    }
+
+    //-----------------------------//
+
+    if (layer == "FrontDetail")
+    {
+        this->layer = Scene::FrontDetail;
+    }
+    else if (layer == "Solid")
+    {
+        this->layer = Scene::Solid;
+    }
+    else if (layer == "Water")
+    {
+        this->layer = Scene::Water;
+    }
+    else if (layer == "Dynamic")
+    {
+        this->layer = Scene::Dynamic;
+    }
+    else if (layer == "RearDetail")
+    {
+        this->layer = Scene::RearDetail;
     }
 }

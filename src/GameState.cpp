@@ -108,6 +108,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addObserver(m_scoreBoard);
     m_scene.addObserver(m_particleController);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Solid), Scene::Solid);
+    //TODO set front a rear details drawables
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
 

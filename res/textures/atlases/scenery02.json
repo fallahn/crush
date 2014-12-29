@@ -7,7 +7,7 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":21,"y":14,"w":183,"h":222},
 	"sourceSize": {"w":212,"h":244},
-	"pivot": {"x":0.5,"y":0.5}
+	"pivot": {"x":0,"y":0}
 },
 {
 	"filename": "Oak-Tree-Sprite.png",
@@ -16,7 +16,7 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":9,"y":5,"w":206,"h":213},
 	"sourceSize": {"w":222,"h":223},
-	"pivot": {"x":0.5,"y":0.5}
+	"pivot": {"x":0,"y":0}
 },
 {
 	"filename": "Poplar-Tree-Sprite.png",
@@ -25,7 +25,7 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":9,"y":7,"w":117,"h":212},
 	"sourceSize": {"w":132,"h":219},
-	"pivot": {"x":0.5,"y":0.5}
+	"pivot": {"x":0,"y":0}
 },
 {
 	"filename": "Raspberry-Bush-Sprite.png",
@@ -34,7 +34,7 @@
 	"trimmed": true,
 	"spriteSourceSize": {"x":2,"y":2,"w":58,"h":52},
 	"sourceSize": {"w":60,"h":54},
-	"pivot": {"x":0.5,"y":0.5}
+	"pivot": {"x":0,"y":0}
 }],
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
@@ -43,6 +43,6 @@
 	"format": "RGBA8888",
 	"size": {"w":553,"h":241},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:ca57eb62dc5f7ecfe2875d6ba2e960d0:36fbacd58b44050777cff3d68d1b8930:84b2cbdc6a92cadd60429648525c941d$"
+	"smartupdate": "$TexturePacker:SmartUpdate:c2d0c3a68a3cc25e4d24332e3fbd986b:36fbacd58b44050777cff3d68d1b8930:84b2cbdc6a92cadd60429648525c941d$"
 }
 }

@@ -36,6 +36,8 @@ source distribution.
 #include <SFML/Config.hpp>
 #include <SFML/Graphics/Color.hpp>
 
+#include <Scene.hpp>
+
 #include <string>
 #include <vector>
 
@@ -45,11 +47,14 @@ public:
 
     struct Node final
     {
-        Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& colour);
+        Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& colour, const std::string& layer);
         sf::Vector2f position;
         sf::Vector2f size;
         Category::Type type;
         sf::Color colour;
+        Scene::Layer layer;
+        std::string spriteSheet;
+        std::string image;
     };
 
     explicit Map(const std::string& path);

@@ -100,6 +100,7 @@
     <ClCompile Include="src\PlayerBehaviour.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
+    <ClCompile Include="src\SpriteSheet.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
     <ClCompile Include="src\TitleState.cpp" />
@@ -113,6 +114,7 @@
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\MapController.hpp" />
+    <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\UberShader.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />
     <ClInclude Include="include\NpcController.hpp" />
