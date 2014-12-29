@@ -144,7 +144,9 @@ namespace Level_editor
                     p.BackgroundImage = m_selectedFrame.smallImage;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
-                    nd.layer = Layer.RearDetail;
+                    nd.layer = Layer.RearDetail; //TODO choose this between front / rear
+                    nd.frameName = m_selectedFrame.filename;
+                    nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
                     break;
                 default: break;
             }
@@ -203,6 +205,21 @@ namespace Level_editor
                 panelNodeColour.Click += pickLightColour;
                 panelNodeColour.BackColor = m_selectedNode.BackColor;
             }
+
+            if(type == Node.BodyType.Detail)
+            {
+                selectFrame(tag.spriteSheet, tag.frameName);
+            }
+        }
+
+        private void setPanelTexture(ref Panel p)
+        {
+            p.BackgroundImage = m_selectedFrame.smallImage;
+            p.Size = p.BackgroundImage.Size;
+            var nd = (NodeData)p.Tag;
+            nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
+            nd.frameName = m_selectedFrame.filename;
+            p.Tag = nd;
         }
 
         /// <summary>
@@ -317,6 +334,10 @@ namespace Level_editor
                         break;
                     case "Light":
                         addNode(Node.BodyType.Light, n.Position, n.Size).BackColor = Color.FromArgb(n.Colour);
+                        break;
+                    case "Detail":
+                        selectFrame(n.SpriteSheet, n.FrameName);
+                        addNode(Node.BodyType.Detail, n.Position, n.Size);
                         break;
                 }
             }

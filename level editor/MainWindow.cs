@@ -76,6 +76,11 @@ namespace Level_editor
             InitializeComponent();
             //WindowState = FormWindowState.Maximized;
 
+            //generate default data for selected sprite so it won't get all
+            //borked when there are no sprite sheets to load / missing
+            m_selectedFrame.largeImage = defaultImage();
+            m_selectedFrame.smallImage = defaultImage();
+
             m_textureDirectory = RegKey.read("texture_directory");
             if(m_textureDirectory == null || !Directory.Exists(m_textureDirectory))
             {
@@ -332,27 +337,64 @@ namespace Level_editor
             {
                 Node.BodyType type = (Node.BodyType)comboBoxNodePropertyType.SelectedValue;
                 var nodeData = (NodeData)m_selectedNode.Tag;
+                if (nodeData.type == type) return;
+
                 nodeData.type = type;
+                nodeData.spriteSheet = null;
+                nodeData.frameName = null;
+                
                 switch(type)
                 {
                     case Node.BodyType.Block:
                         m_selectedNode.BackColor = blockColour;
                         m_selectedNode.Width = blockSize.Width / scale;
                         m_selectedNode.Height = blockSize.Height / scale;
+                        m_selectedNode.BackgroundImage = Properties.Resources.block;
+                        nodeData.layer = Layer.Dynamic;
                         break;
                     case Node.BodyType.Item:
                         m_selectedNode.BackColor = bonusColour;
                         m_selectedNode.Width = itemSize.Width / scale;
                         m_selectedNode.Height = itemSize.Height / scale;
+                        m_selectedNode.BackgroundImage = Properties.Resources.item;
+                        nodeData.layer = Layer.Dynamic;
                         break;
                     case Node.BodyType.Solid:
                         m_selectedNode.BackColor = solidColour;
+                        m_selectedNode.BackgroundImage = null;
+                        nodeData.layer = Layer.Solid;
                         break;
                     case Node.BodyType.Water:
                         m_selectedNode.BackColor = waterColour;
+                        m_selectedNode.BackgroundImage = null;
+                        nodeData.layer = Layer.Water;
+                        break;
+                    case Node.BodyType.Detail:
+                        if (m_spriteSheets.Count > 0)
+                        {
+                            m_selectedNode.BackColor = Color.Transparent;
+                            m_selectedNode.BackgroundImage = m_selectedFrame.smallImage;
+                            m_selectedNode.Size = m_selectedFrame.smallImage.Size;
+                            nodeData.layer = Layer.RearDetail;
+                            nodeData.spriteSheet = m_selectedFrame.parentSheet.meta.image;
+                            nodeData.frameName = m_selectedFrame.filename;
+                            break;
+                        }
+                        else
+                        {
+                            comboBoxNodePropertyType.SelectedIndex--;
+                            return;
+                        }
+                    case Node.BodyType.Light:
+                        m_selectedNode.BackColor = panelNodeColour.BackColor;
+                        m_selectedNode.Width = itemSize.Width / scale;
+                        m_selectedNode.Height = itemSize.Height / scale;
+                        m_selectedNode.BackgroundImage = Properties.Resources.bulb;
+                        nodeData.layer = Layer.FrontDetail;
                         break;
                     default: break;
                 }
+                m_selectedNode.Tag = nodeData;
                 
                 if(type == Node.BodyType.Solid
                     || type == Node.BodyType.Water)
@@ -365,6 +407,22 @@ namespace Level_editor
                     numericUpDownNodePropertySizeX.Enabled = false;
                     numericUpDownNodePropertySizeY.Enabled = false;
                 }
+
+                if(type == Node.BodyType.Light)
+                {
+                    //enable colour picker
+                    panelNodeColour.Click += pickLightColour;
+                    panelNodeColour.BackColor = m_selectedNode.BackColor;
+                }
+                else
+                {
+                    //disable
+                    panelNodeColour.Click -= pickLightColour;
+                    panelNodeColour.BackColor = Color.DarkGray;
+                }
+
+                //sort layers
+                sortNodes();
             }
         }
         private void buttonDeleteNode_Click(object sender, EventArgs e)
@@ -396,8 +454,7 @@ namespace Level_editor
                     BrowseWindow bw = new BrowseWindow(this);
                     if(bw.ShowDialog() == DialogResult.OK)
                     {
-                        m_selectedNode.Size = m_selectedFrame.smallImage.Size;
-                        m_selectedNode.BackgroundImage = m_selectedFrame.smallImage;
+                        setPanelTexture(ref m_selectedNode);
                     }
                     break;
                 default: break;

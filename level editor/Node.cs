@@ -87,15 +87,22 @@ namespace Level_editor
                     break;
                 default: break;
             }
+            m_layer = Enum.GetName(typeof(Layer), tag.layer);
+
+            m_spritesheet = tag.spriteSheet;
+            m_frameName = tag.frameName;
         }
 
         [JsonConstructor]
-        public Node(Point position, Size size, string type, Int32 colour = 0)
+        public Node(Point position, Size size, string type, string layer, Int32 colour = 0, string spriteSheet = "", string frameName = "")
         {
             m_position = position;
             m_size = size;
             m_type = type;
+            m_layer = layer;
             m_colour = colour;
+            m_spritesheet = spriteSheet;
+            m_frameName = frameName;
         }
         
         public enum BodyType
@@ -126,7 +133,6 @@ namespace Level_editor
         }
 
         private Size m_size;
-
         public Size Size
         {
             get { return m_size; }
@@ -140,11 +146,32 @@ namespace Level_editor
             set { m_type = value; }
         }
 
+        private string m_layer;
+        public string Layer
+        {
+            get { return m_layer; }
+            set { m_layer = value; }
+        }
+
         private Int32 m_colour;
         public Int32 Colour
         {
             get { return m_colour; }
             set { m_colour = value; }
+        }
+
+        private string m_spritesheet;
+        public string SpriteSheet
+        {
+            get { return m_spritesheet; }
+            set { m_spritesheet = value; }
+        }
+
+        private string m_frameName;
+        public string FrameName
+        {
+            get { return m_frameName; }
+            set { m_frameName = value; }
         }
     }
 
@@ -152,5 +179,7 @@ namespace Level_editor
     {
         public Layer layer;
         public Node.BodyType type;
+        public string spriteSheet;
+        public string frameName;
     }
 }

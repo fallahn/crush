@@ -42,7 +42,7 @@ source distribution.
 
 namespace
 {
-    sf::CircleShape lightDrawable(10.f);
+    sf::CircleShape lightDrawable(5.f);
 
     const sf::Uint8 maxPlayers = 2u;
 
@@ -74,6 +74,8 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
     m_scene.addShader(m_shaderResource.get(Shader::Type::Water));
 
+    float origin = lightDrawable.getRadius();
+    lightDrawable.setOrigin(origin, origin);
 
     //parse map
     Map map("res/maps/testmap2.crm");
@@ -232,13 +234,12 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
 
-    //if (id++ < 3)
-    //{
-        auto light = m_scene.addLight(sf::Vector3f(1.f, 0.88f, 0.55f), 200.f);
-        light->setDepth(90.f);
-        npcNode->setLight(light);
-        npcNode->addObserver(*light);
-    //}
+    //TODO bring this back with deferred rendering
+    /*auto light = m_scene.addLight(sf::Vector3f(1.f, 0.88f, 0.55f), 200.f);
+    light->setDepth(90.f);
+    npcNode->setLight(light);
+    npcNode->addObserver(*light);*/
+    
     m_scene.addNode(npcNode, Scene::Dynamic);
 }
 
@@ -283,18 +284,18 @@ void GameState::addMapBody(const Map::Node& n)
         break;
     case Category::Light:
     {
-        //auto node = std::make_unique<Node>(std::to_string(id++));
-        //node->setCategory(Category::Light);
-        ////TODO magix0r numb0rz
-        //auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
-        //light->setDepth(200.f);
-        //node->setLight(light);
-        //node->setPosition(n.position);
-        //node->addObserver(*light);
-        //node->setDrawable(&lightDrawable);
+        auto node = std::make_unique<Node>(std::to_string(id++));
+        node->setCategory(Category::Light);
+        //TODO magix0r numb0rz
+        auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
+        light->setDepth(200.f);
+        node->setLight(light);
+        node->setPosition(n.position + (n.size / 2.f));
+        node->addObserver(*light);
+        node->setDrawable(&lightDrawable);
         //node->setBlendMode(sf::BlendAlpha);
 
-        //m_scene.addNode(node);
+        m_scene.addNode(node, Scene::RearDetail);
     }
     default: break;
     }

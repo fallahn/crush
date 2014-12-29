@@ -47,7 +47,7 @@ namespace Level_editor
     partial class MainWindow : Form
     {
         private List<SpriteSheet> m_spriteSheets = new List<SpriteSheet>();
-        private Frame m_selectedFrame = null;
+        private Frame m_selectedFrame = new Frame();
 
         public List<SpriteSheet> SpriteSheets
         {
@@ -158,7 +158,7 @@ namespace Level_editor
             return array;
         }
 
-        public bool loadFile(string path)
+        private bool loadFile(string path)
         {           
             try
             {
@@ -180,6 +180,39 @@ namespace Level_editor
                 MessageBox.Show(e.Message, "Failed to parse atlas json");
                 return false;
             }
+        }
+
+        private void selectFrame(string spriteSheet, string frameName)
+        {
+            foreach(SpriteSheet ss in m_spriteSheets)
+            {
+                if(ss.meta.image == spriteSheet)
+                {
+                    foreach(Frame f in ss.frames)
+                    {
+                        if(f.filename == frameName)
+                        {
+                            m_selectedFrame = f;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        private Bitmap defaultImage()
+        {
+            Bitmap bitmap = new Bitmap(32, 32);
+
+            for (var x = 0; x < 32; ++x)
+            {
+                for (var y = 0; y < 32; ++y)
+                {
+                    bitmap.SetPixel(x, y, Color.Magenta);
+                }
+            }
+
+            return bitmap;
         }
     }
 }
