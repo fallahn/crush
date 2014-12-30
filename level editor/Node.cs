@@ -45,7 +45,8 @@ namespace Level_editor
         Dynamic,
         Water,
         Solid,
-        FrontDetail
+        FrontDetail,
+        None
     }
 
     class Node

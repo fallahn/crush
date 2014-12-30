@@ -33,7 +33,6 @@ source distribution.
 #include <Map.hpp>
 #include <Light.hpp>
 
-
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -42,7 +41,8 @@ source distribution.
 
 namespace
 {
-    sf::CircleShape lightDrawable(5.f);
+    sf::CircleShape lightDrawable(6.f);
+    sf::Sprite backgroundSprite;
 
     const sf::Uint8 maxPlayers = 2u;
 
@@ -52,8 +52,6 @@ namespace
             static_cast<float>(c.g) / 255.f,
             static_cast<float>(c.b) / 255.f };
     }
-
-    int id = 0;
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -72,10 +70,16 @@ GameState::GameState(StateStack& stack, Context context)
     Scene::defaultCamera.setView(getContext().defaultView);
     m_scene.addShader(m_shaderResource.get(Shader::Type::FlatShaded));
     m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
+    m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMap));
     m_scene.addShader(m_shaderResource.get(Shader::Type::Water));
 
     float origin = lightDrawable.getRadius();
     lightDrawable.setOrigin(origin, origin);
+    lightDrawable.setFillColor(sf::Color(255u, 255u, 255u, 140u));
+    lightDrawable.setOutlineColor(sf::Color(255u, 255u, 255u, 11u));
+    lightDrawable.setOutlineThickness(80.f);
+
+    backgroundSprite.setTexture(m_textureResource.get("res/textures/background.png"));
 
     //parse map
     Map map("res/maps/testmap2.crm");
@@ -108,7 +112,9 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addObserver(m_scoreBoard);
     m_scene.addObserver(m_particleController);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Solid), Scene::Solid);
-    //TODO set front a rear details drawables
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::RearDrawable), Scene::RearDetail);
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::FrontDrawable), Scene::FrontDetail);
+    m_scene.setLayerDrawable(&backgroundSprite, Scene::Background);
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
 
@@ -285,18 +291,18 @@ void GameState::addMapBody(const Map::Node& n)
         break;
     case Category::Light:
     {
-        auto node = std::make_unique<Node>(std::to_string(id++));
+        auto node = std::make_unique<Node>();
         node->setCategory(Category::Light);
         //TODO magix0r numb0rz
-        auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
-        light->setDepth(200.f);
+        auto light = m_scene.addLight(colourToVec3(n.colour), 600.f);
+        light->setDepth(450.f);
         node->setLight(light);
         node->setPosition(n.position + (n.size / 2.f));
         node->addObserver(*light);
         node->setDrawable(&lightDrawable);
-        //node->setBlendMode(sf::BlendAlpha);
+        node->setBlendMode(sf::BlendAlpha);
 
-        m_scene.addNode(node, Scene::RearDetail);
+        m_scene.addNode(node, Scene::Background);
     }
     default: break;
     }

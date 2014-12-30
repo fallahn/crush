@@ -67,7 +67,7 @@ namespace Level_editor
         /// <param name="type">Type of node</param>
         /// <param name="position">Position of node</param>
         /// <param name="size">Size of node</param>
-        private Panel addNode(Node.BodyType type, Point position, Size size)
+        private Panel addNode(Node.BodyType type, Point position, Size size, Layer layer = Layer.None)
         {
             //divide by two as UI is half world game world size
             Panel p = new Panel();
@@ -151,6 +151,7 @@ namespace Level_editor
                 default: break;
             }
 
+            if (layer != Layer.None) nd.layer = layer;
             p.Tag = nd;
             panelEditorInner.Controls.Add(p);
             if(m_canSort) sortNodes();
@@ -183,6 +184,8 @@ namespace Level_editor
             numericUpDownNodePropertySizeX.Value = (decimal)m_selectedNode.Width * scale;
             numericUpDownNodePropertySizeY.Value = (decimal)m_selectedNode.Height * scale;
 
+            checkBoxFrontDetail.Enabled = false;
+            //checkBoxFrontDetail.Checked = false;
 
             var tag = ((NodeData)p.Tag);
             var type = tag.type;
@@ -209,6 +212,8 @@ namespace Level_editor
             if(type == Node.BodyType.Detail)
             {
                 selectFrame(tag.spriteSheet, tag.frameName);
+                checkBoxFrontDetail.Enabled = true;
+                checkBoxFrontDetail.Checked = (tag.layer == Layer.FrontDetail);
             }
         }
 
@@ -337,7 +342,8 @@ namespace Level_editor
                         break;
                     case "Detail":
                         selectFrame(n.SpriteSheet, n.FrameName);
-                        addNode(Node.BodyType.Detail, n.Position, n.Size);
+                        //Layer l = (n.Layer == "RearDetail") ? Layer.RearDetail : Layer.FrontDetail;
+                        addNode(Node.BodyType.Detail, n.Position, n.Size, (n.Layer == "RearDetail") ? Layer.RearDetail : Layer.FrontDetail);
                         break;
                 }
             }

@@ -147,6 +147,9 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
 {
     switch (other->getType())
     {
+    case CollisionWorld::Body::Type::Player:
+    case CollisionWorld::Body::Type::Npc:
+
     case CollisionWorld::Body::Type::Block:
     case CollisionWorld::Body::Type::Solid:
         //if block above then drop block by raising player drop event
@@ -160,9 +163,8 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
             e.player.positionY = other->getCentre().y;
             raiseEvent(e);
         }
-    
-    case CollisionWorld::Body::Type::Player:
-    case CollisionWorld::Body::Type::Npc:
+    //case CollisionWorld::Body::Type::Player:
+    //case CollisionWorld::Body::Type::Npc:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
 

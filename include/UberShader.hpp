@@ -34,8 +34,6 @@ source distribution.
 
 namespace Shader
 {
-    //SFML uses fixed function, so fuck it, let's roll with it
-
     /*NOTE the orthographic projection means that the eye direction
     is the same across the entire quad, effectively breaking the spec
     calculations (only fragments facing directly towards the camera
@@ -116,7 +114,7 @@ namespace Shader
         "varying vec3 v_eyeDirection;\n" \
         "\n" \
         "vec4 diffuseColour;\n" \
-        "vec4 normalColour = vec4(0.5, 0.5, 1.0, 1.0);\n" \
+        "vec4 normalColour = vec4(0.5, 0.5, 1.0, 0.0);\n" \
         "\n" \
         "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightColour, float falloff)\n" \
         "{\n" \
@@ -129,6 +127,7 @@ namespace Shader
         "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
         /*TODO switch const exponent for variable*/
         "    vec3 specularColour = vec3(pow(specularAngle, 56.0)) * falloff;\n" \
+
         "    return mixedColour + (specularColour * normalColour.a);\n" \
         "#else\n" \
         "    return mixedColour;\n" \

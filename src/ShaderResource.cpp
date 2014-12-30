@@ -51,6 +51,7 @@ sf::Shader& ShaderResource::get(Shader::Type type)
         return *result->second;
     }
 
+    //NOTE shader not working properly when using scene lighting? MAKE SURE IT HAS BEEN ADDED TO SCENE SHADERS
     Shader::Ptr shader = std::make_unique<sf::Shader>();
     switch (type)
     {

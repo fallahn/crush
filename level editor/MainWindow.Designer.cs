@@ -39,6 +39,7 @@
             this.buttonAddNode = new System.Windows.Forms.Button();
             this.comboBoxAddNode = new System.Windows.Forms.ComboBox();
             this.groupBoxNodeProperties = new System.Windows.Forms.GroupBox();
+            this.checkBoxFrontDetail = new System.Windows.Forms.CheckBox();
             this.panelNodeColour = new System.Windows.Forms.Panel();
             this.label13 = new System.Windows.Forms.Label();
             this.buttonDeleteNode = new System.Windows.Forms.Button();
@@ -76,9 +77,9 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -235,6 +236,7 @@
             // 
             // groupBoxNodeProperties
             // 
+            this.groupBoxNodeProperties.Controls.Add(this.checkBoxFrontDetail);
             this.groupBoxNodeProperties.Controls.Add(this.panelNodeColour);
             this.groupBoxNodeProperties.Controls.Add(this.label13);
             this.groupBoxNodeProperties.Controls.Add(this.buttonDeleteNode);
@@ -252,6 +254,18 @@
             this.groupBoxNodeProperties.TabIndex = 1;
             this.groupBoxNodeProperties.TabStop = false;
             this.groupBoxNodeProperties.Text = "Node Properties";
+            // 
+            // checkBoxFrontDetail
+            // 
+            this.checkBoxFrontDetail.AutoSize = true;
+            this.checkBoxFrontDetail.Enabled = false;
+            this.checkBoxFrontDetail.Location = new System.Drawing.Point(19, 168);
+            this.checkBoxFrontDetail.Name = "checkBoxFrontDetail";
+            this.checkBoxFrontDetail.Size = new System.Drawing.Size(80, 17);
+            this.checkBoxFrontDetail.TabIndex = 11;
+            this.checkBoxFrontDetail.Text = "Front Detail";
+            this.checkBoxFrontDetail.UseVisualStyleBackColor = true;
+            this.checkBoxFrontDetail.CheckedChanged += new System.EventHandler(this.checkBoxFrontDetail_CheckedChanged);
             // 
             // panelNodeColour
             // 
@@ -697,7 +711,7 @@
             // 
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.O)));
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
             // 
@@ -799,6 +813,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxFrontDetail;
     }
 }
 

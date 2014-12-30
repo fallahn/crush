@@ -50,7 +50,9 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_shaderResource    (sr),
     m_itemSprite        (tr.get("res/textures/item.png")),
     m_blockSprite       (tr.get("res/textures/steel_crate_diffuse.png")),
-    m_drawable          (tr, sr.get(Shader::Type::NormalMapSpecular))
+    m_solidDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular)),
+    m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
+    m_frontDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular))
 {
     //TODO load textures based on map data
     //scale sprite to match node size
@@ -136,10 +138,42 @@ void MapController::loadMap(const Map& map)
         else
         {
             spawn(n);
-            if (n.type == Category::Solid)
-                m_drawable.addPart(n.position, n.size, "funt");
-            else if (n.type == Category::Block)
+            switch(n.type )
+            {
+            case Category::Solid:
+                //TODO select a single texture for solid blocks in editor
+                m_solidDrawable.addPart(n.position, n.size, "funt"); 
+                break;
+
+            case Category::Block:
                 m_blockSprite.setScale(n.size.x / blockTextureSize.x, n.size.y / blockTextureSize.y);
+                break;
+            case Category::Detail:
+            {
+                assert(!n.spriteSheet.empty());
+                auto result = m_spriteSheets.find(n.spriteSheet);
+                if (result == m_spriteSheets.end())
+                {
+                    //insert new sprite sheet
+                    const std::string sheetName = n.spriteSheet.substr(0, n.spriteSheet.find("png")) + "json";
+                    m_spriteSheets.insert(std::make_pair(n.spriteSheet, SpriteSheet("res/textures/atlases/" + sheetName)));
+                    result = m_spriteSheets.find(n.spriteSheet); //hackiness to avoid default ctor for SpriteSheet
+                }
+
+                if (n.layer == Scene::RearDetail)
+                {
+                    m_rearDrawable.addSprite(n.spriteSheet, result->second.getFrame(n.image, n.position));
+                }
+                else
+                {
+                    //safe to assume layer is front? might not be....
+                    m_frontDrawable.addSprite(n.spriteSheet, result->second.getFrame(n.image, n.position));
+                }
+            }
+                break;
+            default: break;
+            }
+
         }
 
     }
@@ -152,7 +186,7 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
     switch (type) 
     {
     case MapDrawable::Solid:
-        return static_cast<sf::Drawable*>(&m_drawable);
+        return static_cast<sf::Drawable*>(&m_solidDrawable);
     case MapDrawable::Item:
         return static_cast<sf::Drawable*>(&m_itemSprite);
     case MapDrawable::Block: //TODO random different textures?
@@ -160,10 +194,12 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
     case MapDrawable::Water:
         m_waterDrawables.emplace_back(m_textureResource.get("res/textures/water_normal.png"), m_shaderResource.get(Shader::Type::Water));
         return static_cast<sf::Drawable*>(&m_waterDrawables.back());
-        break;
-    default: break;
+    case MapDrawable::RearDrawable:
+        return static_cast<sf::Drawable*>(&m_rearDrawable);
+    case MapDrawable::FrontDrawable:
+        return static_cast<sf::Drawable*>(&m_frontDrawable);
+    default: return nullptr;
     }
-    return nullptr;
 }
 
 //private
@@ -189,13 +225,16 @@ void MapController::LayerDrawable::addPart(const sf::Vector2f& pos, const sf::Ve
 {
     if (m_layerData.find(textureName) == m_layerData.end())
     {
-        m_layerData.insert(std::make_pair(textureName, LayerData()));
-        //TODO how to decide which normal map to load, if at all?
-        m_layerData[textureName].diffuseTexture = m_textureResource.get("res/textures/brick_diffuse.png");
-        m_layerData[textureName].diffuseTexture.setRepeated(true);
-        m_layerData[textureName].normalTexture = m_textureResource.get("res/textures/brick_normal.png");
-        m_layerData[textureName].normalTexture.setRepeated(true);
-        m_layerData[textureName].vertexArray.setPrimitiveType(sf::Quads);
+        auto pair = std::make_pair(textureName, LayerData());
+        
+        //TODO load actual texture name
+        pair.second.diffuseTexture = m_textureResource.get("res/textures/brick_diffuse.png");
+        pair.second.diffuseTexture.setRepeated(true);
+        pair.second.normalTexture = m_textureResource.get("res/textures/brick_normal.png");
+        pair.second.normalTexture.setRepeated(true);
+        pair.second.vertexArray.setPrimitiveType(sf::Quads);
+
+        m_layerData.insert(pair);
     }
     
     auto& vertexArray = m_layerData[textureName].vertexArray;
@@ -208,6 +247,27 @@ void MapController::LayerDrawable::addPart(const sf::Vector2f& pos, const sf::Ve
     vertexArray.append({ p, p });
 }
 
+void MapController::LayerDrawable::addSprite(const std::string& textureName, const SpriteSheet::Quad& frame)
+{
+    if (m_layerData.find(textureName) == m_layerData.end())
+    {
+        auto pair = std::make_pair(textureName, LayerData());
+
+        pair.second.diffuseTexture = m_textureResource.get("res/textures/atlases/" + textureName);
+        std::string normalName = textureName;
+        normalName.insert(normalName.find(".png"), "_normal");
+        pair.second.normalTexture = m_textureResource.get("res/textures/atlases/" + normalName);
+        pair.second.vertexArray.setPrimitiveType(sf::Quads);
+
+        m_layerData.insert(pair);
+    }
+
+    for (const auto& q : frame)
+    {
+        m_layerData[textureName].vertexArray.append(q);
+    }
+}
+
 void MapController::LayerDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     m_shader.setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
@@ -215,7 +275,7 @@ void MapController::LayerDrawable::draw(sf::RenderTarget& rt, sf::RenderStates s
 
     for (const auto& layer : m_layerData)
     {
-        m_shader.setParameter("u_diffuseMap", layer.second.diffuseTexture);
+        m_shader.setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
         m_shader.setParameter("u_normalMap", layer.second.normalTexture);
         states.texture = &layer.second.diffuseTexture;
         rt.draw(layer.second.vertexArray, states);

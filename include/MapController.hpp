@@ -95,7 +95,7 @@ private:
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();
 
-
+    std::map<std::string, SpriteSheet> m_spriteSheets;
 
     class LayerDrawable : public sf::Drawable, private sf::NonCopyable
     {
@@ -104,7 +104,7 @@ private:
         ~LayerDrawable() = default;
 
         void addPart(const sf::Vector2f& position, const sf::Vector2f& size, const std::string& textureName);
-        void addSprite(/*frrrrgnlnlne*/);
+        void addSprite(const std::string& textureName, const SpriteSheet::Quad& frame);
     private:
         struct LayerData
         {
@@ -118,7 +118,7 @@ private:
         TextureResource& m_textureResource;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
-    } m_drawable;
+    } m_solidDrawable, m_rearDrawable, m_frontDrawable;
 };
 
 #endif //MAP_CONTROLLER_H_

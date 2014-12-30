@@ -74,7 +74,7 @@ namespace Level_editor
         public MainWindow()
         {
             InitializeComponent();
-            //WindowState = FormWindowState.Maximized;
+            WindowState = FormWindowState.Maximized;
 
             //generate default data for selected sprite so it won't get all
             //borked when there are no sprite sheets to load / missing
@@ -154,7 +154,6 @@ namespace Level_editor
             newFile();
         }
 
-
         private void bindComboboxValues(ComboBox cb)
         {
             var data = Enum.GetValues(typeof(Node.BodyType))
@@ -183,7 +182,10 @@ namespace Level_editor
             {
                 if(MessageBox.Show("Save changes to current map?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 {
-                    saveFile();
+                    if (m_mapPath == string.Empty || m_mapPath == null)
+                        saveAsToolStripMenuItem_Click(sender, e);
+                    else
+                        saveFile();
                 }
             }
             newFile();
@@ -335,6 +337,9 @@ namespace Level_editor
         {
             if (m_selectedNode != null)
             {
+                checkBoxFrontDetail.Enabled = false;
+                //checkBoxFrontDetail.Checked = false;
+
                 Node.BodyType type = (Node.BodyType)comboBoxNodePropertyType.SelectedValue;
                 var nodeData = (NodeData)m_selectedNode.Tag;
                 if (nodeData.type == type) return;
@@ -378,6 +383,7 @@ namespace Level_editor
                             nodeData.layer = Layer.RearDetail;
                             nodeData.spriteSheet = m_selectedFrame.parentSheet.meta.image;
                             nodeData.frameName = m_selectedFrame.filename;
+                            checkBoxFrontDetail.Enabled = true;
                             break;
                         }
                         else
@@ -460,6 +466,20 @@ namespace Level_editor
                 default: break;
             }
         }
+        private void checkBoxFrontDetail_CheckedChanged(object sender, EventArgs e)
+        {
+            if(m_selectedNode != null)
+            {
+                var nd = (NodeData)m_selectedNode.Tag;
+                if(nd.type == Node.BodyType.Detail)
+                {
+                    nd.layer = (checkBoxFrontDetail.Checked) ? Layer.FrontDetail : Layer.RearDetail;
+                    m_selectedNode.Tag = nd;
+                    sortNodes();
+                }
+            }
+        }
+
 
         //node addition
         private void buttonAddNode_Click(object sender, EventArgs e)
@@ -649,6 +669,7 @@ namespace Level_editor
                 numericUpDownNodePropertySizeY.Enabled = false;
 
                 comboBoxNodePropertyType.Enabled = false;
+                checkBoxFrontDetail.Enabled = false;
             }
         }
 
@@ -657,9 +678,11 @@ namespace Level_editor
         {
             if(e.Button == MouseButtons.Left)
             {
-                addNode(((NodeData)m_selectedNode.Tag).type,
+                var nd = (NodeData)m_selectedNode.Tag;
+                addNode(nd.type,
                     new Point(960, 540),
-                    new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale));
+                    new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale),
+                    nd.layer);
             }
         }
     }

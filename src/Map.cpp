@@ -118,8 +118,8 @@ Map::Map(const std::string& path)
                 if (n.get("SpriteSheet").is<std::string>())
                     m_nodes.back().spriteSheet = n.get("SpriteSheet").get<std::string>();
 
-                if (n.get("FileName").is<std::string>())
-                    m_nodes.back().image = n.get("FileName").get<std::string>();
+                if (n.get("FrameName").is<std::string>())
+                    m_nodes.back().image = n.get("FrameName").get<std::string>();
             }
             else
             {

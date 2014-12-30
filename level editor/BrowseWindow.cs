@@ -51,6 +51,15 @@ namespace Level_editor
                 }
                 tabControl1.TabPages.Add(tp);
             }
+
+            foreach(TabPage tp in tabControl1.TabPages)
+            {
+                if(tp.Text == mainWindow.SelectedFrame.parentSheet.meta.image)
+                {
+                    tabControl1.SelectedTab = tp;
+                    break;
+                }
+            }
         }
 
 

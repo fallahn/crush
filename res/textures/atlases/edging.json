@@ -1,0 +1,39 @@
+{"frames": [
+
+{
+	"filename": "edge_end_left.png",
+	"frame": {"x":84,"y":2,"w":34,"h":22},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":22},
+	"sourceSize": {"w":34,"h":22},
+	"pivot": {"x":0,"y":0}
+},
+{
+	"filename": "edge_end_right.png",
+	"frame": {"x":120,"y":2,"w":29,"h":22},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":29,"h":22},
+	"sourceSize": {"w":29,"h":22},
+	"pivot": {"x":0,"y":0}
+},
+{
+	"filename": "edge_tile.png",
+	"frame": {"x":2,"y":2,"w":80,"h":22},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":22},
+	"sourceSize": {"w":80,"h":22},
+	"pivot": {"x":0,"y":0}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "edging.png",
+	"format": "RGBA8888",
+	"size": {"w":151,"h":26},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:51f8e7b11ab0be37961a0169910cb18d:792681b9ed414291c6883f2d0a8a702c:702c2091f50a047a5eaefc773ae24315$"
+}
+}

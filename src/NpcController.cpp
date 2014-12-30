@@ -87,7 +87,6 @@ void NpcController::onNotify(Subject& s, const Event& evt)
                 //remove sprite
                 Node* n = static_cast<Node*>(&s);
                 assert(n->getDrawable());
-                //AnimatedSprite* sprite = static_cast<AnimatedSprite*>(n->getDrawable());
                 m_unusedSprites.push_back(n->getDrawable());
                 n->setDrawable(nullptr);
             }

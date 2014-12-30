@@ -83,7 +83,7 @@ private:
     {
         std::unique_ptr<sf::Texture> t(new sf::Texture());
         sf::Image i;
-        i.create(20u, 20u, sf::Color::Magenta);
+        i.create(20u, 20u, sf::Color(127u, 127u, 255u));
         t->loadFromImage(i);
         return std::move(t);
     }
