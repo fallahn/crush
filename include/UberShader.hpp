@@ -58,6 +58,8 @@ namespace Shader
         /*"const vec3 bitangent = vec3(0.0, 1.0, 0.0);" \*/
         "const vec3 normal = vec3(0.0, 0.0, 1.0);\n" \
 
+        "const vec2 sceneSize = vec2(1920.0, 1080.0);\n" \
+
         "vec3 getLightPosition(int index)\n" \
         "{\n" \
         "    return vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositions[0][index], u_pointLightPositions[1][index], u_pointLightPositions[3][index], 1.0));\n" \
@@ -67,6 +69,7 @@ namespace Shader
         "{\n" \
         "    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n" \
         "    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n" \
+
         "\n" \
         "    vec3 n = normalize(gl_NormalMatrix * normal);\n" \
         "    vec3 t = normalize(gl_NormalMatrix * tangent);\n" \
@@ -74,6 +77,11 @@ namespace Shader
         "    vec3 b = cross(n, t);\n" \
         "\n" \
         "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
+        "#if defined(REFLECT_MAP)\n" \
+        "    gl_TexCoord[1].xy = vec2(viewVertex.x, (viewVertex.y - (2.0 * gl_Vertex.y))) / sceneSize;\n" \
+        "    gl_TexCoord[2].xy = (viewVertex - 20.0).xy / sceneSize;\n" \
+        "#endif\n" \
+        /*why on earth place it into view space then straight back to model??*/
         "    vec3 viewDirectionalLightDirection = vec3(gl_ModelViewMatrix * u_inverseWorldViewMatrix * vec4(u_directionalLightDirection, 1.0));\n" \
         "\n" \
         "    v_directionalLightDirection.x = dot(viewDirectionalLightDirection, t);\n" \
@@ -103,6 +111,9 @@ namespace Shader
     static const std::string uberFragment =
         "uniform sampler2D u_diffuseMap;\n" \
         "uniform sampler2D u_normalMap;\n" \
+        "#if defined(REFLECT_MAP)\n" \
+        "uniform sampler2D u_reflectMap;\n" \
+        "#endif\n" \
         "uniform vec3 u_inverseRanges;\n" \
         "uniform mat4 u_pointLightColours;\n" \
         "uniform vec3 u_directionalLightColour;\n" \
@@ -120,13 +131,14 @@ namespace Shader
         "{\n" \
         "    float diffuseAmount = max(dot(normal, lightDirection), 0.0);\n" \
         "    vec3 mixedColour = lightColour * diffuseColour.rgb * diffuseAmount * falloff;\n" \
+
         /*Blinn-Phong specular calc - TODO calc specular based on some amount - probably from material settings*/
         "#if defined(SPECULAR)\n" \
         "    vec3 eyeDirection = normalize(lightDirection);\n" \
         "    vec3 halfVec = normalize(lightDirection + eyeDirection);\n" \
         "    float specularAngle = clamp(dot(normal, halfVec), 0.0, 1.0);\n" \
         /*TODO switch const exponent for variable*/
-        "    vec3 specularColour = vec3(pow(specularAngle, 56.0)) * falloff;\n" \
+        "    vec3 specularColour = vec3(pow(specularAngle, 96.0)) * falloff;\n" \
 
         "    return mixedColour + (specularColour * normalColour.a);\n" \
         "#else\n" \
@@ -141,15 +153,26 @@ namespace Shader
 
         "void main()\n" \
         "{\n" \
+        "#if defined(BUMP_MAP)\n" \
+        "    normalColour = texture2D(u_normalMap, (gl_TexCoord[0].xy + u_textureOffset));\n" \
+        "#endif\n" \
+
         "#if defined(DIFFUSE_MAP)\n" \
         "    diffuseColour = texture2D(u_diffuseMap, gl_TexCoord[0].xy);\n" \
         "#else\n" \
         "    diffuseColour = gl_Color;\n" \
         "#endif\n" \
-        "    gl_FragColor.a = diffuseColour.a;\n" \
-        "#if defined(BUMP_MAP)\n" \
-        "    normalColour = texture2D(u_normalMap, (gl_TexCoord[0].xy + u_textureOffset));\n" \
+
+        "#if defined(REFLECT_MAP)\n" \
+        "    vec2 coord = vec2(gl_TexCoord[1].xy - (normalColour.rg * 0.01));\n" \
+        "    coord.y += sin((coord.x * 300.0) + (u_textureOffset * 120.0)) * 0.002;\n" \
+        "    diffuseColour.rgb *= texture2D(u_reflectMap, coord).rgb;\n" \
+        "    coord = vec2(gl_TexCoord[2].xy - (normalColour.rg * 0.01));\n" \
+        "    coord.x += sin((coord.y * 30.0) + (u_textureOffset * 120.0)) * 0.002;\n" \
+        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coord).rgb, diffuseColour.rgb, 0.7);\n" \
         "#endif\n" \
+
+        "    gl_FragColor.a = diffuseColour.a;\n" \
         "    vec3 normalVector = normalColour.rgb * 2.0 - 1.0;\n" \
         "    vec3 ambientColour = diffuseColour.rgb * u_ambientColour;\n" \
         "    vec3 blendedColour = ambientColour;\n" \

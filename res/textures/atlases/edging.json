@@ -2,7 +2,7 @@
 
 {
 	"filename": "edge_end_left.png",
-	"frame": {"x":84,"y":2,"w":34,"h":22},
+	"frame": {"x":61,"y":26,"w":34,"h":22},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":22},
@@ -11,7 +11,7 @@
 },
 {
 	"filename": "edge_end_right.png",
-	"frame": {"x":120,"y":2,"w":29,"h":22},
+	"frame": {"x":97,"y":26,"w":29,"h":22},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":29,"h":22},
@@ -20,11 +20,20 @@
 },
 {
 	"filename": "edge_tile.png",
-	"frame": {"x":2,"y":2,"w":80,"h":22},
+	"frame": {"x":61,"y":2,"w":80,"h":22},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":22},
 	"sourceSize": {"w":80,"h":22},
+	"pivot": {"x":0,"y":0}
+},
+{
+	"filename": "ring.png",
+	"frame": {"x":2,"y":2,"w":50,"h":57},
+	"rotated": true,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":57},
+	"sourceSize": {"w":50,"h":57},
 	"pivot": {"x":0,"y":0}
 }],
 "meta": {
@@ -32,8 +41,8 @@
 	"version": "1.0",
 	"image": "edging.png",
 	"format": "RGBA8888",
-	"size": {"w":151,"h":26},
+	"size": {"w":143,"h":54},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:51f8e7b11ab0be37961a0169910cb18d:792681b9ed414291c6883f2d0a8a702c:702c2091f50a047a5eaefc773ae24315$"
+	"smartupdate": "$TexturePacker:SmartUpdate:adbcbb7002c7989ade084e6cbfeb4646:866c32f9c6feba7d4cc4b09f6a0e61e5:702c2091f50a047a5eaefc773ae24315$"
 }
 }

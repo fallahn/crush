@@ -40,6 +40,7 @@ namespace
         static const std::string vertColour = "#define VERTEX_COLOUR\n";
         static const std::string vertMultiply = "#define VERTEX_MULTIPLY\n";
         static const std::string specular = "#define SPECULAR\n";
+        static const std::string reflection = "#define REFLECT_MAP\n";
     }
 }
 
@@ -68,8 +69,8 @@ sf::Shader& ShaderResource::get(Shader::Type type)
             Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Shader::uberFragment);
         break;
     case Shader::Type::Water:
-        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::uberVertex,
-            Defines::version + Defines::specular + Defines::normalMap + Shader::uberFragment);
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Defines::reflection + Shader::uberVertex,
+            Defines::version + Defines::specular + Defines::normalMap + Defines::reflection + Shader::uberFragment);
         break;
     default: break;
     }

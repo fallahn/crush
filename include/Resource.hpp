@@ -33,7 +33,6 @@ source distribution.
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Image.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <memory>
 #include <array>

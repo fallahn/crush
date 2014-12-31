@@ -36,7 +36,10 @@ source distribution.
 
 #include <SFML/Graphics/Font.hpp>
 
-const float Game::m_timePerFrame = 1.f / 60.f;
+namespace
+{
+    const float timePerFrame = 1.f / 60.f;
+}
 
 Game::Game()
     : m_renderWindow(sf::VideoMode(1280, 720), "Crush", sf::Style::Close), //1024, 576
@@ -59,12 +62,12 @@ void Game::run()
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
 
-        while (timeSinceLastUpdate > m_timePerFrame)
+        while (timeSinceLastUpdate > timePerFrame)
         {
-            timeSinceLastUpdate -= m_timePerFrame;
+            timeSinceLastUpdate -= timePerFrame;
 
             handleEvents();
-            update(m_timePerFrame);
+            update(timePerFrame);
         }
 
         draw();

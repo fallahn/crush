@@ -49,8 +49,8 @@ namespace
 
 WaterDrawable::WaterDrawable(sf::Texture& normalMap, sf::Shader& shader, const sf::Vector2f& size)
     : m_size        (size),
-    m_lightColour   (64u, 72u, 45u, 130u),
-    m_darkColour    (43u, 34u, 24u, 155u),
+    m_lightColour   (206u, 222u, 192u, 150u),//(64u, 72u, 45u, 130u),
+    m_darkColour    (43u, 34u, 24u, 185u),
     m_vertices      (sf::TrianglesStrip),
     m_normalTexture (normalMap),
     m_texHeight     (static_cast<float>(m_normalTexture.getSize().y)),
@@ -161,6 +161,7 @@ void WaterDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_shader->setParameter("u_normalMap", sf::Shader::CurrentTexture); //need to do this so tex coords are correct
     m_shader->setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
     m_shader->setParameter("u_textureOffset", m_waveTime);
+
     states.shader = m_shader;
     states.texture = &m_normalTexture;
     //states.blendMode = sf::BlendMultiply;

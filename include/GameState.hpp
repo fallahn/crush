@@ -37,6 +37,7 @@ source distribution.
 #include <ParticleController.hpp>
 #include <MapController.hpp>
 #include <ShaderResource.hpp>
+#include <AudioController.hpp>
 
 class GameState final : public State
 {
@@ -61,6 +62,7 @@ private:
     ScoreBoard m_scoreBoard;
     ParticleController m_particleController;
     MapController m_mapController;
+    AudioController m_audioController;
 
     void addBlock(const sf::Vector2f& position, const sf::Vector2f& size);
     void addPlayer(const sf::Vector2f& position, Player& player);

@@ -80,6 +80,7 @@ GameState::GameState(StateStack& stack, Context context)
     lightDrawable.setOutlineThickness(80.f);
 
     backgroundSprite.setTexture(m_textureResource.get("res/textures/background.png"));
+    m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *backgroundSprite.getTexture());
 
     //parse map
     Map map("res/maps/testmap2.crm");
@@ -111,6 +112,7 @@ GameState::GameState(StateStack& stack, Context context)
 
     m_scene.addObserver(m_scoreBoard);
     m_scene.addObserver(m_particleController);
+    m_scene.addObserver(m_audioController);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Solid), Scene::Solid);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::RearDrawable), Scene::RearDetail);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::FrontDrawable), Scene::FrontDetail);
@@ -206,6 +208,7 @@ void GameState::addBlock(const sf::Vector2f& position, const sf::Vector2f& size)
     blockNode->addObserver(m_players[0]);
     blockNode->addObserver(m_players[1]);
     blockNode->addObserver(m_scoreBoard);
+    blockNode->addObserver(m_audioController);
     m_scene.addNode(blockNode, Scene::Dynamic);
 }
 
@@ -222,6 +225,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
         playerNode->addObserver(m_npcController);
         playerNode->addObserver(m_scoreBoard);
         playerNode->addObserver(m_particleController);
+        playerNode->addObserver(m_audioController);
         m_scene.addNode(playerNode, Scene::Dynamic);
 
         player.setSpawnable(false);
@@ -238,6 +242,7 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
     npcNode->addObserver(m_npcController);
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
+    npcNode->addObserver(m_audioController);
 
     //TODO bring this back with deferred rendering
     /*auto light = m_scene.addLight(sf::Vector3f(1.f, 0.88f, 0.55f), 200.f);
@@ -283,6 +288,7 @@ void GameState::addMapBody(const Map::Node& n)
         node->setDrawable(m_mapController.getDrawable(MapController::MapDrawable::Item));
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, n.size));
         node->addObserver(m_particleController);
+        node->addObserver(m_audioController);
 
         m_scene.addNode(node, Scene::Dynamic);
     }

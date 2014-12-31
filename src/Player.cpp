@@ -460,6 +460,13 @@ void Player::doJump()
             {
                 assert(n.getCollisionBody());
                 n.getCollisionBody()->applyForce({ 0.f, -m_jumpForce });
+
+                Event e;
+                e.type = Event::Type::Player;
+                e.player.action = Event::PlayerEvent::Jumped;               
+                e.player.positionX = m_currentPosition.x;
+                e.player.positionY = m_currentPosition.y;
+                n.raiseEvent(e);
             };
             c.categoryMask |= m_id;
             m_commandStack.push(c);
@@ -619,6 +626,14 @@ void Player::doDrop()
             cat &= ~m_carryId;
             cat |= m_lastTouchId;
             n.setCategory(static_cast<Category::Type>(cat));
+
+            //let the world know block was dropped
+            Event e;
+            e.type = Event::Type::Player;
+            e.player.action = Event::PlayerEvent::Dropped;
+            e.player.positionX = m_currentPosition.x;
+            e.player.positionY = m_currentPosition.y;
+            n.raiseEvent(e);
 
             //command player to return friction
             //and remove child

@@ -223,6 +223,9 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         particleSystem.setParticleLifetime(2.f);
         particleSystem.setParticleSize(sf::Vector2f(texture.getSize()));
         particleSystem.setInitialVelocity({ 12.f, -100.f });
+
+        ForceAffector fa({ 0.f, 20.f });
+        particleSystem.addAffector(fa);
     }
         break;
     case Particle::Type::PlayerTwoDie:        
@@ -233,6 +236,9 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         particleSystem.setParticleLifetime(2.f);
         particleSystem.setParticleSize(sf::Vector2f(texture.getSize()));
         particleSystem.setInitialVelocity({ 12.f, -100.f });
+
+        ForceAffector fa({ 0.f, 20.f });
+        particleSystem.addAffector(fa);
     }
         break;
     default: break;

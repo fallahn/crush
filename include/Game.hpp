@@ -52,8 +52,6 @@ public:
 
 private: 
 
-    static const float m_timePerFrame;
-
     sf::RenderWindow m_renderWindow;
     sf::Color m_clearColour;
 

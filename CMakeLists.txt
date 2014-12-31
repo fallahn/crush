@@ -44,6 +44,7 @@ add_executable(
 	CRUSH src/main.cpp
 	src/Affectors.cpp
 	src/AnimatedSprite.cpp
+	src/AudioController.cpp
 	src/BlockBehaviour.cpp
 	src/BodyBehaviour.cpp
 	src/Camera.cpp

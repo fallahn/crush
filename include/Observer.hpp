@@ -71,7 +71,8 @@ source distribution.
                 GotItem,
                 Moved,
                 Stopped,
-                StartedFalling
+                StartedFalling,
+                Jumped
             }action;
             enum Item
             {
@@ -97,6 +98,7 @@ source distribution.
                 Stopped,
                 Started
             }action;
+            float positionX, positionY;
         };
 
         struct GameEvent
