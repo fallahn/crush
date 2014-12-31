@@ -96,36 +96,56 @@ void ParticleController::update(float dt)
 void ParticleController::onNotify(Subject& s, const Event& evt)
 {
     if (evt.type == Event::Node)
-        //&& evt.node.action == game::Event::NodeEvent::Despawn)
     {
         switch (evt.node.action)
         {
         case Event::NodeEvent::Despawn:
         {
-            if (evt.node.type == Category::Npc)
+            switch (evt.node.type)
             {
-                //do dust puff
+            case Category::Npc:
+            {
                 auto& ps = findSystem(Particle::Type::Splat);
                 ps.setPosition({ evt.node.positionX, evt.node.positionY });
                 ps.start(6u, 0.1f);
             }
-            else
+                break;
+            case Category::PlayerOne:
+            {
+                auto& ps = findSystem(Particle::Type::PlayerOneDie);
+                ps.setPosition({ evt.node.positionX, evt.node.positionY });
+                ps.start(1u, 0.1f);
+            }
+                break;
+            case Category::PlayerTwo:
+            {
+                auto& ps = findSystem(Particle::Type::PlayerTwoDie);
+                ps.setPosition({ evt.node.positionX, evt.node.positionY });
+                ps.start(1u, 0.1f);
+            }
+                break;
+            default:
             {
                 auto& ps = findSystem(Particle::Type::Puff);
                 ps.setPosition({ evt.node.positionX, evt.node.positionY });
-                ps.start(5u, 0.1f);
+                ps.start(5u, 0.02f);
+            }
+                break;
             }
             break;
         }
+        break;
         case Event::NodeEvent::HitWater:
         {
+            //splish!
             auto& ps = findSystem(Particle::Type::Splash);
             ps.setPosition({ evt.node.positionX, evt.node.positionY });
             ps.start(4u, 0.02f);
         }
+        break;
         case Event::NodeEvent::Spawn:
         {
-            if (evt.node.type == Category::Item)
+            if (evt.node.type != Category::Npc)
             {
                 //do dust puff
                 auto& ps = findSystem(Particle::Type::Puff);
@@ -194,6 +214,26 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
             RotateAffector ra(40.f);
             particleSystem.addAffector(ra);
         }
+        break;
+    case Particle::Type::PlayerOneDie: //TODO p1 and p2 are rather similar....
+    {
+        auto texture = m_textureResource.get("res/textures/player_one_particle.png");
+        particleSystem.setTexture(m_textureResource.get("res/textures/player_one_particle.png"));
+        particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
+        particleSystem.setParticleLifetime(2.f);
+        particleSystem.setParticleSize(sf::Vector2f(texture.getSize()));
+        particleSystem.setInitialVelocity({ 12.f, -100.f });
+    }
+        break;
+    case Particle::Type::PlayerTwoDie:        
+    {
+        auto texture = m_textureResource.get("res/textures/player_two_particle.png");
+        particleSystem.setTexture(m_textureResource.get("res/textures/player_two_particle.png"));
+        particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
+        particleSystem.setParticleLifetime(2.f);
+        particleSystem.setParticleSize(sf::Vector2f(texture.getSize()));
+        particleSystem.setInitialVelocity({ 12.f, -100.f });
+    }
         break;
     default: break;
     }

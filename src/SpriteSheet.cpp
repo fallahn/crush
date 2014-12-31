@@ -214,7 +214,8 @@ SpriteSheet::Quad SpriteSheet::getFrame(const std::string& name, const sf::Vecto
         if (result->rotated)
         {
             sf::Transform t;
-            t.rotate(-90.f, result->pivot);
+            //pivot coords are normalised
+            t.rotate(-90.f, { frame.width * result->pivot.x, frame.height * result->pivot.y });
 
             for (auto& p : positions)
             {

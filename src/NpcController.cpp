@@ -170,6 +170,11 @@ void NpcController::onNotify(Subject& s, const Event& evt)
 
 void NpcController::update(float dt)
 {
+    //update animated sprites (we always need to do this)
+    for (auto& s : m_sprites)
+        s.update(dt);  
+
+
     if (!m_enabled) return;
 
     //add some random movement
@@ -192,11 +197,6 @@ void NpcController::update(float dt)
         m_spawnClock.restart();
         spawn({ Util::Random::value(300.f, 1200.f), -40.f }, static_cast<sf::Vector2f>(spriteSize));
     }
-
-    //update animated sprite
-    for (auto& s : m_sprites)
-        s.update(dt);
-
 }
 
 void NpcController::setSpawnFunction(std::function<void(const sf::Vector2f&, const sf::Vector2f&)>& func)

@@ -92,17 +92,18 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         break;
     case CollisionWorld::Body::Type::Npc:
     {
-        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        //move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
 
-        //bounce off NPCs
-        auto vel = getVelocity();
-        if (manifold.x != 0)
-            vel.x = -vel.x;
-        if (manifold.y != 0)
-            vel.y = -vel.y;
+        ////bounce off NPCs
+        //auto vel = getVelocity();
+        //if (manifold.x != 0)
+        //    vel.x = -vel.x;
+        //if (manifold.y != 0)
+        //    vel.y = -vel.y;
 
-        vel *= getFriction();
-        setVelocity(vel);
+        //vel *= getFriction();
+        //setVelocity(vel);
+        kill();
     }
         break;
     case CollisionWorld::Body::Item:

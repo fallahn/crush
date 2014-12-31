@@ -117,8 +117,6 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.setLayerDrawable(&backgroundSprite, Scene::Background);
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
-
-    context.gameInstance.setClearColour(map.getAmbientColour());
 }
 
 bool GameState::update(float dt)

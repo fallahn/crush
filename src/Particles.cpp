@@ -43,6 +43,7 @@ ParticleSystem::ParticleSystem(Particle::Type type)
     m_particleSize      (4.f, 4.f),
     m_type              (type),
     m_randVelocity      (false),
+    m_emitRate          (30.f),
     m_particleLifetime  (2.f),
     m_started           (false),
     m_accumulator       (0.f),
@@ -110,6 +111,12 @@ void ParticleSystem::setRandomInitialVelocity(const std::vector<sf::Vector2f>& r
     m_randVelocity = true;
 }
 
+void ParticleSystem::setEmitRate(float rate)
+{
+    assert(rate > 0.f);
+    m_emitRate = rate;
+}
+
 void ParticleSystem::addAffector(Affector& a)
 {
     m_affectors.push_back(a);
@@ -171,8 +178,7 @@ void ParticleSystem::update(float dt)
 
 void ParticleSystem::emit(float dt)
 {
-    const float emitRate = 30.f;
-    const float interval = 1 / emitRate;
+    const float interval = 1.f / m_emitRate;
 
     m_accumulator += dt;
     while (m_accumulator > interval)

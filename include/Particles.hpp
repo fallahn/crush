@@ -47,7 +47,9 @@ struct Particle final : public sf::Transformable
     {
         Puff,
         Splat,
-        Splash
+        Splash,
+        PlayerOneDie,
+        PlayerTwoDie
     };
 
     //sf::Vector2f position;
@@ -76,6 +78,7 @@ public:
     void setParticleLifetime(float time);
     void setInitialVelocity(const sf::Vector2f& vel);
     void setRandomInitialVelocity(const std::vector<sf::Vector2f>& randValues);
+    void setEmitRate(float rate);
 
     void addAffector(Affector& a);
     template <typename T>
@@ -103,6 +106,7 @@ private:
     sf::Vector2f m_initialVelocity;
     bool m_randVelocity;
     std::vector<sf::Vector2f> m_randVelocities;
+    float m_emitRate;
 
     bool m_started;
     float m_accumulator;
