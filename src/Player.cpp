@@ -244,6 +244,8 @@ void Player::onNotify(Subject& s, const Event& evt)
                 //friction so that they are slower when dragging
             case Event::PlayerEvent::Grabbed:
             {
+                if (m_canSpawn) break; //don't do anything, we're dead
+                
                 auto blockNode = dynamic_cast<Node*>(&s);
                 assert(blockNode->getCollisionBody());
                 auto blockBody = blockNode->getCollisionBody();

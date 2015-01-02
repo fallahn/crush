@@ -85,6 +85,8 @@ public:
         void removeChild(Body* b);
         void flipChildren();
 
+        float getSpeed() const;
+
     private:
         Type m_type;
         BehaviourPtr m_behaviour;

@@ -40,6 +40,9 @@ namespace
         "       GAME OVER\n Press C to Continue";
 
     sf::RectangleShape rectangle;
+
+    const float waitTime = 2.f;
+    float waitedTime = 0.f;
 }
 
 GameOverState::GameOverState(StateStack& stack, Context context)
@@ -60,13 +63,16 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 
 void GameOverState::draw()
 {
-    getContext().renderWindow.draw(rectangle);
-    getContext().renderWindow.draw(placeholderText);
+    if (waitedTime > waitTime)
+    {
+        getContext().renderWindow.draw(rectangle);
+        getContext().renderWindow.draw(placeholderText);
+    }
 }
 
 bool GameOverState::update(float dt)
 {
-
+    waitedTime += dt;
     return true; //return true so we can see remaining baddies bouncing about / finish death animations
 }
 

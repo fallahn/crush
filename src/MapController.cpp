@@ -179,6 +179,10 @@ void MapController::loadMap(const Map& map)
     }
     //shuffle item order
     shuffleItems();
+
+    //TODO load background texture based on map data
+    m_backgroundSprite.setTexture(m_textureResource.get("res/textures/background.png"));
+    m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
 }
 
 sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
@@ -194,10 +198,12 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
     case MapDrawable::Water:
         m_waterDrawables.emplace_back(m_textureResource.get("res/textures/water_normal.png"), m_shaderResource.get(Shader::Type::Water));
         return static_cast<sf::Drawable*>(&m_waterDrawables.back());
-    case MapDrawable::RearDrawable:
+    case MapDrawable::RearDetail:
         return static_cast<sf::Drawable*>(&m_rearDrawable);
-    case MapDrawable::FrontDrawable:
+    case MapDrawable::FrontDetail:
         return static_cast<sf::Drawable*>(&m_frontDrawable);
+    case MapDrawable::Background:
+        return static_cast<sf::Drawable*>(&m_backgroundSprite);
     default: return nullptr;
     }
 }

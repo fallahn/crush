@@ -56,8 +56,9 @@ public:
         Solid,
         Block,
         Water,
-        RearDrawable,
-        FrontDrawable
+        RearDetail,
+        FrontDetail,
+        Background
     };
 
     MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr);
@@ -88,6 +89,7 @@ private:
     ShaderResource& m_shaderResource;
     AnimatedSprite m_itemSprite;
     AnimatedSprite m_blockSprite;
+    sf::Sprite m_backgroundSprite;
 
     std::list<WaterDrawable> m_waterDrawables;
 

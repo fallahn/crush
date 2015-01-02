@@ -216,7 +216,19 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
 
 //-------------------------------------------
 PlayerBehaviourWater::PlayerBehaviourWater(CollisionWorld::Body* b)
-    : BodyBehaviour(b), m_sinkTime(1.5f), m_currentTime(0.f), m_splashed(false){}
+    : BodyBehaviour(b), m_sinkTime(1.5f), m_currentTime(0.f), m_splashed(false)
+{
+    if (!deleted())
+    {
+        Event e;
+        e.type = Event::Type::Player;
+        e.player.action = Event::PlayerEvent::HitWater;
+        auto pos = b->getCentre();
+        e.player.positionX = pos.x;
+        e.player.positionY = pos.y;
+        raiseEvent(e);
+    }
+}
 
 void PlayerBehaviourWater::update(float dt)
 {

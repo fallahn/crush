@@ -113,6 +113,9 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             Event e;
             e.type = Event::Npc;
             e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
             raiseEvent(e);
         }
     }
@@ -127,6 +130,9 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             Event e;
             e.type = Event::Npc;
             e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
             raiseEvent(e);
         }
         if (manifold.y != 0)
@@ -160,6 +166,9 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             Event e;
             e.type = Event::Npc;
             e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
             raiseEvent(e);
         }
         break;
@@ -184,6 +193,9 @@ NpcBehaviourGround::NpcBehaviourGround(CollisionWorld::Body* b)
         Event e;
         e.type = Event::Npc;
         e.npc.action = Event::NpcEvent::Landed;
+        auto pos = getBody()->getCentre();
+        e.npc.positionX = pos.x;
+        e.npc.positionY = pos.y;
         raiseEvent(e);
 
         e.npc.action = Event::NpcEvent::Stopped;
@@ -211,12 +223,12 @@ void NpcBehaviourGround::update(float dt)
             Event e;
             e.type = Event::Npc;
             e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
-            raiseEvent(e);
-
-            e.npc.action = Event::NpcEvent::Jumped;
             auto pos = getBody()->getCentre();
             e.npc.positionX = pos.x;
             e.npc.positionY = pos.y;
+            raiseEvent(e);
+
+            e.npc.action = Event::NpcEvent::Jumped;
             raiseEvent(e);
         }
         else
@@ -315,6 +327,9 @@ NpcBehaviourWalk::NpcBehaviourWalk(CollisionWorld::Body* b)
         Event e;
         e.type = Event::Npc;
         e.npc.action = Event::NpcEvent::Landed;
+        auto pos = getBody()->getCentre();
+        e.npc.positionX = pos.x;
+        e.npc.positionY = pos.y;
         raiseEvent(e);
 
         e.npc.action = Event::NpcEvent::TurnedRight;
@@ -350,12 +365,12 @@ void NpcBehaviourWalk::update(float dt)
             Event e;
             e.type = Event::Npc;
             e.npc.action = (vel.x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
-            raiseEvent(e);
-
-            e.npc.action =  Event::NpcEvent::Jumped;
             auto pos = getBody()->getCentre();
             e.npc.positionX = pos.x;
             e.npc.positionY = pos.y;
+            raiseEvent(e);
+
+            e.npc.action =  Event::NpcEvent::Jumped;
             raiseEvent(e);
         }
         else
@@ -397,6 +412,9 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             Event e;
             e.type = Event::Npc;
             e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
             raiseEvent(e);
         }
         else if (manifold.y * manifold.z > 5) //prevent dying when just clipping bottom by making sure there is some depth
@@ -429,12 +447,15 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         m_moveForce = -m_moveForce;
         setVelocity({});
         m_applyGravity = false;
-
-        Event e;
-        e.type = Event::Npc;
-        e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
-        raiseEvent(e);
-
+        {
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
+            raiseEvent(e);
+        }
         break;
     case CollisionWorld::Body::Type::Player:
         break;
@@ -450,6 +471,9 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
             Event e;
             e.type = Event::Npc;
             e.npc.action = (m_moveForce > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
             raiseEvent(e);
         }
         break;
@@ -476,6 +500,9 @@ void NpcBehaviourWater::update(float dt)
         Event e;
         e.type = Event::Npc;
         e.npc.action = Event::NpcEvent::Jumped;
+        auto pos = getBody()->getCentre();
+        e.npc.positionX = pos.x;
+        e.npc.positionY = pos.y;
         raiseEvent(e);
     }
 }

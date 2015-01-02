@@ -40,7 +40,7 @@ source distribution.
 #include <map>
 #include <list>
 
-
+class Node;
 class AudioController final : private sf::NonCopyable, public Observer
 {
 public:
@@ -66,6 +66,9 @@ private:
         ItemSpawn,
         ItemDespawn,
         ItemCollected,
+        ItemExtraLife,
+        ItemReverseControls,
+        ItemSuperJumpSpeed,
         NpcDie,
         NpcJump,
         WaterSplash,
@@ -75,13 +78,16 @@ private:
 
     std::map<AudioId, sf::SoundBuffer> m_buffers;
     std::list<sf::Sound> m_sounds;
+    std::list<std::pair<Node*, sf::Sound*>> m_loopedSounds;
 
     void play(AudioId id);
-    void play(AudioId id, const sf::Vector2f& position);
+    sf::Sound& play(AudioId id, const sf::Vector2f& position, bool loop = false);
 
     void flushSounds();
     void setListenerPosition(const sf::Vector2f& position);
     sf::Vector2f getListenerPosition() const;
+
+    void cacheSound(AudioId, const std::string&);
 };
 
 #endif //AUDIO_CONTROLLER_H_

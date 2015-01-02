@@ -72,7 +72,8 @@ source distribution.
                 Moved,
                 Stopped,
                 StartedFalling,
-                Jumped
+                Jumped,
+                HitWater
             }action;
             enum Item
             {
@@ -101,6 +102,18 @@ source distribution.
             float positionX, positionY;
         };
 
+        struct BlockEvent
+        {
+            enum Action
+            {
+                DragStart,
+                DragEnd,
+                HitGround,
+                HitWater
+            }action;
+            float positionX, positionY;
+        };
+
         struct GameEvent
         {
             enum Action
@@ -119,6 +132,7 @@ source distribution.
             Node = 1,
             Player,
             Npc,
+            Block,
             Game
         } type;
 
@@ -127,6 +141,7 @@ source distribution.
             NodeEvent node;
             PlayerEvent player;
             NpcEvent npc;
+            BlockEvent block;
             GameEvent game;
         };
     };

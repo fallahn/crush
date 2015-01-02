@@ -205,6 +205,11 @@ void CollisionWorld::Body::flipChildren()
         c.second.x = -c.second.x;
 }
 
+float CollisionWorld::Body::getSpeed() const
+{
+    return Util::Vector::lengthSquared(m_velocity);
+}
+
 //private
 void CollisionWorld::Body::step(float dt)
 {

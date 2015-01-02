@@ -26,9 +26,12 @@ source distribution.
 *********************************************************************/
 
 #include <AudioController.hpp>
+#include <Node.hpp>
 
 #include <SFML/Audio/Listener.hpp>
 
+#include <cmath>
+#include <iostream>
 
 namespace
 {
@@ -41,40 +44,22 @@ namespace
 AudioController::AudioController()
 {
     //preload sounds
-    m_buffers.insert(std::make_pair(AudioId::PlayerJump, sf::SoundBuffer()));
-    m_buffers[AudioId::PlayerJump].loadFromFile("res/sound/fx/player_jump.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::PlayerPickUp, sf::SoundBuffer()));
-    m_buffers[AudioId::PlayerPickUp].loadFromFile("res/sound/fx/player_pickup.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::PlayerDrop, sf::SoundBuffer()));
-    m_buffers[AudioId::PlayerDrop].loadFromFile("res/sound/fx/player_drop.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::PlayerGrab, sf::SoundBuffer()));
-    m_buffers[AudioId::PlayerGrab].loadFromFile("res/sound/fx/player_grab.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::PlayerDrop, sf::SoundBuffer()));
-    m_buffers[AudioId::PlayerRelease].loadFromFile("res/sound/fx/player_release.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::PlayerDie, sf::SoundBuffer()));
-    m_buffers[AudioId::PlayerDie].loadFromFile("res/sound/fx/player_die.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::ItemSpawn, sf::SoundBuffer()));
-    m_buffers[AudioId::ItemSpawn].loadFromFile("res/sound/fx/item_spawn.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::ItemDespawn, sf::SoundBuffer()));
-    m_buffers[AudioId::ItemDespawn].loadFromFile("res/sound/fx/item_despawn.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::NpcDie, sf::SoundBuffer()));
-    m_buffers[AudioId::NpcDie].loadFromFile("res/sound/fx/npc_die.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::NpcJump, sf::SoundBuffer()));
-    m_buffers[AudioId::NpcJump].loadFromFile("res/sound/fx/npc_jump.wav");
-
-    m_buffers.insert(std::make_pair(AudioId::WaterSplash, sf::SoundBuffer()));
-    m_buffers[AudioId::WaterSplash].loadFromFile("res/sound/fx/hit_water.wav");
-
-
+    cacheSound(AudioId::PlayerJump, "res/sound/fx/player_jump.wav");
+    cacheSound(AudioId::PlayerPickUp, "res/sound/fx/player_pickup.wav");
+    cacheSound(AudioId::PlayerDrop, "res/sound/fx/player_drop.wav");
+    cacheSound(AudioId::PlayerGrab, "res/sound/fx/player_grab.wav");
+    cacheSound(AudioId::PlayerRelease, "res/sound/fx/player_release.wav");
+    cacheSound(AudioId::PlayerDie, "res/sound/fx/player_die.wav");
+    cacheSound(AudioId::ItemSpawn, "res/sound/fx/item_spawn.wav");
+    cacheSound(AudioId::ItemDespawn, "res/sound/fx/item_despawn.wav");
+    cacheSound(AudioId::ItemExtraLife, "res/sound/fx/item_extra_life.wav");
+    cacheSound(AudioId::ItemReverseControls, "res/sound/fx/item_reverse_controls.wav");
+    cacheSound(AudioId::ItemSuperJumpSpeed, "res/sound/fx/item_superjump_superspeed.wav");
+    cacheSound(AudioId::NpcDie, "res/sound/fx/npc_die.wav");
+    cacheSound(AudioId::NpcJump, "res/sound/fx/npc_jump.wav");
+    cacheSound(AudioId::WaterSplash, "res/sound/fx/hit_water.wav");
+    cacheSound(AudioId::BlockLand, "res/sound/fx/block_drop.wav");
+    cacheSound(AudioId::BlockDrag, "res/sound/fx/block_drag.wav");
 
     sf::Listener::setDirection(0.f, 0.f, -1.f);
     setListenerPosition({ 960.f, 540.f }); //set to centre of world for now
@@ -84,6 +69,22 @@ AudioController::AudioController()
 void AudioController::update()
 {
     //TODO spawn random ambience etc
+
+    //update playing sounds
+    for (const auto& p : m_loopedSounds)
+    {
+        auto pos = p.first->getPosition();
+        p.second->setPosition(pos.x, -pos.y, 0.f);
+        auto cb = p.first->getCollisionBody();
+        if (cb)
+        {
+            float speed = cb->getSpeed();
+            //hmm magic consts ....
+            speed = std::max(speed / 305000.f, 0.9f);
+            p.second->setPitch(speed);
+            //std::cerr << speed << std::endl;
+        }
+    }
 
     flushSounds();
 }
@@ -107,11 +108,30 @@ void AudioController::onNotify(Subject& s, const Event& e)
         case Event::PlayerEvent::Grabbed:
             play(AudioId::PlayerGrab, { e.player.positionX, e.player.positionY });
             break;
-        case Event::PlayerEvent::Released:
-            play(AudioId::PlayerRelease, { e.player.positionX, e.player.positionY });
-            break;
+        //case Event::PlayerEvent::Released:
+        //    play(AudioId::PlayerRelease, { e.player.positionX, e.player.positionY });
+        //    break;
         case Event::PlayerEvent::Died:
             play(AudioId::PlayerDie, { e.player.positionX, e.player.positionY });
+            break;
+        case Event::PlayerEvent::HitWater:
+            play(AudioId::WaterSplash, { e.player.positionX, e.player.positionY });
+            break;
+        case Event::PlayerEvent::GotItem:
+            switch (e.player.item)
+            {
+            case Event::PlayerEvent::ExtraLife:
+                play(AudioId::ItemExtraLife, { e.player.positionX, e.player.positionY });
+                break;
+            case Event::PlayerEvent::ExtraSpeed:
+            case Event::PlayerEvent::JumpIncrease:
+                play(AudioId::ItemSuperJumpSpeed, { e.player.positionX, e.player.positionY });
+                break;
+            case Event::PlayerEvent::ReverseControls:
+                play(AudioId::ItemReverseControls, { e.player.positionX, e.player.positionY });
+                break;
+            default: break;
+            }
             break;
         default: break;
         }
@@ -153,6 +173,39 @@ void AudioController::onNotify(Subject& s, const Event& e)
         default: break;
         }
         break;
+    case Event::Type::Block:
+        switch (e.block.action)
+        {
+        case Event::BlockEvent::HitWater:
+            play(AudioId::WaterSplash, { e.block.positionX, e.block.positionY });
+            break;
+        case Event::BlockEvent::HitGround:
+            play(AudioId::BlockLand, { e.block.positionX, e.block.positionY });
+            break;
+        case Event::BlockEvent::DragStart:
+            {
+                auto& sound = play(AudioId::BlockDrag, { e.block.positionX, e.block.positionY }, true);
+                Node* node = static_cast<Node*>(&s);
+                m_loopedSounds.push_back(std::make_pair(node, &sound));
+            }
+            break;
+        case Event::BlockEvent::DragEnd:
+        {
+            Node* node = static_cast<Node*>(&s);
+            m_loopedSounds.remove_if([node](const std::pair<Node*, sf::Sound*>& p)
+            {
+                if (p.first == node)
+                {
+                    p.second->stop();
+                    return true;
+                }
+                else return false;
+            });
+        }
+            break;
+        default: break;
+        }
+        break;
     default: break;
     }
 }
@@ -163,7 +216,7 @@ void AudioController::play(AudioController::AudioId id)
     play(id, getListenerPosition());
 }
 
-void AudioController::play(AudioController::AudioId id, const sf::Vector2f& position)
+sf::Sound& AudioController::play(AudioController::AudioId id, const sf::Vector2f& position, bool loop)
 {
     m_sounds.emplace_back();
 
@@ -172,7 +225,10 @@ void AudioController::play(AudioController::AudioId id, const sf::Vector2f& posi
     sound.setPosition(position.x, -position.y, 0.f);
     sound.setAttenuation(attenuation);
     sound.setMinDistance(minDistance3D);
+    sound.setLoop(loop);
     sound.play();
+
+    return sound;
 }
 
 void AudioController::flushSounds()
@@ -189,4 +245,10 @@ sf::Vector2f AudioController::getListenerPosition() const
 {
     auto pos = sf::Listener::getPosition();
     return{ pos.x, -pos.y };
+}
+
+void AudioController::cacheSound(AudioId id, const std::string& path)
+{
+    m_buffers.insert(std::make_pair(id, sf::SoundBuffer()));
+    m_buffers[id].loadFromFile(path);
 }

@@ -42,7 +42,6 @@ source distribution.
 namespace
 {
     sf::CircleShape lightDrawable(6.f);
-    sf::Sprite backgroundSprite;
 
     const sf::Uint8 maxPlayers = 2u;
 
@@ -79,8 +78,6 @@ GameState::GameState(StateStack& stack, Context context)
     lightDrawable.setOutlineColor(sf::Color(255u, 255u, 255u, 11u));
     lightDrawable.setOutlineThickness(80.f);
 
-    backgroundSprite.setTexture(m_textureResource.get("res/textures/background.png"));
-    m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *backgroundSprite.getTexture());
 
     //parse map
     Map map("res/maps/testmap2.crm");
@@ -114,9 +111,9 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addObserver(m_particleController);
     m_scene.addObserver(m_audioController);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Solid), Scene::Solid);
-    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::RearDrawable), Scene::RearDetail);
-    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::FrontDrawable), Scene::FrontDetail);
-    m_scene.setLayerDrawable(&backgroundSprite, Scene::Background);
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::RearDetail), Scene::RearDetail);
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::FrontDetail), Scene::FrontDetail);
+    m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Background), Scene::Background);
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
 }
@@ -141,6 +138,9 @@ bool GameState::update(float dt)
 
     //map controller (bonuses etc)
     m_mapController.update(dt);
+
+    //do sounds
+    m_audioController.update();
 
     //updates the scene lighting
     m_scene.update(dt);

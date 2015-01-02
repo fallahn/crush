@@ -46,6 +46,8 @@ public:
     explicit BlockBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+private:
+    sf::Vector2f m_lastVelocity;
 };
 
 class BlockBehaviourCarry final : public BodyBehaviour

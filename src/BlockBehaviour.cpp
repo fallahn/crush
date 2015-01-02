@@ -32,6 +32,11 @@ source distribution.
 
 #include <iostream>
 
+namespace
+{
+    const float minDragVelocity = 500.f;
+}
+
 //-------------------------------------------
 void BlockBehaviourAir::update(float dt)
 {
@@ -56,6 +61,14 @@ void BlockBehaviourAir::update(float dt)
     if (getFootSenseMask() == CollisionWorld::Body::Type::Water) //touches water only
     {
         setBehaviour<BlockBehaviourWater>();
+
+        Event e;
+        e.type = Event::Block;
+        e.block.action = Event::BlockEvent::HitWater;
+        auto pos = getBody()->getCentre();
+        e.block.positionX = pos.x;
+        e.block.positionY = pos.y;
+        raiseEvent(e);
     }
 }
 
@@ -69,6 +82,17 @@ void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
         setBehaviour<BlockBehaviourGround>();
+
+        Event e;
+        e.type = Event::Block;
+        e.block.action = Event::BlockEvent::HitGround;
+        {
+            auto pos = getBody()->getCentre();
+            e.block.positionX = pos.x;
+            e.block.positionY = pos.y;
+        }
+        raiseEvent(e);
+
         break;
     default: break;
     }
@@ -89,13 +113,55 @@ void BlockBehaviourGround::update(float dt)
         setBehaviour<BlockBehaviourAir>();
 
         //TODO should set this to not grabbed, but previously owned
+
+        Event e;
+        e.type = Event::Block;
+        e.block.action = Event::BlockEvent::DragEnd;
+        auto pos = getBody()->getCentre();
+        e.block.positionX = pos.x;
+        e.block.positionY = pos.y;
+        raiseEvent(e);
     }
 
     sf::Int32 cat = getParentCategory();
     if (cat & (Category::CarriedOne | Category::CarriedTwo))
     {
         setBehaviour<BlockBehaviourCarry>();
+        //stop drag
+        Event e;
+        e.type = Event::Block;
+        e.block.action = Event::BlockEvent::DragEnd;
+        auto pos = getBody()->getCentre();
+        e.block.positionX = pos.x;
+        e.block.positionY = pos.y;
+        raiseEvent(e);
     }
+
+    if (Util::Vector::lengthSquared(m_lastVelocity) < minDragVelocity
+        && Util::Vector::lengthSquared(vel) > minDragVelocity)
+    {
+        //start drag
+        Event e;
+        e.type = Event::Block;
+        e.block.action = Event::BlockEvent::DragStart;
+        auto pos = getBody()->getCentre();
+        e.block.positionX = pos.x;
+        e.block.positionY = pos.y;
+        raiseEvent(e);
+    }
+    else if (Util::Vector::lengthSquared(m_lastVelocity) > minDragVelocity
+        && Util::Vector::lengthSquared(vel) < minDragVelocity)
+    {
+        //stop drag
+        Event e;
+        e.type = Event::Block;
+        e.block.action = Event::BlockEvent::DragEnd;
+        auto pos = getBody()->getCentre();
+        e.block.positionX = pos.x;
+        e.block.positionY = pos.y;
+        raiseEvent(e);
+    }
+    m_lastVelocity = vel;
 }
 
 void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -108,11 +174,32 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
+
+            /*Event e;
+            e.type = Event::Block;
+            e.block.action = Event::BlockEvent::HitGround;
+            {
+                auto pos = getBody()->getCentre();
+                e.block.positionX = pos.x;
+                e.block.positionY = pos.y;
+            }
+            raiseEvent(e);*/
         }
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity({});
+
+        //Event e;
+        //e.type = Event::Block;
+        //e.block.action = Event::BlockEvent::HitGround;
+        //{
+        //    auto pos = getBody()->getCentre();
+        //    e.block.positionX = pos.x;
+        //    e.block.positionY = pos.y;
+        //}
+        //raiseEvent(e);
+
         break;
     case CollisionWorld::Body::Type::Player:
         other->applyForce(getVelocity());
@@ -123,6 +210,15 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
         {
             setBehaviour<BlockBehaviourAir>();
             setParentCategory(Category::Block);
+
+            //stop drag
+            Event e;
+            e.type = Event::Block;
+            e.block.action = Event::BlockEvent::DragEnd;
+            auto pos = getBody()->getCentre();
+            e.block.positionX = pos.x;
+            e.block.positionY = pos.y;
+            raiseEvent(e);
         }
         break;
     default: break;
@@ -163,6 +259,17 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
             e.player.positionY = other->getCentre().y;
             raiseEvent(e);
         }
+
+        //Event e;
+        //e.type = Event::Block;
+        //e.block.action = Event::BlockEvent::HitGround;
+        //{
+        //    auto pos = getBody()->getCentre();
+        //    e.block.positionX = pos.x;
+        //    e.block.positionY = pos.y;
+        //}
+        //raiseEvent(e);
+
     //case CollisionWorld::Body::Type::Player:
     //case CollisionWorld::Body::Type::Npc:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
