@@ -214,22 +214,19 @@ void GameState::addBlock(const sf::Vector2f& position, const sf::Vector2f& size)
 
 void GameState::addPlayer(const sf::Vector2f& position, Player& player)
 {
-    if (player.canSpawn())
-    {
-        auto playerNode = std::make_unique<Node>("Player");
-        playerNode->setPosition(position);
-        playerNode->setDrawable(player.getSprite());
-        playerNode->setCategory(player.getType());
-        playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, player.getSize()));
-        playerNode->addObserver(player);
-        playerNode->addObserver(m_npcController);
-        playerNode->addObserver(m_scoreBoard);
-        playerNode->addObserver(m_particleController);
-        playerNode->addObserver(m_audioController);
-        m_scene.addNode(playerNode, Scene::Dynamic);
+    auto playerNode = std::make_unique<Node>("Player");
+    playerNode->setPosition(position);
+    playerNode->setDrawable(player.getSprite());
+    playerNode->setCategory(player.getType());
+    playerNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Player, player.getSize()));
+    playerNode->addObserver(player);
+    playerNode->addObserver(m_npcController);
+    playerNode->addObserver(m_scoreBoard);
+    playerNode->addObserver(m_particleController);
+    playerNode->addObserver(m_audioController);
+    m_scene.addNode(playerNode, Scene::Dynamic);
 
-        player.setSpawnable(false);
-    }
+    player.setSpawnable(false);
 }
 
 void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
@@ -243,12 +240,6 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
     npcNode->addObserver(m_scoreBoard);
     npcNode->addObserver(m_particleController);
     npcNode->addObserver(m_audioController);
-
-    //TODO bring this back with deferred rendering
-    /*auto light = m_scene.addLight(sf::Vector3f(1.f, 0.88f, 0.55f), 200.f);
-    light->setDepth(90.f);
-    npcNode->setLight(light);
-    npcNode->addObserver(*light);*/
     
     m_scene.addNode(npcNode, Scene::Dynamic);
 }

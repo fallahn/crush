@@ -61,9 +61,9 @@ public:
     State(StateStack& stateStack, Context context);
     virtual ~State() = default;
 
-    virtual void draw() = 0;
-    virtual bool update(float dt) = 0;
     virtual bool handleEvent(const sf::Event& evt) = 0;
+    virtual bool update(float dt) = 0;
+    virtual void draw() = 0;
 
 protected:
     void requestStackPush(States::ID id);

@@ -108,12 +108,15 @@ private:
     sf::Texture m_normalTexture;
     AnimatedSprite m_sprite;
 
+    bool m_flashSprite;
+
     void enable();
     void setSize(const sf::Vector2f& size);
 
     void doMovement(float dt);
     void doJump();
     void doGrab();
+    void doRelease();
     void doPickUp();
     void doDrop();
 };

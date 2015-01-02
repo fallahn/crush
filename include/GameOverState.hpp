@@ -41,6 +41,8 @@ public:
     bool handleEvent(const sf::Event& evt) override;
 
 private:
+
+    float m_waitedTime;
 };
 
 #endif // GAME_OVER_STATE_H_

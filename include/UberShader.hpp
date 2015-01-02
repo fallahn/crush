@@ -169,7 +169,7 @@ namespace Shader
         "    diffuseColour.rgb *= texture2D(u_reflectMap, coord).rgb;\n" \
         "    coord = vec2(gl_TexCoord[2].xy - (normalColour.rg * 0.01));\n" \
         "    coord.x += sin((coord.y * 30.0) + (u_textureOffset * 120.0)) * 0.002;\n" \
-        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coord).rgb, diffuseColour.rgb, 0.7);\n" \
+        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coord).rgb, diffuseColour.rgb, 0.9);\n" \
         "#endif\n" \
 
         "    gl_FragColor.a = diffuseColour.a;\n" \

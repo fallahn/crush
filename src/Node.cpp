@@ -344,6 +344,13 @@ void Node::onNotify(Subject& s, const Event& evt)
             auto water = static_cast<WaterDrawable*>(m_drawable);
             water->splash(evt.node.positionX - getWorldPosition().x, std::min(500.f, std::fabs(evt.node.speed)));
         }
+        case Event::NodeEvent::InvincibilityExpired:
+        {
+            Event e = evt;
+            e.node.type = m_category;
+            raiseEvent(e);
+        }
+            break;
         default: break;
         }
     }
@@ -364,6 +371,7 @@ void Node::onNotify(Subject& s, const Event& evt)
         }
         break;
         case Event::PlayerEvent::Dropped:
+        case Event::PlayerEvent::Released:
             //this case come from a block body, so just pass on up
             notify(*this, evt);
             break;

@@ -183,6 +183,11 @@ void AnimatedSprite::setPaused(bool paused)
     m_playing = !paused;
 }
 
+void AnimatedSprite::setColour(const sf::Color& c)
+{
+    m_sprite.setColor(c);
+}
+
 sf::FloatRect AnimatedSprite::getLocalBounds() const
 {
     return sf::FloatRect(getOrigin(), static_cast<sf::Vector2f>(getFrameSize()));
@@ -192,6 +197,7 @@ sf::FloatRect AnimatedSprite::getGlobalBounds() const
 {
     return getTransform().transformRect(getLocalBounds());
 }
+
 
 //private
 void AnimatedSprite::draw(sf::RenderTarget& rt, sf::RenderStates states) const

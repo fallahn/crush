@@ -27,6 +27,7 @@ source distribution.
 
 #include <Player.hpp>
 #include <Node.hpp>
+#include <Util.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -87,7 +88,8 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_leftFacing    (false),
     m_lastFacing    (false),
     m_carryingBlock (false),
-    m_spawnPosition (80.f, 500.f)
+    m_spawnPosition (80.f, 500.f),
+    m_flashSprite   (true)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
     if (type == Category::PlayerTwo)
@@ -100,6 +102,7 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
         m_keyBinds.pickUp = sf::Keyboard::Down;
 
         m_leftFacing = true;
+        m_lastFacing = m_leftFacing;
         m_grabId = Category::GrabbedTwo;
         m_lastTouchId = Category::LastTouchedTwo;
         m_carryId = Category::CarriedTwo;
@@ -160,13 +163,32 @@ void Player::update(float dt)
     }
 
     //spawn a new player
-    if (m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
+    if (m_canSpawn && m_spawnClock.getElapsedTime().asSeconds() > spawnTime)
+    {
+        m_flashSprite = true;
         spawn(m_spawnPosition, *this);
+        //hack to make P2 spawn facing the correct direction
+        if (m_id == Category::PlayerTwo)
+        {
+            m_leftFacing = true;
+            m_lastFacing = m_leftFacing;
+        }
+    }
 
     //update sprite
     float fr = maxFrameRate / 2.f;
     m_sprite.setFrameRate(fr + (maxFrameRate * abs(m_moveForce / (maxMoveForce * dt))));
     m_sprite.update(dt);
+
+    if (m_flashSprite)
+    {
+        m_sprite.setColour({
+            //static_cast<sf::Uint8>(Util::Random::value(1, 255)),
+            //static_cast<sf::Uint8>(Util::Random::value(1, 255)),
+            //static_cast<sf::Uint8>(Util::Random::value(1, 255)),
+            255u, 255u, 255u,
+            static_cast<sf::Uint8>(Util::Random::value(1, 255)) });
+    }
 }
 
 void Player::handleEvent(const sf::Event& evt)
@@ -199,29 +221,41 @@ void Player::onNotify(Subject& s, const Event& evt)
     switch (evt.type)
     {
     case Event::Node:
-        if (evt.node.type == m_id
-            && evt.node.action == Event::NodeEvent::Despawn)
-        {
-            //oh noes, we died!
-            m_canSpawn = true;
-            m_spawnClock.restart();
-
-            //let go of any blocks we were holding
-            Command c;
-            c.categoryMask |= m_grabId;
-            c.action = [&](Node& n, float dt)
+        if (evt.node.type == m_id)
+        {    
+            switch (evt.node.action)
             {
-                auto newCat = (n.getCategory() & ~m_grabId);
-                newCat |= m_lastTouchId; //state player was last to touch
-                n.setCategory(static_cast<Category::Type>(newCat));
-            };
-            m_commandStack.push(c);
+            case Event::NodeEvent::Despawn:
+            {
+                //oh noes, we died!
+                m_canSpawn = true;
+                m_spawnClock.restart();
 
-            //reset active powerups
-            m_activeItems = 0u;
+                //let go of any blocks we were holding
+                Command c;
+                c.categoryMask |= m_grabId;
+                c.action = [&](Node& n, float dt)
+                {
+                    auto newCat = (n.getCategory() & ~m_grabId);
+                    newCat |= m_lastTouchId; //state player was last to touch
+                    n.setCategory(static_cast<Category::Type>(newCat));
+                };
+                m_commandStack.push(c);
 
-            //and drop anything we were carrying
-            doDrop();
+                //reset active powerups
+                m_activeItems = 0u;
+
+                //and drop anything we were carrying
+                doDrop();
+                doRelease();
+            }
+                    break;
+            case Event::NodeEvent::InvincibilityExpired:
+                m_flashSprite = false;
+                m_sprite.setColour(sf::Color::White);
+                break;
+            default: break;
+            }
         }
         break;
     case Event::Player:
@@ -279,6 +313,8 @@ void Player::onNotify(Subject& s, const Event& evt)
                     n.getCollisionBody()->removeChild(dynamic_cast<Node*>(&s)->getCollisionBody());
                 };
                 m_commandStack.push(c);
+
+                doRelease();
             }
                 break;
             case Event::PlayerEvent::PickedUp:
@@ -469,6 +505,7 @@ void Player::doJump()
                 e.player.positionX = m_currentPosition.x;
                 e.player.positionY = m_currentPosition.y;
                 n.raiseEvent(e);
+
             };
             c.categoryMask |= m_id;
             m_commandStack.push(c);
@@ -518,20 +555,25 @@ void Player::doGrab()
     else
     {
         if ((m_buttonMask & (1 << m_keyBinds.joyButtonGrab)))
-        {
-            //send a command to all grabbed blocks to set their id as not grabbed
-            Command c;
-            c.categoryMask |= m_grabId;
-            c.action = [&](Node& n, float dt)
-            {
-                auto newCat = (n.getCategory() & ~m_grabId);
-                newCat |= m_lastTouchId; //state player was last to touch
-                n.setCategory(static_cast<Category::Type>(newCat));
-            };
-            m_commandStack.push(c);
+        {       
+            doRelease();
         }
         m_buttonMask &= ~(1 << m_keyBinds.joyButtonGrab);
     }
+}
+
+void Player::doRelease()
+{
+    //send a command to all grabbed blocks to set their id as not grabbed
+    Command c;
+    c.categoryMask |= m_grabId;
+    c.action = [&](Node& n, float dt)
+    {
+        auto newCat = (n.getCategory() & ~m_grabId);
+        newCat |= m_lastTouchId; //state player was last to touch
+        n.setCategory(static_cast<Category::Type>(newCat));
+    };
+    m_commandStack.push(c);
 }
 
 void Player::doPickUp()

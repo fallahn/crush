@@ -50,6 +50,7 @@ AudioController::AudioController()
     cacheSound(AudioId::PlayerGrab, "res/sound/fx/player_grab.wav");
     cacheSound(AudioId::PlayerRelease, "res/sound/fx/player_release.wav");
     cacheSound(AudioId::PlayerDie, "res/sound/fx/player_die.wav");
+    cacheSound(AudioId::PlayerSpawn, "res/sound/fx/player_spawn.wav");
     cacheSound(AudioId::ItemSpawn, "res/sound/fx/item_spawn.wav");
     cacheSound(AudioId::ItemDespawn, "res/sound/fx/item_despawn.wav");
     cacheSound(AudioId::ItemExtraLife, "res/sound/fx/item_extra_life.wav");
@@ -156,6 +157,10 @@ void AudioController::onNotify(Subject& s, const Event& e)
             {
             case Category::Item:
                 play(AudioId::ItemSpawn, { e.node.positionX, e.node.positionY });
+                break;
+            case Category::PlayerOne:
+            case Category::PlayerTwo:
+                play(AudioId::PlayerSpawn, { e.node.positionX, e.node.positionY });
                 break;
             default: break;
             }

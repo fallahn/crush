@@ -65,8 +65,8 @@ sf::Shader& ShaderResource::get(Shader::Type type)
             Defines::version + Defines::diffuseMap + Defines::normalMap + Shader::uberFragment);
         break;
     case Shader::Type::NormalMapSpecular:        
-        shader->loadFromMemory(Defines::version + Shader::uberVertex,
-            Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Shader::uberFragment);
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Shader::uberVertex,
+            Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Defines::vertMultiply + Shader::uberFragment);
         break;
     case Shader::Type::Water:
         shader->loadFromMemory(Defines::version + Defines::vertColour + Defines::reflection + Shader::uberVertex,

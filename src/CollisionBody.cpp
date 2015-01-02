@@ -39,11 +39,11 @@ source distribution.
 
 namespace
 {
-    const float sensorSize = 10.f;
+    const float sensorSize = 3.f;
     const float defaultStrength = 35.f;
     //TODO fix magic numbers - basically default view size with 100 unit padding
     const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
-
+    const float invincibilityTime = 4.f;
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
@@ -58,7 +58,9 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_health            (defaultStrength),
     m_strength          (defaultStrength),
     m_parent            (nullptr),
-    m_dead              (false)
+    m_dead              (false),
+    m_invincible        (false),
+    m_invincibilityCount(0.f)
 {
     switch (type)
     {
@@ -73,6 +75,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::Player:
         m_behaviour = std::make_unique<PlayerBehaviourAir>(this);
+        m_invincible = true;
         break;
     case Type::Solid:
         m_behaviour = std::make_unique<SolidBehaviour>(this);
@@ -265,6 +268,25 @@ void CollisionWorld::Body::step(float dt)
         m_health += m_strength * dt;
     }
 
+
+    //check for invincibility time out
+    if (m_invincible)
+    {
+        m_invincibilityCount += dt;
+        if (m_invincibilityCount > invincibilityTime)
+        {
+            m_invincible = false;
+
+            //send event
+            Event e;
+            e.type = Event::Node;
+            e.node.action = Event::NodeEvent::InvincibilityExpired;
+            e.node.positionX = m_position.x;
+            e.node.positionY = m_position.y;
+            notify(*this, e);
+        }
+    }
+
 }
 
 void CollisionWorld::Body::move(const sf::Vector2f& amount)
@@ -286,7 +308,7 @@ void CollisionWorld::Body::destroy()
 {
     //this could possible get called twice on the same body
     //from both being crushed, and losing all health
-    if (!m_dead)
+    if (!m_dead && !m_invincible)
     {
         Event evt;
         evt.type = Event::Node;

@@ -112,6 +112,8 @@ public:
         Body* m_parent;
 
         bool m_dead;
+        bool m_invincible;
+        float m_invincibilityCount;
 
         void step(float dt);
         void applyGravity(const sf::Vector2f& gravity);

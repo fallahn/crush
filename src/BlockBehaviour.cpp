@@ -112,12 +112,24 @@ void BlockBehaviourGround::update(float dt)
         //nothing underneath so should be falling
         setBehaviour<BlockBehaviourAir>();
 
-        //TODO should set this to not grabbed, but previously owned
+        auto pos = getBody()->getCentre();
+
+        //should set this to not grabbed, but previously owned
+        auto cat = getParentCategory();
+        if (cat & (Category::GrabbedOne | Category::GrabbedTwo))
+        {
+            Event e;
+            e.type = Event::Player;
+            e.player.action = Event::PlayerEvent::Released;
+            e.player.playerId = (cat & Category::GrabbedOne) ? Category::PlayerOne : Category::PlayerTwo;
+            e.player.positionX = pos.x;
+            e.player.positionY = pos.y;
+            raiseEvent(e);
+        }
 
         Event e;
         e.type = Event::Block;
-        e.block.action = Event::BlockEvent::DragEnd;
-        auto pos = getBody()->getCentre();
+        e.block.action = Event::BlockEvent::DragEnd;        
         e.block.positionX = pos.x;
         e.block.positionY = pos.y;
         raiseEvent(e);

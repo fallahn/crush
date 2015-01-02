@@ -63,6 +63,7 @@ private:
         PlayerGrab,
         PlayerRelease,
         PlayerDie,
+        PlayerSpawn,
         ItemSpawn,
         ItemDespawn,
         ItemCollected,

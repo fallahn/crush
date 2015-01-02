@@ -42,11 +42,11 @@ namespace
     sf::RectangleShape rectangle;
 
     const float waitTime = 2.f;
-    float waitedTime = 0.f;
 }
 
 GameOverState::GameOverState(StateStack& stack, Context context)
-    : State(stack, context)
+    : State         (stack, context),
+    m_waitedTime    (0.f)
 {
     getContext().renderWindow.setTitle("Menu Screen");
     getContext().renderWindow.setView(getContext().defaultView);
@@ -61,19 +61,19 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     rectangle.setSize(context.defaultView.getSize());
 }
 
+bool GameOverState::update(float dt)
+{
+    m_waitedTime += dt;
+    return true; //return true so we can see remaining baddies bouncing about / finish death animations
+}
+
 void GameOverState::draw()
 {
-    if (waitedTime > waitTime)
+    if (m_waitedTime > waitTime)
     {
         getContext().renderWindow.draw(rectangle);
         getContext().renderWindow.draw(placeholderText);
     }
-}
-
-bool GameOverState::update(float dt)
-{
-    waitedTime += dt;
-    return true; //return true so we can see remaining baddies bouncing about / finish death animations
 }
 
 bool GameOverState::handleEvent(const sf::Event& evt)

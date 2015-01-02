@@ -73,6 +73,8 @@ public:
     bool playing() const;
     void setPaused(bool paused);
 
+    void setColour(const sf::Color& c);
+
     sf::FloatRect getLocalBounds() const;
     sf::FloatRect getGlobalBounds() const;
 

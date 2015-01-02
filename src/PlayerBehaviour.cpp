@@ -153,6 +153,16 @@ void PlayerBehaviourGround::update(float dt)
     if ((getFootSenseMask() & (CollisionWorld::Body::Type::Block | CollisionWorld::Body::Type::Solid)) == 0)
     {
         setBehaviour<PlayerBehaviourAir>();
+
+        //let go of whatever we're holding
+        Event e;
+        e.type = Event::Player;
+        e.player.action = Event::PlayerEvent::Released;
+        e.player.playerId = getParentCategory();// (cat & Category::GrabbedOne) ? Category::PlayerOne : Category::PlayerTwo;
+        auto pos = getBody()->getCentre();
+        e.player.positionX = pos.x;
+        e.player.positionY = pos.y;
+        raiseEvent(e);
     }
 }
 
@@ -173,8 +183,12 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         {
             int cat = other->getParentCategory();
             auto vel = getVelocity();
-            if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0 && vel.y >= 0.f) //don't take damage from blocks being carried, or by jumping up into them
+            
+            if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0 //don't take damage from blocks being carried,
+                && other->getSpeed() > 10.f) //or if they aren't moving
+            {
                 damage(std::fabs(manifold.z * (damageMultiplier / getFootSenseCount())), other); //always take same damage regardless of blocks touching
+            }
             else
             {
                 //drop block?
