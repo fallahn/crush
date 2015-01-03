@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -31,11 +31,16 @@ source distribution.
 #define STATE_H_
 
 #include <StateIds.hpp>
+#include <AnimatedSprite.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/View.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/System/Thread.hpp>
+#include <SFML/System/Clock.hpp>
 
 #include <memory>
+#include <atomic>
 
 namespace sf
 {
@@ -72,11 +77,20 @@ protected:
 
     Context getContext() const;
 
+    void launchLoadingScreen();    
+    void quitLoadingScreen();
+
 private:
 
     StateStack* m_stack;
     Context m_context;
 
+    AnimatedSprite m_loadingSprite;
+    sf::Text m_loadingText;
+    std::atomic<bool> m_threadRunning;
+    sf::Thread m_loadingThread;
+    sf::Clock m_threadClock;
+    void updateLoadingScreen();
 };
 
 #endif //STATE_H_

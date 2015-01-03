@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -35,10 +35,10 @@ class GameOverState final : public State
 public:
     GameOverState(StateStack& stack, Context context);
     ~GameOverState() = default;
-
-    void draw() override;
-    bool update(float dt) override;
+    
     bool handleEvent(const sf::Event& evt) override;
+    bool update(float dt) override;
+    void draw() override;
 
 private:
 

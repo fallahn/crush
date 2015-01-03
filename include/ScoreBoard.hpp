@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -35,12 +35,18 @@ source distribution.
 
 #include <SFML/System/NonCopyable.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Text.hpp>
+
+#include <list>
+
 
 class ScoreBoard final : public Observer, public Subject, public sf::Drawable, private sf::NonCopyable
 {
 public:
     ScoreBoard(StateStack& stack, State::Context context);
     ~ScoreBoard() = default;
+
+    void update(float dt);
 
     void onNotify(Subject& s, const Event& evt) override;
 
@@ -67,6 +73,31 @@ private:
     void updateText(Category::Type type);
     void disablePlayer(Category::Type player);
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+
+    class Message final : public sf::Drawable
+    {
+    public:
+        Message(const std::string& text, const sf::Vector2f& position, const sf::Font& font);
+        Message(const Message& copy) = default;
+        ~Message() = default;
+
+        void update(float dt);
+
+        void setColour(const sf::Color& c);
+        bool stopped() const;
+
+    private:
+
+        sf::Color m_colour;
+        float m_transparency;
+
+        sf::Text m_text;
+        float m_messageSpeed;
+
+        void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    };
+
+    std::list<Message> m_messages;
 };
 
 #endif //HUD_H_

@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -34,10 +34,10 @@ class PauseState final : public State
 {
 public:
     PauseState(StateStack& stack, Context context);
-    ~PauseState() = default;
+    ~PauseState();
 
-    void draw() override;
     bool update(float dt) override;
+    void draw() override;
     bool handleEvent(const sf::Event& evt) override;
 
 private:

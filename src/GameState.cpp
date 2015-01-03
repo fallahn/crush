@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -51,6 +51,8 @@ namespace
             static_cast<float>(c.g) / 255.f,
             static_cast<float>(c.b) / 255.f };
     }
+
+    const std::string music = "res/sound/music/night_sounds.ogg";
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -63,6 +65,9 @@ GameState::GameState(StateStack& stack, Context context)
     m_particleController(m_textureResource, m_shaderResource),
     m_mapController     (m_commandStack, m_textureResource, m_shaderResource)
 {
+    //launch loading window
+    launchLoadingScreen();
+    
     //build world
     context.renderWindow.setTitle("Game Screen");
     
@@ -116,6 +121,13 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Background), Scene::Background);
     m_scene.setAmbientColour(map.getAmbientColour());
     m_scene.setSunLightColour(map.getSunlightColour());
+
+    //sf::Clock c;
+    //while (c.getElapsedTime().asSeconds() < 5.f){}
+
+    //close loading screen before starting music
+    quitLoadingScreen();
+    context.gameInstance.playMusic(music);
 }
 
 bool GameState::update(float dt)
@@ -144,6 +156,10 @@ bool GameState::update(float dt)
 
     //updates the scene lighting
     m_scene.update(dt);
+
+    //update scoreboard
+    m_scoreBoard.update(dt);
+
     return true;
 }
 
@@ -194,7 +210,6 @@ bool GameState::handleEvent(const sf::Event& evt)
     
     return true;
 }
-
 
 
 //private

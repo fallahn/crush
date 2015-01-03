@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -28,6 +28,8 @@ source distribution.
 #include <State.hpp>
 #include <StateStack.hpp>
 #include <Resource.hpp>
+#include <Game.hpp>
+#include <Util.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -57,9 +59,13 @@ State::Context::Context(sf::RenderWindow& window, Game& game)
 //-------------------------------------------
 
 State::State(StateStack& stateStack, Context context)
-    : m_stack(&stateStack),
-    m_context(context){}
+    : m_stack           (&stateStack),
+    m_context           (context),
+    m_loadingText       ("Loading..", context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
+    m_threadRunning     (false),
+    m_loadingThread     (&State::updateLoadingScreen, this){}
 
+//protected
 void State::requestStackPush(States::ID id)
 {
     m_stack->pushState(id);
@@ -78,4 +84,48 @@ void State::requestStackClear()
 State::Context State::getContext() const
 {
     return m_context;
+}
+
+void State::launchLoadingScreen()
+{
+    m_context.gameInstance.pause();
+    
+    m_loadingSprite.setTexture(m_context.gameInstance.getTextureResource().get("res/textures/robot_diffuse.png"));
+    m_loadingSprite.setFrameCount(8u);
+    m_loadingSprite.setFrameSize({ 48, 56 });
+    m_loadingSprite.setFrameRate(18.f);
+    m_loadingSprite.setLooped(true);
+    m_loadingSprite.play();
+    m_loadingSprite.setScale(2.f, 2.f);
+    m_loadingSprite.setPosition(m_context.renderWindow.getView().getCenter());
+    m_loadingSprite.setOrigin(sf::Vector2f(m_loadingSprite.getFrameSize() / 2));
+
+    Util::Position::centreOrigin(m_loadingText);
+    m_loadingText.setPosition(m_loadingSprite.getPosition());
+    m_loadingText.move(0.f, 60.f);
+
+    m_context.renderWindow.setActive(false);
+    m_threadRunning = true;
+    m_loadingThread.launch();
+}
+
+void State::quitLoadingScreen()
+{
+    m_threadRunning = false;
+    m_loadingThread.wait();
+    m_context.gameInstance.resume();
+}
+
+//private
+void State::updateLoadingScreen()
+{
+    while (m_threadRunning)
+    {
+        m_loadingSprite.update(m_threadClock.restart().asSeconds());
+        m_context.renderWindow.clear();
+        m_context.renderWindow.draw(m_loadingSprite);
+        m_context.renderWindow.draw(m_loadingText);
+        m_context.renderWindow.display();
+    }
+    m_context.renderWindow.setActive(false);
 }

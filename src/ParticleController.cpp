@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -183,7 +183,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
     case  Particle::Type::Splash:
         {
             particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
-            particleSystem.setColour({ 64u, 72u, 45u, 130u });
+            particleSystem.setColour({ 44u, 79u, 59u, 150u });
             particleSystem.setParticleLifetime(1.2f);
             particleSystem.setParticleSize({ 4.f, 9.f });
             particleSystem.setRandomInitialVelocity(splashVelocities);

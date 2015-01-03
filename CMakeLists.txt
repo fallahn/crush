@@ -61,6 +61,7 @@ add_executable(
 	src/Map.cpp
 	src/MapController.cpp
 	src/MenuState.cpp
+	src/Music.cpp
 	src/Node.cpp
 	src/NpcBehaviour.cpp	
 	src/NpcController.cpp

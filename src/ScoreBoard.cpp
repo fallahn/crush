@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -46,6 +46,9 @@ namespace
     const sf::Uint16 crushPoints = 500u; //points for crushing someone
     const sf::Uint16 suicidePoints = 200u; //points deducted for accidentally crushing self
     const sf::Uint16 itemPoints = 400u; //points for collecting item
+
+    const float messageAcceleration = 232.f;
+    const float initialMessageSpeed = 60.f;
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
@@ -73,6 +76,14 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
 }
 
 //public
+void ScoreBoard::update(float dt)
+{
+    m_messages.remove_if([](const Message& m){return m.stopped(); });
+
+    for (auto& m : m_messages)
+        m.update(dt);
+}
+
 void ScoreBoard::onNotify(Subject& s, const Event& evt)
 {
     switch (evt.type)
@@ -142,29 +153,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
         {
             auto textUpdateTarget = evt.node.type;
             switch (evt.node.type)
-            {
-                
-            case Category::PlayerOne:
-                //TODO this is moot now as we can't jump on players / NPCs
-                /*if (evt.node.target == Category::Npc)
-                {
-                    m_playerOneScore += npcPoints;
-                }
-                else if (evt.node.target == Category::PlayerTwo)
-                {
-                    m_playerOneScore += playerPoints;
-                }*/
-                break;
-            case Category::PlayerTwo:
-                /*if (evt.node.target == Category::Npc)
-                {
-                    m_playerTwoScore += npcPoints;
-                }
-                else if (evt.node.target == Category::PlayerOne)
-                {
-                    m_playerTwoScore += playerPoints;
-                }*/
-                break;
+            {                
             case Category::Block:
                 if (evt.node.owner == Category::PlayerOne)
                 {
@@ -173,13 +162,40 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                         case Category::PlayerTwo: //p1 crushed p2
                             m_playerOneLives++;
                             m_playerOneScore += playerPoints;
+
+                            //show message
+                            m_messages.emplace_back(std::to_string(playerPoints),
+                                sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+
+
                         case Category::Npc: //p1 killed bad guy
                             m_playerOneScore += crushPoints;
+
+                            //show message
+                            m_messages.emplace_back(std::to_string(crushPoints),
+                                sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+
                             break;
                         case Category::PlayerOne: //p1 killed self, doh
-                            (m_playerOneScore > suicidePoints) ?
-                                m_playerOneScore -= suicidePoints :
+                        {
+                            std::string msg = "-";
+                            if (m_playerOneScore > suicidePoints)
+                            {
+                                m_playerOneScore -= suicidePoints;
+                                msg += std::to_string(suicidePoints);
+                            }
+                            else
+                            {
+                                msg += std::to_string(m_playerOneScore);
                                 m_playerOneScore = 0u;
+                            }
+
+                            m_messages.emplace_back(msg,
+                                sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                        }
                             break;
                         default: break;
                         }
@@ -191,33 +207,78 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                         case Category::PlayerOne: //p2 killed p1  
                             m_playerTwoLives++;
                             m_playerTwoScore += playerPoints;
+
+                            //show message
+                            m_messages.emplace_back(std::to_string(playerPoints),
+                                sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+
                         case Category::Npc: //p2 killed bad guy
                             m_playerTwoScore += crushPoints;
+
+                            //show message
+                            m_messages.emplace_back(std::to_string(crushPoints),
+                                sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+
                             break;
                         case Category::PlayerTwo: //p2 crushed self :S
-                            (m_playerTwoScore > suicidePoints) ?
-                                m_playerTwoScore -= suicidePoints :
+                        {    
+                            std::string msg = "-";
+                            if (m_playerTwoScore > suicidePoints)
+                            {
+                                m_playerTwoScore -= suicidePoints;
+                                msg += std::to_string(suicidePoints);
+                            }
+                            else
+                            {
+                                msg += std::to_string(m_playerTwoScore);
                                 m_playerTwoScore = 0u;
+                            }
+
+                            m_messages.emplace_back(msg,
+                                sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                        }
                             break;
                         default: break;
                         }
                 }
                 else if (evt.node.owner == Category::None)
                 {
+                    std::string msg = "-";
                     switch (evt.node.target)
                     {
                     case Category::PlayerOne: //p1 killed self, doh
-                        (m_playerOneScore > suicidePoints) ?
-                            m_playerOneScore -= suicidePoints :
+                        if (m_playerOneScore > suicidePoints)
+                        {
+                            msg += std::to_string(suicidePoints);
+                            m_playerOneScore -= suicidePoints;
+                        }
+                        else
+                        {
+                            msg += std::to_string(m_playerOneScore);
                             m_playerOneScore = 0u;
+                        }
                         break;
                     case Category::PlayerTwo: //p2 crushed self :S
-                        (m_playerTwoScore > suicidePoints) ?
-                            m_playerTwoScore -= suicidePoints :
+                        if (m_playerTwoScore > suicidePoints)
+                        {
+                            msg += std::to_string(suicidePoints);
+                            m_playerTwoScore -= suicidePoints;
+                        }
+                        else
+                        {
+                            msg += std::to_string(m_playerTwoScore);
                             m_playerTwoScore = 0u;
+                        }
                         break;
                     default: break;
                     }
+
+                    m_messages.emplace_back(msg,
+                        sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                        m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
                 }
                 textUpdateTarget = evt.node.owner;
                 break;
@@ -228,6 +289,8 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
         }
         break;
     case Event::Player:
+    {
+        std::string msg;
         switch (evt.player.action)
         {
         case Event::PlayerEvent::GotItem:
@@ -237,19 +300,37 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                 (evt.player.playerId == Category::PlayerOne) ?
                     m_playerOneLives++ :
                     m_playerTwoLives++;
+                msg = "Extra Life! ";
+                break;
             case Event::PlayerEvent::Attraction:
+                msg = "Nothing! ";
+                break;
             case Event::PlayerEvent::ExtraSpeed:
+                msg = "Extra Speed! ";
+                break;
             case Event::PlayerEvent::JumpIncrease:
+                msg = "Extra Jump! ";
+                break;
             case Event::PlayerEvent::ReverseControls:
-                (evt.player.playerId == Category::PlayerOne) ? 
-                    m_playerOneScore += itemPoints :
-                    m_playerTwoScore += itemPoints;
+                msg = "Reverse Controls! ";
+                break;
             default: break;
             }
+            (evt.player.playerId == Category::PlayerOne) ?
+                m_playerOneScore += itemPoints :
+                m_playerTwoScore += itemPoints;
+
+            //display message
+            m_messages.emplace_back(msg + std::to_string(itemPoints),
+                sf::Vector2f(evt.player.positionX, evt.player.positionY),
+                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+
+            m_messages.back().setColour(sf::Color::Yellow);
             updateText(evt.player.playerId);
             break;
         default:break;
         }
+    }
         break;
     default: break;
     }
@@ -352,7 +433,51 @@ void ScoreBoard::disablePlayer(Category::Type player)
 
 void ScoreBoard::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    for (const auto& m : m_messages)
+        m_context.renderWindow.draw(m);
+
     m_context.renderWindow.draw(playerOneText);
     m_context.renderWindow.draw(playerTwoText);
     m_context.renderWindow.draw(npcText);
+}
+
+//-----message class-----//
+ScoreBoard::Message::Message(const std::string& text, const sf::Vector2f& position, const sf::Font& font)
+    : m_colour          (sf::Color::White),
+    m_transparency      (1.f),
+    m_text              (text, font, 24u),
+    m_messageSpeed      (initialMessageSpeed)
+{
+    Util::Position::centreOrigin(m_text);
+    m_text.setPosition(position);
+}
+
+void ScoreBoard::Message::update(float dt)
+{
+    const float step = 1.4f * dt;
+    m_transparency -= step;
+
+    if (m_transparency > 0)
+    {
+        m_colour.a = static_cast<sf::Uint8>(255.f * m_transparency);
+        m_text.setColor(m_colour);
+    }
+
+    m_messageSpeed += messageAcceleration * dt;
+    m_text.move(0.f, -m_messageSpeed * dt);
+}
+
+void ScoreBoard::Message::setColour(const sf::Color& c)
+{
+    m_colour = c;
+}
+
+bool ScoreBoard::Message::stopped() const
+{
+    return (m_transparency <= 0);
+}
+
+void ScoreBoard::Message::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    rt.draw(m_text, states);
 }

@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -39,26 +39,30 @@ namespace
 {
     sf::Text titleText;
     sf::Text bigText;
+
+    const std::string music = "res/sound/music/intro.ogg";
 }
 
 TitleState::TitleState(StateStack& stack, Context context)
     : State(stack, context)
 {
-    getContext().renderWindow.setTitle("Title Screen");
-    getContext().renderWindow.setView(getContext().defaultView);
+    context.renderWindow.setTitle("Title Screen");
+    context.renderWindow.setView(context.defaultView);
 
-    titleText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
+    titleText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     titleText.setCharacterSize(36u);
     titleText.setString("Press any key to continue...");
 
     Util::Position::centreOrigin(titleText);
-    titleText.setPosition(getContext().defaultView.getCenter());
+    titleText.setPosition(context.defaultView.getCenter());
 
-    bigText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
+    bigText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     bigText.setCharacterSize(100u);
     bigText.setString("CRUSH!");
     Util::Position::centreOrigin(bigText);
     bigText.setPosition(titleText.getPosition() - sf::Vector2f(0.f, bigText.getLocalBounds().height + 20.f));
+
+    context.gameInstance.playMusic(music);
 }
 
 void TitleState::draw()

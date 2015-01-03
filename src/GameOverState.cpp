@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -42,28 +42,33 @@ namespace
     sf::RectangleShape rectangle;
 
     const float waitTime = 2.f;
+
+    const std::string music = "res/sound/music/game_over.ogg";
 }
 
 GameOverState::GameOverState(StateStack& stack, Context context)
     : State         (stack, context),
     m_waitedTime    (0.f)
 {
-    getContext().renderWindow.setTitle("Menu Screen");
-    getContext().renderWindow.setView(getContext().defaultView);
+    context.renderWindow.setTitle("Menu Screen");
+    context.renderWindow.setView(context.defaultView);
 
-    placeholderText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
+    placeholderText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     placeholderText.setString(str);
     placeholderText.setCharacterSize(60u);
     Util::Position::centreOrigin(placeholderText);
-    placeholderText.setPosition(getContext().defaultView.getCenter());
+    placeholderText.setPosition(context.defaultView.getCenter());
 
     rectangle.setFillColor({ 0u, 0u, 0u, 148u });
     rectangle.setSize(context.defaultView.getSize());
+
+    context.gameInstance.playMusic(music); //TODO make this delayed
 }
 
 bool GameOverState::update(float dt)
 {
     m_waitedTime += dt;
+
     return true; //return true so we can see remaining baddies bouncing about / finish death animations
 }
 

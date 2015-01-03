@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -39,11 +39,15 @@ source distribution.
 namespace
 {
     const float timePerFrame = 1.f / 60.f;
+
+    sf::Clock frameClock;
+    float timeSinceLastUpdate = 0.f;
 }
 
 Game::Game()
     : m_renderWindow(sf::VideoMode(1280, 720), "Crush", sf::Style::Close), //1024, 576
-    m_stateStack        (State::Context(m_renderWindow, *this))
+    m_stateStack    (State::Context(m_renderWindow, *this)),
+    m_paused        (false)
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);
@@ -54,9 +58,7 @@ Game::Game()
 //public
 void Game::run()
 {
-    sf::Clock frameClock;
-    float timeSinceLastUpdate = 0.f;
-
+    frameClock.restart();
     while (m_renderWindow.isOpen())
     {
         float elapsedTime = frameClock.restart().asSeconds();
@@ -67,11 +69,24 @@ void Game::run()
             timeSinceLastUpdate -= timePerFrame;
 
             handleEvents();
-            update(timePerFrame);
+            if(!m_paused)
+                update(timePerFrame);
         }
 
         draw();
     }
+}
+
+void Game::pause()
+{
+    m_paused = true;
+}
+
+void Game::resume()
+{
+    m_paused = false;
+    frameClock.restart();
+    timeSinceLastUpdate = 0.f;
 }
 
 void Game::setClearColour(sf::Color c)
@@ -94,6 +109,27 @@ ShaderResource& Game::getShaderResource()
     return m_shaderResource;
 }
 
+void Game::playMusic(const std::string& title, bool loop)
+{
+    m_musicPlayer.play(title, loop);
+}
+
+void Game::stopMusic()
+{
+    m_musicPlayer.stop();
+}
+
+void Game::pauseMusic()
+{
+    m_musicPlayer.setPaused(true);
+}
+
+void Game::resumeMusic()
+{
+    m_musicPlayer.setPaused(false);
+}
+
+
 //private
 void Game::handleEvents()
 {
@@ -105,6 +141,12 @@ void Game::handleEvents()
             if (evt.key.code == sf::Keyboard::Escape)
                 m_renderWindow.close();
         //-----------------------------------------
+
+        //pause simulation while window is not focused
+        if (evt.type == sf::Event::LostFocus)
+            pause();
+        else if (evt.type == sf::Event::GainedFocus)
+            resume();
 
         m_stateStack.handleEvent(evt);
         

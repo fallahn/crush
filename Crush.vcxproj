@@ -76,6 +76,7 @@
     <ClCompile Include="src\ItemBehaviour.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\MapController.cpp" />
+    <ClCompile Include="src\Music.cpp" />
     <ClCompile Include="src\NpcController.cpp" />
     <ClCompile Include="src\BlockBehaviour.cpp" />
     <ClCompile Include="src\BodyBehaviour.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\MapController.hpp" />
+    <ClInclude Include="include\Music.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\UberShader.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />

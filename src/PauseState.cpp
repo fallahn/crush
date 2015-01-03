@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -42,18 +42,24 @@ namespace
 PauseState::PauseState(StateStack& stack, Context context)
     : State(stack, context)
 {
-    getContext().renderWindow.setView(getContext().defaultView);
+    context.renderWindow.setView(context.defaultView);
     
     grey.setFillColor({ 0u, 0u, 0u, 148u });
     grey.setSize(context.defaultView.getSize());
 
-    text.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
+    text.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     text.setString("PAUSED");
     text.setCharacterSize(80u);
     Util::Position::centreOrigin(text);
-    text.setPosition(getContext().defaultView.getCenter());
+    text.setPosition(context.defaultView.getCenter());
+
+    context.gameInstance.pauseMusic();
 }
 
+PauseState::~PauseState()
+{
+    getContext().gameInstance.resumeMusic();
+}
 
 bool PauseState::update(float dt)
 {

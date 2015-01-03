@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -45,25 +45,30 @@ namespace
         "(Player Two) to grab a box and drag it around.\n"
         "Press S (Player One) or Down (Player Two) to \n"
         "pick up a block and stack it on others.\n"
+        "(or just use a controller!)\n"
         "Score the most points by crushing the bad guys\n"
         "(or each other!). Crush enemies between blocks..\n"
         " but don't accidentally crush yourself!\n"
         "\n"
         "Press Enter to begin.";
+
+    const std::string music = "res/sound/music/main_menu.ogg";
 }
 
 MenuState::MenuState(StateStack& stack, Context context)
     : State(stack, context)
 {
-    getContext().renderWindow.setTitle("Menu Screen");
-    getContext().renderWindow.setView(getContext().defaultView);
+    context.renderWindow.setTitle("Menu Screen");
+    context.renderWindow.setView(context.defaultView);
 
-    placeholderText.setFont(getContext().gameInstance.getFont("res/fonts/VeraMono.ttf"));
+    placeholderText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     placeholderText.setString(str);
-    placeholderText.setCharacterSize(60u);
+    placeholderText.setCharacterSize(58u);
     Util::Position::centreOrigin(placeholderText);
-    placeholderText.setPosition(getContext().defaultView.getCenter());
+    placeholderText.setPosition(context.defaultView.getCenter());
     
+    //TODO get theme music
+    context.gameInstance.playMusic(music);
 }
 
 void MenuState::draw()

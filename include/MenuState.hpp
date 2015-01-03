@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -36,8 +36,8 @@ public:
     MenuState(StateStack& stack, Context context);
     ~MenuState() = default;
 
-    void draw() override;
     bool update(float dt) override;
+    void draw() override;
     bool handleEvent(const sf::Event& evt) override;
 
 private:

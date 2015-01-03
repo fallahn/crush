@@ -171,6 +171,9 @@
     <ClCompile Include="src\AudioController.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
+    <ClCompile Include="src\Music.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -298,6 +301,9 @@
     </ClInclude>
     <ClInclude Include="include\AudioController.hpp">
       <Filter>Header Files\Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Music.hpp">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

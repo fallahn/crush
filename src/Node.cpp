@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -311,7 +311,7 @@ void Node::onNotify(Subject& s, const Event& evt)
                 //decide what it is player collected and announce it
                 std::cout << "Player collected some shizzle!" << std::endl;
                 Event::PlayerEvent::Item itemType 
-                    = static_cast<Event::PlayerEvent::Item>(Util::Random::value(0, Event::PlayerEvent::Item::Size - 1));
+                    = static_cast<Event::PlayerEvent::Item>(Util::Random::value(1, Event::PlayerEvent::Item::Size - 1));
                 std::cout << "item type: " << itemType << std::endl;
                 Event e;
                 e.type = Event::Player;
@@ -329,7 +329,14 @@ void Node::onNotify(Subject& s, const Event& evt)
                 sf::Int32 cat = m_category;
                 cat &= ~(Category::LastTouchedOne | Category::LastTouchedTwo);
                 m_category = static_cast<Category::Type>(cat);
-                notify(*this, evt);
+
+                Event e = evt;
+                assert(m_collisionBody);
+                auto pos = m_collisionBody->getCentre();
+                e.node.positionX = pos.x;
+                e.node.positionY = pos.y;
+
+                notify(*this, e);
             }
         }
         break;

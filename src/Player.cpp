@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -167,12 +167,6 @@ void Player::update(float dt)
     {
         m_flashSprite = true;
         spawn(m_spawnPosition, *this);
-        //hack to make P2 spawn facing the correct direction
-        if (m_id == Category::PlayerTwo)
-        {
-            m_leftFacing = true;
-            m_lastFacing = m_leftFacing;
-        }
     }
 
     //update sprite

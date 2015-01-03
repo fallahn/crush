@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush - Zlib license.
@@ -33,6 +33,7 @@ source distribution.
 #include <StateStack.hpp>
 #include <Resource.hpp>
 #include <ShaderResource.hpp>
+#include <Music.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -43,6 +44,8 @@ public:
     ~Game() = default;
 
     void run();
+    void pause();
+    void resume();
 
     void setClearColour(sf::Color c);
     sf::Font& getFont(const std::string& path);
@@ -50,7 +53,14 @@ public:
     TextureResource& getTextureResource();
     ShaderResource& getShaderResource();
 
+    void playMusic(const std::string& title, bool loop = true);
+    void stopMusic();
+    void pauseMusic();
+    void resumeMusic();
+
 private: 
+
+    bool m_paused;
 
     sf::RenderWindow m_renderWindow;
     sf::Color m_clearColour;
@@ -60,6 +70,8 @@ private:
     FontResource m_fontResource;
     TextureResource m_textureResource;
     ShaderResource m_shaderResource;
+
+    MusicPlayer m_musicPlayer;
 
     void handleEvents();
     void update(float dt);
