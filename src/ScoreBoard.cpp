@@ -52,27 +52,38 @@ namespace
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
-    : m_stack           (stack),
-    m_context           (context),
-    m_playerOneLives    (5),
-    m_playerTwoLives    (-1),
-    m_playerOneScore    (0u),
-    m_playerTwoScore    (0u),
-    m_playerOneExtinct  (false),
-    m_playerTwoExtinct  (false),
-    m_maxNpcs           (2u),
-    m_spawnedNpcs       (0u),
-    m_deadNpcs          (0u)
+    : m_stack(stack),
+    m_context(context),
+    m_playerOneLives(5),
+    m_playerTwoLives(-1),
+    m_playerOneScore(0u),
+    m_playerTwoScore(0u),
+    m_playerOneExtinct(false),
+    m_playerTwoExtinct(false),
+    m_maxNpcs(2u),
+    m_spawnedNpcs(0u),
+    m_deadNpcs(0u)
 {
     playerOneText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     playerOneText.setPosition({ 60.f, 10.f });
-    updateText(Category::PlayerOne);
+    //updateText(Category::PlayerOne);
 
     playerTwoText.setFont(*playerOneText.getFont());
-    playerTwoText.setString("Press Start");
+    //playerTwoText.setString("Press Start");
     playerTwoText.setPosition({ 1400.f, 10.f });
 
     npcText.setFont(*playerOneText.getFont());
+
+    //initialise player data from current context
+    m_playerOneExtinct = !context.gameData.playerOne.enabled;
+    m_playerOneLives = (m_playerOneExtinct) ? -1 : context.gameData.playerOne.lives;
+    m_playerOneScore = context.gameData.playerOne.score;
+    updateText(Category::PlayerOne);
+
+    m_playerTwoExtinct = !context.gameData.playerTwo.enabled;
+    m_playerTwoLives = (m_playerTwoExtinct) ? -1 : context.gameData.playerTwo.lives;
+    m_playerTwoScore = context.gameData.playerTwo.score;
+    updateText(Category::PlayerTwo);
 }
 
 //public
@@ -118,6 +129,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                 {
                     //game over, all dead
                     m_stack.pushState(States::ID::GameOver);
+                    updateGameData();
 
                     //disable player input
                     disablePlayer(Category::PlayerOne);
@@ -407,11 +419,25 @@ void ScoreBoard::updateText(Category::Type type)
         npcText.setPosition(m_context.defaultView.getCenter() + sf::Vector2f(0.f, -500.f));
     }
 
+    //not really sure why this is in this function as it's not the obvious place to look
     if (m_playerOneLives < 0 && m_playerTwoLives < 0)
     {
         //Gaaaaaaame Oveeeeer!!!
         m_stack.pushState(States::ID::GameOver);
+        updateGameData();
     }
+}
+
+void ScoreBoard::updateGameData()
+{
+    auto& gameData = m_context.gameData;
+    gameData.playerOne.enabled = !m_playerOneExtinct;
+    gameData.playerOne.lives = m_playerOneLives;
+    gameData.playerOne.score = m_playerOneScore;
+
+    gameData.playerTwo.enabled = !m_playerTwoExtinct;
+    gameData.playerTwo.lives = m_playerTwoLives;
+    gameData.playerTwo.score = m_playerTwoScore;
 }
 
 void ScoreBoard::disablePlayer(Category::Type player)

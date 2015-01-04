@@ -36,8 +36,11 @@ source distribution.
 namespace
 {
     sf::Text placeholderText;
-    std::string str =
+    std::string loseStr =
         "       GAME OVER\n Press C to Continue";
+
+    std::string winStr =
+        "        YOU WIN!\n Press C to Continue";
 
     sf::RectangleShape rectangle;
 
@@ -54,7 +57,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     context.renderWindow.setView(context.defaultView);
 
     placeholderText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
-    placeholderText.setString(str);
+    (!context.gameData.playerOne.enabled && !context.gameData.playerTwo.enabled) ? placeholderText.setString(loseStr) : placeholderText.setString(winStr);
     placeholderText.setCharacterSize(60u);
     Util::Position::centreOrigin(placeholderText);
     placeholderText.setPosition(context.defaultView.getCenter());
@@ -63,6 +66,8 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     rectangle.setSize(context.defaultView.getSize());
 
     context.gameInstance.playMusic(music); //TODO make this delayed
+
+    //TODO parse context data and sum up scores
 }
 
 bool GameOverState::update(float dt)
@@ -87,8 +92,20 @@ bool GameOverState::handleEvent(const sf::Event& evt)
     {
         if (evt.key.code == sf::Keyboard::C)
         {
+            
             requestStackClear();
-            requestStackPush(States::ID::Menu);
+            auto& gameData = getContext().gameData;
+            if (++gameData.mapIndex == gameData.mapList.size() //reached the end of the map list
+                || (!gameData.playerOne.enabled && !gameData.playerTwo.enabled)) //both players are dead
+            {
+                //go back to main menu
+                requestStackPush(States::ID::Menu);
+            }
+            else
+            {
+                //load next map
+                requestStackPush(States::ID::Game);
+            }
         }
     }
     return false;

@@ -58,11 +58,12 @@ struct GameData
     struct PlayerData
     {
         sf::Uint16 score;
-        sf::Uint8 lives;
+        sf::Int16 lives;
         std::string name;
         Player::Keys keyBinds;
+        bool enabled;
 
-        PlayerData() : score(0u), lives(5u){}
+        PlayerData() : score(0u), lives(5u), enabled(true){}
     }playerOne, playerTwo;
 };
 
@@ -76,11 +77,11 @@ public:
 
     struct Context
     {
-        Context(sf::RenderWindow& renderWindow, Game& game);
+        Context(sf::RenderWindow& renderWindow, Game& game, GameData& gd);
         sf::RenderWindow& renderWindow;
         Game& gameInstance;
         sf::View defaultView; //automatically updated to correctly letterbox screen
-        GameData gameData;
+        GameData& gameData;
     };
 
     State(StateStack& stateStack, Context context);

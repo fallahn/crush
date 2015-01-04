@@ -42,11 +42,13 @@ namespace
 
     sf::Clock frameClock;
     float timeSinceLastUpdate = 0.f;
+
+    GameData gameData;
 }
 
 Game::Game()
-    : m_renderWindow(sf::VideoMode(1280, 720), "Crush", sf::Style::Close), //1024, 576
-    m_stateStack    (State::Context(m_renderWindow, *this)),
+    : m_renderWindow(sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
+    m_stateStack(State::Context(m_renderWindow, *this, gameData)),
     m_paused        (false)
 {
     registerStates();

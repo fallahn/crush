@@ -85,7 +85,7 @@ GameState::GameState(StateStack& stack, Context context)
 
 
     //parse map
-    Map map("res/maps/testmap.crm");
+    Map map("res/maps/" + context.gameData.mapList[context.gameData.mapIndex]);
 
     //set up controllers
     m_players.reserve(2);
@@ -97,6 +97,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_players[1].setSpawnFunction(playerSpawnFunc);
     m_players[0].setSpawnPosition(map.getPlayerOneSpawn());
     m_players[1].setSpawnPosition(map.getPlayerTwoSpawn());
+    //TODO set keybinds from context
 
     std::function<void(const sf::Vector2f&, const sf::Vector2f&)> npcSpawnFunc = std::bind(&GameState::addNpc, this, std::placeholders::_1, std::placeholders::_2);
     m_npcController.setSpawnFunction(npcSpawnFunc);
@@ -109,7 +110,10 @@ GameState::GameState(StateStack& stack, Context context)
     m_scoreBoard.addObserver(m_players[0]);
     m_scoreBoard.addObserver(m_players[1]);
     m_scoreBoard.addObserver(m_npcController);
-    m_scoreBoard.enablePlayer(Category::PlayerOne);
+    if (context.gameData.playerOne.enabled)
+        m_scoreBoard.enablePlayer(Category::PlayerOne);
+    if (context.gameData.playerTwo.enabled)
+        m_scoreBoard.enablePlayer(Category::PlayerTwo);
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
 
     m_scene.addObserver(m_scoreBoard);
@@ -196,7 +200,7 @@ bool GameState::handleEvent(const sf::Event& evt)
 
             break;
         case sf::Keyboard::Num2:
-            m_scoreBoard.enablePlayer(Category::PlayerTwo);
+            //m_scoreBoard.enablePlayer(Category::PlayerTwo);
             break;
         case sf::Keyboard::P:
             requestStackPush(States::ID::Pause);

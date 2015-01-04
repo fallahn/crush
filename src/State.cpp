@@ -33,9 +33,10 @@ source distribution.
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
-State::Context::Context(sf::RenderWindow& window, Game& game)
+State::Context::Context(sf::RenderWindow& window, Game& game, GameData& gd)
     : renderWindow  (window),
-    gameInstance    (game)
+    gameInstance    (game),
+    gameData        (gd)
 {
     //calculate the correct viewe size / ratio for window size
     defaultView.setSize(1920.f, 1080.f);

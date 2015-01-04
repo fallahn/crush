@@ -48,12 +48,14 @@ namespace
 TitleState::TitleState(StateStack& stack, Context context)
     : State(stack, context)
 {
+    //check map directory and make sure we only have map files listed
     context.gameData.mapList = FileSystem::listFiles("res/maps");
-
-    //TODO remove this after testing on linux
-    std::cout << "found " << context.gameData.mapList.size() << " files:" << std::endl;
-    for (const auto& s : context.gameData.mapList)
-        std::cout << s << std::endl;
+    context.gameData.mapList.erase(std::remove_if(context.gameData.mapList.begin(), context.gameData.mapList.end(),
+        [](const std::string& s)
+    {
+        return (FileSystem::getFileExtension(s) != ".crm");
+    }),
+        context.gameData.mapList.end());
     
     context.renderWindow.setTitle("Title Screen");
     context.renderWindow.setView(context.defaultView);

@@ -40,12 +40,11 @@ namespace
         "HOW TO PLAY:\n"
         "\n"
         "Use WAD to move Player One and Arrow keys\n"
-        "to move Player Two. Press 2 to spawn the second\n"
-        "player. Hold Space (Player One) or Right Shift\n"
-        "(Player Two) to grab a box and drag it around.\n"
-        "Press S (Player One) or Down (Player Two) to \n"
-        "pick up a block and stack it on others.\n"
-        "(or just use a controller!)\n"
+        "to move Player Two. Hold Space (Player One)\n"
+        "or Right Shift (Player Two) to grab a box and\n"
+        "drag it around. Press S (Player One) or Down\n"
+        "(Player Two) to pick up a block and stack it\n"
+        "on others (also works with a controller!).\n"
         "Score the most points by crushing the bad guys\n"
         "(or each other!). Crush enemies between blocks..\n"
         " but don't accidentally crush yourself!\n"
@@ -66,9 +65,17 @@ MenuState::MenuState(StateStack& stack, Context context)
     placeholderText.setCharacterSize(58u);
     Util::Position::centreOrigin(placeholderText);
     placeholderText.setPosition(context.defaultView.getCenter());
-    
-    //TODO get theme music
+
+
     context.gameInstance.playMusic(music);
+
+    //reset game data TODO make sure to load correct keybinds
+    //and enable correct amount of players
+    context.gameData.playerOne = {};
+    //context.gameData.playerOne.enabled = false;
+    context.gameData.playerTwo = {};
+    context.gameData.playerTwo.enabled = false;
+    context.gameData.mapIndex = 0;
 }
 
 void MenuState::draw()

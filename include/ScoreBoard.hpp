@@ -71,6 +71,7 @@ private:
     sf::Uint8 m_deadNpcs;
 
     void updateText(Category::Type type);
+    void updateGameData();
     void disablePlayer(Category::Type player);
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
