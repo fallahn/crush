@@ -32,6 +32,7 @@ source distribution.
 
 #include <StateIds.hpp>
 #include <AnimatedSprite.hpp>
+#include <Player.hpp>
 
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -47,6 +48,24 @@ namespace sf
     class RenderWindow;
 }
 
+struct GameData
+{
+    std::vector<std::string> mapList;
+    sf::Uint16 mapIndex; //current map in the list
+
+    GameData() : mapIndex(0u){}
+
+    struct PlayerData
+    {
+        sf::Uint16 score;
+        sf::Uint8 lives;
+        std::string name;
+        Player::Keys keyBinds;
+
+        PlayerData() : score(0u), lives(5u){}
+    }playerOne, playerTwo;
+};
+
 class StateStack;
 class Game;
 class TextureResource;
@@ -61,6 +80,7 @@ public:
         sf::RenderWindow& renderWindow;
         Game& gameInstance;
         sf::View defaultView; //automatically updated to correctly letterbox screen
+        GameData gameData;
     };
 
     State(StateStack& stateStack, Context context);

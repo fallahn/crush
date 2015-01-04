@@ -34,6 +34,8 @@ source distribution.
 #include <Resource.hpp>
 #include <Util.hpp>
 
+#include <FileSystem.hpp>
+#include <iostream>
 
 namespace
 {
@@ -46,6 +48,13 @@ namespace
 TitleState::TitleState(StateStack& stack, Context context)
     : State(stack, context)
 {
+    context.gameData.mapList = FileSystem::listFiles("res/maps");
+
+    //TODO remove this after testing on linux
+    std::cout << "found " << context.gameData.mapList.size() << " files:" << std::endl;
+    for (const auto& s : context.gameData.mapList)
+        std::cout << s << std::endl;
+    
     context.renderWindow.setTitle("Title Screen");
     context.renderWindow.setView(context.defaultView);
 

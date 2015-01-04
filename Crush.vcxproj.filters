@@ -174,6 +174,9 @@
     <ClCompile Include="src\Music.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
+    <ClCompile Include="src\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -304,6 +307,9 @@
     </ClInclude>
     <ClInclude Include="include\Music.hpp">
       <Filter>Header Files\States</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FileSystem.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -52,6 +52,7 @@ add_executable(
 	src/CollisionWorld.cpp
 	src/CommandStack.cpp
 	src/DebugShape.cpp
+	src/FileSystem.cpp
 	src/FontResource.cpp
 	src/Game.cpp
 	src/GameState.cpp

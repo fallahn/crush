@@ -85,7 +85,7 @@ GameState::GameState(StateStack& stack, Context context)
 
 
     //parse map
-    Map map("res/maps/testmap2.crm");
+    Map map("res/maps/testmap.crm");
 
     //set up controllers
     m_players.reserve(2);
