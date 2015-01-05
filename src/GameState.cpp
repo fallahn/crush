@@ -260,6 +260,13 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
     npcNode->addObserver(m_particleController);
     npcNode->addObserver(m_audioController);
     
+    /*auto light = m_scene.addLight(sf::Vector3f(1.f, 1.f, 1.f), 600.f);
+    if (light)
+    {
+        light->setDepth(450.f);
+        npcNode->setLight(light);
+        npcNode->addObserver(*light);
+    }*/
     m_scene.addNode(npcNode, Scene::Dynamic);
 }
 
@@ -299,6 +306,15 @@ void GameState::addMapBody(const Map::Node& n)
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Item, n.size));
         node->addObserver(m_particleController);
         node->addObserver(m_audioController);
+
+        //TODO make smaller / brighter
+        auto light = m_scene.addLight(sf::Vector3f(0.34f, 0.96f, 1.f), 600.f);
+        if (light)
+        {
+            light->setDepth(450.f);
+            node->setLight(light);
+            node->addObserver(*light);
+        }
 
         m_scene.addNode(node, Scene::Dynamic);
     }

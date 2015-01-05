@@ -35,7 +35,7 @@ source distribution.
 
 namespace
 {
-    const sf::Uint8 maxLights = 3;
+    const sf::Uint8 maxLights = 6u;
     const sf::Vector3f sunTarget(960.f, 540.f, 0.f);
 }
 
@@ -233,7 +233,7 @@ void Scene::update(float dt)
     //underlying array of the transform class
     std::array<sf::Vector3f, maxLights> positions;
     std::array<sf::Vector3f, maxLights> colours;
-    std::array<float, maxLights> ranges = { 1.f, 1.f, 1.f };
+    std::array<float, maxLights> ranges = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
 
     for (auto i = 0u; i < m_lights.size(); ++i)
     {
@@ -242,13 +242,22 @@ void Scene::update(float dt)
         ranges[i] = m_lights[i].getRangeInverse();
     }
 
-    sf::Transform lightPositions(positions[0].x, positions[0].y, positions[0].z,
-                                positions[1].x, positions[1].y, positions[1].z, 
-                                positions[2].x, positions[2].y, positions[2].z);
 
-    sf::Transform lightColours(colours[0].x, colours[0].y, colours[0].z,
-                                colours[1].x, colours[1].y, colours[1].z,
-                                colours[2].x, colours[2].y, colours[2].z);
+    sf::Transform lightPositionsFirst(positions[0].x, positions[0].y, positions[0].z,
+                                    positions[1].x, positions[1].y, positions[1].z, 
+                                    positions[2].x, positions[2].y, positions[2].z);
+
+    sf::Transform lightPositionsSecond(positions[3].x, positions[3].y, positions[3].z,
+                                    positions[4].x, positions[4].y, positions[4].z,
+                                    positions[5].x, positions[5].y, positions[5].z);
+
+    sf::Transform lightColoursFirst(colours[0].x, colours[0].y, colours[0].z,
+                                    colours[1].x, colours[1].y, colours[1].z,
+                                    colours[2].x, colours[2].y, colours[2].z);
+
+    sf::Transform lightColoursSecond(colours[3].x, colours[3].y, colours[3].z,
+                                    colours[4].x, colours[4].y, colours[4].z,
+                                    colours[5].x, colours[5].y, colours[5].z);
 
     for (auto& s : m_shaders)
     {
@@ -256,9 +265,11 @@ void Scene::update(float dt)
         s->setParameter("u_directionalLightColour", m_sunLight.getColour());
         s->setParameter("u_ambientColour", m_ambientColour);
 
-        s->setParameter("u_pointLightColours", lightColours);
+        s->setParameter("u_pointLightPositionsFirst", lightPositionsFirst);
+        s->setParameter("u_pointLightPositionsSecond", lightPositionsSecond);
+        s->setParameter("u_pointLightColoursFirst", lightColoursFirst);
+        s->setParameter("u_pointLightColoursSecond", lightColoursSecond);
         s->setParameter("u_inverseRanges", sf::Vector3f(ranges[0], ranges[1], ranges[2]));
-        s->setParameter("u_pointLightPositions", lightPositions);
     }
 
     flush();

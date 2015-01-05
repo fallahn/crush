@@ -46,13 +46,15 @@ namespace Shader
 
 
     static const std::string uberVertex =
-        "uniform mat4 u_pointLightPositions;\n" \
+        "#define LIGHT_COUNT 6\n" \
+        "uniform mat4 u_pointLightPositionsFirst;\n" \
+        "uniform mat4 u_pointLightPositionsSecond;\n" \
         "uniform vec3 u_directionalLightDirection;\n" \
         "uniform mat4 u_inverseWorldViewMatrix;\n" \
 
         "varying vec3 v_eyeDirection;\n" \
         "varying vec3 v_directionalLightDirection;\n" \
-        "varying vec3 v_pointLightDirections[3];\n" \
+        "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n" \
 
         "const vec3 tangent = vec3(1.0, 0.0, 0.0);\n" \
         /*"const vec3 bitangent = vec3(0.0, 1.0, 0.0);" \*/
@@ -60,10 +62,18 @@ namespace Shader
 
         "const vec2 sceneSize = vec2(1920.0, 1080.0);\n" \
 
-        "vec3 getLightPosition(int index)\n" \
+
+        "vec3[LIGHT_COUNT] unpackLightPositions()\n" \
         "{\n" \
-        "    return vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositions[0][index], u_pointLightPositions[1][index], u_pointLightPositions[3][index], 1.0));\n" \
+            "return vec3[LIGHT_COUNT](\n" \
+                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][0], u_pointLightPositionsFirst[1][0], u_pointLightPositionsFirst[3][0], 1.0)),\n" \
+                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][1], u_pointLightPositionsFirst[1][1], u_pointLightPositionsFirst[3][1], 1.0)),\n" \
+                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][3], u_pointLightPositionsFirst[1][3], u_pointLightPositionsFirst[3][3], 1.0)),\n" \
+                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][0], u_pointLightPositionsSecond[1][0], u_pointLightPositionsSecond[3][0], 1.0)),\n" \
+                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][1], u_pointLightPositionsSecond[1][1], u_pointLightPositionsSecond[3][1], 1.0)),\n" \
+                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][3], u_pointLightPositionsSecond[1][3], u_pointLightPositionsSecond[3][3], 1.0)));\n" \
         "}\n" \
+
 
         "void main()\n" \
         "{\n" \
@@ -88,8 +98,8 @@ namespace Shader
         "    v_directionalLightDirection.y = dot(viewDirectionalLightDirection, b);\n" \
         "    v_directionalLightDirection.z = dot(viewDirectionalLightDirection, n);\n" \
 
-        "    vec3 pointPositions[3] = vec3[3](getLightPosition(0), getLightPosition(1), getLightPosition(3));\n" \
-        "    for(int i = 0; i < 3; i++)\n" \
+        "    vec3 pointPositions[LIGHT_COUNT] = unpackLightPositions();\n" \
+        "    for(int i = 0; i < LIGHT_COUNT; i++)\n" \
         "    {\n" \
         "        vec3 viewPointLightDir = vec3(gl_ModelViewMatrix * vec4(pointPositions[i], 1.0)) - viewVertex;\n" \
         "\n" \
@@ -109,19 +119,21 @@ namespace Shader
 
     //TODO add specular exponent as uniform
     static const std::string uberFragment =
+        "#define LIGHT_COUNT 6\n" \
         "uniform sampler2D u_diffuseMap;\n" \
         "uniform sampler2D u_normalMap;\n" \
         "#if defined(REFLECT_MAP)\n" \
         "uniform sampler2D u_reflectMap;\n" \
         "#endif\n" \
         "uniform vec3 u_inverseRanges;\n" \
-        "uniform mat4 u_pointLightColours;\n" \
+        "uniform mat4 u_pointLightColoursFirst;\n" \
+        "uniform mat4 u_pointLightColoursSecond;\n" \
         "uniform vec3 u_directionalLightColour;\n" \
         "uniform vec3 u_ambientColour;\n" \
         "uniform float u_textureOffset;\n" \
         "\n" \
         "varying vec3 v_directionalLightDirection;\n" \
-        "varying vec3 v_pointLightDirections[3];\n" \
+        "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n" \
         "varying vec3 v_eyeDirection;\n" \
         "\n" \
         "vec4 diffuseColour;\n" \
@@ -146,10 +158,18 @@ namespace Shader
         "#endif\n" \
         "}\n" \
 
-        "vec3 getColour(int index)\n" \
+
+        "vec3[LIGHT_COUNT] unpackLightColours()\n" \
         "{\n" \
-        "    return vec3(u_pointLightColours[0][index], u_pointLightColours[1][index], u_pointLightColours[3][index]);\n" \
+            "return vec3[LIGHT_COUNT](\n" \
+                "vec3(u_pointLightColoursFirst[0][0], u_pointLightColoursFirst[1][0], u_pointLightColoursFirst[3][0]),\n" \
+                "vec3(u_pointLightColoursFirst[0][1], u_pointLightColoursFirst[1][1], u_pointLightColoursFirst[3][1]),\n" \
+                "vec3(u_pointLightColoursFirst[0][3], u_pointLightColoursFirst[1][3], u_pointLightColoursFirst[3][3]),\n" \
+                "vec3(u_pointLightColoursSecond[0][0], u_pointLightColoursSecond[1][0], u_pointLightColoursSecond[3][0]),\n" \
+                "vec3(u_pointLightColoursSecond[0][1], u_pointLightColoursSecond[1][1], u_pointLightColoursSecond[3][1]),\n" \
+                "vec3(u_pointLightColoursSecond[0][3], u_pointLightColoursSecond[1][3], u_pointLightColoursSecond[3][3]));\n" \
         "}\n" \
+
 
         "void main()\n" \
         "{\n" \
@@ -176,10 +196,11 @@ namespace Shader
         "    vec3 normalVector = normalColour.rgb * 2.0 - 1.0;\n" \
         "    vec3 ambientColour = diffuseColour.rgb * u_ambientColour;\n" \
         "    vec3 blendedColour = ambientColour;\n" \
-        "    vec3 pointLightColours[3] = vec3[3](getColour(0), getColour(1), getColour(3));\n" \
-        "    for(int i = 0; i < 3; i++)\n" \
+        "    vec3 pointLightColours[LIGHT_COUNT] = unpackLightColours();\n" \
+        /*TODO fix inverse range index*/
+        "    for(int i = 0; i < LIGHT_COUNT; i++)\n" \
         "    {\n" \
-        "        vec3 pointLightDirection = v_pointLightDirections[i] * u_inverseRanges[i];\n" \
+        "        vec3 pointLightDirection = v_pointLightDirections[i] * u_inverseRanges[0];\n" \
         "        float falloff = clamp(1.0 - dot(pointLightDirection, pointLightDirection), 0.0, 1.0);\n" \
         "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), pointLightColours[i], falloff);\n" \
         "    }\n" \
