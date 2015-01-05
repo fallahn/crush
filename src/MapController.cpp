@@ -182,6 +182,9 @@ void MapController::loadMap(const Map& map)
 
     //TODO load background texture based on map data
     m_backgroundSprite.setTexture(m_textureResource.get("res/textures/background.png"));
+    m_backgroundSprite.setFrameSize(sf::Vector2i(m_backgroundSprite.getTexture()->getSize()));
+    m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/background_normal.png"));
+    m_backgroundSprite.setShader(m_shaderResource.get(Shader::Type::NormalMap));
     m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
 }
 

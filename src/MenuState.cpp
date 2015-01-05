@@ -67,7 +67,7 @@ MenuState::MenuState(StateStack& stack, Context context)
     placeholderText.setPosition(context.defaultView.getCenter());
 
 
-    context.gameInstance.playMusic(music);
+    //context.gameInstance.playMusic(music);
 
     //reset game data TODO make sure to load correct keybinds
     //and enable correct amount of players

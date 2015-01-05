@@ -260,10 +260,10 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
     npcNode->addObserver(m_particleController);
     npcNode->addObserver(m_audioController);
     
-    /*auto light = m_scene.addLight(sf::Vector3f(1.f, 1.f, 1.f), 600.f);
+   /* auto light = m_scene.addLight(sf::Vector3f(1.f, 0.5f, 0.f), 200.f);
     if (light)
     {
-        light->setDepth(450.f);
+        light->setDepth(50.f);
         npcNode->setLight(light);
         npcNode->addObserver(*light);
     }*/
@@ -308,10 +308,10 @@ void GameState::addMapBody(const Map::Node& n)
         node->addObserver(m_audioController);
 
         //TODO make smaller / brighter
-        auto light = m_scene.addLight(sf::Vector3f(0.34f, 0.96f, 1.f), 600.f);
+        auto light = m_scene.addLight(sf::Vector3f(0.34f, 0.96f, 1.f), 400.f);
         if (light)
         {
-            light->setDepth(450.f);
+            light->setDepth(50.f);
             node->setLight(light);
             node->addObserver(*light);
         }
@@ -324,8 +324,8 @@ void GameState::addMapBody(const Map::Node& n)
         auto node = std::make_unique<Node>();
         node->setCategory(Category::Light);
         //TODO magix0r numb0rz
-        auto light = m_scene.addLight(colourToVec3(n.colour), 600.f);
-        light->setDepth(450.f);
+        auto light = m_scene.addLight(colourToVec3(n.colour), 200.f);
+        light->setDepth(50.f);
         node->setLight(light);
         node->setPosition(n.position + (n.size / 2.f));
         node->addObserver(*light);

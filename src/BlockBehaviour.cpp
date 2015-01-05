@@ -285,7 +285,7 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
     //case CollisionWorld::Body::Type::Player:
     //case CollisionWorld::Body::Type::Npc:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({});
+        setVelocity({0.f, getVelocity().y});
 
         break;
     default: break;

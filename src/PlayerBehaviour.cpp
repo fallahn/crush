@@ -178,12 +178,11 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
             && */manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-            setVelocity({});    
-        }
-        {
+            float yVel = std::min(0.f, getVelocity().y);
+            setVelocity({0.f, yVel});    
+        
             int cat = other->getParentCategory();
-            auto vel = getVelocity();
-            
+                       
             if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0 //don't take damage from blocks being carried,
                 && other->getSpeed() > 10.f) //or if they aren't moving
             {

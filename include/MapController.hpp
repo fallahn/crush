@@ -89,7 +89,7 @@ private:
     ShaderResource& m_shaderResource;
     AnimatedSprite m_itemSprite;
     AnimatedSprite m_blockSprite;
-    sf::Sprite m_backgroundSprite;
+    AnimatedSprite m_backgroundSprite;
 
     std::list<WaterDrawable> m_waterDrawables;
 

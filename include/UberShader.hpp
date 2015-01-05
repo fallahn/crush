@@ -152,7 +152,7 @@ namespace Shader
         /*TODO switch const exponent for variable*/
         "    vec3 specularColour = vec3(pow(specularAngle, 96.0)) * falloff;\n" \
 
-        "    return mixedColour + (specularColour * normalColour.a);\n" \
+        "    return mixedColour + (specularColour * 0.5);//normalColour.a);\n" \
         "#else\n" \
         "    return mixedColour;\n" \
         "#endif\n" \

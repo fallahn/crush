@@ -46,7 +46,7 @@ namespace Level_editor
     public partial class MainWindow : Form
     {
         private int m_lightCount = 0;
-        private const int m_maxLights = 3;
+        private const int m_maxLights = 4;
 
         //prevent initial sorting on loading of a map, until
         //the final node is added
@@ -97,12 +97,28 @@ namespace Level_editor
                     p.Move += p1_Move;
                     p.BackgroundImage = Properties.Resources.player_one;
                     nd.layer = Layer.Dynamic;
+
+                    numericUpDownPlayerOneX.ValueChanged -= numericUpDownPlayerOneX_ValueChanged;
+                    numericUpDownPlayerOneY.ValueChanged -= numericUpDownPlayerOneY_ValueChanged;
+                    numericUpDownPlayerOneX.Value = (decimal)position.X;
+                    numericUpDownPlayerOneY.Value = (decimal)position.Y;
+                    numericUpDownPlayerOneX.ValueChanged += numericUpDownPlayerOneX_ValueChanged;
+                    numericUpDownPlayerOneY.ValueChanged += numericUpDownPlayerOneY_ValueChanged;
+
                     break;
                 case Node.BodyType.PlayerTwo:
                     p.BackColor = playerTwoColour;
                     p.Move += p2_Move;
                     p.BackgroundImage = Properties.Resources.player_two;
                     nd.layer = Layer.Dynamic;
+
+                    numericUpDownPlayerTwoX.ValueChanged -= numericUpDownPlayerTwoX_ValueChanged;
+                    numericUpDownPlayerTwoY.ValueChanged -= numericUpDownPlayerTwoY_ValueChanged;
+                    numericUpDownPlayerTwoX.Value = (decimal)position.X;
+                    numericUpDownPlayerTwoY.Value = (decimal)position.Y;
+                    numericUpDownPlayerTwoX.ValueChanged += numericUpDownPlayerTwoX_ValueChanged;
+                    numericUpDownPlayerTwoY.ValueChanged += numericUpDownPlayerTwoY_ValueChanged;
+
                     break;
                 case Node.BodyType.Solid:
                     p.BackColor = solidColour;
@@ -135,7 +151,7 @@ namespace Level_editor
                     }
                     else
                     {
-                        MessageBox.Show("Maps cannot contain more than 3 dynamic lights");
+                        MessageBox.Show("Maps cannot contain more than 4 dynamic lights");
                         return null;
                     }
                     break;
@@ -251,6 +267,7 @@ namespace Level_editor
         private void newFile()
         {
             m_currentMap = new Map();
+            m_lightCount = 0;
 
             //set window title to 'untitled'
             this.Text = "Untitled";
@@ -293,6 +310,7 @@ namespace Level_editor
             
             //create new map object and parse data into it
             m_currentMap = new Map();
+            m_lightCount = 0;
 
             JsonSerializer js = new JsonSerializer();
             js.NullValueHandling = NullValueHandling.Ignore;
