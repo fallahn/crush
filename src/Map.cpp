@@ -120,6 +120,10 @@ Map::Map(const std::string& path)
 
                 if (n.get("FrameName").is<std::string>())
                     m_nodes.back().image = n.get("FrameName").get<std::string>();
+
+                //as are anchor offsets (used for lights with contraints)
+                if (n.get("AnchorOffset").is<double>())
+                    m_nodes.back().anchorOffset = static_cast<float>(n.get("AnchorOffset").get<double>());
             }
             else
             {
@@ -198,7 +202,8 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     : position  (Util::Vector::vec2FromString(position)),
     size        (Util::Vector::vec2FromString(size)),
     type        (Category::None),
-    colour      (c)
+    colour      (c),
+    anchorOffset(0.f)
 {
     if (type == "Block")
     {

@@ -181,12 +181,6 @@ namespace Level_editor
             if (m_selectedNode != null)
             {
                 m_selectedNode.BorderStyle = BorderStyle.None;
-                if(((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
-                {
-                    //remove colour picker
-                    panelNodeColour.Click -= pickLightColour;
-                    panelNodeColour.BackColor = Color.DarkGray;
-                }
             }
             m_selectedNode = p;
             m_selectedNode.BorderStyle = BorderStyle.Fixed3D;
@@ -217,13 +211,6 @@ namespace Level_editor
             }
             comboBoxNodePropertyType.SelectedValue = type;
             comboBoxNodePropertyType.Enabled = true;
-
-            if(type == Node.BodyType.Light)
-            {
-                //add event handler and set colour
-                panelNodeColour.Click += pickLightColour;
-                panelNodeColour.BackColor = m_selectedNode.BackColor;
-            }
 
             if(type == Node.BodyType.Detail)
             {
@@ -356,7 +343,11 @@ namespace Level_editor
                         addNode(Node.BodyType.Item, n.Position, n.Size);
                         break;
                     case "Light":
-                        addNode(Node.BodyType.Light, n.Position, n.Size).BackColor = Color.FromArgb(n.Colour);
+                        var node = addNode(Node.BodyType.Light, n.Position, n.Size);
+                        node.BackColor = Color.FromArgb(n.Colour);
+                        NodeData nd = (NodeData)node.Tag;
+                        nd.anchorOffset = n.AnchorOffset;
+                        node.Tag = nd;
                         break;
                     case "Detail":
                         selectFrame(n.SpriteSheet, n.FrameName);

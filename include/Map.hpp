@@ -55,6 +55,7 @@ public:
         Scene::Layer layer;
         std::string spriteSheet;
         std::string image;
+        float anchorOffset;
     };
 
     explicit Map(const std::string& path);

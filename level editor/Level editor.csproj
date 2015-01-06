@@ -47,11 +47,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BrowseWindow.cs">
+    <Compile Include="BrowseTexturesWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="BrowseWindow.Designer.cs">
-      <DependentUpon>BrowseWindow.cs</DependentUpon>
+    <Compile Include="BrowseTexturesWindow.Designer.cs">
+      <DependentUpon>BrowseTexturesWindow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LightPropertiesWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LightPropertiesWindow.Designer.cs">
+      <DependentUpon>LightPropertiesWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -77,8 +83,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegKey.cs" />
     <Compile Include="SpriteSheet.cs" />
-    <EmbeddedResource Include="BrowseWindow.resx">
-      <DependentUpon>BrowseWindow.cs</DependentUpon>
+    <EmbeddedResource Include="BrowseTexturesWindow.resx">
+      <DependentUpon>BrowseTexturesWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LightPropertiesWindow.resx">
+      <DependentUpon>LightPropertiesWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>

@@ -37,11 +37,11 @@ using System.Windows.Forms;
 
 namespace Level_editor
 {
-    public partial class BrowseWindow : Form
+    public partial class BrowseTexturesWindow : Form
     {
         private MainWindow m_mainWindow;
 
-        public BrowseWindow(MainWindow mainWindow)
+        public BrowseTexturesWindow(MainWindow mainWindow)
         {
             InitializeComponent();
 

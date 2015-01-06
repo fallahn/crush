@@ -40,8 +40,6 @@
             this.comboBoxAddNode = new System.Windows.Forms.ComboBox();
             this.groupBoxNodeProperties = new System.Windows.Forms.GroupBox();
             this.checkBoxFrontDetail = new System.Windows.Forms.CheckBox();
-            this.panelNodeColour = new System.Windows.Forms.Panel();
-            this.label13 = new System.Windows.Forms.Label();
             this.buttonDeleteNode = new System.Windows.Forms.Button();
             this.numericUpDownNodePropertySizeY = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownNodePropertySizeX = new System.Windows.Forms.NumericUpDown();
@@ -237,8 +235,6 @@
             // groupBoxNodeProperties
             // 
             this.groupBoxNodeProperties.Controls.Add(this.checkBoxFrontDetail);
-            this.groupBoxNodeProperties.Controls.Add(this.panelNodeColour);
-            this.groupBoxNodeProperties.Controls.Add(this.label13);
             this.groupBoxNodeProperties.Controls.Add(this.buttonDeleteNode);
             this.groupBoxNodeProperties.Controls.Add(this.numericUpDownNodePropertySizeY);
             this.groupBoxNodeProperties.Controls.Add(this.numericUpDownNodePropertySizeX);
@@ -266,23 +262,6 @@
             this.checkBoxFrontDetail.Text = "Front Detail";
             this.checkBoxFrontDetail.UseVisualStyleBackColor = true;
             this.checkBoxFrontDetail.CheckedChanged += new System.EventHandler(this.checkBoxFrontDetail_CheckedChanged);
-            // 
-            // panelNodeColour
-            // 
-            this.panelNodeColour.BackColor = System.Drawing.Color.DarkGray;
-            this.panelNodeColour.Location = new System.Drawing.Point(134, 129);
-            this.panelNodeColour.Name = "panelNodeColour";
-            this.panelNodeColour.Size = new System.Drawing.Size(75, 25);
-            this.panelNodeColour.TabIndex = 10;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(15, 141);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(95, 13);
-            this.label13.TabIndex = 9;
-            this.label13.Text = "Colour (lights only):";
             // 
             // buttonDeleteNode
             // 
@@ -809,8 +788,6 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Panel panelAmbientColour;
-        private System.Windows.Forms.Panel panelNodeColour;
-        private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBoxFrontDetail;

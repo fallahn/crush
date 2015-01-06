@@ -50,6 +50,8 @@ namespace Level_editor
         private Panel m_selectedNode = null;
 
         private Size blockSize = new Size(66, 66);
+        private Size solidSize = new Size(60, 60);
+        private Size lightSize = new Size(32, 32);
         private Size playerSize = new Size(41, 64);
         private Size itemSize = new Size(64, 64);
         private const int scale = 2;// ui is half the size of the actual game world
@@ -392,7 +394,6 @@ namespace Level_editor
                             return;
                         }
                     case Node.BodyType.Light:
-                        m_selectedNode.BackColor = panelNodeColour.BackColor;
                         m_selectedNode.Width = itemSize.Width / scale;
                         m_selectedNode.Height = itemSize.Height / scale;
                         m_selectedNode.BackgroundImage = Properties.Resources.bulb;
@@ -414,19 +415,6 @@ namespace Level_editor
                     numericUpDownNodePropertySizeY.Enabled = false;
                 }
 
-                if(type == Node.BodyType.Light)
-                {
-                    //enable colour picker
-                    panelNodeColour.Click += pickLightColour;
-                    panelNodeColour.BackColor = m_selectedNode.BackColor;
-                }
-                else
-                {
-                    //disable
-                    panelNodeColour.Click -= pickLightColour;
-                    panelNodeColour.BackColor = Color.DarkGray;
-                }
-
                 //sort layers
                 sortNodes();
             }
@@ -440,8 +428,6 @@ namespace Level_editor
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;
 
-                panelNodeColour.BackColor = Color.DarkGray;
-                panelNodeColour.Click -= pickColour;
                 if(((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
                 {
                     m_lightCount--;
@@ -457,10 +443,17 @@ namespace Level_editor
             switch (tag.type)
             {
                 case Node.BodyType.Detail:
-                    BrowseWindow bw = new BrowseWindow(this);
+                    BrowseTexturesWindow bw = new BrowseTexturesWindow(this);
                     if(bw.ShowDialog() == DialogResult.OK)
                     {
                         setPanelTexture(ref m_selectedNode);
+                    }
+                    break;
+                case Node.BodyType.Light:
+                    if (m_selectedNode != null)
+                    {
+                        LightPropertiesWindow ld = new LightPropertiesWindow(ref m_selectedNode);
+                        ld.ShowDialog();
                     }
                     break;
                 default: break;
@@ -495,6 +488,7 @@ namespace Level_editor
             {
                 case "Solid":
                     type = Node.BodyType.Solid;
+                    size = solidSize;
                     break;
                 case "Item":            
                     type = Node.BodyType.Item;
@@ -505,7 +499,7 @@ namespace Level_editor
                     break;
                 case "Light":
                     type = Node.BodyType.Light;
-                    size = new Size(60, 60);
+                    size = lightSize;
                     break;
                 case "Detail":
                     if(m_spriteSheets.Count > 0)

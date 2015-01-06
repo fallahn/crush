@@ -43,7 +43,7 @@ namespace
     const float sensorSize = 3.f;
     const float defaultStrength = 35.f;
     //TODO fix magic numbers - basically default view size with 100 unit padding
-    const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2120.f, 1280.f } };
+    const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2020.f, 1280.f } };
     const float invincibilityTime = 4.f;
 }
 

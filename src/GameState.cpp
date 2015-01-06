@@ -141,8 +141,7 @@ GameState::GameState(StateStack& stack, Context context)
 
     auto nodeB = std::make_unique<Node>();
     nodeB->setPosition(1160.f, 540.f);
-    c2.setFillColor(sf::Color::Red);
-    //nodeB->setDrawable(&c2);
+    nodeB->setDrawable(&c1);
     nodeB->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { 2.f, 2.f }));
 
     auto nodeC = std::make_unique<Node>();
@@ -154,7 +153,7 @@ GameState::GameState(StateStack& stack, Context context)
     nodeC->setLight(lightA);
 
     m_collisionWorld.addConstraint(nodeA->getCollisionBody(), nodeB->getCollisionBody(), 120.f);
-    m_collisionWorld.addConstraint(nodeB->getCollisionBody(), nodeC->getCollisionBody(), 150.f);
+    m_collisionWorld.addConstraint(nodeA->getCollisionBody(), nodeC->getCollisionBody(), 120.f);
 
     m_scene.addNode(nodeA);
     m_scene.addNode(nodeB);
@@ -162,6 +161,9 @@ GameState::GameState(StateStack& stack, Context context)
 
     auto nodeD = std::make_unique<Node>();
     nodeD->setPosition(320.f, 540.f);
+    c2.setFillColor(sf::Color::Red);
+    c2.setOutlineColor(sf::Color(255u, 0u, 0u, 43u));
+    c2.setOutlineThickness(60.f);
     nodeD->setDrawable(&c2);
     nodeD->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c2.getRadius() * 2.f, c2.getRadius()  * 2.f }));
     auto lightB = m_scene.addLight(sf::Vector3f(1.f, 0.1f, 0.f), 400.f);
@@ -373,6 +375,20 @@ void GameState::addMapBody(const Map::Node& n)
         node->addObserver(*light);
         node->setDrawable(&lightDrawable);
         node->setBlendMode(sf::BlendAlpha);
+
+        if (n.anchorOffset)
+        {
+            //we want a constraint on this light
+            node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, n.size));
+
+            auto anchorNode = std::make_unique<Node>();
+            anchorNode->setPosition(n.position);
+            anchorNode->move(0.f, -n.anchorOffset);
+            anchorNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, n.size));
+
+            m_collisionWorld.addConstraint(anchorNode->getCollisionBody(), node->getCollisionBody(), n.anchorOffset);
+            m_scene.addNode(anchorNode);
+        }
 
         m_scene.addNode(node, Scene::Background);
     }

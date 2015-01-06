@@ -1,6 +1,6 @@
 ﻿namespace Level_editor
 {
-    partial class BrowseWindow
+    partial class BrowseTexturesWindow
     {
         /// <summary>
         /// Required designer variable.

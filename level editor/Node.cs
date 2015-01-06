@@ -92,10 +92,11 @@ namespace Level_editor
 
             m_spritesheet = tag.spriteSheet;
             m_frameName = tag.frameName;
+            m_anchorOffset = tag.anchorOffset;
         }
 
         [JsonConstructor]
-        public Node(Point position, Size size, string type, string layer, Int32 colour = 0, string spriteSheet = "", string frameName = "")
+        public Node(Point position, Size size, string type, string layer, Int32 colour = 0, Int32 anchorOffset = 0, string spriteSheet = "", string frameName = "")
         {
             m_position = position;
             m_size = size;
@@ -104,6 +105,7 @@ namespace Level_editor
             m_colour = colour;
             m_spritesheet = spriteSheet;
             m_frameName = frameName;
+            m_anchorOffset = anchorOffset;
         }
         
         public enum BodyType
@@ -174,6 +176,13 @@ namespace Level_editor
             get { return m_frameName; }
             set { m_frameName = value; }
         }
+
+        private int m_anchorOffset;
+        public int AnchorOffset
+        {
+            get { return m_anchorOffset; }
+            set { m_anchorOffset = value; }
+        }
     }
 
     struct NodeData
@@ -182,5 +191,6 @@ namespace Level_editor
         public Node.BodyType type;
         public string spriteSheet;
         public string frameName;
+        public int anchorOffset; //how far above this node the constraint anchor resides
     }
 }
