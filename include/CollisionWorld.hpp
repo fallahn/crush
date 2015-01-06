@@ -57,12 +57,13 @@ public:
         typedef std::unique_ptr<BodyBehaviour> BehaviourPtr;
         enum Type
         {
-            Block  = (1 << 0),
-            Solid  = (1 << 1), //ie the ground
-            Player = (1 << 2),
-            Npc    = (1 << 3),
-            Item   = (1 << 4),
-            Water  = (1 << 5)
+            Block    = (1 << 0),
+            Solid    = (1 << 1), //ie the ground
+            Player   = (1 << 2),
+            Npc      = (1 << 3),
+            Item     = (1 << 4),
+            Water    = (1 << 5),
+            FreeForm = (1 << 6)
         };
 
         Body(Type type, const sf::Vector2f& size);
@@ -86,6 +87,7 @@ public:
         void flipChildren();
 
         float getSpeed() const;
+        const sf::Vector2f& getVelocity() const;
 
     private:
         Type m_type;
@@ -121,10 +123,25 @@ public:
         void destroy();
     };
     
+    class Constraint final : public Deletable
+    {
+        friend class CollisionWorld;
+    public:
+        Constraint(Body* a, Body* b, float length);
+        ~Constraint() = default;
+
+        void update(float dt);
+    private:
+        Body* m_bodyA;
+        Body* m_bodyB;
+        float m_length;
+    };
+
     explicit CollisionWorld(float gravity);
     ~CollisionWorld() = default;
 
     Body* addBody(Body::Type type, const sf::Vector2f& size);
+    void addConstraint(Body* a, Body* b, float length);
 
     void step(float dt);
 
@@ -133,6 +150,8 @@ private:
 
     std::vector<Body::Ptr> m_bodies;
     std::set<CollisionPair> m_collisions;
+
+    std::vector<Constraint> m_constraints;
 
     sf::Vector2f m_gravity;
     //contains the normal in the first two components and penetration in z

@@ -49,11 +49,13 @@ add_executable(
 	src/BodyBehaviour.cpp
 	src/Camera.cpp
 	src/CollisionBody.cpp
+	src/CollisionConstraint.cpp
 	src/CollisionWorld.cpp
 	src/CommandStack.cpp
 	src/DebugShape.cpp
 	src/FileSystem.cpp
 	src/FontResource.cpp
+	src/FreeFormBehaviour.cpp
 	src/Game.cpp
 	src/GameState.cpp
 	src/GameOverState.cpp

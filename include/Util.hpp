@@ -95,6 +95,11 @@ namespace Util
             return std::sqrt(lengthSquared(source));
         }
 
+        static sf::Vector2f reflect(const sf::Vector2f& velocity, const sf::Vector2f& normal)
+        {
+            return -2.f * dot(velocity, normal) * normal + velocity;
+        }
+
         //converts a comma delimited string to vector 2
         static sf::Vector2f vec2FromString(const std::string& str)
         {

@@ -73,7 +73,9 @@
     <ClCompile Include="src\Affectors.cpp" />
     <ClCompile Include="src\AnimatedSprite.cpp" />
     <ClCompile Include="src\AudioController.cpp" />
+    <ClCompile Include="src\CollisionConstraint.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
+    <ClCompile Include="src\FreeFormBehaviour.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\MapController.cpp" />
@@ -116,6 +118,7 @@
     <ClInclude Include="include\AudioController.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
     <ClInclude Include="include\FileSystem.hpp" />
+    <ClInclude Include="include\FreeFormBehaviour.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\MapController.hpp" />

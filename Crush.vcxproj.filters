@@ -177,6 +177,12 @@
     <ClCompile Include="src\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\CollisionConstraint.cpp">
+      <Filter>Source Files\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FreeFormBehaviour.cpp">
+      <Filter>Source Files\Behaviours</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -310,6 +316,9 @@
     </ClInclude>
     <ClInclude Include="include\FileSystem.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\FreeFormBehaviour.hpp">
+      <Filter>Header Files\Behaviours</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -53,6 +53,10 @@ namespace
     }
 
     const std::string music = "res/sound/music/night_sounds.ogg";
+
+
+    sf::CircleShape c1(20.f);
+    sf::CircleShape c2(30.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -128,6 +132,45 @@ GameState::GameState(StateStack& stack, Context context)
 
     //sf::Clock c;
     //while (c.getElapsedTime().asSeconds() < 5.f){}
+
+    //----temp stuff to test constraint----
+    auto nodeA = std::make_unique<Node>();
+    nodeA->setPosition(960.f, 540.f);
+    nodeA->setDrawable(&c1);
+    nodeA->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { c1.getRadius() * 2.f, c1.getRadius()  * 2.f }));
+
+    auto nodeB = std::make_unique<Node>();
+    nodeB->setPosition(1160.f, 540.f);
+    c2.setFillColor(sf::Color::Red);
+    //nodeB->setDrawable(&c2);
+    nodeB->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { 2.f, 2.f }));
+
+    auto nodeC = std::make_unique<Node>();
+    nodeC->setPosition(1320.f, 540.f);
+    nodeC->setDrawable(&c1);
+    nodeC->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c1.getRadius() * 2.f, c1.getRadius()  * 2.f }));
+    auto lightA = m_scene.addLight(sf::Vector3f(1.f, 0.6f, 0.f), 400.f);
+    lightA->setDepth(50.f);
+    nodeC->setLight(lightA);
+
+    m_collisionWorld.addConstraint(nodeA->getCollisionBody(), nodeB->getCollisionBody(), 120.f);
+    m_collisionWorld.addConstraint(nodeB->getCollisionBody(), nodeC->getCollisionBody(), 150.f);
+
+    m_scene.addNode(nodeA);
+    m_scene.addNode(nodeB);
+    m_scene.addNode(nodeC);
+
+    auto nodeD = std::make_unique<Node>();
+    nodeD->setPosition(320.f, 540.f);
+    nodeD->setDrawable(&c2);
+    nodeD->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c2.getRadius() * 2.f, c2.getRadius()  * 2.f }));
+    auto lightB = m_scene.addLight(sf::Vector3f(1.f, 0.1f, 0.f), 400.f);
+    lightB->setDepth(50.f);
+    nodeD->setLight(lightB);
+    m_scene.addNode(nodeD);
+
+    //-------------------------------------
+
 
     //close loading screen before starting music
     quitLoadingScreen();
@@ -307,7 +350,6 @@ void GameState::addMapBody(const Map::Node& n)
         node->addObserver(m_particleController);
         node->addObserver(m_audioController);
 
-        //TODO make smaller / brighter
         auto light = m_scene.addLight(sf::Vector3f(0.34f, 0.96f, 1.f), 400.f);
         if (light)
         {

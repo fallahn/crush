@@ -30,6 +30,8 @@ source distribution.
 #include <Util.hpp>
 #include <BodyBehaviour.hpp>
 
+#include <iostream>
+
 CollisionWorld::CollisionWorld(float gravity)
     : m_gravity(0.f, gravity)
 {
@@ -43,6 +45,28 @@ CollisionWorld::Body* CollisionWorld::addBody(CollisionWorld::Body::Type type, c
     return m_bodies.back().get();
 }
 
+void CollisionWorld::addConstraint(CollisionWorld::Body* bodyA, CollisionWorld::Body* bodyB, float length)
+{
+    assert(bodyA);
+    assert(bodyB);
+
+    //make sure the length meets minimum distance of bodies
+    auto size = bodyA->getSize();
+    float radA = std::max(size.x, size.y);
+
+    size = bodyB->getSize();
+    float radB = std::max(size.x, size.y);
+
+    if (length > radA + radB)
+    {
+        m_constraints.emplace_back(bodyA, bodyB, length);
+    }
+    else
+    {
+        std::cerr << "Constraint length too short for given bodies, no constraint created" << std::endl;
+    }
+}
+
 void CollisionWorld::step(float dt)
 {
 
@@ -51,6 +75,11 @@ void CollisionWorld::step(float dt)
     {
         return p->deleted();
     }), m_bodies.end());
+
+    m_constraints.erase(std::remove_if(m_constraints.begin(), m_constraints.end(), [](const Constraint& c)
+    {
+        return c.deleted();
+    }), m_constraints.end());
 
     //check for collision pairs and add to list
     //TODO we could narrow this down with space partitioning
@@ -92,11 +121,17 @@ void CollisionWorld::step(float dt)
         pair.first->m_behaviour->resolve(man, pair.second);
     }
 
-    //update any parent node positions
-    for (auto& po : m_bodies)
+    //apply any constraints to their respective bodies
+    for (auto& c : m_constraints)
     {
-        po->applyGravity(m_gravity);
-        po->step(dt);
+        c.update(dt);
+    }
+
+    //update any parent node positions
+    for (auto& b : m_bodies)
+    {
+        b->applyGravity(m_gravity);
+        b->step(dt);
     }
 }
 

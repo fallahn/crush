@@ -93,6 +93,9 @@ void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         }
         raiseEvent(e);
 
+        e.block.action = Event::BlockEvent::DragEnd;
+        raiseEvent(e);
+
         break;
     default: break;
     }

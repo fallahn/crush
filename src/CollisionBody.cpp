@@ -33,6 +33,7 @@ source distribution.
 #include <PlayerBehaviour.hpp>
 #include <WaterBehaviour.hpp>
 #include <ItemBehaviour.hpp>
+#include <FreeFormBehaviour.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -85,6 +86,10 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::Item:
         m_behaviour = std::make_unique<ItemBehaviourAir>(this);
+        break;
+    case Type::FreeForm:
+        m_behaviour = std::make_unique<FreeFormBehaviourAir>(this);
+        m_friction = 0.99f;
         break;
     default: break;
     }
@@ -211,6 +216,11 @@ void CollisionWorld::Body::flipChildren()
 float CollisionWorld::Body::getSpeed() const
 {
     return Util::Vector::lengthSquared(m_velocity);
+}
+
+const sf::Vector2f& CollisionWorld::Body::getVelocity() const
+{
+    return m_velocity;
 }
 
 //private
