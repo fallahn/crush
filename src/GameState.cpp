@@ -56,7 +56,7 @@ namespace
 
 
     sf::CircleShape c1(20.f);
-    sf::CircleShape c2(30.f);
+    sf::CircleShape c2(10.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -134,7 +134,7 @@ GameState::GameState(StateStack& stack, Context context)
     //while (c.getElapsedTime().asSeconds() < 5.f){}
 
     //----temp stuff to test constraint----
-    auto nodeA = std::make_unique<Node>();
+    /*auto nodeA = std::make_unique<Node>();
     nodeA->setPosition(960.f, 540.f);
     nodeA->setDrawable(&c1);
     nodeA->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { c1.getRadius() * 2.f, c1.getRadius()  * 2.f }));
@@ -157,16 +157,16 @@ GameState::GameState(StateStack& stack, Context context)
 
     m_scene.addNode(nodeA);
     m_scene.addNode(nodeB);
-    m_scene.addNode(nodeC);
+    m_scene.addNode(nodeC);*/
 
     auto nodeD = std::make_unique<Node>();
     nodeD->setPosition(320.f, 540.f);
-    c2.setFillColor(sf::Color::Red);
-    c2.setOutlineColor(sf::Color(255u, 0u, 0u, 43u));
+    c2.setFillColor(sf::Color::Yellow);
+    c2.setOutlineColor(sf::Color(255u, 255u, 0u, 43u));
     c2.setOutlineThickness(60.f);
     nodeD->setDrawable(&c2);
     nodeD->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c2.getRadius() * 2.f, c2.getRadius()  * 2.f }));
-    auto lightB = m_scene.addLight(sf::Vector3f(1.f, 0.1f, 0.f), 400.f);
+    auto lightB = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 400.f);
     lightB->setDepth(50.f);
     nodeD->setLight(lightB);
     m_scene.addNode(nodeD);
@@ -379,12 +379,13 @@ void GameState::addMapBody(const Map::Node& n)
         if (n.anchorOffset)
         {
             //we want a constraint on this light
-            node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, n.size));
+            node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
 
             auto anchorNode = std::make_unique<Node>();
             anchorNode->setPosition(n.position);
             anchorNode->move(0.f, -n.anchorOffset);
-            anchorNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, n.size));
+            anchorNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
+            anchorNode->setDrawable(&c1);
 
             m_collisionWorld.addConstraint(anchorNode->getCollisionBody(), node->getCollisionBody(), n.anchorOffset);
             m_scene.addNode(anchorNode);

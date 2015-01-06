@@ -96,6 +96,7 @@
             this.Controls.Add(this.numericUpDownAnchorOffset);
             this.Controls.Add(this.label1);
             this.Name = "LightPropertiesWindow";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Light Properties";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownAnchorOffset)).EndInit();
             this.ResumeLayout(false);

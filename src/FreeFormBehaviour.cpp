@@ -52,12 +52,18 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
         raiseEvent(evt, other);
 
         break;
+    case CollisionWorld::Body::Block:
+    case CollisionWorld::Body::Solid:
+        setBehaviour<FreeFormBehaviourGround>();
+
+        //TODO raise event?
+
     default:
         sf::Vector2f normal(manifold.x, manifold.y);
         move(normal * manifold.z);
 
         auto vel = getVelocity();
-        vel = Util::Vector::reflect(vel, normal);
+        vel = Util::Vector::reflect(vel, normal) * getFriction();
         vel += other->getVelocity();
         setVelocity(vel);
 
@@ -69,12 +75,29 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
 
 void FreeFormBehaviourGround::update(float dt)
 {
-    setVelocity({});
+    setVelocity({getVelocity().x * getFriction(), 0.f});
+
+    if ((getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block)) == 0)
+        setBehaviour<FreeFormBehaviourAir>();
 }
 
 void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
 {
+    switch (other->getType())
+    {
+    case CollisionWorld::Body::Water:
+        break;
+    default:
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
 
+        auto vel = getVelocity();
+        vel = Util::Vector::reflect(vel, normal) * getFriction();
+        vel += other->getVelocity();
+        setVelocity(vel);
+        
+        break;
+    }
 }
 
 //--------------------------------------

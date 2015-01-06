@@ -357,6 +357,7 @@ namespace Level_editor
                         m_selectedNode.Width = blockSize.Width / scale;
                         m_selectedNode.Height = blockSize.Height / scale;
                         m_selectedNode.BackgroundImage = Properties.Resources.block;
+                        m_selectedNode.Size = new Size(blockSize.Width / scale, blockSize.Height / scale);
                         nodeData.layer = Layer.Dynamic;
                         break;
                     case Node.BodyType.Item:
@@ -364,6 +365,7 @@ namespace Level_editor
                         m_selectedNode.Width = itemSize.Width / scale;
                         m_selectedNode.Height = itemSize.Height / scale;
                         m_selectedNode.BackgroundImage = Properties.Resources.item;
+                        m_selectedNode.Size = new Size(itemSize.Width / scale, itemSize.Height / scale);
                         nodeData.layer = Layer.Dynamic;
                         break;
                     case Node.BodyType.Solid:
@@ -394,8 +396,8 @@ namespace Level_editor
                             return;
                         }
                     case Node.BodyType.Light:
-                        m_selectedNode.Width = itemSize.Width / scale;
-                        m_selectedNode.Height = itemSize.Height / scale;
+                        m_selectedNode.Width = lightSize.Width / scale;
+                        m_selectedNode.Height = lightSize.Height / scale;
                         m_selectedNode.BackgroundImage = Properties.Resources.bulb;
                         nodeData.layer = Layer.FrontDetail;
                         break;
@@ -673,10 +675,12 @@ namespace Level_editor
             if(e.Button == MouseButtons.Left)
             {
                 var nd = (NodeData)m_selectedNode.Tag;
-                addNode(nd.type,
+                var node = addNode(nd.type,
                     new Point(960, 540),
                     new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale),
                     nd.layer);
+                node.Tag = nd;
+                node.BackColor = m_selectedNode.BackColor;
             }
         }
     }
