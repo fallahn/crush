@@ -50,7 +50,7 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_shaderResource    (sr),
     m_itemSprite        (tr.get("res/textures/item.png")),
     m_blockSprite       (tr.get("res/textures/steel_crate_diffuse.png")),
-    m_solidDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular)),
+    m_solidDrawable     (tr, sr.get(Shader::Type::NormalMap)),
     m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
     m_frontDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular))
 {

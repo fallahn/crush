@@ -28,10 +28,17 @@ source distribution.
 #include <FreeFormBehaviour.hpp>
 #include <Util.hpp>
 
+namespace
+{
+    const float maxSpeed = 900000.f;
+}
 
 void FreeFormBehaviourAir::update(float dt)
 {
-    setVelocity(getVelocity() * getFriction());
+    //hack to prevent as much tunnelling as possible
+    const float limit = maxSpeed / getBody()->getSpeed();
+    auto vel = getVelocity() * std::min(1.f, limit);
+    setVelocity(vel * getFriction());
 }
 
 void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -54,7 +61,8 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
         break;
     case CollisionWorld::Body::Block:
     case CollisionWorld::Body::Solid:
-        setBehaviour<FreeFormBehaviourGround>();
+        //if (getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block))
+        //    setBehaviour<FreeFormBehaviourGround>();
 
         //TODO raise event?
 
@@ -75,7 +83,9 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
 
 void FreeFormBehaviourGround::update(float dt)
 {
-    setVelocity({getVelocity().x * getFriction(), 0.f});
+    const float limit = maxSpeed / getBody()->getSpeed();
+    auto vel = getVelocity() * std::min(1.f, limit);
+    setVelocity({vel.x * getFriction(), 0.f});
 
     if ((getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block)) == 0)
         setBehaviour<FreeFormBehaviourAir>();

@@ -33,6 +33,7 @@ source distribution.
 
 #include <Resource.hpp>
 #include <Util.hpp>
+#include <Console.hpp>
 
 #include <FileSystem.hpp>
 #include <iostream>
@@ -56,13 +57,14 @@ TitleState::TitleState(StateStack& stack, Context context)
         return (FileSystem::getFileExtension(s) != ".crm");
     }),
         context.gameData.mapList.end());
-    
+
+
     context.renderWindow.setTitle("Title Screen");
     context.renderWindow.setView(context.defaultView);
 
     titleText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     titleText.setCharacterSize(36u);
-    titleText.setString("Press any key to continue...");
+    titleText.setString("Press Space to continue...");
 
     Util::Position::centreOrigin(titleText);
     titleText.setPosition(context.defaultView.getCenter());
@@ -92,8 +94,11 @@ bool TitleState::handleEvent(const sf::Event& evt)
 {
     if (evt.type == sf::Event::KeyPressed)
     {
-        requestStackPop();
-        requestStackPush(States::ID::Menu);
+        if (evt.key.code == sf::Keyboard::Space)
+        {
+            requestStackPop();
+            requestStackPush(States::ID::Menu);
+        }
     }
     return true;
 }

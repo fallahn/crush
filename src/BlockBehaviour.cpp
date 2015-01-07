@@ -97,6 +97,16 @@ void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         raiseEvent(e);
 
         break;
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+
+        if (getFootSenseMask() & CollisionWorld::Body::FreeForm)
+            setBehaviour<BlockBehaviourGround>();
+    }
+    break;
     default: break;
     }
 }
@@ -236,6 +246,13 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
             raiseEvent(e);
         }
         break;
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+    }
+    break;
     default: break;
     }
 }

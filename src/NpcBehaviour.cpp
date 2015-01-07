@@ -172,7 +172,13 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             raiseEvent(e);
         }
         break;
-
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+    }
+    break;
     default: break;
     }
 }

@@ -34,6 +34,7 @@ source distribution.
 #include <Resource.hpp>
 #include <ShaderResource.hpp>
 #include <Music.hpp>
+#include <Console.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -72,6 +73,8 @@ private:
     ShaderResource m_shaderResource;
 
     MusicPlayer m_musicPlayer;
+
+    Console m_console;
 
     void handleEvents();
     void update(float dt);

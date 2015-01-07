@@ -36,6 +36,7 @@ source distribution.
 #include <random>
 #include <ctime>
 #include <cassert>
+#include <sstream>
 
 namespace
 {
@@ -67,6 +68,32 @@ namespace Util
                 if (next > str.length()) next = str.length();
             }
             return values;
+        }
+
+        //splits a soring with a given token and returns a vector of results
+        static std::vector<std::string> tokenize(const std::string& str, char delim, bool keepEmpty = false)
+        {
+            assert(!str.empty());
+            std::stringstream ss(str);
+            std::string token;
+            std::vector<std::string> output;
+            while (std::getline(ss, token, delim))
+            {
+                if (!token.empty() ||
+                    (token.empty() && keepEmpty))
+                {
+                    output.push_back(token);
+                }
+            }
+            return output;
+        }
+
+        //returns string as all lower case
+        static std::string toLower(const std::string& str)
+        {
+            std::string result = str;
+            std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+            return result;
         }
     }
 

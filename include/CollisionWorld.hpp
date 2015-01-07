@@ -63,7 +63,8 @@ public:
             Npc      = (1 << 3),
             Item     = (1 << 4),
             Water    = (1 << 5),
-            FreeForm = (1 << 6)
+            FreeForm = (1 << 6),
+            Anchor   = (1 << 7)
         };
 
         Body(Type type, const sf::Vector2f& size);

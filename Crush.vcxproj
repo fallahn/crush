@@ -74,6 +74,7 @@
     <ClCompile Include="src\AnimatedSprite.cpp" />
     <ClCompile Include="src\AudioController.cpp" />
     <ClCompile Include="src\CollisionConstraint.cpp" />
+    <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
     <ClCompile Include="src\FreeFormBehaviour.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
@@ -114,9 +115,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
+    <ClInclude Include="include\AnchorBehaviour.hpp" />
     <ClInclude Include="include\AnimatedSprite.hpp" />
     <ClInclude Include="include\AudioController.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
+    <ClInclude Include="include\Console.hpp" />
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\FreeFormBehaviour.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />

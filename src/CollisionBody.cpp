@@ -34,6 +34,7 @@ source distribution.
 #include <WaterBehaviour.hpp>
 #include <ItemBehaviour.hpp>
 #include <FreeFormBehaviour.hpp>
+#include <AnchorBehaviour.hpp>
 
 #include <cassert>
 #include <iostream>
@@ -89,7 +90,10 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
         break;
     case Type::FreeForm:
         m_behaviour = std::make_unique<FreeFormBehaviourAir>(this);
-        m_friction = 0.99f;
+        m_friction = 0.97f;
+        break;
+    case Type::Anchor:
+        m_behaviour = std::make_unique<AnchorBehaviour>(this);
         break;
     default: break;
     }

@@ -26,6 +26,7 @@ source distribution.
 *********************************************************************/
 
 #include <ItemBehaviour.hpp>
+#include <Util.hpp>
 
 void ItemBehaviourAir::update(float dt)
 {
@@ -56,6 +57,13 @@ void ItemBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     case CollisionWorld::Body::Player:
         kill();
         break;
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+    }
+    break;
     default: break; //NPCs don't do anything
     }
 }
@@ -87,6 +95,13 @@ void ItemBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::
     case CollisionWorld::Body::Player:
         kill();
         break;
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+    }
+    break;
     default: break; //NPCs don't do anything
     }
 }

@@ -89,7 +89,7 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
             setVelocity({ vel.x, -vel.y * getFriction() });
         }
     }
-        break;
+    break;
     case CollisionWorld::Body::Type::Npc:
     {
         //move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
@@ -105,14 +105,23 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         //setVelocity(vel);
         kill();
     }
-        break;
+    break;
     case CollisionWorld::Body::Item:
+    {
         Event e;
         e.node.action = Event::NodeEvent::KilledNode;
         e.node.type = getParentCategory();
         e.node.target = Category::Item;
         e.type = Event::Node;
         raiseEvent(e);
+    }
+        break;
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+    }
         break;
     default: break;
     }
@@ -216,13 +225,21 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         kill();
         break;
     case CollisionWorld::Body::Item:
-            Event e;
-            e.node.action = Event::NodeEvent::KilledNode;
-            e.node.type = getParentCategory();
-            e.node.target = Category::Item;
-            e.type = Event::Node;
-            raiseEvent(e);
+    {
+        Event e;
+        e.node.action = Event::NodeEvent::KilledNode;
+        e.node.type = getParentCategory();
+        e.node.target = Category::Item;
+        e.type = Event::Node;
+        raiseEvent(e);
+    }
         break;
+    case CollisionWorld::Body::FreeForm:
+    {
+        sf::Vector2f normal(manifold.x, manifold.y);
+        move(normal * manifold.z);
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+    }
     default: break;
     }
 }

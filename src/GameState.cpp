@@ -161,15 +161,16 @@ GameState::GameState(StateStack& stack, Context context)
 
     auto nodeD = std::make_unique<Node>();
     nodeD->setPosition(320.f, 540.f);
-    c2.setFillColor(sf::Color::Yellow);
-    c2.setOutlineColor(sf::Color(255u, 255u, 0u, 43u));
+    c2.setFillColor(sf::Color::White);
+    c2.setOutlineColor(sf::Color(255u, 255u, 250u, 43u));
     c2.setOutlineThickness(60.f);
     nodeD->setDrawable(&c2);
     nodeD->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c2.getRadius() * 2.f, c2.getRadius()  * 2.f }));
     auto lightB = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 400.f);
     lightB->setDepth(50.f);
     nodeD->setLight(lightB);
-    m_scene.addNode(nodeD);
+    nodeD->setBlendMode(sf::BlendAdd);
+    m_scene.addNode(nodeD, Scene::RearDetail);
 
     //-------------------------------------
 
@@ -376,20 +377,20 @@ void GameState::addMapBody(const Map::Node& n)
         node->setDrawable(&lightDrawable);
         node->setBlendMode(sf::BlendAlpha);
 
-        if (n.anchorOffset)
-        {
-            //we want a constraint on this light
-            node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
+        //if (n.anchorOffset)
+        //{
+        //    //we want a constraint on this light
+        //    node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
 
-            auto anchorNode = std::make_unique<Node>();
-            anchorNode->setPosition(n.position);
-            anchorNode->move(0.f, -n.anchorOffset);
-            anchorNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
-            anchorNode->setDrawable(&c1);
+        //    auto anchorNode = std::make_unique<Node>();
+        //    anchorNode->setPosition(n.position);
+        //    anchorNode->move(0.f, -n.anchorOffset);
+        //    anchorNode->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Anchor, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
+        //    anchorNode->setDrawable(&c1);
 
-            m_collisionWorld.addConstraint(anchorNode->getCollisionBody(), node->getCollisionBody(), n.anchorOffset);
-            m_scene.addNode(anchorNode);
-        }
+        //    m_collisionWorld.addConstraint(anchorNode->getCollisionBody(), node->getCollisionBody(), n.anchorOffset);
+        //    m_scene.addNode(anchorNode);
+        //}
 
         m_scene.addNode(node, Scene::Background);
     }

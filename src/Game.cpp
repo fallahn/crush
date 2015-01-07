@@ -31,8 +31,9 @@ source distribution.
 #include <GameState.hpp>
 #include <PauseState.hpp>
 #include <GameOverState.hpp>
-
+#include <Util.hpp>
 #include <Resource.hpp>
+#include <FileSystem.hpp>
 
 #include <SFML/Graphics/Font.hpp>
 
@@ -47,19 +48,55 @@ namespace
 }
 
 Game::Game()
-    : m_renderWindow(sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
-    m_stateStack(State::Context(m_renderWindow, *this, gameData)),
-    m_paused        (false)
+    : m_renderWindow    (sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
+    m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
+    m_paused            (false),
+    m_console           (getFont("res/fonts/veramono.ttf"))
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);
 
     m_renderWindow.setVerticalSyncEnabled(true);
+
+    m_clearColour = sf::Color(100u, 149u, 237u);
+
+    //bind commands to console
+    Console::CommandData cd;
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        m_renderWindow.close();
+        return "Quitting...";
+    };
+    cd.help = "quits the game";
+    m_console.addItem("quit", cd);
+
+    //register map change command with console
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        if (l.empty()) return "please specify a map name";
+        for (auto i = 0u; i < gameData.mapList.size(); ++i)
+        {
+            if (Util::String::toLower(gameData.mapList[i]) == Util::String::toLower(l[0]) + ".crm")
+            {
+                gameData.mapIndex = i;
+                m_stateStack.clearStates();
+                m_stateStack.pushState(States::ID::Game);
+                return "changing map to " + l[0];
+            }
+        }
+        return "map " + l[0] + " not found.";
+    };
+    cd.help = "load specified map";
+    m_console.addItem("map", cd);
 }
 
 //public
 void Game::run()
 {
+    //load default console config
+    m_console.exec("exec default.con");
+    m_console.exec("bind escape quit");
+
     frameClock.restart();
     while (m_renderWindow.isOpen())
     {
@@ -77,6 +114,9 @@ void Game::run()
 
         draw();
     }
+
+    //write console config file
+    m_console.exec("export_config");
 }
 
 void Game::pause()
@@ -131,18 +171,17 @@ void Game::resumeMusic()
     m_musicPlayer.setPaused(false);
 }
 
-
 //private
 void Game::handleEvents()
 {
     sf::Event evt;
     while (m_renderWindow.pollEvent(evt))
     {
-        //--global esc to quit - TODO remove this--
         if (evt.type == sf::Event::KeyPressed)
-            if (evt.key.code == sf::Keyboard::Escape)
-                m_renderWindow.close();
-        //-----------------------------------------
+        {
+            if (evt.key.code == sf::Keyboard::Home)
+                m_console.show(!m_console.visible());
+        }
 
         //pause simulation while window is not focused
         if (evt.type == sf::Event::LostFocus)
@@ -150,7 +189,9 @@ void Game::handleEvents()
         else if (evt.type == sf::Event::GainedFocus)
             resume();
 
-        m_stateStack.handleEvent(evt);
+        m_console.handleEvent(evt);
+        if (!m_console.visible()) //TODO why doesn't this work based on console handling events returning true?
+            m_stateStack.handleEvent(evt);
         
         if(evt.type == sf::Event::Closed)
             m_renderWindow.close();
@@ -166,6 +207,7 @@ void Game::draw()
 {
     m_renderWindow.clear(m_clearColour);
     m_stateStack.draw();
+    if (m_console.visible()) m_renderWindow.draw(m_console);
     m_renderWindow.display();
 }
 

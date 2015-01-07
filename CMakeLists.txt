@@ -52,6 +52,7 @@ add_executable(
 	src/CollisionConstraint.cpp
 	src/CollisionWorld.cpp
 	src/CommandStack.cpp
+	src/Console.cpp
 	src/DebugShape.cpp
 	src/FileSystem.cpp
 	src/FontResource.cpp

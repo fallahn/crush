@@ -25,43 +25,19 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <CollisionWorld.hpp>
-#include <Util.hpp>
+//behaviours for anchors which do nothing other than act as constraint points
 
-#include <cassert>
-#include <iostream>
+#ifndef ANCHOR_BEHAVIOUR_H_
+#define ANCHOR_BEHAVIOUR_H_
 
+#include <BodyBehaviour.hpp>
 
-
-CollisionWorld::Constraint::Constraint(CollisionWorld::Body* a, CollisionWorld::Body* b, float length)
-    : m_bodyA   (a),
-    m_bodyB     (b),
-    m_length    (length)
+class AnchorBehaviour final : public BodyBehaviour
 {
-    assert(a);
-    assert(b);
-}
+public:
+    explicit AnchorBehaviour(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    void update(float dt) override{ setVelocity({}); }
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override{}
+};
 
-//public
-void CollisionWorld::Constraint::update(float dt)
-{
-    //TODO replace with observer?
-    /*if (m_bodyA->deleted() || m_bodyB->deleted())
-    {
-        deleteObject();
-    }*/
-
-    //TODO square root optimise?
-    auto constraintVec = m_bodyB->getCentre() - m_bodyA->getCentre();
-    float constraintLength = Util::Vector::length(constraintVec);
-    auto constraintUnit = constraintVec / constraintLength;
-
-    float relativeVelocity = Util::Vector::dot((m_bodyB->m_velocity - m_bodyA->m_velocity), constraintUnit);
-    float relativeDistance = constraintLength - m_length;
-
-    sf::Vector2f force(constraintUnit * (relativeVelocity + relativeDistance));
-
-    m_bodyA->applyForce(force);
-    m_bodyB->applyForce(-force);
-
-}
+#endif //ANCHOR_BEHAVIOUR
