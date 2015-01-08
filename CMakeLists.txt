@@ -28,6 +28,10 @@ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y")
 SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/")
 
 find_package(SFML 2 REQUIRED system window graphics audio)
+if(UNIX)
+find_package(X11 REQUIRED)
+endif
+
 #optional package manager on arch (PKGBUILD script currently missing)
 #include (FindPkgConfig)
 #PKG_SEARCH_MODULE(SFML 2 REQUIRED system window graphics)

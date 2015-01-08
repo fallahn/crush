@@ -393,7 +393,7 @@ void GameState::addMapBody(const Map::Node& n)
         light->setDepth(50.f);
         node->setLight(light);
         //node->setBlendMode(sf::BlendAdd);
-        m_scene.addNode(node, Scene::FrontDetail);
+        m_scene.addNode(node, Scene::Dynamic);
         break;
     }
     default: break;

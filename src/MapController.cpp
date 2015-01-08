@@ -193,8 +193,6 @@ void MapController::loadMap(const Map& map)
     m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
 
     m_solidDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
-    //m_rearDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
-    //m_frontDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
 
     //TODO move control of this to observer / update
     Map::Node n;
@@ -288,7 +286,7 @@ void MapController::LayerDrawable::addSprite(const std::string& textureName, con
         m_layerData.insert(pair);
     }
 
-    for (const auto& q : frame)
+    for (auto& q : frame)
     {
         m_layerData[textureName].vertexArray.append(q);
     }

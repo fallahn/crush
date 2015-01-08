@@ -52,7 +52,7 @@ Game::Game()
     : m_renderWindow    (sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
     m_paused            (false),
-    m_console           (getFont("res/fonts/veramono.ttf"))
+    m_console           (getFont("res/fonts/VeraMono.ttf"))
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);

@@ -29,8 +29,17 @@ source distribution.
 
 #include <Game.hpp>
 
+#ifdef __linux
+<X11/Xlib.h>
+#endif //__linux
+
 int main()
 {
+#ifdef __linux
+    XInitThreads()
+#endif //__linux  
+    
+    
     Game game;
     game.run();
 
