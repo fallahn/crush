@@ -27,6 +27,7 @@ source distribution.
 
 #include <Console.hpp>
 #include <Util.hpp>
+#include <FileSystem.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -60,7 +61,7 @@ Console::Console(const sf::Font& font)
     m_outputText.setCharacterSize(charSize);
     m_outputText.move(textOffset, textOffset);
 
-    m_backgroundRect.setFillColor(sf::Color(0u, 0u, 0u, 120u));
+    m_backgroundRect.setFillColor(sf::Color(0u, 0u, 0u, 100u));
     m_backgroundRect.setSize(size);
     
     updateText();
@@ -111,7 +112,7 @@ Console::Console(const sf::Font& font)
     cd.help = "params <input> <command> bind console command to input event such as key or mouse button presses";
     addItem("bind", cd);
 
-    //TODO unbind inpouts / commands
+    //TODO unbind inputs / commands
 
     //---output list of available commands---//
     cd.action = [this](CommandList l)->std::string
@@ -151,7 +152,7 @@ Console::Console(const sf::Font& font)
             return "No file specified. Usage: <string> filename";
         }
         std::string fileName = l[0];
-        if (fileName.substr(fileName.size() - 4u) != configExtension)
+        if (FileSystem::getFileExtension(fileName) != configExtension)
             fileName += configExtension;
         std::fstream file(fileName);
         if (file.fail())
@@ -198,7 +199,7 @@ Console::Console(const sf::Font& font)
             fileName = "default.con";
         }
         std::ofstream cfgFile(fileName);
-        for (auto& cmd : m_configList)
+        for (const auto& cmd : m_configList)
             cfgFile << cmd << std::endl;
         return "Wrote " + std::to_string(m_configList.size()) + " lines to " + fileName;
     };
@@ -242,57 +243,8 @@ void Console::print(const std::string& text)
 
 bool Console::handleEvent(const sf::Event& e)
 {
-    //update keyboard input - only when visible
-    if (m_show)
-    {
-        if (e.type == sf::Event::KeyPressed)
-        {
-            switch (e.key.code)
-            {
-            case sf::Keyboard::Tab:
-                m_show = false;
-                return true;
-            case sf::Keyboard::BackSpace:
-                if (!m_commandBuffer.empty())
-                    m_commandBuffer.pop_back();
-                updateText();
-                return true;
-            case sf::Keyboard::Return:
-                parseCommand();
-                return true;
-            case sf::Keyboard::Up:
-                if (!m_commandHistory.empty()
-                    && m_historyIndex > 0)
-                {
-                    m_commandBuffer = m_commandHistory[--m_historyIndex];
-                    updateText();
-                }
-                return true;
-            case sf::Keyboard::Down:
-                if (!m_commandHistory.empty()
-                    && m_historyIndex < m_commandHistory.size())
-                {
-                    m_commandBuffer = m_commandHistory[m_historyIndex++];
-                    updateText();
-                }
-                return true;
-            }
-        }
-        else if (e.type == sf::Event::TextEntered)
-        {
-            //handle ASCII characters only, skipping backspace and delete
-            if (e.text.unicode > 31
-                && e.text.unicode < 127
-                && m_commandBuffer.size() < maxBufferLength)
-            {
-                m_commandBuffer += static_cast<char>(e.text.unicode);
-                updateText();
-                
-            }
-            return true;
-        }
-    }
-    else //check bindings for command to execute
+    //check bindings for command to execute
+    //if (!m_show)
     {
         if (e.type == sf::Event::KeyPressed)
         {
@@ -309,6 +261,52 @@ bool Console::handleEvent(const sf::Event& e)
         }
     }
     return false;
+}
+
+void Console::handleUIEvent(const sf::Event& e)
+{
+    if (e.type == sf::Event::KeyPressed)
+    {
+        switch (e.key.code)
+        {
+        case sf::Keyboard::BackSpace:
+            if (!m_commandBuffer.empty())
+                m_commandBuffer.pop_back();
+            updateText();
+            return;
+        case sf::Keyboard::Return:
+            parseCommand();
+            return;
+        case sf::Keyboard::Up:
+            if (!m_commandHistory.empty()
+                && m_historyIndex > 0)
+            {
+                m_commandBuffer = m_commandHistory[--m_historyIndex];
+                updateText();
+            }
+            return;
+        case sf::Keyboard::Down:
+            if (!m_commandHistory.empty()
+                && m_historyIndex < m_commandHistory.size())
+            {
+                m_commandBuffer = m_commandHistory[m_historyIndex++];
+                updateText();
+            }
+            return;
+        }
+    }
+    else if (e.type == sf::Event::TextEntered)
+    {
+        //handle ASCII characters only, skipping backspace and delete
+        if (e.text.unicode > 31
+            && e.text.unicode < 127
+            && m_commandBuffer.size() < maxBufferLength)
+        {
+            m_commandBuffer += static_cast<char>(e.text.unicode);
+            updateText();
+
+        }
+    }
 }
 
 void Console::exec(const std::string& cmd)
@@ -372,7 +370,7 @@ std::string Console::bindInput(CommandList& l)
         }
         //TODO fall through to test joy/mouse bindings
     }
-        return input + " not currently bound to any command.";
+    return input + " not currently bound to any command.";
     default: break;
     }
 
@@ -442,6 +440,12 @@ void Console::parseCommand()
             && !m_cheatsEnabled)
         {
             print(commandList[0] + " cannot execute without cheats enabled");
+        }
+        else if ((item->second.flags & CommandFlag::ConClosed)
+            && m_show)
+        {
+            //don't execute while console open
+            
         }
         else
         {

@@ -47,6 +47,7 @@ public:
 
     struct Node final
     {
+        Node();
         Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& colour, const std::string& layer);
         sf::Vector2f position;
         sf::Vector2f size;

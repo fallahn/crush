@@ -239,6 +239,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
 
         ForceAffector fa({ 0.f, 20.f });
         particleSystem.addAffector(fa);
+
     }
         break;
     default: break;

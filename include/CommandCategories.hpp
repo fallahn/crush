@@ -49,7 +49,8 @@ namespace Category
         Item            = (1 << 11),
         Water           = (1 << 12),
         Light           = (1 << 13),
-        Detail          = (1 << 14)
+        Detail          = (1 << 14),
+        Hat             = (1 << 16)
     };
 }
 

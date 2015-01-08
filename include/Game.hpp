@@ -53,6 +53,7 @@ public:
 
     TextureResource& getTextureResource();
     ShaderResource& getShaderResource();
+    Console& getConsole();
 
     void playMusic(const std::string& title, bool loop = true);
     void stopMusic();

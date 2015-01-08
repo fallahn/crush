@@ -31,6 +31,7 @@ source distribution.
 #include <GameState.hpp>
 #include <PauseState.hpp>
 #include <GameOverState.hpp>
+#include <ConsoleState.hpp>
 #include <Util.hpp>
 #include <Resource.hpp>
 #include <FileSystem.hpp>
@@ -94,6 +95,24 @@ Game::Game()
 void Game::run()
 {
     //load default console config
+    Console::CommandData cd;
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        if (m_console.visible())
+        {
+            m_stateStack.popState();
+            return "";
+        }
+        else
+        {
+            m_stateStack.pushState(States::ID::Console);
+            return "";
+        }
+    };
+    cd.help = "toggles console visibility";
+    
+    m_console.addItem("show", cd);
+    m_console.exec("bind tab show");
     m_console.exec("exec default.con");
     m_console.exec("bind escape quit");
 
@@ -151,6 +170,11 @@ ShaderResource& Game::getShaderResource()
     return m_shaderResource;
 }
 
+Console& Game::getConsole()
+{
+    return m_console;
+}
+
 void Game::playMusic(const std::string& title, bool loop)
 {
     m_musicPlayer.play(title, loop);
@@ -177,12 +201,6 @@ void Game::handleEvents()
     sf::Event evt;
     while (m_renderWindow.pollEvent(evt))
     {
-        if (evt.type == sf::Event::KeyPressed)
-        {
-            if (evt.key.code == sf::Keyboard::Home)
-                m_console.show(!m_console.visible());
-        }
-
         //pause simulation while window is not focused
         if (evt.type == sf::Event::LostFocus)
             pause();
@@ -190,8 +208,7 @@ void Game::handleEvents()
             resume();
 
         m_console.handleEvent(evt);
-        if (!m_console.visible()) //TODO why doesn't this work based on console handling events returning true?
-            m_stateStack.handleEvent(evt);
+        m_stateStack.handleEvent(evt);
         
         if(evt.type == sf::Event::Closed)
             m_renderWindow.close();
@@ -218,4 +235,5 @@ void Game::registerStates()
     m_stateStack.registerState<GameState>(States::ID::Game);
     m_stateStack.registerState<PauseState>(States::ID::Pause);
     m_stateStack.registerState<GameOverState>(States::ID::GameOver);
+    m_stateStack.registerState<ConsoleState>(States::ID::Console);
 }

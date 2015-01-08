@@ -159,19 +159,6 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addNode(nodeB);
     m_scene.addNode(nodeC);*/
 
-    auto nodeD = std::make_unique<Node>();
-    nodeD->setPosition(320.f, 540.f);
-    c2.setFillColor(sf::Color::White);
-    c2.setOutlineColor(sf::Color(255u, 255u, 250u, 43u));
-    c2.setOutlineThickness(60.f);
-    nodeD->setDrawable(&c2);
-    nodeD->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c2.getRadius() * 2.f, c2.getRadius()  * 2.f }));
-    auto lightB = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 400.f);
-    lightB->setDepth(50.f);
-    nodeD->setLight(lightB);
-    nodeD->setBlendMode(sf::BlendAdd);
-    m_scene.addNode(nodeD, Scene::RearDetail);
-
     //-------------------------------------
 
 
@@ -393,6 +380,21 @@ void GameState::addMapBody(const Map::Node& n)
         //}
 
         m_scene.addNode(node, Scene::Background);
+        break;
+    }
+
+    case Category::Hat:
+    {
+        auto node = std::make_unique<Node>();
+        node->setPosition(n.position);
+        node->setDrawable(m_mapController.getDrawable(MapController::MapDrawable::Hat));
+        node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, n.size));
+        auto light = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 400.f);
+        light->setDepth(50.f);
+        node->setLight(light);
+        //node->setBlendMode(sf::BlendAdd);
+        m_scene.addNode(node, Scene::FrontDetail);
+        break;
     }
     default: break;
     }

@@ -42,7 +42,8 @@ namespace Shader
         FlatShaded,
         NormalMap,
         NormalMapSpecular,
-        Water
+        Water,
+        GaussianBlur
     };
 
     typedef std::unique_ptr<sf::Shader> Ptr;

@@ -25,24 +25,25 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//IDs for various game states
+#ifndef CONSOLE_STATE_H_
+#define CONSOLE_STATE_H_
 
-#ifndef STATE_IDS_H_
-#define STATE_IDS_H_
+#include <State.hpp>
 
-namespace States
+class Console;
+class ConsoleState final : public State
 {
-    enum class ID
-    {
-        None,
-        Title,
-        Menu,
-        Game,
-        Loading,
-        Pause,
-        GameOver,
-        Console
-    };
-}
+public:
+    ConsoleState(StateStack& stack, Context context);
+    ~ConsoleState();
 
-#endif
+    bool update(float dt) override;
+    void draw() override;
+    bool handleEvent(const sf::Event& evt) override;
+
+private:
+
+    Console& m_console;
+};
+
+#endif //PAUSE_STATE_H_

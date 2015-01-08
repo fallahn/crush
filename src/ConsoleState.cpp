@@ -25,24 +25,33 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//IDs for various game states
+#include <ConsoleState.hpp>
+#include <Game.hpp>
 
-#ifndef STATE_IDS_H_
-#define STATE_IDS_H_
-
-namespace States
+ConsoleState::ConsoleState(StateStack& stack, Context context)
+    : State     (stack, context),
+    m_console   (context.gameInstance.getConsole())
 {
-    enum class ID
-    {
-        None,
-        Title,
-        Menu,
-        Game,
-        Loading,
-        Pause,
-        GameOver,
-        Console
-    };
+    m_console.show();
 }
 
-#endif
+ConsoleState::~ConsoleState()
+{
+    m_console.show(false);
+}
+
+bool ConsoleState::update(float dt)
+{
+    return false;
+}
+
+void ConsoleState::draw()
+{
+    getContext().renderWindow.draw(m_console);
+}
+
+bool ConsoleState::handleEvent(const sf::Event& e)
+{
+    m_console.handleUIEvent(e);
+    return false;
+}

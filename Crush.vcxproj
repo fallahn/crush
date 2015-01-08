@@ -75,6 +75,7 @@
     <ClCompile Include="src\AudioController.cpp" />
     <ClCompile Include="src\CollisionConstraint.cpp" />
     <ClCompile Include="src\Console.cpp" />
+    <ClCompile Include="src\ConsoleState.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
     <ClCompile Include="src\FreeFormBehaviour.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
@@ -120,12 +121,14 @@
     <ClInclude Include="include\AudioController.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
     <ClInclude Include="include\Console.hpp" />
+    <ClInclude Include="include\ConsoleState.hpp" />
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\FreeFormBehaviour.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />
     <ClInclude Include="include\MapController.hpp" />
     <ClInclude Include="include\Music.hpp" />
+    <ClInclude Include="include\PostShaders.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\UberShader.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />

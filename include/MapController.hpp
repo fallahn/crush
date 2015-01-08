@@ -42,9 +42,11 @@ source distribution.
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 
 #include <functional>
 #include <list>
+#include <memory>
 
 class Map;
 class MapController final : private sf::NonCopyable
@@ -58,7 +60,8 @@ public:
         Water,
         RearDetail,
         FrontDetail,
-        Background
+        Background,
+        Hat
     };
 
     MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr);
@@ -90,6 +93,7 @@ private:
     AnimatedSprite m_itemSprite;
     AnimatedSprite m_blockSprite;
     AnimatedSprite m_backgroundSprite;
+    AnimatedSprite m_hatSprite;
 
     std::list<WaterDrawable> m_waterDrawables;
 
@@ -107,6 +111,7 @@ private:
 
         void addPart(const sf::Vector2f& position, const sf::Vector2f& size, const std::string& textureName);
         void addSprite(const std::string& textureName, const SpriteSheet::Quad& frame);
+        void buildShadow(sf::Shader& blurShader);
     private:
         struct LayerData
         {
@@ -118,6 +123,9 @@ private:
         sf::Shader& m_shader;
         std::map<std::string, LayerData> m_layerData;
         TextureResource& m_textureResource;
+
+        std::unique_ptr<sf::RenderTexture> m_shadowTexture;
+        sf::Sprite m_shadowSprite;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     } m_solidDrawable, m_rearDrawable, m_frontDrawable;

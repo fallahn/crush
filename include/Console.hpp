@@ -47,9 +47,10 @@ class Console final : public sf::Drawable, private sf::NonCopyable
 public:
     enum CommandFlag
     {
-        None   = 0,
-        Cheat  = (1 << 0), //command will only execute if cheats enabled
-        Config = (1 << 1) //command should be saved to .con file
+        None      = 0,
+        Cheat     = (1 << 0), //command will only execute if cheats enabled
+        Config    = (1 << 1), //command should be saved to .con file
+        ConClosed = (1 << 2) //only executes if console is closed
     };
 
     typedef std::vector<std::string> CommandList;
@@ -71,6 +72,7 @@ public:
     void print(const std::string& text);
 
     bool handleEvent(const sf::Event& e);
+    void handleUIEvent(const sf::Event& e);
     void exec(const std::string& cmd);
 
     void show(bool shown = true);

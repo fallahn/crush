@@ -28,6 +28,7 @@ source distribution.
 #include <ShaderResource.hpp>
 #include <UberShader.hpp>
 #include <ParticleShaders.hpp>
+#include <PostShaders.hpp>
 
 namespace
 {
@@ -71,6 +72,9 @@ sf::Shader& ShaderResource::get(Shader::Type type)
     case Shader::Type::Water:
         shader->loadFromMemory(Defines::version + Defines::vertColour + Defines::reflection + Shader::uberVertex,
             Defines::version + Defines::specular + Defines::normalMap + Defines::reflection + Shader::uberFragment);
+        break;
+    case Shader::Type::GaussianBlur:
+        shader->loadFromMemory(Defines::version + Shader::gaussianFrag, sf::Shader::Fragment);
         break;
     default: break;
     }

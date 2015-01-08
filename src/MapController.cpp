@@ -50,6 +50,7 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_shaderResource    (sr),
     m_itemSprite        (tr.get("res/textures/item.png")),
     m_blockSprite       (tr.get("res/textures/steel_crate_diffuse.png")),
+    m_hatSprite         (tr.get("res/textures/hat_diffuse.png")),
     m_solidDrawable     (tr, sr.get(Shader::Type::NormalMap)),
     m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
     m_frontDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular))
@@ -70,6 +71,10 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     //m_blockSprite.setFrameSize({ 66, 66 });
     m_blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
     m_blockSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
+
+    m_hatSprite.setFrameSize(sf::Vector2i(m_hatSprite.getTexture()->getSize()));
+    m_hatSprite.setNormalMap(tr.get("res/textures/hat_normal.png"));
+    m_hatSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
 }
 
 //public
@@ -186,6 +191,16 @@ void MapController::loadMap(const Map& map)
     m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/background_normal.png"));
     m_backgroundSprite.setShader(m_shaderResource.get(Shader::Type::NormalMap));
     m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
+
+    m_solidDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
+    //m_rearDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
+    //m_frontDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
+
+    //TODO move control of this to observer / update
+    Map::Node n;
+    n.position = { 320.f, 540.f };
+    n.size = sf::Vector2f(m_hatSprite.getTexture()->getSize());
+    spawn(n);
 }
 
 sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
@@ -207,6 +222,8 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
         return static_cast<sf::Drawable*>(&m_frontDrawable);
     case MapDrawable::Background:
         return static_cast<sf::Drawable*>(&m_backgroundSprite);
+    case MapDrawable::Hat:
+        return static_cast<sf::Drawable*>(&m_hatSprite);
     default: return nullptr;
     }
 }
@@ -247,13 +264,13 @@ void MapController::LayerDrawable::addPart(const sf::Vector2f& pos, const sf::Ve
     }
     
     auto& vertexArray = m_layerData[textureName].vertexArray;
-    vertexArray.append({ pos, pos });
+    vertexArray.append({ pos, sf::Color::Black, pos });
     sf::Vector2f p(pos.x + size.x, pos.y);
-    vertexArray.append({ p, p });
+    vertexArray.append({ p, sf::Color::Black, p });
     p.y += size.y;
-    vertexArray.append({ p, p });
+    vertexArray.append({ p, sf::Color::Black, p });
     p.x -= size.x;
-    vertexArray.append({ p, p });
+    vertexArray.append({ p, sf::Color::Black, p });
 }
 
 void MapController::LayerDrawable::addSprite(const std::string& textureName, const SpriteSheet::Quad& frame)
@@ -277,8 +294,53 @@ void MapController::LayerDrawable::addSprite(const std::string& textureName, con
     }
 }
 
+void MapController::LayerDrawable::buildShadow(sf::Shader& blurShader)
+{
+    const sf::Vector2i texSize(480, 270); //TODO link magic numbers to view size
+    m_shadowTexture = std::make_unique<sf::RenderTexture>();
+    m_shadowTexture->create(texSize.x, texSize.y);
+    m_shadowTexture->setSmooth(true);
+
+    sf::RenderStates states;
+    states.transform.scale(0.25f, 0.25f);
+
+    m_shadowTexture->clear(sf::Color::White);
+    for (auto& l : m_layerData)
+    {
+        m_shadowTexture->draw(l.second.vertexArray, states);
+    }
+    m_shadowTexture->display();
+
+    
+    sf::RenderTexture tempRt;
+    tempRt.create(texSize.x, texSize.y);
+    for (auto i = 0u; i < 2u; ++i)
+    {
+        blurShader.setParameter("u_diffuse", m_shadowTexture->getTexture());
+        blurShader.setParameter("u_offset", sf::Vector2f(1.f / texSize.x, 0.f));
+        tempRt.clear(sf::Color::White);
+        tempRt.draw(sf::Sprite(m_shadowTexture->getTexture()), &blurShader);
+        tempRt.display();
+
+        blurShader.setParameter("u_diffuse", tempRt.getTexture());
+        blurShader.setParameter("u_offset", sf::Vector2f(0.f, 1.f / texSize.y));
+        m_shadowTexture->clear(sf::Color::White);
+        m_shadowTexture->draw(sf::Sprite(tempRt.getTexture()), &blurShader);
+        m_shadowTexture->display();
+    }
+
+    m_shadowSprite.setTexture(m_shadowTexture->getTexture());
+    m_shadowSprite.setScale(4.f, 4.f);
+}
+
 void MapController::LayerDrawable::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    if (m_shadowTexture)
+    {
+        //TODO multi pass for each light offset?
+        rt.draw(m_shadowSprite, sf::BlendMultiply);
+    }
+    
     m_shader.setParameter("u_inverseWorldViewMatrix", states.transform.getInverse());
     states.shader = &m_shader;
 
