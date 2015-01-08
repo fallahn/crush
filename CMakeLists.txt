@@ -30,7 +30,7 @@ SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/modules/"
 find_package(SFML 2 REQUIRED system window graphics audio)
 if(UNIX)
 find_package(X11 REQUIRED)
-endif
+endif(UNIX)
 
 #optional package manager on arch (PKGBUILD script currently missing)
 #include (FindPkgConfig)
@@ -43,6 +43,11 @@ include_directories(
 
 link_libraries(
 	${SFML_LIBRARIES})
+
+if(X11_FOUND)
+include_directories(${X11_INCLUDE_DIRS})
+link_libraries(${X11_LIBRARIES})
+endif(X11_FOUND)
 
 add_executable(
 	CRUSH src/main.cpp
