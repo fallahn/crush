@@ -82,6 +82,7 @@ private:
     void draw();
 
     void registerStates();
+    void registerConCommands();
 };
 
 #endif //GAME_H_

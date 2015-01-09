@@ -62,59 +62,16 @@ Game::Game()
     m_clearColour = sf::Color(100u, 149u, 237u);
 
     //bind commands to console
-    Console::CommandData cd;
-    cd.action = [this](Console::CommandList l)->std::string
-    {
-        m_renderWindow.close();
-        return "Quitting...";
-    };
-    cd.help = "quits the game";
-    m_console.addItem("quit", cd);
-
-    //register map change command with console
-    cd.action = [this](Console::CommandList l)->std::string
-    {
-        if (l.empty()) return "please specify a map name";
-        for (auto i = 0u; i < gameData.mapList.size(); ++i)
-        {
-            if (Util::String::toLower(gameData.mapList[i]) == Util::String::toLower(l[0]) + ".crm")
-            {
-                gameData.mapIndex = i;
-                m_stateStack.clearStates();
-                m_stateStack.pushState(States::ID::Game);
-                return "changing map to " + l[0];
-            }
-        }
-        return "map " + l[0] + " not found.";
-    };
-    cd.help = "load specified map";
-    m_console.addItem("map", cd);
+    registerConCommands();
 }
 
 //public
 void Game::run()
 {
     //load default console config
-    Console::CommandData cd;
-    cd.action = [this](Console::CommandList l)->std::string
-    {
-        if (m_console.visible())
-        {
-            m_stateStack.popState();
-            return "";
-        }
-        else
-        {
-            m_stateStack.pushState(States::ID::Console);
-            return "";
-        }
-    };
-    cd.help = "toggles console visibility";
-    
-    m_console.addItem("show", cd);
     m_console.exec("bind tab show");
-    m_console.exec("exec default.con");
     m_console.exec("bind escape quit");
+    m_console.exec("exec default.con");
 
     frameClock.restart();
     while (m_renderWindow.isOpen())
@@ -130,7 +87,6 @@ void Game::run()
             if(!m_paused)
                 update(timePerFrame);
         }
-
         draw();
     }
 
@@ -236,4 +192,67 @@ void Game::registerStates()
     m_stateStack.registerState<PauseState>(States::ID::Pause);
     m_stateStack.registerState<GameOverState>(States::ID::GameOver);
     m_stateStack.registerState<ConsoleState>(States::ID::Console);
+}
+
+void Game::registerConCommands()
+{
+    //-------toggle console state-----//
+    Console::CommandData cd;
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        if (m_console.visible())
+        {
+            m_stateStack.popState();
+            return "";
+        }
+        else
+        {
+            m_stateStack.pushState(States::ID::Console);
+            return "";
+        }
+    };
+    cd.help = "toggles console visibility";
+    m_console.addItem("show", cd);
+
+    //-----quit application-----//
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        m_renderWindow.close();
+        return "Quitting...";
+    };
+    cd.help = "quits the game";
+    m_console.addItem("quit", cd);
+
+    //----register map change----//
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        if (l.empty()) return "please specify a map name";
+        for (auto i = 0u; i < gameData.mapList.size(); ++i)
+        {
+            if (Util::String::toLower(gameData.mapList[i]) == Util::String::toLower(l[0]) + ".crm")
+            {
+                gameData.mapIndex = i;
+                m_stateStack.clearStates();
+                m_stateStack.pushState(States::ID::Game);
+                return "changing map to " + l[0];
+            }
+        }
+        return "map " + l[0] + " not found.";
+    };
+    cd.help = "load specified map";
+    m_console.addItem("map", cd);
+
+    //---skip map---//
+    cd.action = [this](Console::CommandList l)->std::string
+    {
+        gameData.mapIndex++;
+        if (gameData.mapIndex == gameData.mapList.size())
+            gameData.mapIndex = 0;
+
+        m_stateStack.clearStates();
+        m_stateStack.pushState(States::ID::Game);
+        return "";
+    };
+    cd.help = "load next map in the list";
+    m_console.addItem("nextmap", cd);
 }

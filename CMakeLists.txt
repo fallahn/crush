@@ -91,6 +91,10 @@ add_executable(
 	src/State.cpp
 	src/StateStack.cpp
 	src/TitleState.cpp
+	src/UIButton.cpp
+	src/UIContainer.cpp
+	src/UIControl.cpp
+	src/UILabel.cpp
 	src/WaterBehaviour.cpp
 	src/WaterDrawable.cpp)
 
