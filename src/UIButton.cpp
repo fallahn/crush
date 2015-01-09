@@ -42,7 +42,7 @@ Button::Button(const sf::Font& font, const sf::Texture& texture)
 
     for (auto i = 0u; i < 3u; ++i)
     {
-        m_subRects[i] = subrect;
+        m_subRects.push_back(subrect);
         subrect.top += subrect.height;
     }
 
@@ -135,6 +135,6 @@ void Button::setTogglable(bool b)
 void Button::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
-    rt.draw(m_sprite);
-    rt.draw(m_text);
+    rt.draw(m_sprite, states);
+    rt.draw(m_text, states);
 }

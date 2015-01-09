@@ -29,6 +29,7 @@ source distribution.
 #define MENU_STATE_H_
 
 #include <State.hpp>
+#include <UIContainer.hpp>
 
 class MenuState final : public State
 {
@@ -41,6 +42,8 @@ public:
     bool handleEvent(const sf::Event& evt) override;
 
 private:
+
+    ui::Container m_uiContainer;
 };
 
 #endif //MENU_STATE_H_

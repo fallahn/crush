@@ -115,6 +115,7 @@
     <ClCompile Include="src\UIContainer.cpp" />
     <ClCompile Include="src\UIControl.cpp" />
     <ClCompile Include="src\UILabel.cpp" />
+    <ClCompile Include="src\UISlider.cpp" />
     <ClCompile Include="src\WaterBehaviour.cpp" />
     <ClCompile Include="src\WaterDrawable.cpp" />
   </ItemGroup>
@@ -169,6 +170,7 @@
     <ClInclude Include="include\UIContainer.hpp" />
     <ClInclude Include="include\UIControl.hpp" />
     <ClInclude Include="include\UILabel.hpp" />
+    <ClInclude Include="include\UISlider.hpp" />
     <ClInclude Include="include\Util.hpp" />
     <ClInclude Include="include\WaterBehaviour.hpp" />
     <ClInclude Include="include\WaterDrawable.hpp" />

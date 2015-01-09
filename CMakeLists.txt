@@ -95,6 +95,7 @@ add_executable(
 	src/UIContainer.cpp
 	src/UIControl.cpp
 	src/UILabel.cpp
+	src/UISlider.cpp
 	src/WaterBehaviour.cpp
 	src/WaterDrawable.cpp)
 

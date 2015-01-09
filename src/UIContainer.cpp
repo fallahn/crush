@@ -68,8 +68,8 @@ void Container::handleEvent(const sf::Event& e)
         {
             selectNext();
         }
-        else if (e.key.code == sf::Keyboard::Return ||
-            e.key.code == sf::Keyboard::Space)
+        else if (e.key.code == sf::Keyboard::Return/* ||
+            e.key.code == sf::Keyboard::Space*/)
         {
             if (hasSelection()) m_controls[m_selectedIndex]->activate();
         }

@@ -207,6 +207,9 @@
     <ClCompile Include="src\UIButton.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\UISlider.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -366,6 +369,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\UIButton.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UISlider.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
