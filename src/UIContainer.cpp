@@ -32,6 +32,11 @@ source distribution.
 
 using namespace ui;
 
+namespace
+{
+    const float deadzone = 40.f;
+}
+
 Container::Container()
     : m_selectedIndex(-1)
 {}
@@ -77,13 +82,36 @@ void Container::handleEvent(const sf::Event& e)
     //controller navigation
     else if (e.type == sf::Event::JoystickMoved)
     {
-        //TODO test axis and value (need controller for this)
+        //TODO stick is a little over sensitive
+        //if (e.joystickMove.axis == sf::Joystick::Axis::Y)
+        //{
+        //    if (e.joystickMove.position > deadzone)
+        //    {
+        //        selectNext();
+        //    }
+        //    else if (e.joystickMove.position < -deadzone)
+        //    {
+        //        selectPrevious();
+        //    }
+        //}
+        ////pov direction is opposite to thumb on XBC
+        //else if (e.joystickMove.axis == sf::Joystick::Axis::PovY)
+        {
+            if (e.joystickMove.position > deadzone)
+            {
+                selectPrevious();
+            }
+            else if (e.joystickMove.position < -deadzone)
+            {
+                selectNext();
+            }
+        }
     }
     //controller button
     else if (e.type == sf::Event::JoystickButtonReleased)
     {
         //TODO check button mapping (A and START on xbawx)
-        if (e.joystickButton.button == 0 || e.joystickButton.button == 8)
+        if (e.joystickButton.button == 0 || e.joystickButton.button == 7)
             if (hasSelection()) m_controls[m_selectedIndex]->activate();
     }
 }

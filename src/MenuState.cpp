@@ -81,7 +81,7 @@ MenuState::MenuState(StateStack& stack, Context context)
     m_uiContainer.addControl(playerOneButton);
 
     //player two button
-    auto playerTwoButton = std::make_shared<ui::Button>(font, tr.get("res/Textures/ui/button.png"));
+    auto playerTwoButton = std::make_shared<ui::Button>(font, tr.get("res/textures/ui/button.png"));
     playerTwoButton->setText("Two Player");
     playerTwoButton->setPosition(960.f, 248.f);
     playerTwoButton->setTextColour(sf::Color::Black);

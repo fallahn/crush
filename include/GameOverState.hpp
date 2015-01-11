@@ -34,7 +34,7 @@ class GameOverState final : public State
 {
 public:
     GameOverState(StateStack& stack, Context context);
-    ~GameOverState() = default;
+    ~GameOverState();// = default;
     
     bool handleEvent(const sf::Event& evt) override;
     bool update(float dt) override;

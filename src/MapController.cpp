@@ -70,11 +70,12 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_blockSprite.setFrameCount(1u);
     //m_blockSprite.setFrameSize({ 66, 66 });
     m_blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
-    m_blockSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
+    m_blockSprite.setShader(sr.get(Shader::Type::Metal));
 
     m_hatSprite.setFrameSize(sf::Vector2i(m_hatSprite.getTexture()->getSize()));
     m_hatSprite.setNormalMap(tr.get("res/textures/hat_normal.png"));
-    m_hatSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
+    m_hatSprite.setShader(sr.get(Shader::Type::Metal));
+
 }
 
 //public
@@ -191,6 +192,12 @@ void MapController::loadMap(const Map& map)
     m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/background_normal.png"));
     m_backgroundSprite.setShader(m_shaderResource.get(Shader::Type::NormalMap));
     m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
+    m_shaderResource.get(Shader::Type::WaterDrop).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
+    m_shaderResource.get(Shader::Type::Metal).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
+
+    //std::function<const sf::Texture&()> f = std::bind(&MapController::getBackgroundTexture, this);
+    //Shader::UniformBinding::Ptr fb = std::make_unique<Shader::FunctionBinding<const sf::Texture&>>(m_shaderResource.get(Shader::Type::Metal), "u_reflectMap", f);
+    //m_shaderResource.addBinding(fb);
 
     m_solidDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
 
@@ -236,6 +243,10 @@ void MapController::shuffleItems()
     });
 }
 
+const sf::Texture& MapController::getBackgroundTexture() const
+{
+    return *m_backgroundSprite.getTexture();
+}
 
 //--------------drawable--------------
 MapController::LayerDrawable::LayerDrawable(TextureResource& tr, sf::Shader& shader)

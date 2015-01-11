@@ -67,7 +67,7 @@ namespace ui
 
 
     private:
-        enum ButtonState
+        enum State
         {
             Normal = 0,
             Selected,

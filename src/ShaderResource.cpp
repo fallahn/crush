@@ -42,6 +42,7 @@ namespace
         static const std::string vertMultiply = "#define VERTEX_MULTIPLY\n";
         static const std::string specular = "#define SPECULAR\n";
         static const std::string reflection = "#define REFLECT_MAP\n";
+        static const std::string environment = "#define SKY_MAP\n";
     }
 }
 
@@ -70,8 +71,16 @@ sf::Shader& ShaderResource::get(Shader::Type type)
             Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Defines::vertMultiply + Shader::uberFragment);
         break;
     case Shader::Type::Water:
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Defines::environment + Shader::uberVertex,
+            Defines::version + Defines::specular + Defines::normalMap + Defines::environment + Shader::uberFragment);
+        break;
+    case Shader::Type::WaterDrop:
+        shader->loadFromMemory(Defines::version + Defines::vertColour + Defines::environment + Shader::uberVertex,
+            Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::environment + Defines::specular + Defines::vertMultiply + Shader::uberFragment);
+        break;
+    case Shader::Type::Metal:
         shader->loadFromMemory(Defines::version + Defines::vertColour + Defines::reflection + Shader::uberVertex,
-            Defines::version + Defines::specular + Defines::normalMap + Defines::reflection + Shader::uberFragment);
+            Defines::version + Defines::diffuseMap + Defines::normalMap + Defines::specular + Defines::reflection + Shader::uberFragment);
         break;
     case Shader::Type::GaussianBlur:
         shader->loadFromMemory(Defines::version + Shader::gaussianFrag, sf::Shader::Fragment);
@@ -81,4 +90,15 @@ sf::Shader& ShaderResource::get(Shader::Type type)
 
     m_shaders.insert(std::make_pair(type, std::move(shader)));
     return *m_shaders[type];
+}
+
+void ShaderResource::addBinding(Shader::UniformBinding::Ptr& b)
+{
+    m_uniformBindings.push_back(std::move(b));
+}
+
+void ShaderResource::updateBindings()
+{
+    for (auto& b : m_uniformBindings)
+        b->bind();
 }

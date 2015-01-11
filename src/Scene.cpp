@@ -169,6 +169,9 @@ void Scene::setSunlight(const Light& light)
 void Scene::addShader(sf::Shader& shader)
 {
     m_shaders.push_back(&shader);
+
+    sf::Transform transform; //set a default value for this uniform
+    shader.setParameter("u_inverseWorldViewMatrix", transform.getInverse());
 }
 
 void Scene::setAmbientColour(const sf::Color& colour)
@@ -269,7 +272,8 @@ void Scene::update(float dt)
         s->setParameter("u_pointLightPositionsSecond", lightPositionsSecond);
         s->setParameter("u_pointLightColoursFirst", lightColoursFirst);
         s->setParameter("u_pointLightColoursSecond", lightColoursSecond);
-        s->setParameter("u_inverseRanges", sf::Vector3f(ranges[0], ranges[1], ranges[2]));
+        s->setParameter("u_inverseRangesFirst", sf::Vector3f(ranges[0], ranges[1], ranges[2]));
+        s->setParameter("u_inverseRangesSecond", sf::Vector3f(ranges[3], ranges[4], ranges[5]));
     }
 
     flush();

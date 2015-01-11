@@ -79,7 +79,9 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addShader(m_shaderResource.get(Shader::Type::FlatShaded));
     m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
     m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMap));
+    m_scene.addShader(m_shaderResource.get(Shader::Type::Metal));
     m_scene.addShader(m_shaderResource.get(Shader::Type::Water));
+    m_scene.addShader(m_shaderResource.get(Shader::Type::WaterDrop));
 
     float origin = lightDrawable.getRadius();
     lightDrawable.setOrigin(origin, origin);
@@ -133,35 +135,6 @@ GameState::GameState(StateStack& stack, Context context)
     //sf::Clock c;
     //while (c.getElapsedTime().asSeconds() < 5.f){}
 
-    //----temp stuff to test constraint----
-    /*auto nodeA = std::make_unique<Node>();
-    nodeA->setPosition(960.f, 540.f);
-    nodeA->setDrawable(&c1);
-    nodeA->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::Solid, { c1.getRadius() * 2.f, c1.getRadius()  * 2.f }));
-
-    auto nodeB = std::make_unique<Node>();
-    nodeB->setPosition(1160.f, 540.f);
-    nodeB->setDrawable(&c1);
-    nodeB->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { 2.f, 2.f }));
-
-    auto nodeC = std::make_unique<Node>();
-    nodeC->setPosition(1320.f, 540.f);
-    nodeC->setDrawable(&c1);
-    nodeC->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { c1.getRadius() * 2.f, c1.getRadius()  * 2.f }));
-    auto lightA = m_scene.addLight(sf::Vector3f(1.f, 0.6f, 0.f), 400.f);
-    lightA->setDepth(50.f);
-    nodeC->setLight(lightA);
-
-    m_collisionWorld.addConstraint(nodeA->getCollisionBody(), nodeB->getCollisionBody(), 120.f);
-    m_collisionWorld.addConstraint(nodeA->getCollisionBody(), nodeC->getCollisionBody(), 120.f);
-
-    m_scene.addNode(nodeA);
-    m_scene.addNode(nodeB);
-    m_scene.addNode(nodeC);*/
-
-    //-------------------------------------
-
-
     //close loading screen before starting music
     quitLoadingScreen();
     context.gameInstance.playMusic(music);
@@ -197,11 +170,13 @@ bool GameState::update(float dt)
     //update scoreboard
     m_scoreBoard.update(dt);
 
+    //make sure shader bindings are up to date
+    m_shaderResource.updateBindings();
     return true;
 }
 
 void GameState::draw()
-{
+{  
     getContext().renderWindow.draw(m_scene);
     getContext().renderWindow.draw(m_particleController);
     getContext().renderWindow.draw(m_scoreBoard);
@@ -356,7 +331,7 @@ void GameState::addMapBody(const Map::Node& n)
         auto node = std::make_unique<Node>();
         node->setCategory(Category::Light);
         //TODO magix0r numb0rz
-        auto light = m_scene.addLight(colourToVec3(n.colour), 200.f);
+        auto light = m_scene.addLight(colourToVec3(n.colour), 500.f);
         light->setDepth(50.f);
         node->setLight(light);
         node->setPosition(n.position + (n.size / 2.f));
@@ -389,7 +364,7 @@ void GameState::addMapBody(const Map::Node& n)
         node->setPosition(n.position);
         node->setDrawable(m_mapController.getDrawable(MapController::MapDrawable::Hat));
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, n.size));
-        auto light = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 400.f);
+        auto light = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 200.f);
         light->setDepth(50.f);
         node->setLight(light);
         //node->setBlendMode(sf::BlendAdd);

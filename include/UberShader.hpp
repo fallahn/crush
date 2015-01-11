@@ -44,6 +44,8 @@ namespace Shader
     light arrays are fudged by packing them into matrices and extracting
     again on the GPU. Not ideal, but it works*/
 
+    /*SKY_MAP is the scene reflected vertically for effects like water
+    REFLECT_MAP is the scene reflected horizontally for metal type reflection*/
 
     static const std::string uberVertex =
         "#define LIGHT_COUNT 6\n" \
@@ -65,13 +67,13 @@ namespace Shader
 
         "vec3[LIGHT_COUNT] unpackLightPositions()\n" \
         "{\n" \
-            "return vec3[LIGHT_COUNT](\n" \
-                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][0], u_pointLightPositionsFirst[1][0], u_pointLightPositionsFirst[3][0], 1.0)),\n" \
-                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][1], u_pointLightPositionsFirst[1][1], u_pointLightPositionsFirst[3][1], 1.0)),\n" \
-                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][3], u_pointLightPositionsFirst[1][3], u_pointLightPositionsFirst[3][3], 1.0)),\n" \
-                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][0], u_pointLightPositionsSecond[1][0], u_pointLightPositionsSecond[3][0], 1.0)),\n" \
-                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][1], u_pointLightPositionsSecond[1][1], u_pointLightPositionsSecond[3][1], 1.0)),\n" \
-                "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][3], u_pointLightPositionsSecond[1][3], u_pointLightPositionsSecond[3][3], 1.0)));\n" \
+        "return vec3[LIGHT_COUNT](\n" \
+        "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][0], u_pointLightPositionsFirst[1][0], u_pointLightPositionsFirst[3][0], 1.0)),\n" \
+        "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][1], u_pointLightPositionsFirst[1][1], u_pointLightPositionsFirst[3][1], 1.0)),\n" \
+        "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsFirst[0][3], u_pointLightPositionsFirst[1][3], u_pointLightPositionsFirst[3][3], 1.0)),\n" \
+        "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][0], u_pointLightPositionsSecond[1][0], u_pointLightPositionsSecond[3][0], 1.0)),\n" \
+        "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][1], u_pointLightPositionsSecond[1][1], u_pointLightPositionsSecond[3][1], 1.0)),\n" \
+        "vec3(u_inverseWorldViewMatrix * vec4(u_pointLightPositionsSecond[0][3], u_pointLightPositionsSecond[1][3], u_pointLightPositionsSecond[3][3], 1.0)));\n" \
         "}\n" \
 
 
@@ -87,11 +89,16 @@ namespace Shader
         "    vec3 b = cross(n, t);\n" \
         "\n" \
         "    vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n" \
-        "#if defined(REFLECT_MAP)\n" \
+        "#if defined(SKY_MAP)\n" \
         "    gl_TexCoord[1].xy = vec2(viewVertex.x, (viewVertex.y - (2.0 * gl_Vertex.y))) / sceneSize;\n" \
-        "    gl_TexCoord[2].xy = (viewVertex - 20.0).xy / sceneSize;\n" \
         "#endif\n" \
-        /*why on earth place it into view space then straight back to model??*/
+
+        "#if defined(REFLECT_MAP)\n" \
+        "    gl_TexCoord[2].xy = viewVertex.xy / sceneSize;\n" \
+        "    gl_TexCoord[2].x = 1.0 - gl_TexCoord[2].x;\n" \
+        "#endif\n" \
+
+        
         "    vec3 viewDirectionalLightDirection = vec3(gl_ModelViewMatrix * u_inverseWorldViewMatrix * vec4(u_directionalLightDirection, 1.0));\n" \
         "\n" \
         "    v_directionalLightDirection.x = dot(viewDirectionalLightDirection, t);\n" \
@@ -122,10 +129,14 @@ namespace Shader
         "#define LIGHT_COUNT 6\n" \
         "uniform sampler2D u_diffuseMap;\n" \
         "uniform sampler2D u_normalMap;\n" \
-        "#if defined(REFLECT_MAP)\n" \
+        "#if defined(REFLECT_MAP) || defined(SKY_MAP)\n" \
         "uniform sampler2D u_reflectMap;\n" \
+        "#define SPEC_AMOUNT 1.0\n" \
+        "#else\n" \
+        "#define SPEC_AMOUNT 0.5\n" \
         "#endif\n" \
-        "uniform vec3 u_inverseRanges;\n" \
+        "uniform vec3 u_inverseRangesFirst;\n" \
+        "uniform vec3 u_inverseRangesSecond;\n" \
         "uniform mat4 u_pointLightColoursFirst;\n" \
         "uniform mat4 u_pointLightColoursSecond;\n" \
         "uniform vec3 u_directionalLightColour;\n" \
@@ -138,6 +149,7 @@ namespace Shader
         "\n" \
         "vec4 diffuseColour;\n" \
         "vec4 normalColour = vec4(0.5, 0.5, 1.0, 0.0);\n" \
+        "float[LIGHT_COUNT] inverseRanges = float[LIGHT_COUNT](u_inverseRangesFirst.x, u_inverseRangesFirst.y, u_inverseRangesFirst.z, u_inverseRangesSecond.x, u_inverseRangesSecond.y, u_inverseRangesSecond.z);\n" \
         "\n" \
         "vec3 calcLighting(vec3 normal, vec3 lightDirection, vec3 lightColour, float falloff)\n" \
         "{\n" \
@@ -152,7 +164,7 @@ namespace Shader
         /*TODO switch const exponent for variable*/
         "    vec3 specularColour = vec3(pow(specularAngle, 96.0)) * falloff;\n" \
 
-        "    return mixedColour + (specularColour * 0.5);//normalColour.a);\n" \
+        "    return mixedColour + (specularColour * SPEC_AMOUNT);//normalColour.a);\n" \
         "#else\n" \
         "    return mixedColour;\n" \
         "#endif\n" \
@@ -183,13 +195,16 @@ namespace Shader
         "    diffuseColour = gl_Color;\n" \
         "#endif\n" \
 
+        "#if defined(SKY_MAP)\n" \
+        "    vec2 coordS = vec2(gl_TexCoord[1].xy - (normalColour.rg * 0.01));\n" \
+        "    coordS.y += sin((coordS.x * 300.0) + (u_textureOffset * 120.0)) * 0.002;\n" \
+        "    diffuseColour.rgb *= texture2D(u_reflectMap, coordS).rgb;\n" \
+
+        "#endif\n" \
+
         "#if defined(REFLECT_MAP)\n" \
-        "    vec2 coord = vec2(gl_TexCoord[1].xy - (normalColour.rg * 0.01));\n" \
-        "    coord.y += sin((coord.x * 300.0) + (u_textureOffset * 120.0)) * 0.002;\n" \
-        "    diffuseColour.rgb *= texture2D(u_reflectMap, coord).rgb;\n" \
-        "    coord = vec2(gl_TexCoord[2].xy - (normalColour.rg * 0.01));\n" \
-        "    coord.x += sin((coord.y * 30.0) + (u_textureOffset * 120.0)) * 0.002;\n" \
-        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coord).rgb, diffuseColour.rgb, 0.9);\n" \
+        "    vec2 coordR = vec2(gl_TexCoord[2].xy- (normalColour.rg * 0.5));\n" \
+        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coordR).rgb, diffuseColour.rgb, 0.5);\n" \
         "#endif\n" \
 
         "    gl_FragColor.a = diffuseColour.a;\n" \
@@ -200,7 +215,7 @@ namespace Shader
         /*TODO fix inverse range index*/
         "    for(int i = 0; i < LIGHT_COUNT; i++)\n" \
         "    {\n" \
-        "        vec3 pointLightDirection = v_pointLightDirections[i] * u_inverseRanges[0];\n" \
+        "        vec3 pointLightDirection = v_pointLightDirections[i] * inverseRanges[i];\n" \
         "        float falloff = clamp(1.0 - dot(pointLightDirection, pointLightDirection), 0.0, 1.0);\n" \
         "        blendedColour += calcLighting(normalVector, normalize(v_pointLightDirections[i]), pointLightColours[i], falloff);\n" \
         "    }\n" \

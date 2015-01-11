@@ -49,8 +49,8 @@ namespace
 
 WaterDrawable::WaterDrawable(sf::Texture& normalMap, sf::Shader& shader, const sf::Vector2f& size)
     : m_size        (size),
-    m_lightColour   (96u, 172u, 222u, 150u),//(64u, 72u, 45u, 130u),
-    m_darkColour    (40u, 14u, 34u, 185u),
+    m_lightColour   (96u, 172u, 222u, 190u),//(64u, 72u, 45u, 130u),
+    m_darkColour    (40u, 14u, 34u, 205u),
     m_vertices      (sf::TrianglesStrip),
     m_normalTexture (normalMap),
     m_texHeight     (static_cast<float>(m_normalTexture.getSize().y)),

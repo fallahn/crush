@@ -201,14 +201,14 @@ sf::FloatRect AnimatedSprite::getGlobalBounds() const
 
 //private
 void AnimatedSprite::draw(sf::RenderTarget& rt, sf::RenderStates states) const
-{
-    states.transform *= getTransform();
-    states.shader = m_shader;
+{    
     if (m_shader)
     {
         m_shader->setParameter("u_normalMap", m_normalMap);
-        m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
+        m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
     }
+    states.transform *= getTransform();
+    states.shader = m_shader;
     rt.draw(m_sprite, states);
 }
 

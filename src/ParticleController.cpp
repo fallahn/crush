@@ -183,7 +183,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
     case  Particle::Type::Splash:
         {
             particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
-            particleSystem.setColour({ 44u, 79u, 59u, 150u });
+            particleSystem.setColour({ 96u, 172u, 222u, 190u });
             particleSystem.setParticleLifetime(1.2f);
             particleSystem.setParticleSize({ 4.f, 9.f });
             particleSystem.setRandomInitialVelocity(splashVelocities);
@@ -194,7 +194,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
             ScaleAffector sa({ 1.f, 8.5f });
             particleSystem.addAffector(sa);
 
-            //particleSystem.setShader(waterShader);
+            particleSystem.setShader(m_shaderResource.get(Shader::Type::WaterDrop));
             particleSystem.setBlendMode(sf::BlendAlpha);
         }
         break;

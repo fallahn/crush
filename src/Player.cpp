@@ -46,6 +46,7 @@ namespace
     const float pickupPadding = 3.2f;
     const float dragPadding = 0.51f;
     const float pickupHeight = 14.f;
+    const float carryForceReduction = 0.75f;
 
     //item modifiers
     const float itemDuration = 16.f;
@@ -266,6 +267,20 @@ void Player::onNotify(Subject& s, const Event& evt)
             case Event::PlayerEvent::Stopped:
             case Event::PlayerEvent::Landed:
                 m_sprite.play(idle);
+
+                //make sure friction is set when carrying block
+                if (m_carryingBlock)
+                {
+                    Command d;
+                    d.categoryMask |= m_id;
+                    d.action = [&, this](Node& on, float dt)
+                    {
+                        assert(on.getCollisionBody());
+                        on.getCollisionBody()->setFriction(friction * carryForceReduction);
+                    };
+                    m_commandStack.push(d);
+                    m_jumpForce = jumpForce * carryForceReduction;
+                }
                 break;
 
                 //grabbing / releasing the blocks updates the players
@@ -623,7 +638,7 @@ void Player::doPickUp()
 
                             this->m_carryVector.y = (on.getCollisionBody()->getSize().y - n.getCollisionBody()->getSize().y) - pickupHeight;                           
                             on.getCollisionBody()->addChild(n.getCollisionBody(), this->m_carryVector);
-                            on.getCollisionBody()->setFriction(friction * 0.75f);
+                            on.getCollisionBody()->setFriction(friction * carryForceReduction);
                         };
                         m_commandStack.push(d);
                     }
@@ -631,7 +646,7 @@ void Player::doPickUp()
                 m_commandStack.push(c); 
 
                 m_carryingBlock = true;
-                m_jumpForce = jumpForce * 0.75f;
+                m_jumpForce = jumpForce * carryForceReduction;
             }
             else
             {

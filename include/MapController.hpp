@@ -101,6 +101,9 @@ private:
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();
 
+
+    const sf::Texture& getBackgroundTexture() const;
+
     std::map<std::string, SpriteSheet> m_spriteSheets;
 
     class LayerDrawable : public sf::Drawable, private sf::NonCopyable

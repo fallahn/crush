@@ -28,6 +28,8 @@ source distribution.
 #include <UISlider.hpp>
 #include <Util.hpp>
 
+#include <SFML/Graphics/RenderTarget.hpp>
+
 #include <cassert>
 
 using namespace ui;
@@ -68,22 +70,24 @@ bool Slider::selectable() const
 
 void Slider::select()
 {
-
+    Control::select();
+    m_handleSprite.setTextureRect(m_subRects[State::Selected]);
 }
 
 void Slider::deselect()
 {
-
+    Control::deselect();
+    m_handleSprite.setTextureRect(m_subRects[State::Normal]);
 }
 
 void Slider::activate()
 {
-
+    Control::activate();
 }
 
 void Slider::deactivate()
 {
-
+    Control::deactivate();
 }
 
 void Slider::handleEvent(const sf::Event& e)
@@ -94,50 +98,117 @@ void Slider::handleEvent(const sf::Event& e)
 void Slider::setMaxValue(float value)
 {
     assert(value > 0);
+    m_maxValue = value;
 }
 
 void Slider::setDirection(Direction direction)
 {
+    if (direction != m_direction)
+    {
+        m_direction = direction;
 
+        float newX = m_slotShape.getSize().y;
+        float newY = m_slotShape.getSize().x;
+        m_slotShape.setSize({ newX, newY });
+
+        newX = m_handleSprite.getPosition().y;
+        newY = m_handleSprite.getPosition().x;
+        m_handleSprite.setPosition(newX, newY);
+
+        newX = m_localBounds.height;
+        newY = m_localBounds.width;
+        m_localBounds.width = newX;
+        m_localBounds.height = newY;
+
+        newX = m_localBounds.top;
+        newY = m_localBounds.left;
+        m_localBounds.left = newX;
+        m_localBounds.top = newY;
+    }
 }
 
 void Slider::setLength(float length)
 {
+    auto currentSize = m_slotShape.getSize();
+    if (m_direction == Direction::Horizontal)
+    {
+        float pos = m_handleSprite.getPosition().x / currentSize.x;
+        pos *= length;
+        m_handleSprite.setPosition(pos, m_handleSprite.getPosition().y);
 
+        currentSize.x = length;
+        m_slotShape.setSize(currentSize);
+        m_localBounds.width = length;
+    }
+    else
+    {
+        float pos = m_handleSprite.getPosition().y / currentSize.y;
+        pos *= length;
+        m_handleSprite.setPosition(m_handleSprite.getPosition().x, pos);
+
+        currentSize.y = length;
+        m_slotShape.setSize(currentSize);
+        m_localBounds.height = length;
+    }
+    m_length = length;
 }
 
 void Slider::setValue(float value)
 {
-
+    assert(value <= m_maxValue && value >= 0);
+    auto pos = m_handleSprite.getPosition();
+    if (m_direction == Direction::Horizontal)
+    {
+        pos.x = (m_length / m_maxValue) * value;
+    }
+    else
+    {
+        pos.y = (m_length / m_maxValue) * value;
+    }
+    m_handleSprite.setPosition(pos);
 }
 
 float Slider::getValue() const
 {
-    return 0.f;
+    if (m_direction == Direction::Horizontal)
+    {
+        return m_handleSprite.getPosition().x / m_length * m_maxValue;
+    }
+    else
+    {
+        return m_handleSprite.getPosition().y / m_length * m_maxValue;
+    }
 }
 
 void Slider::setText(const std::string& text)
 {
-
+    m_text.setString(text);
+    updateText();
 }
 
 void Slider::setTextColour(const sf::Color& colour)
 {
-
+    m_text.setColor(colour);
 }
 
 void Slider::setFontSize(sf::Uint16 size)
 {
-
+    m_text.setCharacterSize(size);
 }
 
 //private
 void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
 {
-
+    states.transform *= getTransform();
+    states.blendMode = sf::BlendMultiply;
+    rt.draw(m_slotShape, states);
+    states.blendMode = sf::BlendAlpha;
+    rt.draw(m_handleSprite, states);
+    rt.draw(m_text, states);
 }
 
 void Slider::updateText()
 {
-
+    Util::Position::centreOrigin(m_text);
+    m_text.setPosition(m_text.getOrigin().x, -m_text.getLocalBounds().height * 2.f);
 }

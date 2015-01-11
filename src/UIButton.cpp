@@ -47,7 +47,7 @@ Button::Button(const sf::Font& font, const sf::Texture& texture)
     }
 
     m_sprite.setTexture(m_texture);
-    m_sprite.setTextureRect(m_subRects[ButtonState::Normal]);
+    m_sprite.setTextureRect(m_subRects[State::Normal]);
 
     auto bounds = m_sprite.getLocalBounds();
     m_text.setPosition(bounds.width / 2.f, bounds.height / 2.f);
@@ -62,20 +62,20 @@ bool Button::selectable() const
 void Button::select()
 {
     Control::select();
-    m_sprite.setTextureRect(m_subRects[ButtonState::Selected]);
+    m_sprite.setTextureRect(m_subRects[State::Selected]);
 }
 
 void Button::deselect()
 {
     Control::deselect();
-    m_sprite.setTextureRect(m_subRects[ButtonState::Normal]);
+    m_sprite.setTextureRect(m_subRects[State::Normal]);
 }
 
 void Button::activate()
 {
     Control::activate();
     if (m_toggleButton)
-        m_sprite.setTextureRect(m_subRects[ButtonState::Active]);
+        m_sprite.setTextureRect(m_subRects[State::Active]);
 
     if (m_callback) m_callback();
 
@@ -90,11 +90,11 @@ void Button::deactivate()
     {
         if (selected())
         {
-            m_sprite.setTextureRect(m_subRects[ButtonState::Selected]);
+            m_sprite.setTextureRect(m_subRects[State::Selected]);
         }
         else
         {
-            m_sprite.setTextureRect(m_subRects[ButtonState::Normal]);
+            m_sprite.setTextureRect(m_subRects[State::Normal]);
         }
     }
 }

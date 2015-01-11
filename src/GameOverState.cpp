@@ -70,6 +70,11 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     //TODO parse context data and sum up scores
 }
 
+GameOverState::~GameOverState()
+{
+    getContext().gameInstance.playMusic("res/sound/music/intro.ogg");;
+}
+
 bool GameOverState::update(float dt)
 {
     m_waitedTime += dt;

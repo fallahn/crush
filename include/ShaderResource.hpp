@@ -34,6 +34,8 @@ source distribution.
 
 #include <memory>
 #include <map>
+#include <functional>
+#include <vector>
 
 namespace Shader
 {
@@ -43,10 +45,40 @@ namespace Shader
         NormalMap,
         NormalMapSpecular,
         Water,
+        WaterDrop,
+        Metal,
         GaussianBlur
     };
 
     typedef std::unique_ptr<sf::Shader> Ptr;
+
+    struct UniformBinding
+    {       
+        typedef std::unique_ptr<UniformBinding> Ptr;
+        
+        UniformBinding(sf::Shader& s, const std::string& u)
+            : shader(s), uniform(u) {}
+        virtual ~UniformBinding() = default;
+        sf::Shader& shader;
+        std::string uniform;
+        virtual void bind(){};// = 0;
+    };
+
+    template <class T>
+    struct FunctionBinding : public UniformBinding
+    {
+        typedef std::unique_ptr<FunctionBinding> Ptr;
+
+        FunctionBinding(sf::Shader& s, const std::string& u, std::function<T()>& valueFunc)
+            : UniformBinding(s, u),
+            value(valueFunc){}
+        std::function<T()> value;
+
+        void bind()
+        {
+            shader.setParameter(uniform, value());
+        }
+    };
 }
 
 class ShaderResource final : private sf::NonCopyable
@@ -58,8 +90,13 @@ public:
 
     sf::Shader& get(Shader::Type type);
 
+    void addBinding(Shader::UniformBinding::Ptr& b);
+    void updateBindings();
+
 private:
     std::map<Shader::Type, Shader::Ptr> m_shaders;
+
+    std::vector<Shader::UniformBinding::Ptr> m_uniformBindings;
 };
 
 #endif //SHADER_RESOURCE_H_
