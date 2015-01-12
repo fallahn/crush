@@ -199,7 +199,7 @@ sf::Color Map::colourFromInt(sf::Int32 value)
 
 //node ctor
 Map::Node::Node()
-    : type(Category::Hat), anchorOffset(0.f){}
+    : type(Category::HatDropped), anchorOffset(0.f){}
 
 Map::Node::Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& c, const std::string& layer)
     : position  (Util::Vector::vec2FromString(position)),

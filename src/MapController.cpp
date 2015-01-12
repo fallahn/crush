@@ -40,6 +40,8 @@ namespace
 {
     const float spawnGapTime = 22.f;//time between spawns
     sf::Vector2f blockTextureSize;
+
+    float hatSpawnTime = 0.f;
 }
 
 MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr)
@@ -125,6 +127,16 @@ void MapController::update(float dt)
 
     for (auto& w : m_waterDrawables)
         w.update(dt);
+
+    //check for new hattage
+    if (hatSpawnTime > 0)
+    {
+        hatSpawnTime -= dt;
+        if (hatSpawnTime <= 0)
+        {
+            spawnHat();
+        }
+    }
 }
 
 void MapController::setSpawnFunction(std::function<void(const Map::Node&)>& func)
@@ -179,9 +191,7 @@ void MapController::loadMap(const Map& map)
                 break;
             default: break;
             }
-
         }
-
     }
     //shuffle item order
     shuffleItems();
@@ -200,12 +210,7 @@ void MapController::loadMap(const Map& map)
     //m_shaderResource.addBinding(fb);
 
     m_solidDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
-
-    //TODO move control of this to observer / update
-    Map::Node n;
-    n.position = { 320.f, 540.f };
-    n.size = sf::Vector2f(m_hatSprite.getTexture()->getSize());
-    spawn(n);
+    spawnHat();
 }
 
 sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
@@ -233,6 +238,24 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
     }
 }
 
+void MapController::onNotify(Subject& s, const Event& e)
+{
+    switch (e.type)
+    {
+    case Event::Node:
+        switch (e.node.action)
+        {
+        case Event::NodeEvent::Despawn:
+            if (e.node.type == Category::HatDropped)
+                hatSpawnTime = static_cast<float>(Util::Random::value(20, 30));
+            break;
+        default: break;
+        }
+        break;
+    default: break;
+    }
+}
+
 //private
 void MapController::shuffleItems()
 {
@@ -241,6 +264,14 @@ void MapController::shuffleItems()
     {
         return Util::Random::value(0, m_items.size()) % i;
     });
+}
+
+void MapController::spawnHat()
+{
+    Map::Node n;
+    n.position = sf::Vector2f(static_cast<float>(Util::Random::value(40, 1880)), static_cast<float>(Util::Random::value(-30, 1000)));
+    n.size = sf::Vector2f(m_hatSprite.getTexture()->getSize());
+    spawn(n);
 }
 
 const sf::Texture& MapController::getBackgroundTexture() const

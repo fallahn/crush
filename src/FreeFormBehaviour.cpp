@@ -125,7 +125,7 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
             Event e;
             e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
-            e.node.target = Category::Hat;
+            e.node.target = Category::HatDropped;
 
             int cat = other->getParentCategory();
             if (cat & (Category::LastTouchedOne | Category::GrabbedOne)) e.node.owner = Category::PlayerOne;

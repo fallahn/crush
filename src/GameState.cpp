@@ -358,13 +358,13 @@ void GameState::addMapBody(const Map::Node& n)
         break;
     }
 
-    case Category::Hat:
+    case Category::HatDropped:
     {
         auto node = std::make_unique<Node>();
         node->setPosition(n.position);
         node->setDrawable(m_mapController.getDrawable(MapController::MapDrawable::Hat));
         node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, n.size));
-        node->setCategory(Category::Hat);
+        node->setCategory(n.type);
         auto light = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 200.f);
         light->setDepth(50.f);
         node->setLight(light);
@@ -372,6 +372,7 @@ void GameState::addMapBody(const Map::Node& n)
 
         node->addObserver(m_particleController);
         node->addObserver(m_audioController);
+        node->addObserver(m_mapController);
 
         m_scene.addNode(node, Scene::Dynamic);
         break;

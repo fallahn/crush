@@ -50,7 +50,8 @@ namespace Category
         Water           = (1 << 12),
         Light           = (1 << 13),
         Detail          = (1 << 14),
-        Hat             = (1 << 16)
+        HatDropped      = (1 << 15),
+        HatCarried      = (1 << 16)
     };
 }
 

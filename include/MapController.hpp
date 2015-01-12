@@ -33,6 +33,7 @@ source distribution.
 #include <CommandStack.hpp>
 #include <Resource.hpp>
 #include <ShaderResource.hpp>
+#include <Observer.hpp>
 #include <Map.hpp>
 #include <AnimatedSprite.hpp>
 #include <WaterDrawable.hpp>
@@ -49,7 +50,7 @@ source distribution.
 #include <memory>
 
 class Map;
-class MapController final : private sf::NonCopyable
+class MapController final : private sf::NonCopyable, public Observer
 {
 public:
     enum class MapDrawable
@@ -73,6 +74,9 @@ public:
     void loadMap(const Map& map);
 
     sf::Drawable* getDrawable(MapDrawable type);
+
+    void onNotify(Subject& s, const Event& e) override;
+
 private:
     struct Item
     {
@@ -100,8 +104,9 @@ private:
 
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();
+    void spawnHat();
 
-
+    //used as shader binding
     const sf::Texture& getBackgroundTexture() const;
 
     std::map<std::string, SpriteSheet> m_spriteSheets;
