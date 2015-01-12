@@ -84,6 +84,11 @@ bool PauseState::handleEvent(const sf::Event& evt)
         default: break;
         }
     }
+    else if (evt.type == sf::Event::JoystickButtonPressed)
+    {
+        if (evt.joystickButton.button == 7)
+            requestStackPop();
+    }
     return false;
 }
 

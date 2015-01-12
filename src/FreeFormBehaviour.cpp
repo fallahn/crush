@@ -50,17 +50,26 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
     {
     case CollisionWorld::Body::Type::Water:
         setBehaviour<FreeFormBehaviourWater>();
+        {
+            //raise splash event
+            Event evt;
+            evt.type = Event::Node;
+            evt.node.type = Category::Water;
+            evt.node.action = Event::NodeEvent::HitWater;
+            evt.node.positionX = getBody()->getCentre().x;
+            evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
+            evt.node.speed = getVelocity().y;
+            raiseEvent(evt, other);
 
-        //raise splash event
-        Event evt;
-        evt.type = Event::Node;
-        evt.node.type = Category::Water;
-        evt.node.action = Event::NodeEvent::HitWater;
-        evt.node.positionX = getBody()->getCentre().x;
-        evt.node.positionY = getBody()->getCentre().y + (getBody()->getSize().y / 2.f);
-        evt.node.speed = getVelocity().y;
-        raiseEvent(evt, other);
-
+            //use block splash sound
+            Event e;
+            e.type = Event::Block;
+            e.block.action = Event::BlockEvent::HitWater;
+            auto pos = getBody()->getCentre();
+            e.block.positionX = pos.x;
+            e.block.positionY = pos.y;
+            raiseEvent(e);
+        }
         break;
     case CollisionWorld::Body::Block:
     case CollisionWorld::Body::Solid:
@@ -71,7 +80,18 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
             //std::cerr << getBody()->getSpeed() << ": switch to ground state" << std::endl;
         }
 
-        //TODO raise event?
+        //raise event
+        {
+            Event e;
+            e.type = Event::Block;
+            e.block.action = Event::BlockEvent::HitGround;
+            {
+                auto pos = getBody()->getCentre();
+                e.block.positionX = pos.x;
+                e.block.positionY = pos.y;
+            }
+            raiseEvent(e);
+        }
 
     default:
         sf::Vector2f normal(manifold.x, manifold.y);
@@ -143,6 +163,18 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
 
         break;
     case CollisionWorld::Body::Solid:
+        /*if (getBody()->getSpeed() > 2000.f)
+        {
+            Event e;
+            e.type = Event::Block;
+            e.block.action = Event::BlockEvent::HitGround;
+            {
+                auto pos = getBody()->getCentre();
+                e.block.positionX = pos.x;
+                e.block.positionY = pos.y;
+            }
+            raiseEvent(e);
+        }*/
     default:
         sf::Vector2f normal(manifold.x, manifold.y);
         

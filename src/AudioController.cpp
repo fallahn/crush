@@ -61,6 +61,8 @@ AudioController::AudioController()
     cacheSound(AudioId::WaterSplash, "res/sound/fx/hit_water.wav");
     cacheSound(AudioId::BlockLand, "res/sound/fx/block_drop.wav");
     cacheSound(AudioId::BlockDrag, "res/sound/fx/block_drag.wav");
+    cacheSound(AudioId::HatCrush, "res/sound/fx/hat_crush.wav");
+    cacheSound(AudioId::HatSpawn, "res/sound/fx/hat_spawn.wav");
 
     sf::Listener::setDirection(0.f, 0.f, -1.f);
     setListenerPosition({ 960.f, 540.f }); //set to centre of world for now
@@ -148,6 +150,10 @@ void AudioController::onNotify(Subject& s, const Event& e)
             case Category::Npc:
                 play(AudioId::NpcDie, { e.node.positionX, e.node.positionY });
                 break;
+            case Category::HatCarried:
+            case Category::HatDropped:
+                play(AudioId::HatCrush, { e.node.positionX, e.node.positionY });
+                break;
             default: break;
             }
         }
@@ -161,6 +167,9 @@ void AudioController::onNotify(Subject& s, const Event& e)
             case Category::PlayerOne:
             case Category::PlayerTwo:
                 play(AudioId::PlayerSpawn, { e.node.positionX, e.node.positionY });
+                break;
+            case Category::HatDropped:
+                play(AudioId::HatSpawn, { e.node.positionX, e.node.positionY });
                 break;
             default: break;
             }

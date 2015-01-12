@@ -216,6 +216,10 @@ bool GameState::handleEvent(const sf::Event& evt)
         default:break;
         }
         break;
+    case sf::Event::JoystickButtonPressed:
+        if (evt.joystickButton.button == 7)
+            requestStackPush(States::ID::Pause);
+        break;
     default: break;
 
     }

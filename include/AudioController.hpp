@@ -74,7 +74,9 @@ private:
         NpcJump,
         WaterSplash,
         BlockLand,
-        BlockDrag
+        BlockDrag,
+        HatSpawn,
+        HatCrush
     };
 
     std::map<AudioId, sf::SoundBuffer> m_buffers;
