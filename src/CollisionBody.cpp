@@ -91,6 +91,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     case Type::FreeForm:
         m_behaviour = std::make_unique<FreeFormBehaviourAir>(this);
         m_friction = 0.97f;
+        m_strength = 10.f;
         break;
     case Type::Anchor:
         m_behaviour = std::make_unique<AnchorBehaviour>(this);
@@ -219,11 +220,12 @@ void CollisionWorld::Body::flipChildren()
 
 float CollisionWorld::Body::getSpeed() const
 {
-    return Util::Vector::lengthSquared(m_velocity);
+    return Util::Vector::lengthSquared(getVelocity());
 }
 
 const sf::Vector2f& CollisionWorld::Body::getVelocity() const
 {
+    if (m_parent) return m_parent->getVelocity();
     return m_velocity;
 }
 

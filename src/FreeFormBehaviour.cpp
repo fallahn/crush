@@ -28,9 +28,12 @@ source distribution.
 #include <FreeFormBehaviour.hpp>
 #include <Util.hpp>
 
+#include <iostream>
+
 namespace
 {
     const float maxSpeed = 900000.f;
+    const float damageMultiplier = 1.46f;
 }
 
 void FreeFormBehaviourAir::update(float dt)
@@ -61,8 +64,12 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
         break;
     case CollisionWorld::Body::Block:
     case CollisionWorld::Body::Solid:
-        //if (getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block))
-        //    setBehaviour<FreeFormBehaviourGround>();
+        if ((getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block))
+            && getBody()->getSpeed() < 2600.f) //bounce a bit before switching to ground
+        {
+            setBehaviour<FreeFormBehaviourGround>();
+            //std::cerr << getBody()->getSpeed() << ": switch to ground state" << std::endl;
+        }
 
         //TODO raise event?
 
@@ -97,9 +104,50 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
     {
     case CollisionWorld::Body::Water:
         break;
+
+    case CollisionWorld::Body::Block:
+       
+        if ((manifold.x != 0.f || (manifold.y * manifold.z < 0))) //prevents shifting vertically down
+        {
+            sf::Vector2f normal(manifold.x, manifold.y);
+            move(normal * manifold.z);
+            auto vel = getVelocity();
+            vel = Util::Vector::reflect(vel, normal) * getFriction();
+            vel += other->getVelocity();
+            setVelocity(vel);
+        }
+        else if (manifold.y * manifold.z > 6)
+        {
+            //block is above, so crush
+            kill();
+
+            //raise event to say player killed us
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
+            e.node.type = Category::Block;
+            e.node.target = Category::Hat;
+
+            int cat = other->getParentCategory();
+            if (cat & (Category::LastTouchedOne | Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
+            else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
+            else e.node.owner = Category::None;
+
+            e.type = Event::Node;
+            raiseEvent(e, other);
+        }
+        {
+            int cat = other->getParentCategory();
+            if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
+                damage(std::fabs(manifold.z * damageMultiplier), other);
+        }
+
+        break;
+    case CollisionWorld::Body::Solid:
     default:
         sf::Vector2f normal(manifold.x, manifold.y);
-        move(normal * manifold.z);
+        
+        if (manifold.x != 0) //only move horizontally
+            move(normal * manifold.z);
 
         auto vel = getVelocity();
         vel = Util::Vector::reflect(vel, normal) * getFriction();

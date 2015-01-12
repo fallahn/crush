@@ -222,7 +222,7 @@ sf::Drawable* NpcController::getDrawable()
         m_sprites.emplace_back(m_textureResource.get("res/textures/robot_diffuse.png"));
         AnimatedSprite* s = &m_sprites.back();
         s->setNormalMap(m_textureResource.get("res/textures/robot_normal.tga"));
-        s->setShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
+        s->setShader(m_shaderResource.get(Shader::Type::Metal));
         s->setFrameCount(8u);
         s->setFrameSize(spriteSize);
         s->setFrameRate(18.f);

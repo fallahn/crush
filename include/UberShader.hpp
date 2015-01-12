@@ -204,7 +204,7 @@ namespace Shader
 
         "#if defined(REFLECT_MAP)\n" \
         "    vec2 coordR = vec2(gl_TexCoord[2].xy- (normalColour.rg * 0.5));\n" \
-        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coordR).rgb, diffuseColour.rgb, 0.5);\n" \
+        "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coordR).rgb, diffuseColour.rgb, 0.4);\n" \
         "#endif\n" \
 
         "    gl_FragColor.a = diffuseColour.a;\n" \

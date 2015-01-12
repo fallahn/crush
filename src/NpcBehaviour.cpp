@@ -177,6 +177,20 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         sf::Vector2f normal(manifold.x, manifold.y);
         move(normal * manifold.z);
         setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+
+        //if NPC settles on top then walk off
+        if (getBody()->getSpeed() < 2500.f)
+        {
+            Event e;
+            e.type = Event::Npc;
+            e.npc.action = (getVelocity().x > 0) ? Event::NpcEvent::TurnedRight : Event::NpcEvent::TurnedLeft;
+            auto pos = getBody()->getCentre();
+            e.npc.positionX = pos.x;
+            e.npc.positionY = pos.y;
+            raiseEvent(e);
+
+            setBehaviour<NpcBehaviourWalk>();
+        }
     }
     break;
     default: break;
@@ -310,6 +324,10 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             setVelocity({});
         }
+        break;
+    case CollisionWorld::Body::FreeForm:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity(getVelocity() * 0.8f);
         break;
     default: break;
     }
@@ -465,7 +483,10 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
         break;
     case CollisionWorld::Body::Type::Player:
         break;
-
+    case CollisionWorld::Body::FreeForm:
+        move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
+        setVelocity(getVelocity() * 0.8f);
+        break;
     case CollisionWorld::Body::Type::Npc:
         if (Util::Vector::lengthSquared(getVelocity()) > 0.2f
             && manifold.x != 0.f) //prevents shifting vertically

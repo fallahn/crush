@@ -194,6 +194,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
             ScaleAffector sa({ 1.f, 8.5f });
             particleSystem.addAffector(sa);
 
+            m_shaderResource.get(Shader::Type::WaterDrop).setParameter("u_normalMap", m_textureResource.get("res/textures/water_splash_normal.png"));
             particleSystem.setShader(m_shaderResource.get(Shader::Type::WaterDrop));
             particleSystem.setBlendMode(sf::BlendAlpha);
         }

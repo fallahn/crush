@@ -240,7 +240,7 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
     {
         sf::Vector2f normal(manifold.x, manifold.y);
         move(normal * manifold.z);
-        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+        setVelocity(getVelocity() * 0.8f);
     }
     default: break;
     }

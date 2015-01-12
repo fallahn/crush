@@ -243,6 +243,7 @@ void Player::onNotify(Subject& s, const Event& evt)
                 //and drop anything we were carrying
                 doDrop();
                 doRelease();
+                m_carryingBlock = false;
             }
                     break;
             case Event::NodeEvent::InvincibilityExpired:

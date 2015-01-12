@@ -70,7 +70,7 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_blockSprite.setFrameCount(1u);
     //m_blockSprite.setFrameSize({ 66, 66 });
     m_blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
-    m_blockSprite.setShader(sr.get(Shader::Type::Metal));
+    m_blockSprite.setShader(sr.get(Shader::Type::NormalMap));
 
     m_hatSprite.setFrameSize(sf::Vector2i(m_hatSprite.getTexture()->getSize()));
     m_hatSprite.setNormalMap(tr.get("res/textures/hat_normal.png"));

@@ -248,9 +248,9 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
         break;
     case CollisionWorld::Body::FreeForm:
     {
-        sf::Vector2f normal(manifold.x, manifold.y);
+        /*sf::Vector2f normal(manifold.x, manifold.y);
         move(normal * manifold.z);
-        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
+        setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));*/
     }
     break;
     default: break;
