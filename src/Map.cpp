@@ -263,7 +263,7 @@ Map::Node::Node(const std::string& position, const std::string& size, const std:
     }
     else if (layer == "Dynamic")
     {
-        this->layer = Scene::Dynamic;
+        this->layer = Scene::DynamicRear;
     }
     else if (layer == "RearDetail")
     {

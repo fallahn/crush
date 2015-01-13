@@ -191,6 +191,11 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
 
             setBehaviour<NpcBehaviourWalk>();
         }
+
+        if (other->getParentCategory() == Category::HatCarried)
+        {
+            //kill NPC (and raise event?)
+        }
     }
     break;
     default: break;
@@ -328,6 +333,11 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
     case CollisionWorld::Body::FreeForm:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity(getVelocity() * 0.8f);
+
+        if (other->getParentCategory() == Category::HatCarried)
+        {
+            //kill and raise event
+        }
         break;
     default: break;
     }

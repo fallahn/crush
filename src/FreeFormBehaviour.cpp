@@ -42,6 +42,12 @@ void FreeFormBehaviourAir::update(float dt)
     const float limit = maxSpeed / getBody()->getSpeed();
     auto vel = getVelocity() * std::min(1.f, limit);
     setVelocity(vel * getFriction());
+
+    //change state if we get carried
+    if (getParentCategory() == Category::HatCarried)
+    {
+        setBehaviour<FreeFormBehaviourCarry>();
+    }
 }
 
 void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -115,7 +121,15 @@ void FreeFormBehaviourGround::update(float dt)
     setVelocity({vel.x * getFriction(), 0.f});
 
     if ((getFootSenseMask() & (CollisionWorld::Body::Solid | CollisionWorld::Body::Block)) == 0)
+    {
         setBehaviour<FreeFormBehaviourAir>();
+    }
+
+    //change state if we get carried
+    if (getParentCategory() == Category::HatCarried)
+    {
+        setBehaviour<FreeFormBehaviourCarry>();
+    }
 }
 
 void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
@@ -141,7 +155,7 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
             //block is above, so crush
             kill();
 
-            //raise event to say player killed us
+            //raise event to say player killed us - actually does anyone care who killed the hat?
             Event e;
             e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
@@ -150,7 +164,7 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
             int cat = other->getParentCategory();
             if (cat & (Category::LastTouchedOne | Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
             else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
-            else e.node.owner = Category::None;
+            else e.node.owner = Category::None; //TODO this needs to fill in the owner - include 'carried' flag?
 
             e.type = Event::Node;
             raiseEvent(e, other);
@@ -187,6 +201,30 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
         setVelocity(vel);
         
         break;
+    }
+}
+
+//--------------------------------------
+
+void FreeFormBehaviourCarry::update(float dt)
+{
+    setVelocity({});
+
+    //reset if no longer carried
+    if (getParentCategory() != Category::HatCarried)
+    {
+        setBehaviour<FreeFormBehaviourAir>();
+    }
+}
+
+void FreeFormBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other)
+{
+    switch (other->getType())
+    {
+    case CollisionWorld::Body::Npc:
+        //kill teh hats
+        break;
+    default: break;
     }
 }
 

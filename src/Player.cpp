@@ -60,6 +60,8 @@ namespace
     Animation run(0, 5);
     Animation jump(6, 6);
     Animation fall(7, 7);
+
+    const sf::Vector2f hatPosition(0.f, -29.f);
 }
 
 Player::Keys::Keys()
@@ -90,7 +92,8 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_lastFacing    (false),
     m_carryingBlock (false),
     m_spawnPosition (80.f, 500.f),
-    m_flashSprite   (true)
+    m_flashSprite   (true),
+    m_hasHat        (false)
 {
     assert(type == Category::PlayerOne || type == Category::PlayerTwo);
     if (type == Category::PlayerTwo)
@@ -245,6 +248,7 @@ void Player::onNotify(Subject& s, const Event& evt)
                 doDrop();
                 doRelease();
                 m_carryingBlock = false;
+                dropHat();
                 
             }
                     break;
@@ -644,12 +648,51 @@ void Player::doPickUp()
                             on.getCollisionBody()->setFriction(friction * carryForceReduction);
                         };
                         m_commandStack.push(d);
+
+                        //should only become true if we manage to pick up block
+                        m_carryingBlock = true;
+                        m_jumpForce = jumpForce * carryForceReduction;
                     }
                 };
                 m_commandStack.push(c); 
 
-                m_carryingBlock = true;
-                m_jumpForce = jumpForce * carryForceReduction;
+
+                //look to see if we can pick up the hat
+                Command e;
+                e.categoryMask |= Category::HatDropped;
+                e.action = [&, this](Node& n, float dt)
+                {
+                    auto point = (m_leftFacing) ? m_currentPosition - m_grabVector : m_currentPosition + m_grabVector;
+
+                    assert(n.getCollisionBody());
+                    if (n.getCollisionBody()->contains(point))
+                    {
+                        n.setCategory(Category::HatCarried);
+
+                        //raise event to say we picked up hat
+                        Event evt;
+                        evt.type = Event::Player;
+                        evt.player.action = Event::PlayerEvent::GotHat;
+                        evt.player.playerId = m_id;
+                        auto position = n.getWorldPosition();
+                        evt.player.positionX = position.x;
+                        evt.player.positionY = position.y;
+                        n.raiseEvent(evt);
+
+                        //raise a command for player node to attach hat body to player body
+                        Command f;
+                        f.categoryMask |= m_id;
+                        f.action = [&, this](Node& on, float dt)
+                        {
+                            assert(on.getCollisionBody());
+                            on.getCollisionBody()->addChild(n.getCollisionBody(), hatPosition);
+                        };
+                        m_commandStack.push(f);
+
+                        m_hasHat = true;
+                    }
+                };
+                m_commandStack.push(e);
             }
             else
             {
@@ -707,5 +750,30 @@ void Player::doDrop()
         m_commandStack.push(c);
 
         m_carryingBlock = false;
+    }
+}
+
+void Player::dropHat()
+{
+    if (m_hasHat)
+    {
+        Command c;
+        c.categoryMask |= Category::HatCarried;
+        c.action = [this](Node& n, float dt)
+        {
+            n.setCategory(Category::HatDropped);
+
+            //raise dropped event
+            Event evt;
+            evt.type = Event::Player;
+            evt.player.action = Event::PlayerEvent::DroppedHat;
+            evt.player.playerId = m_id;
+            auto position = n.getWorldPosition();
+            evt.player.positionX = position.x;
+            evt.player.positionY = position.y;
+            n.raiseEvent(evt);
+        };
+        m_commandStack.push(c);
+        m_hasHat = false;
     }
 }

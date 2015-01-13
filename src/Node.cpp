@@ -258,7 +258,7 @@ void Node::setCategory(Category::Type cat)
     }
 }
 
-sf::Uint16 Node::getCategory() const
+sf::Uint32 Node::getCategory() const
 {
     return m_category;
 }

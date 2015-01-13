@@ -109,6 +109,7 @@ private:
     AnimatedSprite m_sprite;
 
     bool m_flashSprite;
+    bool m_hasHat;
 
     void enable();
     void setSize(const sf::Vector2f& size);
@@ -119,6 +120,7 @@ private:
     void doRelease();
     void doPickUp();
     void doDrop();
+    void dropHat();
 };
 
 #endif //PLAYER_H_

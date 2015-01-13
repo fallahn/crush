@@ -50,6 +50,16 @@ private:
 
 };
 
+class FreeFormBehaviourCarry final : public BodyBehaviour
+{
+public:
+    explicit FreeFormBehaviourCarry(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    void update(float dt) override;
+    void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
+private:
+
+};
+
 class FreeFormBehaviourWater final : public BodyBehaviour
 {
 public:

@@ -118,6 +118,8 @@ void PlayerBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         break;
     case CollisionWorld::Body::FreeForm:
     {
+        if (other->getParentCategory() == Category::HatCarried) break;
+
         sf::Vector2f normal(manifold.x, manifold.y);
         move(normal * manifold.z);
         setVelocity(Util::Vector::reflect(getVelocity() * getFriction(), normal));
@@ -238,6 +240,8 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         break;
     case CollisionWorld::Body::FreeForm:
     {
+        if (other->getParentCategory() == Category::HatCarried) break;
+
         sf::Vector2f normal(manifold.x, manifold.y);
         move(normal * manifold.z);
         setVelocity(getVelocity() * 0.8f);

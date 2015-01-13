@@ -80,7 +80,7 @@ public:
     const std::string& getName() const;
 
     void setCategory(Category::Type cat);
-    sf::Uint16 getCategory() const;
+    sf::Uint32 getCategory() const;
 
     void executeCommand(const Command& c, float dt);
 

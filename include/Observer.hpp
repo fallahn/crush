@@ -75,7 +75,8 @@ source distribution.
                 StartedFalling,
                 Jumped,
                 HitWater,
-                GotHat
+                GotHat,
+                DroppedHat
             }action;
             enum Item
             {

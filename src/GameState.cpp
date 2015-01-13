@@ -240,7 +240,7 @@ void GameState::addBlock(const sf::Vector2f& position, const sf::Vector2f& size)
     blockNode->addObserver(m_players[1]);
     blockNode->addObserver(m_scoreBoard);
     blockNode->addObserver(m_audioController);
-    m_scene.addNode(blockNode, Scene::Dynamic);
+    m_scene.addNode(blockNode, Scene::DynamicRear);
 }
 
 void GameState::addPlayer(const sf::Vector2f& position, Player& player)
@@ -255,7 +255,7 @@ void GameState::addPlayer(const sf::Vector2f& position, Player& player)
     playerNode->addObserver(m_scoreBoard);
     playerNode->addObserver(m_particleController);
     playerNode->addObserver(m_audioController);
-    m_scene.addNode(playerNode, Scene::Dynamic);
+    m_scene.addNode(playerNode, Scene::DynamicRear);
 
     player.setSpawnable(false);
 }
@@ -279,7 +279,7 @@ void GameState::addNpc(const sf::Vector2f& position, const sf::Vector2f& size)
         npcNode->setLight(light);
         //npcNode->addObserver(*light);
     }*/
-    m_scene.addNode(npcNode, Scene::Dynamic);
+    m_scene.addNode(npcNode, Scene::DynamicRear);
 }
 
 void GameState::addMapBody(const Map::Node& n)
@@ -327,7 +327,7 @@ void GameState::addMapBody(const Map::Node& n)
             //node->addObserver(*light);
         }
 
-        m_scene.addNode(node, Scene::Dynamic);
+        m_scene.addNode(node, Scene::DynamicFront);
     }
         break;
     case Category::Light:
@@ -372,13 +372,13 @@ void GameState::addMapBody(const Map::Node& n)
         auto light = m_scene.addLight(sf::Vector3f(1.f, 0.9f, 0.f), 200.f);
         light->setDepth(50.f);
         node->setLight(light);
-        //node->setBlendMode(sf::BlendAdd);
 
         node->addObserver(m_particleController);
         node->addObserver(m_audioController);
         node->addObserver(m_mapController);
+        node->addObserver(m_scoreBoard);
 
-        m_scene.addNode(node, Scene::Dynamic);
+        m_scene.addNode(node, Scene::DynamicFront);
         break;
     }
     default: break;

@@ -45,7 +45,8 @@ public:
     { 
         Background,
         RearDetail,
-        Dynamic, //players / NPCs etc
+        DynamicRear, //players / NPCs etc
+        DynamicFront, //player details like hat / powerups
         Water,
         Solid,
         FrontDetail,

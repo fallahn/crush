@@ -52,17 +52,19 @@ namespace
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
-    : m_stack(stack),
-    m_context(context),
-    m_playerOneLives(5),
-    m_playerTwoLives(-1),
-    m_playerOneScore(0u),
-    m_playerTwoScore(0u),
-    m_playerOneExtinct(false),
-    m_playerTwoExtinct(false),
-    m_maxNpcs(2u),
-    m_spawnedNpcs(0u),
-    m_deadNpcs(0u)
+    : m_stack           (stack),
+    m_context           (context),
+    m_playerOneLives    (5),
+    m_playerTwoLives    (-1),
+    m_playerOneScore    (0u),
+    m_playerTwoScore    (0u),
+    m_playerOneHatTime  (0.f),
+    m_playerTwoHatTime  (0.f),
+    m_playerOneExtinct  (false),
+    m_playerTwoExtinct  (false),
+    m_maxNpcs           (2u),
+    m_spawnedNpcs       (0u),
+    m_deadNpcs          (0u)
 {
     playerOneText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     playerOneText.setPosition({ 60.f, 10.f });
@@ -340,6 +342,13 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
             m_messages.back().setColour(sf::Color::Yellow);
             updateText(evt.player.playerId);
             break;
+        case Event::PlayerEvent::GotHat:
+            std::cerr << "I has hats" << std::endl;
+            break;
+        case Event::PlayerEvent::DroppedHat:
+            std::cerr << "I dropped teh hats :(" << std::endl;
+            break;
+
         default:break;
         }
     }

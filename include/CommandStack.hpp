@@ -32,6 +32,8 @@ source distribution.
 
 #include <CommandCategories.hpp>
 
+#include <SFML/Config.hpp>
+
 #include <queue>
 #include <functional>
 
@@ -41,7 +43,7 @@ struct Command
     Command();
     ~Command() = default;
     std::function<void(Node&, float)> action;
-    unsigned short categoryMask; //target node categories are OR'd into this
+    sf::Uint32 categoryMask; //target node categories are OR'd into this
 };
 
 class CommandStack final
