@@ -130,13 +130,24 @@ source distribution.
             }action;
         };
 
+        struct HatEvent
+        {
+            enum Action
+            {
+                HitWater,
+                HitGround
+            }action;
+            float positionX, positionY;
+        };
+
         enum Type
         {
             Node = 1,
             Player,
             Npc,
             Block,
-            Game
+            Game,
+            Hat
         } type;
 
         union 
@@ -146,6 +157,7 @@ source distribution.
             NpcEvent npc;
             BlockEvent block;
             GameEvent game;
+            HatEvent hat;
         };
     };
 //}

@@ -194,7 +194,18 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
 
         if (other->getParentCategory() == Category::HatCarried)
         {
-            //kill NPC (and raise event?)
+            //kill NPC
+            kill();
+
+            //raise event to say player killed us
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
+            e.node.type = Category::Block;
+            e.node.target = Category::Npc;
+            e.node.owner = Category::HatCarried;
+
+            e.type = Event::Node;
+            raiseEvent(e, other);
         }
     }
     break;

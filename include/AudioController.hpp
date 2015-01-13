@@ -76,7 +76,8 @@ private:
         BlockLand,
         BlockDrag,
         HatSpawn,
-        HatCrush
+        HatCrush,
+        HatLand
     };
 
     std::map<AudioId, sf::SoundBuffer> m_buffers;

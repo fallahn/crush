@@ -63,6 +63,7 @@ AudioController::AudioController()
     cacheSound(AudioId::BlockDrag, "res/sound/fx/block_drag.wav");
     cacheSound(AudioId::HatCrush, "res/sound/fx/hat_crush.wav");
     cacheSound(AudioId::HatSpawn, "res/sound/fx/hat_spawn.wav");
+    cacheSound(AudioId::HatLand, "res/sound/fx/hat_land.wav");
 
     sf::Listener::setDirection(0.f, 0.f, -1.f);
     setListenerPosition({ 960.f, 540.f }); //set to centre of world for now
@@ -103,6 +104,7 @@ void AudioController::onNotify(Subject& s, const Event& e)
             play(AudioId::PlayerJump, { e.player.positionX, e.player.positionY });
             break;
         case Event::PlayerEvent::PickedUp:
+        case Event::PlayerEvent::GotHat:
             play(AudioId::PlayerPickUp, { e.player.positionX, e.player.positionY });
             break;
         case Event::PlayerEvent::Dropped:
@@ -140,8 +142,9 @@ void AudioController::onNotify(Subject& s, const Event& e)
         }
         break;
     case Event::Type::Node:
-        if (e.node.action == Event::NodeEvent::Despawn)
+        switch (e.node.action)
         {
+        case Event::NodeEvent::Despawn:
             switch (e.node.type)
             {
             case Category::Item:
@@ -156,9 +159,8 @@ void AudioController::onNotify(Subject& s, const Event& e)
                 break;
             default: break;
             }
-        }
-        else if (e.node.action == Event::NodeEvent::Spawn)
-        {
+            break;
+        case Event::NodeEvent::Spawn:
             switch (e.node.type)
             {
             case Category::Item:
@@ -173,6 +175,10 @@ void AudioController::onNotify(Subject& s, const Event& e)
                 break;
             default: break;
             }
+            break;
+        /*case Event::NodeEvent::HitWater:
+            play(AudioId::WaterSplash, { e.node.positionX, e.node.positionY });
+            break;*/
         }
         break;
     case Event::Type::Npc:
@@ -216,6 +222,18 @@ void AudioController::onNotify(Subject& s, const Event& e)
                 else return false;
             });
         }
+            break;
+        default: break;
+        }
+        break;
+    case Event::Type::Hat:
+        switch (e.hat.action)
+        {
+        case Event::HatEvent::HitGround:
+            play(AudioId::HatLand, { e.hat.positionX, e.hat.positionY });
+            break;
+        case Event::HatEvent::HitWater:
+            play(AudioId::WaterSplash, { e.hat.positionX, e.hat.positionY });
             break;
         default: break;
         }

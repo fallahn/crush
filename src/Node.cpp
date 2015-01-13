@@ -391,6 +391,7 @@ void Node::onNotify(Subject& s, const Event& evt)
         break;
     case Event::Npc:
     case Event::Block:
+    case Event::Hat:
         //pass events straight up
         if(m_drawable) notify(*this, evt);
         break;

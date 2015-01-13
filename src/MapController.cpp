@@ -246,7 +246,8 @@ void MapController::onNotify(Subject& s, const Event& e)
         switch (e.node.action)
         {
         case Event::NodeEvent::Despawn:
-            if (e.node.type == Category::HatDropped)
+            if (e.node.type == Category::HatDropped
+                || e.node.type == Category::HatCarried) //might be on head when killed
                 hatSpawnTime = static_cast<float>(Util::Random::value(20, 30));
             break;
         default: break;

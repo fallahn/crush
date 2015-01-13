@@ -190,7 +190,7 @@ void CollisionWorld::Body::addChild(CollisionWorld::Body* b, const sf::Vector2f&
 {
     if (b->m_parent != this)
     {
-        m_children[b] = relPosition;
+        m_children[b] = relPosition;// -b->m_centre;
         if (b->m_parent)
         {
             b->m_parent->removeChild(b);
@@ -272,6 +272,7 @@ void CollisionWorld::Body::step(float dt)
     for (auto& c : m_children)
     {
         c.first->setPosition(getCentre() + (c.second - c.first->m_centre));
+        c.first->step(dt); //else children lag by a frame
     }
 
     //update strength value or kill if no health

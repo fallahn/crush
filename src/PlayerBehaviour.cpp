@@ -185,35 +185,40 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
         setBehaviour<PlayerBehaviourWater>();
         break;
     case CollisionWorld::Body::Type::Block:
-        if (/*Util::Vector::lengthSquared(getVelocity()) > 0.2f
-            && */manifold.x != 0.f) //prevents shifting vertically
+        if (manifold.x != 0.f) //prevents shifting vertically
         {
             move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
             float yVel = std::min(0.f, getVelocity().y);
-            setVelocity({0.f, yVel});    
-        
+            setVelocity({ 0.f, yVel });
+
             int cat = other->getParentCategory();
-                       
+
             if ((cat & (Category::CarriedOne | Category::CarriedTwo)) == 0 //don't take damage from blocks being carried,
                 && other->getSpeed() > 10.f) //or if they aren't moving
             {
-                float damageAmount = std::fabs(manifold.z * (damageMultiplier / getFootSenseCount()));
-                damage(damageAmount, other); //always take same damage regardless of blocks touching
+                float damageAmount = std::fabs(manifold.z * (damageMultiplier / getFootSenseCount()));//always take same damage regardless of blocks touching
+                damage(damageAmount, other); 
                 //std::cerr << damageAmount<< ": block damage " << std::endl;
             }
             else
             {
                 //drop block?
             }
-                //std::cerr << manifold.z << std::endl;
+            //std::cerr << manifold.z << std::endl;
         }
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         if (manifold.x == 0)
+        {
             setVelocity({ getVelocity().x, 0.f }); //carry on moving if we hit ground
-        else
-            setVelocity({}); 
+        }
+        else if (manifold.y == 0) //don't die falling, just when crushed against wall
+        {
+            float damageAmount = std::fabs(manifold.z /** damageMultiplier*/);
+            damage(damageAmount, other);
+            setVelocity({});
+        }
         break;
     case CollisionWorld::Body::Type::Player:
         //move away if side collision 

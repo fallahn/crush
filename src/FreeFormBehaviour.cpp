@@ -69,11 +69,11 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
 
             //use block splash sound
             Event e;
-            e.type = Event::Block;
-            e.block.action = Event::BlockEvent::HitWater;
+            e.type = Event::Hat;
+            e.hat.action = Event::HatEvent::HitWater;
             auto pos = getBody()->getCentre();
-            e.block.positionX = pos.x;
-            e.block.positionY = pos.y;
+            e.hat.positionX = pos.x;
+            e.hat.positionY = pos.y;
             raiseEvent(e);
         }
         break;
@@ -89,12 +89,12 @@ void FreeFormBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld:
         //raise event
         {
             Event e;
-            e.type = Event::Block;
-            e.block.action = Event::BlockEvent::HitGround;
+            e.type = Event::Hat;
+            e.hat.action = Event::HatEvent::HitGround;
             {
                 auto pos = getBody()->getCentre();
-                e.block.positionX = pos.x;
-                e.block.positionY = pos.y;
+                e.hat.positionX = pos.x;
+                e.hat.positionY = pos.y;
             }
             raiseEvent(e);
         }
@@ -222,7 +222,23 @@ void FreeFormBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorl
     switch (other->getType())
     {
     case CollisionWorld::Body::Npc:
-        //kill teh hats
+        ////kill teh hats
+        //break;
+    case CollisionWorld::Body::Block:
+        //kill if from above
+        if (manifold.y * manifold.z > 6)
+        {
+            kill();
+
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
+            e.node.type = Category::Block;
+            e.node.target = Category::HatDropped;
+            e.node.owner = Category::None;
+
+            e.type = Event::Node;
+            raiseEvent(e, other);
+        }
         break;
     default: break;
     }
