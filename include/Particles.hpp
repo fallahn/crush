@@ -67,6 +67,7 @@ public:
     ~ParticleSystem() = default;
 
     void setTexture(const sf::Texture& t);
+    void setNormalMap(const sf::Texture& n);
     void setColour(const sf::Color& colour);
     void setBlendMode(sf::BlendMode mode);
     void setShader(sf::Shader& shader);
@@ -96,6 +97,7 @@ public:
 private:
     std::deque<Particle> m_particles;
     sf::Texture* m_texture;
+    sf::Texture* m_normalMap;
     sf::Color m_colour;
     sf::Vector2f m_position;
     sf::Vector2f m_particleSize;

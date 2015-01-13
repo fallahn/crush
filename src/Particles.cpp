@@ -39,6 +39,7 @@ namespace
 
 ParticleSystem::ParticleSystem(Particle::Type type)
     : m_texture         (nullptr),
+    m_normalMap         (nullptr),
     m_colour            (sf::Color::White),
     m_particleSize      (4.f, 4.f),
     m_type              (type),
@@ -62,6 +63,11 @@ void ParticleSystem::setTexture(const sf::Texture& t)
 {
     m_texture = const_cast<sf::Texture*>(&t);
     m_texCoords = sf::Vector2f(m_texture->getSize());
+}
+
+void ParticleSystem::setNormalMap(const sf::Texture& n)
+{
+    m_normalMap = const_cast<sf::Texture*>(&n);
 }
 
 void ParticleSystem::setColour(const sf::Color& colour)
@@ -253,7 +259,14 @@ void ParticleSystem::draw(sf::RenderTarget& rt, sf::RenderStates states) const
         m_needsUpdate = false;
     }
 
-    if (m_shader) m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
+    if (m_shader)
+    {
+        m_shader->setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
+        if (m_normalMap)
+        {
+            m_shader->setParameter("u_normalMap", *m_normalMap);
+        }
+    }
 
     states.texture = m_texture;
     states.shader = m_shader;

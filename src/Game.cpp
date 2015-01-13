@@ -51,7 +51,6 @@ namespace
 Game::Game()
     : m_renderWindow    (sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
-    m_paused            (false),
     m_console           (getFont("res/fonts/VeraMono.ttf"))
 {
     registerStates();
@@ -63,6 +62,8 @@ Game::Game()
 
     //bind commands to console
     registerConCommands();
+
+    update = std::bind(&Game::updateGame, this, std::placeholders::_1);
 }
 
 //public
@@ -84,8 +85,7 @@ void Game::run()
             timeSinceLastUpdate -= timePerFrame;
 
             handleEvents();
-            if(!m_paused)
-                update(timePerFrame);
+            update(timePerFrame);
         }
         draw();
     }
@@ -96,12 +96,12 @@ void Game::run()
 
 void Game::pause()
 {
-    m_paused = true;
+    update = std::bind(&Game::pauseGame, this, std::placeholders::_1);
 }
 
 void Game::resume()
 {
-    m_paused = false;
+    update = std::bind(&Game::updateGame, this, std::placeholders::_1);
     frameClock.restart();
     timeSinceLastUpdate = 0.f;
 }
@@ -171,10 +171,12 @@ void Game::handleEvents()
     }
 }
 
-void Game::update(float dt)
+void Game::updateGame(float dt)
 {
     m_stateStack.update(dt);
 }
+
+void Game::pauseGame(float dt){}
 
 void Game::draw()
 {

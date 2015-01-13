@@ -51,7 +51,7 @@ namespace
     //item modifiers
     const float itemDuration = 16.f;
     const float speedIncrease = 1.8f;
-    const float jumpIncrease = 1.5f;
+    const float jumpIncrease = 1.3f;
 
     //animation consts
     const float maxFrameRate = 12.f;
@@ -239,11 +239,13 @@ void Player::onNotify(Subject& s, const Event& evt)
 
                 //reset active powerups
                 m_activeItems = 0u;
+                m_jumpForce = jumpForce;
 
                 //and drop anything we were carrying
                 doDrop();
                 doRelease();
                 m_carryingBlock = false;
+                
             }
                     break;
             case Event::NodeEvent::InvincibilityExpired:

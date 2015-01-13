@@ -43,11 +43,17 @@ Map::Map(const std::string& path)
     std::ifstream file(path);
     assert(file.good());
 
-    //json should be a single line
+    //read the entire file into memory first
     std::string jsonString;
-    //file >> jsonString;
-    std::getline(file, jsonString);
+    while (!file.eof())
+    {
+        std::string temp;
+        file >> temp;
+        jsonString += temp;
+    }
     assert(!jsonString.empty());
+    file.close();
+
 
     picojson::value v;
     auto err = picojson::parse(v, jsonString);

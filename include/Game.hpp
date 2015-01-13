@@ -38,6 +38,8 @@ source distribution.
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include <functional>
+
 class Game final : private sf::NonCopyable
 {
 public:
@@ -62,8 +64,6 @@ public:
 
 private: 
 
-    bool m_paused;
-
     sf::RenderWindow m_renderWindow;
     sf::Color m_clearColour;
 
@@ -78,7 +78,9 @@ private:
     Console m_console;
 
     void handleEvents();
-    void update(float dt);
+    std::function<void(float)> update;
+    void updateGame(float dt);
+    void pauseGame(float dt);
     void draw();
 
     void registerStates();
