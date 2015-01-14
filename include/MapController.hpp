@@ -95,9 +95,9 @@ private:
     TextureResource& m_textureResource;
     ShaderResource& m_shaderResource;
     AnimatedSprite m_itemSprite;
-    AnimatedSprite m_blockSprite;
     AnimatedSprite m_backgroundSprite;
     AnimatedSprite m_hatSprite;
+    std::vector<AnimatedSprite> m_blockSprites;
 
     std::list<WaterDrawable> m_waterDrawables;
     std::vector<sf::Vector2f> m_hatSpawns;

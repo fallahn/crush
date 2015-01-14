@@ -290,6 +290,7 @@ void BlockBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorld::
             e.player.positionX = other->getCentre().x;
             e.player.positionY = other->getCentre().y;
             raiseEvent(e);
+            std::cerr << "dropped from carry!" << std::endl;
         }
 
         //Event e;

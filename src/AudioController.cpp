@@ -109,6 +109,7 @@ void AudioController::onNotify(Subject& s, const Event& e)
             break;
         case Event::PlayerEvent::Dropped:
             play(AudioId::PlayerDrop, { e.player.positionX, e.player.positionY });
+            std::cerr << "playdrop" << std::endl;
             break;
         case Event::PlayerEvent::Grabbed:
             play(AudioId::PlayerGrab, { e.player.positionX, e.player.positionY });

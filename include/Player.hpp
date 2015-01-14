@@ -119,7 +119,7 @@ private:
     void doGrab();
     void doRelease();
     void doPickUp();
-    void doDrop();
+    void doDrop(bool raiseEvent = true);
     void dropHat();
 };
 

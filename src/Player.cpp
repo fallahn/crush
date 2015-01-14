@@ -345,7 +345,7 @@ void Player::onNotify(Subject& s, const Event& evt)
                 break;
             case Event::PlayerEvent::Dropped:
                 //something made us drop the block
-                doDrop();
+                doDrop(false);
                 break;
             case Event::PlayerEvent::GotItem:
                 switch (evt.player.item)
@@ -712,7 +712,7 @@ void Player::doPickUp()
     }
 }
 
-void Player::doDrop()
+void Player::doDrop(bool raiseEvent)
 {
     if (m_carryingBlock)
     {
@@ -723,7 +723,7 @@ void Player::doDrop()
         //release block
         Command c;
         c.categoryMask |= m_carryId;
-        c.action = [&](Node& n, float dt)
+        c.action = [&, raiseEvent](Node& n, float dt)
         {
             auto cat = n.getCategory();
             cat &= ~m_carryId;
@@ -731,13 +731,16 @@ void Player::doDrop()
             n.setCategory(static_cast<Category::Type>(cat));
 
             //let the world know block was dropped
-            Event e;
-            e.type = Event::Type::Player;
-            e.player.action = Event::PlayerEvent::Dropped;
-            e.player.positionX = m_currentPosition.x;
-            e.player.positionY = m_currentPosition.y;
-            n.raiseEvent(e);
-
+            if (raiseEvent)
+            {
+                Event e;
+                e.type = Event::Type::Player;
+                e.player.action = Event::PlayerEvent::Dropped;
+                e.player.positionX = m_currentPosition.x;
+                e.player.positionY = m_currentPosition.y;
+                n.raiseEvent(e);
+                std::cerr << raiseEvent << std::endl;
+            }
             //command player to return friction
             //and remove child
             Command d;

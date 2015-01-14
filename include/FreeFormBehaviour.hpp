@@ -43,11 +43,11 @@ public:
 class FreeFormBehaviourGround final : public BodyBehaviour
 {
 public:
-    explicit FreeFormBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b){};
+    explicit FreeFormBehaviourGround(CollisionWorld::Body* b) : BodyBehaviour(b), m_expireTime(0.f){};
     void update(float dt) override;
     void resolve(const sf::Vector3f& manifold, CollisionWorld::Body* other) override;
 private:
-
+    float m_expireTime;
 };
 
 class FreeFormBehaviourCarry final : public BodyBehaviour

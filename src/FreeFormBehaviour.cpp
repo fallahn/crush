@@ -34,6 +34,8 @@ namespace
 {
     const float maxSpeed = 900000.f;
     const float damageMultiplier = 1.46f;
+
+    const float waterDuration = 24.f;
 }
 
 void FreeFormBehaviourAir::update(float dt)
@@ -125,6 +127,15 @@ void FreeFormBehaviourGround::update(float dt)
         setBehaviour<FreeFormBehaviourAir>();
     }
 
+    if (getFootSenseMask() & CollisionWorld::Body::Water)
+    {
+        m_expireTime += dt;
+        if (m_expireTime >= waterDuration)
+        {
+            kill();
+        }
+    }
+
     //change state if we get carried
     if (getParentCategory() == Category::HatCarried)
     {
@@ -137,6 +148,7 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
     switch (other->getType())
     {
     case CollisionWorld::Body::Water:
+        
         break;
 
     case CollisionWorld::Body::Block:

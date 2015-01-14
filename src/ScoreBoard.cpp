@@ -50,6 +50,7 @@ namespace
     const sf::Uint16 suicidePoints = 200u; //points deducted for accidentally crushing self
     const sf::Uint16 itemPoints = 400u; //points for collecting item
     const sf::Uint16 killStreakPoints = 500u;
+    const sf::Int8 killStreakStep = 5; //number of kills in a streak
 
     const float messageAcceleration = 232.f;
     const float initialMessageSpeed = 60.f;
@@ -217,10 +218,10 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                                 messageFont);
 
                             m_playerOneKillStreak++;
-                            if ((m_playerOneKillStreak % 5) == 0)
+                            if ((m_playerOneKillStreak % killStreakStep) == 0)
                             {
                                 killstreakMessage();
-                                m_playerOneScore += killStreakPoints;
+                                m_playerOneScore += (m_playerOneKillStreak / killStreakStep) * killStreakPoints;
                             }
 
                             break;
@@ -268,9 +269,9 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                                 messageFont);
 
                             m_playerTwoKillStreak++;
-                            if (m_playerTwoKillStreak % 5 == 0)
+                            if (m_playerTwoKillStreak % killStreakStep == 0)
                             {
-                                m_playerTwoScore += killStreakPoints;
+                                m_playerTwoScore += (m_playerTwoKillStreak / killStreakStep) * killStreakPoints;
                                 killstreakMessage();
                             }
                             break;
@@ -573,7 +574,7 @@ void ScoreBoard::Message::update(float dt)
 
     if (m_zoom)
     {
-        const float amount = 1.1f + dt;
+        const float amount = 1.04f + dt;
         m_text.scale(amount, amount);
     }
     else

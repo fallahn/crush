@@ -64,7 +64,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
 
-    backgroundRect.setFillColor({ 0u, 0u, 0u, 148u });
+    backgroundRect.setFillColor({ 0u, 0u, 0u, 168u });
     backgroundRect.setSize(context.defaultView.getSize());
 
     //context.gameInstance.playMusic(music);

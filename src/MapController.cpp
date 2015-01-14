@@ -40,10 +40,12 @@ source distribution.
 namespace
 {
     const float spawnGapTime = 22.f;//time between spawns
-    sf::Vector2f blockTextureSize;
 
     float hatSpawnTime = 0.f;
     sf::Uint8 hatSpawnCount = 10u;
+
+    const sf::Uint8 blockTextureCount = 4u;
+    sf::Vector2f blockTextureSize;
 }
 
 MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr)
@@ -53,7 +55,6 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_textureResource   (tr),
     m_shaderResource    (sr),
     m_itemSprite        (tr.get("res/textures/item.png")),
-    m_blockSprite       (tr.get("res/textures/steel_crate_diffuse.png")),
     m_hatSprite         (tr.get("res/textures/hat_diffuse.png")),
     m_solidDrawable     (tr, sr.get(Shader::Type::NormalMap)),
     m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
@@ -61,8 +62,20 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
 {
     //TODO load textures based on map data
     //scale sprite to match node size
-    blockTextureSize = sf::Vector2f(m_blockSprite.getTexture()->getSize());
-    
+    blockTextureSize = sf::Vector2f(tr.get("res/textures/steel_crate_diffuse.png").getSize() / 2u); //KLUUUDDGGE!!!
+
+    for (auto i = 0u; i < blockTextureCount; ++i)
+    {
+        m_blockSprites.emplace_back(tr.get("res/textures/steel_crate_diffuse.png"));
+        auto& blockSprite = m_blockSprites.back();
+        blockSprite.setFrameCount(1u);
+        blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
+        blockSprite.setShader(sr.get(Shader::Type::NormalMap));
+        blockSprite.setFrameCount(blockTextureCount);
+        blockSprite.setFrameSize(sf::Vector2i(blockTextureSize));
+        blockSprite.play(Animation(i, i));
+    }
+
     m_itemSprite.setFrameCount(16u);
     m_itemSprite.setFrameRate(18.f);
     m_itemSprite.setFrameSize({ 64, 64 });
@@ -70,11 +83,6 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_itemSprite.setNormalMap(tr.get("res/textures/item_normal.png"));
     m_itemSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
     m_itemSprite.play();
-
-    m_blockSprite.setFrameCount(1u);
-    //m_blockSprite.setFrameSize({ 66, 66 });
-    m_blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
-    m_blockSprite.setShader(sr.get(Shader::Type::NormalMap));
 
     m_hatSprite.setFrameSize(sf::Vector2i(m_hatSprite.getTexture()->getSize()));
     m_hatSprite.setNormalMap(tr.get("res/textures/hat_normal.png"));
@@ -166,7 +174,7 @@ void MapController::loadMap(const Map& map)
                 break;
 
             case Category::Block:
-                m_blockSprite.setScale(n.size.x / blockTextureSize.x, n.size.y / blockTextureSize.y);
+                //m_blockSprite.setScale(n.size.x / blockTextureSize.x, n.size.y / blockTextureSize.y);
                 break;
             case Category::Detail:
             {
@@ -241,7 +249,7 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
     case MapDrawable::Item:
         return static_cast<sf::Drawable*>(&m_itemSprite);
     case MapDrawable::Block: //TODO random different textures?
-        return static_cast<sf::Drawable*>(&m_blockSprite);
+        return static_cast<sf::Drawable*>(&m_blockSprites[Util::Random::value(0, blockTextureCount - 1)]);
     case MapDrawable::Water:
         m_waterDrawables.emplace_back(m_textureResource.get("res/textures/water_normal.png"), m_shaderResource.get(Shader::Type::Water));
         return static_cast<sf::Drawable*>(&m_waterDrawables.back());
