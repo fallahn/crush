@@ -95,6 +95,7 @@
     <ClCompile Include="src\Map.cpp" />
     <ClCompile Include="src\ParticleController.cpp" />
     <ClCompile Include="src\Particles.cpp" />
+    <ClCompile Include="src\ScoreBar.cpp" />
     <ClCompile Include="src\ScoreBoard.cpp" />
     <ClCompile Include="src\GameOverState.cpp" />
     <ClCompile Include="src\GameState.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="include\MapController.hpp" />
     <ClInclude Include="include\Music.hpp" />
     <ClInclude Include="include\PostShaders.hpp" />
+    <ClInclude Include="include\ScoreBar.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\UberShader.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />

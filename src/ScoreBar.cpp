@@ -25,34 +25,23 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef GAME_OVER_STATE_H_
-#define GAME_OVER_STATE_H_
+#include <ScoreBar.hpp>
 
-#include <State.hpp>
-#include <AnimatedSprite.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
-#include <SFML/Graphics/Text.hpp>
-
-class GameOverState final : public State
+ScoreBar::ScoreBar(const sf::Color& colour, float maxLength)
 {
-public:
-    GameOverState(StateStack& stack, Context context);
-    ~GameOverState();// = default;
-    
-    bool handleEvent(const sf::Event& evt) override;
-    bool update(float dt) override;
-    void draw() override;
 
-private:
+}
 
-    float m_waitedTime;
+//public
+bool ScoreBar::update(float dt)
+{
+    return true;
+}
 
-    AnimatedSprite m_playerOneSprite;
-    AnimatedSprite m_playerTwoSprite;
+//private
+void ScoreBar::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
 
-    std::vector<sf::Text> m_texts;
-    sf::Text m_playerOneScoreText;
-    sf::Text m_playerTwoScoreText;
-};
-
-#endif // GAME_OVER_STATE_H_
+}

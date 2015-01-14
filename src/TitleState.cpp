@@ -58,8 +58,6 @@ TitleState::TitleState(StateStack& stack, Context context)
     }),
         context.gameData.mapList.end());
 
-
-    context.renderWindow.setTitle("Title Screen");
     context.renderWindow.setView(context.defaultView);
 
     titleText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
@@ -98,6 +96,10 @@ bool TitleState::handleEvent(const sf::Event& evt)
         {
             requestStackPop();
             requestStackPush(States::ID::Menu);
+        }
+        else if (evt.key.code == sf::Keyboard::L)
+        {
+            requestStackPush(States::ID::GameOver);
         }
     }
     return true;

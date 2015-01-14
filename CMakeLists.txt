@@ -85,6 +85,7 @@ add_executable(
 	src/Player.cpp
 	src/PlayerBehaviour.cpp
 	src/Scene.cpp
+	src/ScoreBar.cpp
 	src/ScoreBoard.cpp
 	src/ShaderResource.cpp
 	src/SpriteSheet.cpp

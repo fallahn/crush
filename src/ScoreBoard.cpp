@@ -49,27 +49,30 @@ namespace
     const sf::Uint16 crushPoints = 500u; //points for crushing someone
     const sf::Uint16 suicidePoints = 200u; //points deducted for accidentally crushing self
     const sf::Uint16 itemPoints = 400u; //points for collecting item
+    const sf::Uint16 killStreakPoints = 500u;
 
     const float messageAcceleration = 232.f;
     const float initialMessageSpeed = 60.f;
 }
 
 ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
-    : m_stack           (stack),
-    m_context           (context),
-    m_playerOneLives    (5),
-    m_playerTwoLives    (-1),
-    m_playerOneScore    (0u),
-    m_playerTwoScore    (0u),
-    m_playerOneHatTime  (&context.gameData.playerOne.hatTime),
-    m_playerTwoHatTime  (&context.gameData.playerTwo.hatTime),
-    m_nullHatTime       (0.f),
-    m_hatTimer          (&m_nullHatTime),
-    m_playerOneExtinct  (false),
-    m_playerTwoExtinct  (false),
-    m_maxNpcs           (2u),
-    m_spawnedNpcs       (0u),
-    m_deadNpcs          (0u)
+    : m_stack               (stack),
+    m_context               (context),
+    m_playerOneLives        (5),
+    m_playerTwoLives        (-1),
+    m_playerOneScore        (0u),
+    m_playerTwoScore        (0u),
+    m_playerOneKillStreak   (0u),
+    m_playerTwoKillStreak   (0u),
+    m_playerOneHatTime      (&context.gameData.playerOne.hatTime),
+    m_playerTwoHatTime      (&context.gameData.playerTwo.hatTime),
+    m_nullHatTime           (0.f),
+    m_hatTimer              (&m_nullHatTime),
+    m_playerOneExtinct      (false),
+    m_playerTwoExtinct      (false),
+    m_maxNpcs               (2u),
+    m_spawnedNpcs           (0u),
+    m_deadNpcs              (0u)
 {
     playerOneText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
     playerOneText.setPosition(60.f, 10.f );
@@ -113,7 +116,9 @@ void ScoreBoard::update(float dt)
 
     timerText.setString(std::to_string(static_cast<sf::Uint16>(m_nullHatTime)) + ", " 
         + std::to_string(static_cast<sf::Uint16>(*m_playerOneHatTime)) + ", " 
-        + std::to_string(static_cast<sf::Uint16>(*m_playerTwoHatTime)));
+        + std::to_string(static_cast<sf::Uint16>(*m_playerTwoHatTime)) + ", "
+        + std::to_string(m_playerOneKillStreak) + ", "
+        + std::to_string(m_playerTwoKillStreak));
 }
 
 void ScoreBoard::onNotify(Subject& s, const Event& evt)
@@ -132,7 +137,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                 {
                     disablePlayer(Category::PlayerOne);
                 }
-
+                m_playerOneKillStreak = 0u;
                 updateText(evt.node.type);
                 break;
             case Category::PlayerTwo:
@@ -143,6 +148,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                     disablePlayer(Category::PlayerTwo);
                 }
                 updateText(evt.node.type);
+                m_playerTwoKillStreak = 0u;
                 break;
             case Category::Npc:
                 m_deadNpcs++;
@@ -210,6 +216,13 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
                                 messageFont);
 
+                            m_playerOneKillStreak++;
+                            if ((m_playerOneKillStreak % 5) == 0)
+                            {
+                                killstreakMessage();
+                                m_playerOneScore += killStreakPoints;
+                            }
+
                             break;
                         case Category::PlayerOne: //p1 killed self, doh
                         {
@@ -254,6 +267,12 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
                                 messageFont);
 
+                            m_playerTwoKillStreak++;
+                            if (m_playerTwoKillStreak % 5 == 0)
+                            {
+                                m_playerTwoScore += killStreakPoints;
+                                killstreakMessage();
+                            }
                             break;
                         case Category::PlayerTwo: //p2 crushed self :S
                         {    
@@ -305,6 +324,11 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             msg += std::to_string(m_playerTwoScore);
                             m_playerTwoScore = 0u;
                         }
+                        break;
+                    case Category::Npc:
+                        //NPC killed self so shouldn't be subtracted
+                        m_deadNpcs--; //TODO if this gets called before Despawn increases
+                        //then we run the risk of flipping over to 255? :S
                         break;
                     case Category::HatCarried:
                     case Category::HatDropped:
@@ -515,15 +539,25 @@ void ScoreBoard::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_context.renderWindow.draw(timerText);
 }
 
+void ScoreBoard::killstreakMessage()
+{
+    m_messages.emplace_back("CRUSHTASTIC!",
+        m_context.renderWindow.getView().getCenter(),
+        messageFont, true);
+}
+
 //-----message class-----//
-ScoreBoard::Message::Message(const std::string& text, const sf::Vector2f& position, const sf::Font& font)
+ScoreBoard::Message::Message(const std::string& text, const sf::Vector2f& position, const sf::Font& font, bool zoom)
     : m_colour          (sf::Color::White),
     m_transparency      (1.f),
+    m_zoom              (zoom),
     m_text              (text, font, 24u),
     m_messageSpeed      (initialMessageSpeed)
 {
     Util::Position::centreOrigin(m_text);
     m_text.setPosition(position);
+
+    m_text.setStyle(sf::Text::Bold);
 }
 
 void ScoreBoard::Message::update(float dt)
@@ -537,8 +571,16 @@ void ScoreBoard::Message::update(float dt)
         m_text.setColor(m_colour);
     }
 
-    m_messageSpeed += messageAcceleration * dt;
-    m_text.move(0.f, -m_messageSpeed * dt);
+    if (m_zoom)
+    {
+        const float amount = 1.1f + dt;
+        m_text.scale(amount, amount);
+    }
+    else
+    {
+        m_messageSpeed += messageAcceleration * dt;
+        m_text.move(0.f, -m_messageSpeed * dt);
+    }
 }
 
 void ScoreBoard::Message::setColour(const sf::Color& c)

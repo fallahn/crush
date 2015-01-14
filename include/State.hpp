@@ -57,7 +57,7 @@ struct GameData
 
     struct PlayerData
     {
-        sf::Uint16 score;
+        sf::Uint32 score;
         float hatTime;
         sf::Int16 lives;
         std::string name;
@@ -65,7 +65,7 @@ struct GameData
         bool enabled;
         bool hasHat;
 
-        PlayerData() : score(0u), hatTime(0u), lives(5u), enabled(true), hasHat(false){}
+        PlayerData() : score(0u), hatTime(0u), lives(5u), name("Number Six"), enabled(true), hasHat(false){}
     }playerOne, playerTwo;
 };
 

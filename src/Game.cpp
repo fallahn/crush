@@ -49,7 +49,7 @@ namespace
 }
 
 Game::Game()
-    : m_renderWindow    (sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
+    : m_renderWindow    (sf::VideoMode(1024, 576), "CRUSH 0.5", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
     m_console           (getFont("res/fonts/VeraMono.ttf"))
 {

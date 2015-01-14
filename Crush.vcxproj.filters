@@ -210,6 +210,9 @@
     <ClCompile Include="src\UISlider.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\ScoreBar.cpp">
+      <Filter>Source Files\Drawables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -373,6 +376,9 @@
     </ClInclude>
     <ClInclude Include="include\UISlider.hpp">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\ScoreBar.hpp">
+      <Filter>Header Files\Drawables</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

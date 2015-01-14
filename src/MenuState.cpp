@@ -60,9 +60,11 @@ MenuState::MenuState(StateStack& stack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
 
-    //reset game data TODO make sure to load correct keybinds
+    //reset game data TODO make sure to load correct keybinds and names
     context.gameData.playerOne = {};
+    context.gameData.playerOne.name = "Sidney Burnsides";
     context.gameData.playerTwo = {};
+    context.gameData.playerTwo.name = "Gemima Headson";
     context.gameData.mapIndex = 0;
 
     auto& font = context.gameInstance.getFont("res/fonts/VeraMono.ttf");
@@ -123,6 +125,5 @@ bool MenuState::update(float dt)
 bool MenuState::handleEvent(const sf::Event& evt)
 {
     m_uiContainer.handleEvent(evt);
-
     return true;
 }

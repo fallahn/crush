@@ -35,49 +35,101 @@ source distribution.
 
 namespace
 {
-    sf::Text placeholderText;
-    std::string loseStr =
-        "       GAME OVER\n Press C to Continue";
-
-    std::string winStr =
-        "       YOU WIN!\n Press C to Continue";
-
-    sf::RectangleShape rectangle;
-
+    sf::RectangleShape backgroundRect;
     const float waitTime = 2.f;
-
     const std::string music = "res/sound/music/game_over.ogg";
+
+    //point consts
+    const sf::Uint16 pointsPerLife = 300u;
+    const sf::Uint16 pointsPerhat = 100u;
+    const sf::Uint16 hatBonus = 1000u;
+
+    //animation consts
+    const float maxFrameRate = 12.f;
+    const sf::Vector2i frameSize(41, 64);
+    const float spriteScale = 2.f;
+    Animation idle(2, 2);
+    Animation run(0, 5);
+
+    //layout positions
+    const sf::Vector2f playerOnePosition(60.f, 280.f);
+    const sf::Vector2f playerTwoPosition(60.f, 680.f);
 }
 
 GameOverState::GameOverState(StateStack& stack, Context context)
-    : State         (stack, context),
-    m_waitedTime    (0.f)
+    : State                 (stack, context),
+    m_waitedTime            (0.f),
+    m_playerOneScoreText    (std::to_string(context.gameData.playerOne.score), context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u),
+    m_playerTwoScoreText    (std::to_string(context.gameData.playerTwo.score), context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u)
 {
-    context.renderWindow.setTitle("Menu Screen");
     context.renderWindow.setView(context.defaultView);
 
-    placeholderText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
-    (!context.gameData.playerOne.enabled && !context.gameData.playerTwo.enabled) ? placeholderText.setString(loseStr) : placeholderText.setString(winStr);
-    placeholderText.setCharacterSize(60u);
-    Util::Position::centreOrigin(placeholderText);
-    placeholderText.setPosition(context.defaultView.getCenter());
+    backgroundRect.setFillColor({ 0u, 0u, 0u, 148u });
+    backgroundRect.setSize(context.defaultView.getSize());
 
-    rectangle.setFillColor({ 0u, 0u, 0u, 148u });
-    rectangle.setSize(context.defaultView.getSize());
+    //context.gameInstance.playMusic(music);
 
-    context.gameInstance.playMusic(music); //TODO make this delayed
+    //parse context data and sum up scores
+    auto& tr = context.gameInstance.getTextureResource();
 
-    //TODO parse context data and sum up scores
+    m_playerOneSprite.setTexture(tr.get("res/textures/playerOne_diffuse.png"));
+    //m_playerOneSprite.setNormalMap(tr.get("res/textures/player_normal.png"));
+    //m_playerOneSprite.setShader(shader); //using shader needs scene lighting
+    m_playerOneSprite.setFrameCount(8u);
+    m_playerOneSprite.setFrameRate(maxFrameRate);
+    m_playerOneSprite.setFrameSize(frameSize);
+    m_playerOneSprite.setLooped(true);
+    m_playerOneSprite.play(idle); //TODO switch anim to run while bar goes up
+    m_playerOneSprite.setScale(spriteScale, spriteScale);
+    m_playerOneSprite.setPosition(playerOnePosition);
+    if (!context.gameData.playerOne.enabled) m_playerOneSprite.setColour({ 255u, 255u, 255u, 120u });
+
+    m_playerTwoSprite.setTexture(tr.get("res/textures/playerTwo_diffuse.png"));
+    m_playerTwoSprite.setFrameCount(8u);
+    m_playerTwoSprite.setFrameRate(maxFrameRate);
+    m_playerTwoSprite.setFrameSize(frameSize);
+    m_playerTwoSprite.setLooped(true);
+    m_playerTwoSprite.play(run);
+    m_playerTwoSprite.setScale(spriteScale, spriteScale);
+    m_playerTwoSprite.setPosition(playerTwoPosition);
+    if (!context.gameData.playerTwo.enabled) m_playerTwoSprite.setColour({ 255u, 255u, 255u, 120u });
+
+    auto& font = context.gameInstance.getFont("res/fonts/VeraMono.ttf");
+    m_texts.emplace_back("RESULTS", font, 80u);
+    auto& title = m_texts.back();
+    Util::Position::centreOrigin(title);
+    title.setPosition(context.renderWindow.getView().getCenter());
+    title.move(0.f, -500.f);
+
+    m_texts.emplace_back(context.gameData.playerOne.name, font, 40u);
+    auto& playerOneName = m_texts.back();
+    playerOneName.setPosition(playerOnePosition);
+    playerOneName.move(0.f, -80.f);
+
+    m_texts.emplace_back(context.gameData.playerTwo.name, font, 40u);
+    auto& playerTwoName = m_texts.back();
+    playerTwoName.setPosition(playerTwoPosition);
+    playerTwoName.move(0.f, -80.f);
+
+    m_playerOneScoreText.setPosition(playerOnePosition);
+    m_playerOneScoreText.move(0.f, 140.f);
+
+    m_playerTwoScoreText.setPosition(playerTwoPosition);
+    m_playerTwoScoreText.move(0.f, 140.f);
 }
 
 GameOverState::~GameOverState()
 {
-    getContext().gameInstance.playMusic("res/sound/music/intro.ogg");;
+    //getContext().gameInstance.stopMusic();// playMusic("res/sound/music/intro.ogg");
 }
 
 bool GameOverState::update(float dt)
 {
     m_waitedTime += dt;
+
+    m_playerOneSprite.update(dt);
+    m_playerTwoSprite.update(dt);
+
 
     return true; //return true so we can see remaining baddies bouncing about / finish death animations
 }
@@ -86,8 +138,17 @@ void GameOverState::draw()
 {
     if (m_waitedTime > waitTime)
     {
-        getContext().renderWindow.draw(rectangle);
-        getContext().renderWindow.draw(placeholderText);
+        auto& rw = getContext().renderWindow;
+        rw.draw(backgroundRect);
+        rw.draw(m_playerOneSprite);
+        rw.draw(m_playerTwoSprite);
+
+        for (const auto& t : m_texts)
+        {
+            rw.draw(t);
+        }
+        rw.draw(m_playerOneScoreText);
+        rw.draw(m_playerTwoScoreText);
     }
 }
 

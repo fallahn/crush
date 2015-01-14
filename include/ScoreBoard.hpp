@@ -60,8 +60,11 @@ private:
     sf::Int16 m_playerOneLives;
     sf::Int16 m_playerTwoLives;
 
-    sf::Uint16 m_playerOneScore;
-    sf::Uint16 m_playerTwoScore;
+    sf::Uint32 m_playerOneScore;
+    sf::Uint32 m_playerTwoScore;
+
+    sf::Uint16 m_playerOneKillStreak;
+    sf::Uint16 m_playerTwoKillStreak;
 
     float* m_playerOneHatTime;
     float* m_playerTwoHatTime;
@@ -80,10 +83,12 @@ private:
     void disablePlayer(Category::Type player);
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 
+    void killstreakMessage();
+
     class Message final : public sf::Drawable
     {
     public:
-        Message(const std::string& text, const sf::Vector2f& position, const sf::Font& font);
+        Message(const std::string& text, const sf::Vector2f& position, const sf::Font& font, bool zoom = false);
         Message(const Message& copy) = default;
         ~Message() = default;
 
@@ -96,7 +101,7 @@ private:
 
         sf::Color m_colour;
         float m_transparency;
-
+        bool m_zoom;
         sf::Text m_text;
         float m_messageSpeed;
 

@@ -72,9 +72,7 @@ GameState::GameState(StateStack& stack, Context context)
     //launch loading window
     launchLoadingScreen();
     
-    //build world
-    context.renderWindow.setTitle("Game Screen");
-    
+    //build world  
     Scene::defaultCamera.setView(getContext().defaultView);
     m_scene.addShader(m_shaderResource.get(Shader::Type::FlatShaded));
     m_scene.addShader(m_shaderResource.get(Shader::Type::NormalMapSpecular));
