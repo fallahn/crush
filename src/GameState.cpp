@@ -377,6 +377,8 @@ void GameState::addMapBody(const Map::Node& n)
         node->addObserver(m_audioController);
         node->addObserver(m_mapController);
         node->addObserver(m_scoreBoard);
+        node->addObserver(m_players[0]);
+        node->addObserver(m_players[1]);
 
         m_scene.addNode(node, Scene::DynamicFront);
         break;

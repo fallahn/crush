@@ -49,7 +49,7 @@ namespace
 }
 
 Game::Game()
-    : m_renderWindow    (sf::VideoMode(1600, 900), "Crush", sf::Style::Close), //1024, 576
+    : m_renderWindow    (sf::VideoMode(1024, 576), "Crush", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
     m_console           (getFont("res/fonts/VeraMono.ttf"))
 {
@@ -92,6 +92,8 @@ void Game::run()
 
     //write console config file
     m_console.exec("export_config");
+
+    m_musicPlayer.stop();
 }
 
 void Game::pause()

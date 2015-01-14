@@ -207,6 +207,7 @@ void CollisionWorld::Body::removeChild(CollisionWorld::Body* b)
     if (result != m_children.end())
     {
         b->m_parent = nullptr;
+        b->m_velocity = m_velocity;
         if (b->m_node) b->setPosition(b->m_node->getWorldPosition());
         m_children.erase(result);
     }

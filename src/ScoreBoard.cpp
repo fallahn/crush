@@ -41,6 +41,9 @@ namespace
     sf::Text playerOneText;
     sf::Text playerTwoText;
     sf::Text npcText;
+    sf::Text timerText;
+
+    sf::Font messageFont;
 
     const sf::Uint16 playerPoints = 100u; //points for killing other player
     const sf::Uint16 crushPoints = 500u; //points for crushing someone
@@ -58,8 +61,10 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_playerTwoLives    (-1),
     m_playerOneScore    (0u),
     m_playerTwoScore    (0u),
-    m_playerOneHatTime  (0.f),
-    m_playerTwoHatTime  (0.f),
+    m_playerOneHatTime  (&context.gameData.playerOne.hatTime),
+    m_playerTwoHatTime  (&context.gameData.playerTwo.hatTime),
+    m_nullHatTime       (0.f),
+    m_hatTimer          (&m_nullHatTime),
     m_playerOneExtinct  (false),
     m_playerTwoExtinct  (false),
     m_maxNpcs           (2u),
@@ -67,12 +72,12 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_deadNpcs          (0u)
 {
     playerOneText.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
-    playerOneText.setPosition({ 60.f, 10.f });
+    playerOneText.setPosition(60.f, 10.f );
     //updateText(Category::PlayerOne);
 
     playerTwoText.setFont(*playerOneText.getFont());
     //playerTwoText.setString("Press Start");
-    playerTwoText.setPosition({ 1400.f, 10.f });
+    playerTwoText.setPosition(1400.f, 10.f);
 
     npcText.setFont(*playerOneText.getFont());
 
@@ -86,6 +91,13 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
     m_playerTwoLives = (m_playerTwoExtinct) ? -1 : context.gameData.playerTwo.lives;
     m_playerTwoScore = context.gameData.playerTwo.score;
     updateText(Category::PlayerTwo);
+
+    messageFont = context.gameInstance.getFont("res/fonts/VeraMono.ttf");
+
+    timerText.setFont(messageFont);
+    timerText.setPosition(60.f, 50.f);
+    *m_playerOneHatTime = 0.f;
+    *m_playerTwoHatTime = 0.f;
 }
 
 //public
@@ -95,6 +107,13 @@ void ScoreBoard::update(float dt)
 
     for (auto& m : m_messages)
         m.update(dt);
+
+    //update current timer
+    *m_hatTimer += dt;
+
+    timerText.setString(std::to_string(static_cast<sf::Uint16>(m_nullHatTime)) + ", " 
+        + std::to_string(static_cast<sf::Uint16>(*m_playerOneHatTime)) + ", " 
+        + std::to_string(static_cast<sf::Uint16>(*m_playerTwoHatTime)));
 }
 
 void ScoreBoard::onNotify(Subject& s, const Event& evt)
@@ -180,7 +199,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             //show message
                             m_messages.emplace_back(std::to_string(playerPoints),
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                                messageFont);
 
 
                         case Category::Npc: //p1 killed bad guy
@@ -189,7 +208,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             //show message
                             m_messages.emplace_back(std::to_string(crushPoints),
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                                messageFont);
 
                             break;
                         case Category::PlayerOne: //p1 killed self, doh
@@ -208,7 +227,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
 
                             m_messages.emplace_back(msg,
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                                messageFont);
                         }
                             break;
                         default: break;
@@ -225,7 +244,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             //show message
                             m_messages.emplace_back(std::to_string(playerPoints),
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                                messageFont);
 
                         case Category::Npc: //p2 killed bad guy
                             m_playerTwoScore += crushPoints;
@@ -233,7 +252,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             //show message
                             m_messages.emplace_back(std::to_string(crushPoints),
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                                messageFont);
 
                             break;
                         case Category::PlayerTwo: //p2 crushed self :S
@@ -252,7 +271,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
 
                             m_messages.emplace_back(msg,
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                                messageFont);
                         }
                             break;
                         default: break;
@@ -287,12 +306,19 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             m_playerTwoScore = 0u;
                         }
                         break;
+                    case Category::HatCarried:
+                    case Category::HatDropped:
+                        msg = "POF!";
+                        m_hatTimer = &m_nullHatTime;
+                        m_context.gameData.playerOne.hasHat = false;
+                        m_context.gameData.playerTwo.hasHat = false;
+                        break;
                     default: break;
                     }
 
                     m_messages.emplace_back(msg,
                         sf::Vector2f(evt.node.positionX, evt.node.positionY),
-                        m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                        messageFont);
                 }
                 textUpdateTarget = evt.node.owner;
                 break;
@@ -337,16 +363,27 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
             //display message
             m_messages.emplace_back(msg + std::to_string(itemPoints),
                 sf::Vector2f(evt.player.positionX, evt.player.positionY),
-                m_context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+                messageFont);
 
             m_messages.back().setColour(sf::Color::Yellow);
             updateText(evt.player.playerId);
             break;
         case Event::PlayerEvent::GotHat:
-            std::cerr << "I has hats" << std::endl;
+            if (evt.player.playerId == Category::PlayerOne)
+            {
+                m_hatTimer = m_playerOneHatTime;
+                m_context.gameData.playerOne.hasHat = true;
+            }
+            else
+            {
+                m_hatTimer = m_playerTwoHatTime;
+                m_context.gameData.playerTwo.hasHat = true;
+            }
             break;
-        case Event::PlayerEvent::DroppedHat:
-            std::cerr << "I dropped teh hats :(" << std::endl;
+        case Event::PlayerEvent::LostHat:
+            m_hatTimer = &m_nullHatTime;
+            m_context.gameData.playerOne.hasHat = false;
+            m_context.gameData.playerTwo.hasHat = false;
             break;
 
         default:break;
@@ -474,6 +511,8 @@ void ScoreBoard::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_context.renderWindow.draw(playerOneText);
     m_context.renderWindow.draw(playerTwoText);
     m_context.renderWindow.draw(npcText);
+
+    m_context.renderWindow.draw(timerText);
 }
 
 //-----message class-----//

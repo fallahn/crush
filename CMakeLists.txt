@@ -100,7 +100,7 @@ add_executable(
 	src/WaterDrawable.cpp)
 
 #copy reources to output directory
-#install(DIRECTORY res/
-#	DESTINATION res)
+file(COPY res/*.*
+    DESTINATION res)
 		
 

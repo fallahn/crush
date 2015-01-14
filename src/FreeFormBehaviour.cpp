@@ -155,16 +155,15 @@ void FreeFormBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWor
             //block is above, so crush
             kill();
 
-            //raise event to say player killed us - actually does anyone care who killed the hat?
             Event e;
             e.node.action = Event::NodeEvent::KilledNode;
             e.node.type = Category::Block;
             e.node.target = Category::HatDropped;
 
-            int cat = other->getParentCategory();
+            /*int cat = other->getParentCategory();
             if (cat & (Category::LastTouchedOne | Category::GrabbedOne)) e.node.owner = Category::PlayerOne;
             else if (cat & (Category::LastTouchedTwo | Category::GrabbedTwo)) e.node.owner = Category::PlayerTwo;
-            else e.node.owner = Category::None; //TODO this needs to fill in the owner - include 'carried' flag?
+            else */e.node.owner = Category::None; //TODO do we care who killed the hat?
 
             e.type = Event::Node;
             raiseEvent(e, other);

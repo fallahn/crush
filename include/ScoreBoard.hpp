@@ -63,8 +63,10 @@ private:
     sf::Uint16 m_playerOneScore;
     sf::Uint16 m_playerTwoScore;
 
-    float m_playerOneHatTime;
-    float m_playerTwoHatTime;
+    float* m_playerOneHatTime;
+    float* m_playerTwoHatTime;
+    float m_nullHatTime;
+    float* m_hatTimer;
 
     bool m_playerOneExtinct;
     bool m_playerTwoExtinct;

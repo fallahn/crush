@@ -40,7 +40,7 @@ namespace
         "       GAME OVER\n Press C to Continue";
 
     std::string winStr =
-        "        YOU WIN!\n Press C to Continue";
+        "       YOU WIN!\n Press C to Continue";
 
     sf::RectangleShape rectangle;
 

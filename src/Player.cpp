@@ -44,7 +44,7 @@ namespace
 
     //block interaction
     const float pickupPadding = 3.2f;
-    const float dragPadding = 0.51f;
+    const float dragPadding = 0.52f; //multiple of block size
     const float pickupHeight = 14.f;
     const float carryForceReduction = 0.75f;
 
@@ -258,6 +258,10 @@ void Player::onNotify(Subject& s, const Event& evt)
                 break;
             default: break;
             }
+        }
+        else if (evt.node.type == Category::HatCarried)
+        {
+            m_hasHat = false;
         }
         break;
     case Event::Player:
@@ -766,7 +770,7 @@ void Player::dropHat()
             //raise dropped event
             Event evt;
             evt.type = Event::Player;
-            evt.player.action = Event::PlayerEvent::DroppedHat;
+            evt.player.action = Event::PlayerEvent::LostHat;
             evt.player.playerId = m_id;
             auto position = n.getWorldPosition();
             evt.player.positionX = position.x;

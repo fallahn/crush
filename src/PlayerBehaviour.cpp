@@ -200,9 +200,17 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
                 damage(damageAmount, other); 
                 //std::cerr << damageAmount<< ": block damage " << std::endl;
             }
-            else
+            else if ((cat & (Category::GrabbedOne | Category::GrabbedTwo)) == 0)
             {
                 //drop block?
+                Event e;
+                e.type = Event::Player;
+                e.player.action = Event::PlayerEvent::Released;
+                e.player.playerId = getParentCategory();
+                auto pos = getBody()->getCentre();
+                e.player.positionX = pos.x;
+                e.player.positionY = pos.y;
+                raiseEvent(e);
             }
             //std::cerr << manifold.z << std::endl;
         }

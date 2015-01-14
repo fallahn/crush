@@ -35,6 +35,7 @@ source distribution.
 #include <SFML/Graphics/Shader.hpp>
 
 #include <map>
+#include <algorithm>
 
 namespace
 {
@@ -42,6 +43,7 @@ namespace
     sf::Vector2f blockTextureSize;
 
     float hatSpawnTime = 0.f;
+    sf::Uint8 hatSpawnCount = 10u;
 }
 
 MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr)
@@ -113,7 +115,7 @@ void MapController::update(float dt)
                 auto pos = n.getCollisionBody()->getCentre();
                 evt.node.positionX = pos.x;
                 evt.node.positionY = pos.y;
-                n.raiseEvent(evt);
+n.raiseEvent(evt);
             };
             m_commandStack.push(c);
 
@@ -156,11 +158,11 @@ void MapController::loadMap(const Map& map)
         else
         {
             spawn(n);
-            switch(n.type )
+            switch (n.type)
             {
             case Category::Solid:
                 //TODO select a single texture for solid blocks in editor
-                m_solidDrawable.addPart(n.position, n.size, "funt"); 
+                m_solidDrawable.addPart(n.position, n.size, "funt");
                 break;
 
             case Category::Block:
@@ -188,7 +190,7 @@ void MapController::loadMap(const Map& map)
                     m_frontDrawable.addSprite(n.spriteSheet, result->second.getFrame(n.image, n.position));
                 }
             }
-                break;
+            break;
             default: break;
             }
         }
@@ -210,6 +212,23 @@ void MapController::loadMap(const Map& map)
     //m_shaderResource.addBinding(fb);
 
     m_solidDrawable.buildShadow(m_shaderResource.get(Shader::Type::GaussianBlur));
+
+    //generate some random hat spawns
+    for(auto i = 0u; i < 40u; ++i)
+    {
+        m_hatSpawns.emplace_back(static_cast<float>(Util::Random::value(40, 1880)), static_cast<float>(Util::Random::value(-30, 1000)));
+    }
+    //remove points inside nodes
+    for (const auto& n : nodes)
+    {
+        sf::FloatRect nodebox(n.position, n.size);
+        m_hatSpawns.erase(std::remove_if(m_hatSpawns.begin(), m_hatSpawns.end(),
+            [&nodebox](const sf::Vector2f& p)
+        {
+            return nodebox.contains(p);
+        }), m_hatSpawns.end());
+    }
+    
     spawnHat();
 }
 
@@ -270,7 +289,7 @@ void MapController::shuffleItems()
 void MapController::spawnHat()
 {
     Map::Node n;
-    n.position = sf::Vector2f(static_cast<float>(Util::Random::value(40, 1880)), static_cast<float>(Util::Random::value(-30, 1000)));
+    n.position = m_hatSpawns[Util::Random::value(0, m_hatSpawns.size() - 1)];
     n.size = sf::Vector2f(m_hatSprite.getTexture()->getSize());
     spawn(n);
 }

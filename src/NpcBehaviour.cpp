@@ -200,7 +200,7 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
             //raise event to say player killed us
             Event e;
             e.node.action = Event::NodeEvent::KilledNode;
-            e.node.type = Category::Block;
+            e.node.type = Category::HatCarried;
             e.node.target = Category::Npc;
             e.node.owner = Category::HatCarried;
 
@@ -348,6 +348,16 @@ void NpcBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld::B
         if (other->getParentCategory() == Category::HatCarried)
         {
             //kill and raise event
+            kill();
+
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
+            e.node.type = Category::HatCarried;
+            e.node.target = Category::Npc;
+            e.node.owner = Category::None;
+
+            e.type = Event::Node;
+            raiseEvent(e, other);
         }
         break;
     default: break;
@@ -507,6 +517,22 @@ void NpcBehaviourWalk::resolve(const sf::Vector3f& manifold, CollisionWorld::Bod
     case CollisionWorld::Body::FreeForm:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
         setVelocity(getVelocity() * 0.8f);
+
+        if (other->getParentCategory() == Category::HatCarried)
+        {
+            //kill and raise event
+            kill();
+
+            Event e;
+            e.node.action = Event::NodeEvent::KilledNode;
+            e.node.type = Category::HatCarried;
+            e.node.target = Category::Npc;
+            e.node.owner = Category::None;
+
+            e.type = Event::Node;
+            raiseEvent(e, other);
+        }
+
         break;
     case CollisionWorld::Body::Type::Npc:
         if (Util::Vector::lengthSquared(getVelocity()) > 0.2f

@@ -58,12 +58,14 @@ struct GameData
     struct PlayerData
     {
         sf::Uint16 score;
+        float hatTime;
         sf::Int16 lives;
         std::string name;
         Player::Keys keyBinds;
         bool enabled;
+        bool hasHat;
 
-        PlayerData() : score(0u), lives(5u), enabled(true){}
+        PlayerData() : score(0u), hatTime(0u), lives(5u), enabled(true), hasHat(false){}
     }playerOne, playerTwo;
 };
 
