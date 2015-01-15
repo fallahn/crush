@@ -29,19 +29,35 @@ source distribution.
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
-ScoreBar::ScoreBar(const sf::Color& colour, float maxLength)
+namespace
 {
+    const float growthSpeed = 600.f;
+}
 
+
+ScoreBar::ScoreBar(const sf::Color& colour, float maxLength)
+    : m_maxLength(maxLength)
+{
+    m_shape.setFillColor(colour);
+    m_shape.setSize({ 0.f, 60.f });
 }
 
 //public
 bool ScoreBar::update(float dt)
 {
-    return true;
+    auto size = m_shape.getSize();
+    if (size.x < m_maxLength)
+    {
+        size.x += growthSpeed * dt;
+        m_shape.setSize(size);
+    }
+
+    return (m_shape.getSize().x >= m_maxLength);
 }
 
 //private
 void ScoreBar::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
-
+    states.transform *= getTransform();
+    rt.draw(m_shape, states);
 }

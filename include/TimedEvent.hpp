@@ -25,28 +25,28 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef SCORE_BAR_H_
-#define SCORE_BAR_H_
+//allows specified actions to be performed at some point in the future
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Transformable.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/NonCopyable.hpp>
+#ifndef TIMED_EVENT_H_
+#define TIMED_EVENT_H_
 
-class ScoreBar final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
+#include <functional>
+
+struct TimedEvent final
 {
-public:
-    ScoreBar(const sf::Color& colour, float maxSize);
-    ScoreBar(const ScoreBar& copy) = default;
-    ~ScoreBar() = default;
-
-    bool update(float dt); //returns true if animation complete
-
-private:
-
-    sf::RectangleShape m_shape;
-    float m_maxLength;
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
+    float time;
+    std::function<void()> action;
+    void update(float dt)
+    {
+        time -= dt;
+        if (time <= 0)
+        {
+            action();
+            expired = true;
+        }
+    }
+    bool expired;
+    TimedEvent() : time(0.f), expired(false){}
 };
 
-#endif //SCORE_BAR_H_
+#endif //TIMED_EVENT_H_

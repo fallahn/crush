@@ -29,9 +29,15 @@ source distribution.
 #define GAME_OVER_STATE_H_
 
 #include <State.hpp>
+#include <AnimatedIcon.hpp>
 #include <AnimatedSprite.hpp>
+#include <ScoreBar.hpp>
+#include <TimedEvent.hpp>
 
 #include <SFML/Graphics/Text.hpp>
+
+#include <list>
+#include <vector>
 
 class GameOverState final : public State
 {
@@ -45,14 +51,27 @@ public:
 
 private:
 
-    float m_waitedTime;
-
     AnimatedSprite m_playerOneSprite;
     AnimatedSprite m_playerTwoSprite;
 
     std::vector<sf::Text> m_texts;
     sf::Text m_playerOneScoreText;
     sf::Text m_playerTwoScoreText;
+    sf::Text m_continueText;
+
+    std::vector<ScoreBar> m_playerOneBar;
+    std::vector<ScoreBar> m_playerTwoBar;
+    sf::Uint8 m_barIndex;
+
+    AnimatedIcon m_hatIcon;
+
+    std::list<TimedEvent> m_timedEvents;
+    bool m_drawingEnabled;
+    bool m_animateBars;
+    bool m_doHatBonus;
+
+    void initSprite(AnimatedSprite&, const sf::Vector2f&);
+    void continueGame();
 };
 
 #endif // GAME_OVER_STATE_H_

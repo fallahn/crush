@@ -65,7 +65,7 @@ struct GameData
         bool enabled;
         bool hasHat;
 
-        PlayerData() : score(0u), hatTime(0u), lives(5u), name("Number Six"), enabled(true), hasHat(false){}
+        PlayerData() : score(0u), hatTime(10.f), lives(5), name("Number Six"), enabled(true), hasHat(false){}
     }playerOne, playerTwo;
 };
 

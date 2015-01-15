@@ -71,6 +71,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Affectors.cpp" />
+    <ClCompile Include="src\AnimatedIcon.cpp" />
     <ClCompile Include="src\AnimatedSprite.cpp" />
     <ClCompile Include="src\AudioController.cpp" />
     <ClCompile Include="src\CollisionConstraint.cpp" />
@@ -123,6 +124,7 @@
   <ItemGroup>
     <ClInclude Include="include\Affectors.hpp" />
     <ClInclude Include="include\AnchorBehaviour.hpp" />
+    <ClInclude Include="include\AnimatedIcon.hpp" />
     <ClInclude Include="include\AnimatedSprite.hpp" />
     <ClInclude Include="include\AudioController.hpp" />
     <ClInclude Include="include\BlockBehaviour.hpp" />
@@ -137,6 +139,7 @@
     <ClInclude Include="include\PostShaders.hpp" />
     <ClInclude Include="include\ScoreBar.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
+    <ClInclude Include="include\TimedEvent.hpp" />
     <ClInclude Include="include\UberShader.hpp" />
     <ClInclude Include="include\NpcBehaviour.hpp" />
     <ClInclude Include="include\NpcController.hpp" />

@@ -25,28 +25,29 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef SCORE_BAR_H_
-#define SCORE_BAR_H_
+//animated UI icon which bounces / pulses
 
-#include <SFML/Graphics/Drawable.hpp>
+#ifndef ANIMATED_ICON_H_
+#define ANIMATED_ICON_H_
+
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Transformable.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Drawable.hpp>
 
-class ScoreBar final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
+class AnimatedIcon final : public sf::Drawable, public sf::Transformable
 {
 public:
-    ScoreBar(const sf::Color& colour, float maxSize);
-    ScoreBar(const ScoreBar& copy) = default;
-    ~ScoreBar() = default;
+    explicit AnimatedIcon(const sf::Texture& texture);
+    AnimatedIcon(const AnimatedIcon& copy) = default;
+    ~AnimatedIcon() = default;
 
-    bool update(float dt); //returns true if animation complete
+    void update(float dt);
+    void setColour(const sf::Color& c);
 
 private:
-
-    sf::RectangleShape m_shape;
-    float m_maxLength;
+    sf::Uint8 m_tableIndex;
+    sf::Sprite m_sprite;
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 
-#endif //SCORE_BAR_H_
+#endif //ANIMATED_ICON_H_

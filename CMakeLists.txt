@@ -52,6 +52,7 @@ endif(X11_FOUND)
 add_executable(
 	CRUSH src/main.cpp
 	src/Affectors.cpp
+	src/AnimatedIcon.cpp
 	src/AnimatedSprite.cpp
 	src/AudioController.cpp
 	src/BlockBehaviour.cpp
@@ -101,7 +102,7 @@ add_executable(
 	src/WaterDrawable.cpp)
 
 #copy reources to output directory
-file(COPY res/*.*
-    DESTINATION res)
+#file(COPY res/*.*
+#    DESTINATION res)
 		
 

@@ -107,9 +107,9 @@ void WaterDrawable::update(float dt)
     }
 
     //keep the surface moving
-    m_columns[0].height = waveTable[m_waveIndex++] * Util::Random::value(1.2f, 2.4f);
+    m_waveIndex = (m_waveIndex + 1) % waveTable.size();
+    m_columns[0].height = waveTable[m_waveIndex] * Util::Random::value(1.2f, 2.4f);
     m_columns.back().height = -m_columns[0].height;
-    if (m_waveIndex == waveTable.size()) m_waveIndex = 0u;
 
     //update time to send to shader
     m_waveTime += (dt * 0.1f);

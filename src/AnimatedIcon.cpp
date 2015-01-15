@@ -25,28 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef SCORE_BAR_H_
-#define SCORE_BAR_H_
+#include <AnimatedIcon.hpp>
+#include <Util.hpp>
 
-#include <SFML/Graphics/Drawable.hpp>
-#include <SFML/Graphics/Transformable.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/RenderTarget.hpp>
 
-class ScoreBar final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
+#include <vector>
+
+namespace
 {
-public:
-    ScoreBar(const sf::Color& colour, float maxSize);
-    ScoreBar(const ScoreBar& copy) = default;
-    ~ScoreBar() = default;
+    const std::vector<float> waveTable = { 0.f, 0.19f, 0.38f, 0.56f, 0.71f, 0.84f, 0.93f, 0.98f, 0.99f, 0.97f, 0.9f, 0.8f, 0.67f, 0.51f, 0.33f, 0.14f,
+        0.f, -0.38f, -0.71f, -0.93f, -0.99f, -0.9f, -0.67f, -0.33f };
+}
 
-    bool update(float dt); //returns true if animation complete
+AnimatedIcon::AnimatedIcon(const sf::Texture& texture)
+    : m_tableIndex  (0u),
+    m_sprite        (texture)
+{
+    Util::Position::centreOrigin(m_sprite);
+}
 
-private:
+//public
+void AnimatedIcon::update(float dt)
+{
+    m_tableIndex = (m_tableIndex + 1) % waveTable.size();
+    float scale = waveTable[m_tableIndex] * 0.2f + 1.f;
+    m_sprite.setScale(scale, scale);
+}
 
-    sf::RectangleShape m_shape;
-    float m_maxLength;
-    void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
-};
+void AnimatedIcon::setColour(const sf::Color& c)
+{
+    m_sprite.setColor(c);
+}
 
-#endif //SCORE_BAR_H_
+//private
+void AnimatedIcon::draw(sf::RenderTarget& rt, sf::RenderStates states) const
+{
+    states.transform *= getTransform();
+    rt.draw(m_sprite, states);
+}

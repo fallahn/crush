@@ -213,6 +213,9 @@
     <ClCompile Include="src\ScoreBar.cpp">
       <Filter>Source Files\Drawables</Filter>
     </ClCompile>
+    <ClCompile Include="src\AnimatedIcon.cpp">
+      <Filter>Source Files\Drawables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -379,6 +382,12 @@
     </ClInclude>
     <ClInclude Include="include\ScoreBar.hpp">
       <Filter>Header Files\Drawables</Filter>
+    </ClInclude>
+    <ClInclude Include="include\AnimatedIcon.hpp">
+      <Filter>Header Files\Drawables</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TimedEvent.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
