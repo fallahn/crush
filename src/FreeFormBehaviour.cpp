@@ -233,8 +233,19 @@ void FreeFormBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorl
     switch (other->getType())
     {
     case CollisionWorld::Body::Npc:
-        ////kill teh hats
-        //break;
+        //kill teh hats
+        kill();
+
+        Event e;
+        e.node.action = Event::NodeEvent::KilledNode;
+        e.node.type = Category::Npc;
+        e.node.target = Category::HatDropped;
+        e.node.owner = Category::None;
+
+        e.type = Event::Node;
+        raiseEvent(e, other);
+
+        break;
     case CollisionWorld::Body::Block:
         //kill if from above
         if (manifold.y * manifold.z > 6)

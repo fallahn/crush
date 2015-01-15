@@ -202,7 +202,7 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
             }
             else if ((cat & (Category::GrabbedOne | Category::GrabbedTwo)) == 0)
             {
-                //drop block?
+                //drop block
                 Event e;
                 e.type = Event::Player;
                 e.player.action = Event::PlayerEvent::Released;
@@ -211,6 +211,8 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
                 e.player.positionX = pos.x;
                 e.player.positionY = pos.y;
                 raiseEvent(e);
+
+                std::cerr << "release block in collision" << std::endl;
             }
             //std::cerr << manifold.z << std::endl;
         }

@@ -347,6 +347,19 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                 }
                 textUpdateTarget = evt.node.owner;
                 break;
+
+            case Category::Npc:
+                if (evt.node.target == Category::HatDropped)
+                {
+                    m_hatTimer = &m_nullHatTime;
+                    m_context.gameData.playerOne.hasHat = false;
+                    m_context.gameData.playerTwo.hasHat = false;
+
+                    m_messages.emplace_back("PAF!",
+                        sf::Vector2f(evt.node.positionX, evt.node.positionY),
+                        messageFont);
+                }
+                break;
             default: break;
             }
             //if (textUpdateTarget != Category::None)
