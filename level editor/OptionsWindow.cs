@@ -46,6 +46,8 @@ namespace Level_editor
             InitializeComponent();
 
             m_mainWindow = mainWindow;
+            toolTips.SetToolTip(textBoxTexturePath, "this should be the \'atlases\' directory in the game's resource path");
+            textBoxTexturePath.Text = m_mainWindow.TextureDirectory;
         }
 
         private void buttonOk_Click(object sender, EventArgs e)

@@ -71,6 +71,7 @@ namespace Level_editor
         public string TextureDirectory
         {
             set { m_textureDirectory = value; }
+            get { return m_textureDirectory; }
         }
 
         public MainWindow()

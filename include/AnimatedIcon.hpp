@@ -44,7 +44,16 @@ public:
     void update(float dt);
     void setColour(const sf::Color& c);
 
+    void setFadeDuration(float duration);
+    void setTransparency(float);
+    bool fadeIn(float dt);
+    bool fadeOut(float dt);
+
 private:
+    float m_fadeDuration;
+    float m_fadeTime;
+    float m_transparency;
+
     sf::Uint8 m_tableIndex;
     sf::Sprite m_sprite;
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;

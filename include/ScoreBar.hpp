@@ -36,16 +36,19 @@ source distribution.
 class ScoreBar final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
 {
 public:
-    ScoreBar(const sf::Color& colour, float maxSize);
+    ScoreBar(const sf::Color& colour, float maxSize, float maxScore);
     ScoreBar(const ScoreBar& copy) = default;
     ~ScoreBar() = default;
 
     bool update(float dt); //returns true if animation complete
+    float getValue() const;
+    void setTexture(sf::Texture& t);
 
 private:
 
     sf::RectangleShape m_shape;
     float m_maxLength;
+    float m_maxScore;
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 
