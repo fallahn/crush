@@ -122,6 +122,7 @@ public:
         void applyGravity(const sf::Vector2f& gravity);
         void move(const sf::Vector2f& distance);
         void destroy();
+        bool hasChild(Type type);
     };
     
     class Constraint final : public Deletable

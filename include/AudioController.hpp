@@ -31,14 +31,10 @@ source distribution.
 #define AUDIO_CONTROLLER_H_
 
 #include <Observer.hpp>
+#include <SoundPlayer.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/Sound.hpp>
 
-#include <map>
-#include <list>
 
 class Node;
 class AudioController final : private sf::NonCopyable, public Observer
@@ -55,43 +51,7 @@ public:
 
 
 private:
-    enum class AudioId
-    {
-        PlayerJump,
-        PlayerPickUp,
-        PlayerDrop,
-        PlayerGrab,
-        PlayerRelease,
-        PlayerDie,
-        PlayerSpawn,
-        ItemSpawn,
-        ItemDespawn,
-        ItemCollected,
-        ItemExtraLife,
-        ItemReverseControls,
-        ItemSuperJumpSpeed,
-        NpcDie,
-        NpcJump,
-        WaterSplash,
-        BlockLand,
-        BlockDrag,
-        HatSpawn,
-        HatCrush,
-        HatLand
-    };
-
-    std::map<AudioId, sf::SoundBuffer> m_buffers;
-    std::list<sf::Sound> m_sounds;
-    std::list<std::pair<Node*, sf::Sound*>> m_loopedSounds;
-
-    void play(AudioId id);
-    sf::Sound& play(AudioId id, const sf::Vector2f& position, bool loop = false);
-
-    void flushSounds();
-    void setListenerPosition(const sf::Vector2f& position);
-    sf::Vector2f getListenerPosition() const;
-
-    void cacheSound(AudioId, const std::string&);
+    SoundPlayer m_soundPlayer;
 };
 
 #endif //AUDIO_CONTROLLER_H_

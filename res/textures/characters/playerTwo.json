@@ -1,0 +1,84 @@
+{"frames": [
+
+{
+	"filename": "01.png",
+	"frame": {"x":0,"y":0,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "02.png",
+	"frame": {"x":41,"y":0,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "03.png",
+	"frame": {"x":82,"y":0,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "04.png",
+	"frame": {"x":123,"y":0,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "05.png",
+	"frame": {"x":0,"y":64,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "06.png",
+	"frame": {"x":41,"y":64,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "07.png",
+	"frame": {"x":82,"y":64,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "08.png",
+	"frame": {"x":123,"y":64,"w":41,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":41,"h":64},
+	"sourceSize": {"w":41,"h":64},
+	"pivot": {"x":0.5,"y":0.5}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "playerTwo_diffuse.png",
+	"format": "RGBA8888",
+	"size": {"w":164,"h":128},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:db0e90a5c975764b84ea38a8b66908c3:6b8f947d02f6df86b0b811e53340510f:208bb888b2e8fa4f677d61dc2d62de6a$"
+}
+}

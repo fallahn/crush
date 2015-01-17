@@ -101,6 +101,7 @@ private:
 
     std::list<WaterDrawable> m_waterDrawables;
     std::vector<sf::Vector2f> m_hatSpawns;
+    sf::Uint8 m_hatCount;
 
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();

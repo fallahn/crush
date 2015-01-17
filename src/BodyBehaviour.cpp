@@ -140,3 +140,8 @@ bool BodyBehaviour::deleted() const
 {
     return m_body->deleted();
 }
+
+bool BodyBehaviour::hasChild(CollisionWorld::Body::Type t)
+{
+    return m_body->hasChild(t);
+}

@@ -337,3 +337,12 @@ void CollisionWorld::Body::destroy()
         m_dead = true;
     }
 }
+
+bool CollisionWorld::Body::hasChild(Type type)
+{
+    for (const auto& p : m_children)
+    {
+        if (p.first->getType() == type) return true;
+    }
+    return false;
+}

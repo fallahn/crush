@@ -91,7 +91,7 @@ void State::launchLoadingScreen()
 {
     m_context.gameInstance.pause();
     
-    m_loadingSprite.setTexture(m_context.gameInstance.getTextureResource().get("res/textures/robot_diffuse.png"));
+    m_loadingSprite.setTexture(m_context.gameInstance.getTextureResource().get("res/textures/characters/robot_diffuse.png"));
     m_loadingSprite.setFrameCount(8u);
     m_loadingSprite.setFrameSize({ 48, 56 });
     m_loadingSprite.setFrameRate(18.f);

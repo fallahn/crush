@@ -44,7 +44,7 @@ namespace
 
     //block interaction
     const float pickupPadding = 3.2f;
-    const float dragPadding = 0.52f; //multiple of block size
+    const float dragPadding = 0.53f; //multiple of block size
     const float pickupHeight = 14.f;
     const float carryForceReduction = 0.75f;
 
@@ -111,16 +111,16 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
         m_lastTouchId = Category::LastTouchedTwo;
         m_carryId = Category::CarriedTwo;
 
-        m_sprite.setTexture(tr.get("res/textures/playerTwo_diffuse.png"));
+        m_sprite.setTexture(tr.get("res/textures/characters/playerTwo_diffuse.png"));
         m_sprite.setScale(-1.f, 1.f);
         m_sprite.setOrigin(static_cast<float>(frameSize.x), 0.f); //uhhh iron this out at some point
     }
     else
     {
-        m_sprite.setTexture(tr.get("res/textures/playerOne_diffuse.png"));
+        m_sprite.setTexture(tr.get("res/textures/characters/playerOne_diffuse.png"));
     }
 
-    m_sprite.setNormalMap(tr.get("res/textures/player_normal.png"));
+    m_sprite.setNormalMap(tr.get("res/textures/characters/player_normal.png"));
     m_sprite.setShader(shader);
     m_sprite.setFrameCount(8u);
     m_sprite.setFrameRate(maxFrameRate);
@@ -248,8 +248,7 @@ void Player::onNotify(Subject& s, const Event& evt)
                 doDrop();
                 doRelease();
                 m_carryingBlock = false;
-                dropHat();
-                
+                dropHat();               
             }
                     break;
             case Event::NodeEvent::InvincibilityExpired:
@@ -261,7 +260,8 @@ void Player::onNotify(Subject& s, const Event& evt)
         }
         else if (evt.node.type == Category::HatCarried)
         {
-            m_hasHat = false;
+            if (evt.node.action == Event::NodeEvent::Despawn)
+                m_hasHat = false;
         }
         break;
     case Event::Player:

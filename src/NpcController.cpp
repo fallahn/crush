@@ -219,9 +219,9 @@ sf::Drawable* NpcController::getDrawable()
     }
     else
     {
-        m_sprites.emplace_back(m_textureResource.get("res/textures/robot_diffuse.png"));
+        m_sprites.emplace_back(m_textureResource.get("res/textures/characters/robot_diffuse.png"));
         AnimatedSprite* s = &m_sprites.back();
-        s->setNormalMap(m_textureResource.get("res/textures/robot_normal.tga"));
+        s->setNormalMap(m_textureResource.get("res/textures/characters/robot_normal.tga"));
         s->setShader(m_shaderResource.get(Shader::Type::Metal));
         s->setFrameCount(8u);
         s->setFrameSize(spriteSize);

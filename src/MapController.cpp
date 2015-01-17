@@ -54,22 +54,23 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_itemActive        (false),
     m_textureResource   (tr),
     m_shaderResource    (sr),
-    m_itemSprite        (tr.get("res/textures/item.png")),
-    m_hatSprite         (tr.get("res/textures/hat_diffuse.png")),
+    m_itemSprite        (tr.get("res/textures/map/item.png")),
+    m_hatSprite         (tr.get("res/textures/map/hat_diffuse.png")),
+    m_hatCount          (0u),
     m_solidDrawable     (tr, sr.get(Shader::Type::NormalMap)),
     m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
     m_frontDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular))
 {
     //TODO load textures based on map data
     //scale sprite to match node size
-    blockTextureSize = sf::Vector2f(tr.get("res/textures/steel_crate_diffuse.png").getSize() / 2u); //KLUUUDDGGE!!!
+    blockTextureSize = sf::Vector2f(tr.get("res/textures/map/steel_crate_diffuse.png").getSize() / 2u); //KLUUUDDGGE!!!
 
     for (auto i = 0u; i < blockTextureCount; ++i)
     {
-        m_blockSprites.emplace_back(tr.get("res/textures/steel_crate_diffuse.png"));
+        m_blockSprites.emplace_back(tr.get("res/textures/map/steel_crate_diffuse.png"));
         auto& blockSprite = m_blockSprites.back();
         blockSprite.setFrameCount(1u);
-        blockSprite.setNormalMap(tr.get("res/textures/steel_crate_normal.tga"));
+        blockSprite.setNormalMap(tr.get("res/textures/map/steel_crate_normal.tga"));
         blockSprite.setShader(sr.get(Shader::Type::NormalMap));
         blockSprite.setFrameCount(blockTextureCount);
         blockSprite.setFrameSize(sf::Vector2i(blockTextureSize));
@@ -80,12 +81,12 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_itemSprite.setFrameRate(18.f);
     m_itemSprite.setFrameSize({ 64, 64 });
     m_itemSprite.setLooped(true);
-    m_itemSprite.setNormalMap(tr.get("res/textures/item_normal.png"));
+    m_itemSprite.setNormalMap(tr.get("res/textures/map/item_normal.png"));
     m_itemSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
     m_itemSprite.play();
 
     m_hatSprite.setFrameSize(sf::Vector2i(m_hatSprite.getTexture()->getSize()));
-    m_hatSprite.setNormalMap(tr.get("res/textures/hat_normal.png"));
+    m_hatSprite.setNormalMap(tr.get("res/textures/map/hat_normal.png"));
     m_hatSprite.setShader(sr.get(Shader::Type::Metal));
 
 }
@@ -123,7 +124,7 @@ void MapController::update(float dt)
                 auto pos = n.getCollisionBody()->getCentre();
                 evt.node.positionX = pos.x;
                 evt.node.positionY = pos.y;
-n.raiseEvent(evt);
+                n.raiseEvent(evt);
             };
             m_commandStack.push(c);
 
@@ -207,9 +208,9 @@ void MapController::loadMap(const Map& map)
     shuffleItems();
 
     //TODO load background texture based on map data
-    m_backgroundSprite.setTexture(m_textureResource.get("res/textures/background.png"));
+    m_backgroundSprite.setTexture(m_textureResource.get("res/textures/map/background.png"));
     m_backgroundSprite.setFrameSize(sf::Vector2i(m_backgroundSprite.getTexture()->getSize()));
-    m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/background_normal.png"));
+    m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/map/background_normal.png"));
     m_backgroundSprite.setShader(m_shaderResource.get(Shader::Type::NormalMap));
     m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
     m_shaderResource.get(Shader::Type::WaterDrop).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
@@ -251,7 +252,7 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
     case MapDrawable::Block: //TODO random different textures?
         return static_cast<sf::Drawable*>(&m_blockSprites[Util::Random::value(0, blockTextureCount - 1)]);
     case MapDrawable::Water:
-        m_waterDrawables.emplace_back(m_textureResource.get("res/textures/water_normal.png"), m_shaderResource.get(Shader::Type::Water));
+        m_waterDrawables.emplace_back(m_textureResource.get("res/textures/map/water_normal.png"), m_shaderResource.get(Shader::Type::Water));
         return static_cast<sf::Drawable*>(&m_waterDrawables.back());
     case MapDrawable::RearDetail:
         return static_cast<sf::Drawable*>(&m_rearDrawable);
@@ -275,7 +276,10 @@ void MapController::onNotify(Subject& s, const Event& e)
         case Event::NodeEvent::Despawn:
             if (e.node.type == Category::HatDropped
                 || e.node.type == Category::HatCarried) //might be on head when killed
+            {
                 hatSpawnTime = static_cast<float>(Util::Random::value(20, 30));
+                m_hatCount--;
+            }
             break;
         default: break;
         }
@@ -296,10 +300,14 @@ void MapController::shuffleItems()
 
 void MapController::spawnHat()
 {
-    Map::Node n;
-    n.position = m_hatSpawns[Util::Random::value(0, m_hatSpawns.size() - 1)];
-    n.size = sf::Vector2f(m_hatSprite.getTexture()->getSize());
-    spawn(n);
+    if (m_hatCount == 0u)
+    {
+        Map::Node n;
+        n.position = m_hatSpawns[Util::Random::value(0, m_hatSpawns.size() - 1)];
+        n.size = sf::Vector2f(m_hatSprite.getTexture()->getSize());
+        spawn(n);
+        m_hatCount++;
+    }
 }
 
 const sf::Texture& MapController::getBackgroundTexture() const
@@ -322,9 +330,9 @@ void MapController::LayerDrawable::addPart(const sf::Vector2f& pos, const sf::Ve
         auto pair = std::make_pair(textureName, LayerData());
         
         //TODO load actual texture name
-        pair.second.diffuseTexture = m_textureResource.get("res/textures/brick_diffuse.png");
+        pair.second.diffuseTexture = m_textureResource.get("res/textures/map/brick_diffuse.png");
         pair.second.diffuseTexture.setRepeated(true);
-        pair.second.normalTexture = m_textureResource.get("res/textures/brick_normal.png");
+        pair.second.normalTexture = m_textureResource.get("res/textures/map/brick_normal.png");
         pair.second.normalTexture.setRepeated(true);
         pair.second.vertexArray.setPrimitiveType(sf::Quads);
 

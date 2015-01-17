@@ -74,6 +74,16 @@ void ScoreBar::setTexture(sf::Texture& t)
     m_shape.setTexture(&t);
 }
 
+void ScoreBar::setTitleString(const std::string& str)
+{
+    m_title = str;
+}
+
+const std::string& ScoreBar::getTitleString() const
+{
+    return m_title;
+}
+
 //private
 void ScoreBar::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {

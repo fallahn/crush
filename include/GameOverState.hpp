@@ -57,6 +57,7 @@ private:
     std::vector<sf::Text> m_texts;
     sf::Text m_playerOneScoreText;
     sf::Text m_playerTwoScoreText;
+    sf::Text m_statusText;
     float m_playerOneRunningScore;
     float m_playerTwoRunningScore;
 
@@ -74,6 +75,7 @@ private:
 
     void initSprite(AnimatedSprite&, const sf::Vector2f&);
     void continueGame();
+    void animateBar();
 };
 
 #endif // GAME_OVER_STATE_H_

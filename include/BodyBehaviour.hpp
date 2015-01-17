@@ -69,6 +69,7 @@ protected:
     void raiseEvent(const Event& evt, CollisionWorld::Body* target = nullptr);
 
     bool deleted() const;
+    bool hasChild(CollisionWorld::Body::Type t);
 
 private:
     CollisionWorld::Body* m_body;

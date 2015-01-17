@@ -57,6 +57,17 @@ AnimatedSprite::AnimatedSprite(const sf::Texture& t)
     m_loop          (false),
     m_playing       (false){}
 
+AnimatedSprite::AnimatedSprite(const SpriteSheet& spritesheet)
+    : m_shader      (nullptr),
+    m_frameCount    (0u),
+    m_currentFrame  (0u),
+    m_firstFrame    (0u),
+    m_lastFrame     (0u),
+    m_frameRate     (0.f),
+    m_elapsedTime   (0.f),
+    m_loop          (false),
+    m_playing       (false){/*TODO*/}
+
 //public
 void AnimatedSprite::update(float dt)
 {
@@ -217,6 +228,8 @@ void AnimatedSprite::setFrame(sf::Uint8 index)
     assert(index < m_frameCount);
 
     auto position = m_textureSize.x / m_frameSize.x;
+
+    assert(position > 0);
 
     auto x = index % position;
     auto y = index / position;

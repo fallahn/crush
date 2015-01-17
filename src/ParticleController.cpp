@@ -168,8 +168,8 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
     {
     case Particle::Type::Splat:
         {
-            particleSystem.setTexture(m_textureResource.get("res/textures/gear.png"));
-            particleSystem.setNormalMap(m_textureResource.get("res/textures/gear_normal.png"));
+            particleSystem.setTexture(m_textureResource.get("res/textures/particles/gear.png"));
+            particleSystem.setNormalMap(m_textureResource.get("res/textures/particles/gear_normal.png"));
             particleSystem.setRandomInitialVelocity(splatVelocities);
             particleSystem.setShader(m_shaderResource.get(Shader::Type::Metal));
 
@@ -183,8 +183,8 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         break;
     case  Particle::Type::Splash:
         {
-            particleSystem.setTexture(m_textureResource.get("res/textures/water_splash.png"));
-            particleSystem.setNormalMap( m_textureResource.get("res/textures/water_splash_normal.png"));
+            particleSystem.setTexture(m_textureResource.get("res/textures/particles/water_splash.png"));
+            particleSystem.setNormalMap( m_textureResource.get("res/textures/particles/water_splash_normal.png"));
             particleSystem.setShader(m_shaderResource.get(Shader::Type::WaterDrop));
             particleSystem.setColour({ 96u, 172u, 222u, 190u });
             particleSystem.setParticleLifetime(1.2f);
@@ -201,7 +201,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         }
         break;
     case Particle::Type::Puff:
-        particleSystem.setTexture(m_textureResource.get("res/textures/dust_puff.png"));
+        particleSystem.setTexture(m_textureResource.get("res/textures/particles/dust_puff.png"));
         particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
         particleSystem.setParticleLifetime(1.f);
         particleSystem.setParticleSize({ 10.f, 10.f });
@@ -219,8 +219,8 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         break;
     case Particle::Type::PlayerOneDie: //TODO p1 and p2 are rather similar....
     {
-        auto texture = m_textureResource.get("res/textures/player_one_particle.png");
-        particleSystem.setTexture(m_textureResource.get("res/textures/player_one_particle.png"));
+        auto texture = m_textureResource.get("res/textures/particles/player_one_particle.png");
+        particleSystem.setTexture(m_textureResource.get("res/textures/particles/player_one_particle.png"));
         particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
         particleSystem.setParticleLifetime(2.f);
         particleSystem.setParticleSize(sf::Vector2f(texture.getSize()));
@@ -232,8 +232,8 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         break;
     case Particle::Type::PlayerTwoDie:        
     {
-        auto texture = m_textureResource.get("res/textures/player_two_particle.png");
-        particleSystem.setTexture(m_textureResource.get("res/textures/player_two_particle.png"));
+        auto texture = m_textureResource.get("res/textures/particles/player_two_particle.png");
+        particleSystem.setTexture(m_textureResource.get("res/textures/particles/player_two_particle.png"));
         particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
         particleSystem.setParticleLifetime(2.f);
         particleSystem.setParticleSize(sf::Vector2f(texture.getSize()));

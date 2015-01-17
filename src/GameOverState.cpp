@@ -64,8 +64,9 @@ namespace
 
 GameOverState::GameOverState(StateStack& stack, Context context)
     : State                 (stack, context),
-    m_playerOneScoreText    ("0", context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u),
-    m_playerTwoScoreText    ("0", context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u),
+    m_playerOneScoreText    (std::to_string(context.gameData.playerOne.score), context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u),
+    m_playerTwoScoreText    (std::to_string(context.gameData.playerTwo.score), context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u),
+    m_statusText            ("", context.gameInstance.getFont("res/fonts/VeraMono.ttf"), 40u),
     m_playerOneRunningScore (static_cast<float>(context.gameData.playerOne.score)),
     m_playerTwoRunningScore (static_cast<float>(context.gameData.playerTwo.score)),
     m_barIndex              (0u),
@@ -77,7 +78,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
 
-    backgroundRect.setFillColor({ 0u, 0u, 0u, 168u });
+    backgroundRect.setFillColor({ 0u, 0u, 0u, 198u });
     backgroundRect.setSize(context.defaultView.getSize());
 
     //context.gameInstance.playMusic(music);
@@ -86,11 +87,11 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     auto& tr = context.gameInstance.getTextureResource();
     auto& gameData = context.gameData;
 
-    m_playerOneSprite.setTexture(tr.get("res/textures/playerOne_diffuse.png"));
+    m_playerOneSprite.setTexture(tr.get("res/textures/characters/playerOne_diffuse.png"));
     if (!gameData.playerOne.enabled) m_playerOneSprite.setColour({ 255u, 255u, 255u, 120u });
     initSprite(m_playerOneSprite, playerOnePosition);
 
-    m_playerTwoSprite.setTexture(tr.get("res/textures/playerTwo_diffuse.png"));
+    m_playerTwoSprite.setTexture(tr.get("res/textures/characters/playerTwo_diffuse.png"));
     if (!gameData.playerTwo.enabled) m_playerTwoSprite.setColour({ 255u, 255u, 255u, 120u });
     initSprite(m_playerTwoSprite, playerTwoPosition);
     
@@ -123,6 +124,10 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 
     m_playerTwoScoreText.setPosition(playerTwoPosition);
     m_playerTwoScoreText.move(0.f, 140.f);
+
+    Util::Position::centreOrigin(m_statusText);
+    m_statusText.setPosition(context.renderWindow.getView().getCenter());
+
     //--------------------------------
 
     float playerOneLifeScore = pointsPerLife * static_cast<float>(gameData.playerOne.lives);
@@ -139,9 +144,11 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     m_playerOneBar.emplace_back(sf::Color::Red, pxPerPoint * playerOneLifeScore, playerOneLifeScore);
     m_playerOneBar.back().setPosition(barOnePosition);
     m_playerOneBar.back().setTexture(tr.get("res/textures/ui/bar_shadow_red.png"));
+    m_playerOneBar.back().setTitleString("Lives Remaining Bonus");
     m_playerOneBar.emplace_back(sf::Color::Yellow, pxPerPoint * playerOneHatScore, playerOneHatScore);
     m_playerOneBar.back().setPosition(barOnePosition);
     m_playerOneBar.back().setTexture(tr.get("res/textures/ui/bar_shadow_yellow.png"));
+    m_playerOneBar.back().setTitleString("Hat Time Bonus");
     m_playerOneBar.back().move(pxPerPoint* playerOneLifeScore, 0.f);
 
     m_playerTwoBar.emplace_back(sf::Color::Red, pxPerPoint * playerTwoLifeScore, playerTwoLifeScore);
@@ -155,7 +162,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     if (gameData.playerOne.hasHat)
         m_hatIcon.setPosition(playerOneCrownPos);
     else if (gameData.playerTwo.hasHat)
-        m_hatIcon.setPosition(playerOneCrownPos);
+        m_hatIcon.setPosition(playerTwoCrownPos);
 
     m_hatIcon.setTransparency(0.f);
 
@@ -170,12 +177,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     m_timedEvents.push_back(te);
 
     te.time++;
-    te.action = [this]()
-    {
-        m_animateBars = true;
-        m_playerOneSprite.play(run);
-        m_playerTwoSprite.play(run);
-    };
+    te.action = std::bind(&GameOverState::animateBar, this);
     m_timedEvents.push_back(te);
 
     te.time = 7.f;
@@ -214,16 +216,19 @@ bool GameOverState::update(float dt)
             bool barOneDone = m_playerOneBar[m_barIndex].update(dt);
             bool barTwoDone = m_playerTwoBar[m_barIndex].update(dt);
 
-            m_playerOneRunningScore += m_playerOneBar[m_barIndex].getValue();
-            m_playerOneScoreText.setString(std::to_string(static_cast<int>(m_playerOneRunningScore)));
-            m_playerTwoRunningScore += m_playerTwoBar[m_barIndex].getValue();
-            m_playerTwoScoreText.setString(std::to_string(static_cast<int>(m_playerTwoRunningScore)));
+            //m_playerOneRunningScore = m_playerOneBar[m_barIndex].getValue();
+            m_playerOneScoreText.setString(std::to_string(static_cast<int>(m_playerOneRunningScore + m_playerOneBar[m_barIndex].getValue())));
+            //m_playerTwoRunningScore = m_playerTwoBar[m_barIndex].getValue();
+            m_playerTwoScoreText.setString(std::to_string(static_cast<int>(m_playerTwoRunningScore + m_playerTwoBar[m_barIndex].getValue())));
 
             if (barOneDone) m_playerOneSprite.play(idle);
             if (barTwoDone) m_playerTwoSprite.play(idle);
 
             if (barOneDone && barTwoDone)
             {
+                m_playerOneRunningScore += m_playerOneBar[m_barIndex].getValue();
+                m_playerTwoRunningScore += m_playerTwoBar[m_barIndex].getValue();
+
                 m_barIndex++;
                 m_animateBars = false;
 
@@ -231,12 +236,7 @@ bool GameOverState::update(float dt)
                 {
                     TimedEvent te;
                     te.time = 0.8f;
-                    te.action = [this]()
-                    {
-                        m_animateBars = true;
-                        m_playerOneSprite.play(run);
-                        m_playerTwoSprite.play(run);
-                    };
+                    te.action = std::bind(&GameOverState::animateBar, this);
                     m_timedEvents.push_back(te);
                 }
                 else
@@ -256,6 +256,12 @@ bool GameOverState::update(float dt)
                             m_playerTwoRunningScore += hatBonus;
                             m_playerTwoScoreText.setString(std::to_string(static_cast<int>(m_playerTwoRunningScore)));
                             m_doHatBonus = true;
+                        }
+
+                        if (m_doHatBonus)
+                        {
+                            m_statusText.setString("Hat Saviour!");
+                            Util::Position::centreOrigin(m_statusText);
                         }
                     };
                     m_timedEvents.push_back(te);
@@ -307,6 +313,7 @@ void GameOverState::draw()
         {
             rw.draw(t);
         }
+        rw.draw(m_statusText);
     }
 }
 
@@ -364,4 +371,13 @@ void GameOverState::continueGame()
         //load next map
         requestStackPush(States::ID::Game);
     }
+}
+
+void GameOverState::animateBar()
+{
+    m_animateBars = true;
+    m_playerOneSprite.play(run);
+    m_playerTwoSprite.play(run);
+    m_statusText.setString(m_playerOneBar[m_barIndex].getTitleString());
+    Util::Position::centreOrigin(m_statusText);
 }

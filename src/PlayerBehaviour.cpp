@@ -200,7 +200,8 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
                 damage(damageAmount, other); 
                 //std::cerr << damageAmount<< ": block damage " << std::endl;
             }
-            else if ((cat & (Category::GrabbedOne | Category::GrabbedTwo)) == 0)
+            else if ((cat & (Category::GrabbedOne | Category::GrabbedTwo)) == 0
+                && hasChild(CollisionWorld::Body::Block))
             {
                 //drop block
                 Event e;

@@ -46,11 +46,13 @@ private:
     bool m_loop;
 };
 
+class SpriteSheet;
 class AnimatedSprite final : public sf::Drawable, public sf::Transformable
 {
 public:
     AnimatedSprite();
     explicit AnimatedSprite(const sf::Texture& t);
+    explicit AnimatedSprite(const SpriteSheet& sheet);
     AnimatedSprite(const AnimatedSprite& copy) = default;
     ~AnimatedSprite() = default;
 

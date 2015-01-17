@@ -50,6 +50,9 @@ public:
     const std::string& getName() const;
     Quad getFrame(const std::string& name, const sf::Vector2f& position);
 
+    sf::Vector2i getFrameSize(sf::Uint8 index) const;
+    sf::Uint8 getFrameCount() const;
+
 private:
     struct Frame
     {

@@ -89,6 +89,7 @@ add_executable(
 	src/ScoreBar.cpp
 	src/ScoreBoard.cpp
 	src/ShaderResource.cpp
+	src/SoundPlayer.cpp
 	src/SpriteSheet.cpp
 	src/State.cpp
 	src/StateStack.cpp

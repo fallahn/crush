@@ -244,3 +244,15 @@ SpriteSheet::Quad SpriteSheet::getFrame(const std::string& name, const sf::Vecto
     }
     return q;
 }
+
+sf::Vector2i SpriteSheet::getFrameSize(sf::Uint8 index) const
+{
+    assert(index < m_frames.size());
+    return sf::Vector2i(static_cast<int>(m_frames[index].spriteSourceSize.width),
+                        static_cast<int>(m_frames[index].spriteSourceSize.height));
+}
+
+sf::Uint8 SpriteSheet::getFrameCount() const
+{
+    return m_frames.size();
+}

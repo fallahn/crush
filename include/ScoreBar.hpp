@@ -44,11 +44,17 @@ public:
     float getValue() const;
     void setTexture(sf::Texture& t);
 
+    void setTitleString(const std::string& title);
+    const std::string& getTitleString() const;
+
 private:
 
     sf::RectangleShape m_shape;
     float m_maxLength;
     float m_maxScore;
+
+    std::string m_title;
+
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 

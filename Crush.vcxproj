@@ -109,6 +109,7 @@
     <ClCompile Include="src\PlayerBehaviour.cpp" />
     <ClCompile Include="src\Scene.cpp" />
     <ClCompile Include="src\ShaderResource.cpp" />
+    <ClCompile Include="src\SoundPlayer.cpp" />
     <ClCompile Include="src\SpriteSheet.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
@@ -138,6 +139,7 @@
     <ClInclude Include="include\Music.hpp" />
     <ClInclude Include="include\PostShaders.hpp" />
     <ClInclude Include="include\ScoreBar.hpp" />
+    <ClInclude Include="include\SoundPlayer.hpp" />
     <ClInclude Include="include\SpriteSheet.hpp" />
     <ClInclude Include="include\TimedEvent.hpp" />
     <ClInclude Include="include\UberShader.hpp" />
