@@ -324,7 +324,7 @@ void GameState::addMapBody(const Map::Node& n)
             node->setLight(light);
             //node->addObserver(*light);
         }
-
+        node->setBlendMode(sf::BlendAdd);
         m_scene.addNode(node, Scene::DynamicFront);
     }
         break;

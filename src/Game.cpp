@@ -49,7 +49,7 @@ namespace
 }
 
 Game::Game()
-    : m_renderWindow    (sf::VideoMode(1920, 1080), "CRUSH 0.5", sf::Style::Close), //1024, 576
+    : m_renderWindow    (sf::VideoMode(1024, 576), "CRUSH 0.5", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
     m_console           (getFont("res/fonts/VeraMono.ttf"))
 {
@@ -167,7 +167,7 @@ void Game::handleEvents()
 
         m_console.handleEvent(evt);
         m_stateStack.handleEvent(evt);
-        
+
         if(evt.type == sf::Event::Closed)
             m_renderWindow.close();
     }
