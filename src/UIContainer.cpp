@@ -162,6 +162,12 @@ void Container::selectPrevious()
     select(prev);
 }
 
+void Container::update(float dt)
+{
+    for (auto& c : m_controls)
+        c->update(dt);
+}
+
 void Container::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();

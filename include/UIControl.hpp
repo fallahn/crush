@@ -62,6 +62,7 @@ namespace ui
         virtual void deactivate();
 
         virtual void handleEvent(const sf::Event& e) = 0;
+        virtual void update(float dt){};
 
     private:
 
