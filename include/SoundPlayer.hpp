@@ -65,9 +65,11 @@ public:
         BlockDrag,
         HatSpawn,
         HatCrush,
-        HatLand
+        HatLand,
 
         //UI sounds
+        UIMove,
+        UISelect
     };
 
     SoundPlayer();

@@ -30,6 +30,7 @@ source distribution.
 
 #include <State.hpp>
 #include <UIContainer.hpp>
+#include <SoundPlayer.hpp>
 
 class MenuState final : public State
 {
@@ -44,6 +45,7 @@ public:
 private:
 
     ui::Container m_uiContainer;
+    SoundPlayer m_soundPlayer;
 };
 
 #endif //MENU_STATE_H_

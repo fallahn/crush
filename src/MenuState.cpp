@@ -109,6 +109,9 @@ MenuState::MenuState(StateStack& stack, Context context)
     helpButton->setPosition(960.f, 344.f);
     //TODO set callback to display help text
     m_uiContainer.addControl(helpButton);
+
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::UIMove, "res/sound/ui/move.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::UISelect, "res/sound/ui/select.wav");
 }
 
 void MenuState::draw()

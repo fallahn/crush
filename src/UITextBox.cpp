@@ -41,10 +41,10 @@ namespace
 }
 
 TextBox::TextBox(const sf::Font& font, const sf::Color& backColour, const sf::Color& borderColour)
-    : m_text("", font, 30u),
-    m_cursorShape({}),
-    m_showCursor(false),
-    m_lastKey(sf::Keyboard::Unknown)
+    : m_text        ("", font, 30u),
+    m_cursorShape   (sf::Vector2f()),
+    m_showCursor    (false),
+    m_lastKey       (sf::Keyboard::Unknown)
 {
     m_backShape.setFillColor(backColour);
     m_backShape.setOutlineColor(borderColour);
@@ -88,7 +88,7 @@ void TextBox::deactivate()
 
 void TextBox::handleEvent(const sf::Event& e)
 {
-    if (m_showCursor) //TODO why aren't we just checking if we're active?
+    if (active()) //TODO why aren't we just checking if we're active?
     {
         if (e.type == sf::Event::KeyReleased)
         {
@@ -100,14 +100,14 @@ void TextBox::handleEvent(const sf::Event& e)
                 }
             }
         }
-    }
 
-    else if (e.type == sf::Event::TextEntered)
-    {
-        if (e.text.unicode > 31
-            && e.text.unicode < 127)
+        else if (e.type == sf::Event::TextEntered)
         {
-            m_string += static_cast<char>(e.text.unicode);
+            if (e.text.unicode > 31
+                && e.text.unicode < 127)
+            {
+                m_string += static_cast<char>(e.text.unicode);
+            }
         }
     }
 }
@@ -117,6 +117,12 @@ void TextBox::update(float dt)
     sf::FloatRect bounds = m_text.getGlobalBounds();
     m_cursorShape.setPosition(bounds.left + bounds.width, -(m_cursorShape.getSize().y / 2.f));
     m_text.setString(m_string);
+
+    if (m_cursorClock.getElapsedTime().asSeconds() > flashTime)
+    {
+        m_showCursor = !m_showCursor;
+        m_cursorClock.restart();
+    }
 }
 
 const std::string& TextBox::getText() const
