@@ -27,9 +27,7 @@ source distribution.
 
 #include <GameState.hpp>
 #include <Game.hpp>
-#include <BodyBehaviour.hpp>
 #include <Util.hpp>
-#include <Particles.hpp>
 #include <Map.hpp>
 #include <Light.hpp>
 
@@ -53,10 +51,6 @@ namespace
     }
 
     const std::string music = "res/sound/music/night_sounds.ogg";
-
-
-    sf::CircleShape c1(20.f);
-    sf::CircleShape c2(10.f);
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -86,7 +80,6 @@ GameState::GameState(StateStack& stack, Context context)
     lightDrawable.setFillColor(sf::Color(255u, 255u, 255u, 140u));
     lightDrawable.setOutlineColor(sf::Color(255u, 255u, 255u, 11u));
     lightDrawable.setOutlineThickness(80.f);
-
 
     //parse map
     Map map("res/maps/" + context.gameData.mapList[context.gameData.mapIndex]);

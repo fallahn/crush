@@ -56,8 +56,8 @@ namespace
     const sf::Vector2f playerTwoPosition(60.f, 680.f);
     const sf::Vector2f barOnePosition = playerOnePosition + sf::Vector2f(120.f, 60.f);
     const sf::Vector2f barTwoPosition = playerTwoPosition + sf::Vector2f(120.f, 60.f);
-    const sf::Vector2f playerOneCrownPos = barOnePosition + sf::Vector2f(1550.f, -20.f);
-    const sf::Vector2f playerTwoCrownPos = barTwoPosition + sf::Vector2f(1550.f, -20.f);
+    const sf::Vector2f playerOneCrownPos = barOnePosition;// +sf::Vector2f(1550.f, -20.f);
+    const sf::Vector2f playerTwoCrownPos = barTwoPosition;// +sf::Vector2f(1550.f, -20.f);
 
     const float maxWidth = 1920.f - (barOnePosition.x * 2.f);
 }
@@ -103,7 +103,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     title.setPosition(context.renderWindow.getView().getCenter());
     title.move(0.f, -500.f);
 
-    if (gameData.playerOne.enabled)
+    if (gameData.playerOne.score > 0)
     {
         m_texts.emplace_back(gameData.playerOne.name, font, 40u);
         auto& playerOneName = m_texts.back();
@@ -111,7 +111,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
         playerOneName.move(0.f, -80.f);
     }
 
-    if (gameData.playerTwo.enabled)
+    if (gameData.playerTwo.score > 0)
     {
         m_texts.emplace_back(gameData.playerTwo.name, font, 40u);
         auto& playerTwoName = m_texts.back();
@@ -216,9 +216,7 @@ bool GameOverState::update(float dt)
             bool barOneDone = m_playerOneBar[m_barIndex].update(dt);
             bool barTwoDone = m_playerTwoBar[m_barIndex].update(dt);
 
-            //m_playerOneRunningScore = m_playerOneBar[m_barIndex].getValue();
             m_playerOneScoreText.setString(std::to_string(static_cast<int>(m_playerOneRunningScore + m_playerOneBar[m_barIndex].getValue())));
-            //m_playerTwoRunningScore = m_playerTwoBar[m_barIndex].getValue();
             m_playerTwoScoreText.setString(std::to_string(static_cast<int>(m_playerTwoRunningScore + m_playerTwoBar[m_barIndex].getValue())));
 
             if (barOneDone) m_playerOneSprite.play(idle);
@@ -287,7 +285,7 @@ void GameOverState::draw()
         auto& rw = getContext().renderWindow;
         rw.draw(backgroundRect);
 
-        if (getContext().gameData.playerOne.enabled)
+        if (getContext().gameData.playerOne.score > 0)
         {
             rw.draw(m_playerOneSprite);
             for (const auto& b : m_playerOneBar)
@@ -297,7 +295,7 @@ void GameOverState::draw()
             rw.draw(m_playerOneScoreText);
         }
 
-        if (getContext().gameData.playerTwo.enabled)
+        if (getContext().gameData.playerTwo.score > 0)
         {
             rw.draw(m_playerTwoSprite);
             for (const auto& b : m_playerTwoBar)

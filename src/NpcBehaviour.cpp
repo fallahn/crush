@@ -31,7 +31,7 @@ source distribution.
 namespace
 {
     const float initialJumpSpeed = 650.f;
-    const float damageMultiplier = 0.46f;
+    const float damageMultiplier = 0.44f;
 }
 
 //-------------------------------------------
@@ -87,6 +87,12 @@ void NpcBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Body
         //    raiseEvent(e, other); //this should reference the other body as the sender not the NPC
         //    break; //if we should be dead then don't continue to resolve collision
         //}
+
+    {
+        int cat = other->getParentCategory();
+        if (cat & (Category::GrabbedOne | Category::GrabbedTwo | Category::LastTouchedOne | Category::LastTouchedTwo))
+            damage(std::fabs(manifold.z * damageMultiplier), other);
+    }
 
         move(sf::Vector2f( manifold.x, manifold.y ) * manifold.z);
     {   

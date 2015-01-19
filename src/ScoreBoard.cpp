@@ -329,6 +329,7 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                     case Category::Npc:
                         //NPC killed self so shouldn't be subtracted
                         m_deadNpcs--; //TODO if this gets called before Despawn increases
+                        m_spawnedNpcs--;
                         //then we run the risk of flipping over to 255? :S
                         break;
                     case Category::HatCarried:

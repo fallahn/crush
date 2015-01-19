@@ -107,6 +107,7 @@ private:
 
     sf::Texture m_normalTexture;
     AnimatedSprite m_sprite;
+    AnimatedSprite m_powerupSprite;
 
     bool m_flashSprite;
     bool m_hasHat;

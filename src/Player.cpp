@@ -92,6 +92,7 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_lastFacing    (false),
     m_carryingBlock (false),
     m_spawnPosition (80.f, 500.f),
+    m_powerupSprite (tr.get("res/textures/map/item_collected.png")),
     m_flashSprite   (true),
     m_hasHat        (false)
 {
@@ -129,6 +130,13 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_sprite.play(idle);
 
     setSize(static_cast<sf::Vector2f>(m_sprite.getFrameSize()));
+
+    m_powerupSprite.setFrameRate(18.f);
+    m_powerupSprite.setFrameSize({ 64, 64 });
+    m_powerupSprite.setFrameCount(16u);
+    m_powerupSprite.setLooped(true);
+    m_powerupSprite.setOrigin({ 32.f, 32.f });
+    m_powerupSprite.play();
 }
 
 //public
@@ -157,12 +165,23 @@ void Player::update(float dt)
     if (m_activeItems)
     {
         m_itemDuration += dt;
+
+        float opacity = 1.f - (m_itemDuration / itemDuration);
+        sf::Color colour(255u, 255u, 255u, static_cast<sf::Uint8>(opacity * 255.f));
+        m_powerupSprite.setColour(colour);
+
         if (m_itemDuration > itemDuration)
         {
             m_activeItems = 0u;
             m_itemDuration = 0.f;
             m_jumpForce = jumpForce;
             std::cout << "item expired" << std::endl;
+
+            c.action = [](Node& n, float dt)
+            {
+                n.removeChild(*n.findChild("fx"));
+            };
+            m_commandStack.push(c);
         }
     }
 
@@ -177,6 +196,8 @@ void Player::update(float dt)
     float fr = maxFrameRate / 2.f;
     m_sprite.setFrameRate(fr + (maxFrameRate * abs(m_moveForce / (maxMoveForce * dt))));
     m_sprite.update(dt);
+
+    m_powerupSprite.update(dt);
 
     if (m_flashSprite)
     {
@@ -365,8 +386,23 @@ void Player::onNotify(Subject& s, const Event& evt)
                     break;
                 case Event::PlayerEvent::Attraction:
                     std::cout << "NPC attraction not yet implemented" << std::endl;
+                    m_activeItems |= (1 << Event::PlayerEvent::Attraction);
                     break;
                 default: break;
+                }
+                {
+                    //attach icon node
+                    Command c;
+                    c.categoryMask |= m_id;
+                    c.action = [this](Node& n, float dt)
+                    {
+                        Node::Ptr fxNode = std::make_unique<Node>("fx");
+                        fxNode->setBlendMode(sf::BlendAdd);
+                        fxNode->setDrawable(&m_powerupSprite);
+                        fxNode->setPosition(m_size / 2.f);
+                        n.addChild(fxNode);
+                    };
+                    m_commandStack.push(c);
                 }
                 break;
             default: break;
