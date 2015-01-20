@@ -32,6 +32,8 @@ source distribution.
 #include <UIContainer.hpp>
 #include <SoundPlayer.hpp>
 
+#include <vector>
+
 class MenuState final : public State
 {
 public:
@@ -43,9 +45,25 @@ public:
     bool handleEvent(const sf::Event& evt) override;
 
 private:
+    enum Container
+    {
+        Main = 0,
+        InputOptions,
+        SoundOptions,
+        GraphicsOptions,
+        Count
+    }m_currentContainer;
 
-    ui::Container m_uiContainer;
+    std::vector<ui::Container> m_uiContainers;
     SoundPlayer m_soundPlayer;
+
+    sf::Font& m_font;
+    TextureResource& m_textureResource;
+
+    void buildMainMenu();
+    void buildInputOptions();
+    void buildSoundOptions();
+    void buildGraphicsOptions();
 };
 
 #endif //MENU_STATE_H_

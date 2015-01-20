@@ -37,7 +37,8 @@ class ScoreBar final : public sf::Drawable, public sf::Transformable//, private 
 {
 public:
     ScoreBar(const sf::Color& colour, float maxSize, float maxScore);
-    ScoreBar(const ScoreBar& copy) = default;
+    //ScoreBar(ScoreBar&& s){}
+    //ScoreBar& operator=(ScoreBar&&){ return *this; }
     ~ScoreBar() = default;
 
     bool update(float dt); //returns true if animation complete

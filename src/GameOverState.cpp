@@ -56,8 +56,8 @@ namespace
     const sf::Vector2f playerTwoPosition(60.f, 680.f);
     const sf::Vector2f barOnePosition = playerOnePosition + sf::Vector2f(120.f, 60.f);
     const sf::Vector2f barTwoPosition = playerTwoPosition + sf::Vector2f(120.f, 60.f);
-    const sf::Vector2f playerOneCrownPos = barOnePosition;// +sf::Vector2f(1550.f, -20.f);
-    const sf::Vector2f playerTwoCrownPos = barTwoPosition;// +sf::Vector2f(1550.f, -20.f);
+    const sf::Vector2f playerOneCrownPos = barOnePosition + sf::Vector2f(-60.f, -80.f);
+    const sf::Vector2f playerTwoCrownPos = barTwoPosition + sf::Vector2f(-60.f, -80.f);
 
     const float maxWidth = 1920.f - (barOnePosition.x * 2.f);
 }

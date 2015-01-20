@@ -41,7 +41,7 @@ source distribution.
 
 #include <functional>
 
-class Player final : public Observer// : private sf::NonCopyable
+class Player final : public Observer, private sf::NonCopyable
 {
 public:
     struct Keys
@@ -58,6 +58,8 @@ public:
     };
 
     Player(CommandStack& commandStack, Category::Type type, TextureResource& tr, sf::Shader& shader);
+    Player(Player&& p):m_commandStack(p.m_commandStack){}
+    Player& operator=(Player&&){ return *this; }
     ~Player() = default;
 
     void update(float dt);

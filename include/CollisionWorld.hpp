@@ -47,7 +47,7 @@ class BodyBehaviour;
 class CollisionWorld final : sf::NonCopyable
 {
 public:
-    class Body final : public Deletable, public Subject
+    class Body final : public Deletable, public Subject, private sf::NonCopyable
     {
         friend class Node;
         friend class CollisionWorld;

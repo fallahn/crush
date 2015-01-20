@@ -31,6 +31,7 @@ source distribution.
 #define UI_CONTAINER_H_
 
 #include <UIControl.hpp>
+#include <SoundPlayer.hpp>
 
 #include <vector>
 
@@ -42,7 +43,10 @@ namespace ui
     public:
         typedef std::shared_ptr<Container> Ptr;
 
-        Container();
+        explicit Container(SoundPlayer& sp);
+        Container(Container&& c):m_soundPlayer(c.m_soundPlayer){}
+        Container& operator=(Container&&){ return *this; }
+
         ~Container() = default;
 
         void addControl(Control::Ptr control);
@@ -53,6 +57,8 @@ namespace ui
     private:
         std::vector<Control::Ptr> m_controls;
         sf::Int16 m_selectedIndex;
+
+        SoundPlayer& m_soundPlayer;
 
         bool hasSelection() const;
         void select(sf::Int16 index);

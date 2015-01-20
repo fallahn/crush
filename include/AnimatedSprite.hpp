@@ -32,6 +32,7 @@ source distribution.
 
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/System/NonCopyable.hpp>
 
 
 struct Animation
@@ -47,13 +48,14 @@ private:
 };
 
 class SpriteSheet;
-class AnimatedSprite final : public sf::Drawable, public sf::Transformable
+class AnimatedSprite final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
 {
 public:
     AnimatedSprite();
     explicit AnimatedSprite(const sf::Texture& t);
     explicit AnimatedSprite(const SpriteSheet& sheet);
-    AnimatedSprite(const AnimatedSprite& copy) = default;
+    //AnimatedSprite(AnimatedSprite&& a){}
+    //AnimatedSprite& operator=(AnimatedSprite&&){ return *this; }
     ~AnimatedSprite() = default;
 
     void update(float dt);

@@ -56,7 +56,10 @@ namespace
 }
 
 MenuState::MenuState(StateStack& stack, Context context)
-    : State(stack, context)
+    : State             (stack, context),
+    m_currentContainer  (Container::Main),
+    m_font              (context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
+    m_textureResource   (context.gameInstance.getTextureResource())
 {
     context.renderWindow.setView(context.defaultView);
 
@@ -66,57 +69,22 @@ MenuState::MenuState(StateStack& stack, Context context)
     context.gameData.playerTwo = {};
     context.gameData.playerTwo.name = "Gemima Headson";
     context.gameData.mapIndex = 0;
-
-    auto& font = context.gameInstance.getFont("res/fonts/VeraMono.ttf");
-    auto& tr = context.gameInstance.getTextureResource();
-    //player one button
-    auto playerOneButton = std::make_shared<ui::Button>(font, tr.get("res/textures/ui/button.png"));
-    playerOneButton->setText("One Player");
-    playerOneButton->setPosition(960.f, 200.f);
-    playerOneButton->setTextColour(sf::Color::Black);
-    playerOneButton->setCallback([this]()
-    {
-        getContext().gameData.playerTwo.enabled = false;
-        requestStackPop();
-        requestStackPush(States::ID::Game);
-    });
-    m_uiContainer.addControl(playerOneButton);
-
-    //player two button
-    auto playerTwoButton = std::make_shared<ui::Button>(font, tr.get("res/textures/ui/button.png"));
-    playerTwoButton->setText("Two Player");
-    playerTwoButton->setPosition(960.f, 248.f);
-    playerTwoButton->setTextColour(sf::Color::Black);
-    playerTwoButton->setCallback([this]()
-    {
-        requestStackPop();
-        requestStackPush(States::ID::Game);
-    });
-    m_uiContainer.addControl(playerTwoButton);
-
-    //options button
-    auto optionsButton = std::make_shared<ui::Button>(font, tr.get("res/textures/ui/button.png"));
-    optionsButton->setText("Options");
-    optionsButton->setTextColour(sf::Color::Black);
-    optionsButton->setPosition(960.f, 296.f);
-    //TODO set callback to push options state
-    m_uiContainer.addControl(optionsButton);
-
-    //help button
-    auto helpButton = std::make_shared<ui::Button>(font, tr.get("res/textures/ui/button.png"));
-    helpButton->setText("How To Play");
-    helpButton->setTextColour(sf::Color::Black);
-    helpButton->setPosition(960.f, 344.f);
-    //TODO set callback to display help text
-    m_uiContainer.addControl(helpButton);
-
+    
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UIMove, "res/sound/ui/move.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UISelect, "res/sound/ui/select.wav");
+
+    for (auto i = 0; i < Container::Count; ++i)
+        m_uiContainers.emplace_back(m_soundPlayer);
+
+    buildMainMenu();
+    buildInputOptions();
+    buildSoundOptions();
+    buildGraphicsOptions();
 }
 
 void MenuState::draw()
 {
-    getContext().renderWindow.draw(m_uiContainer);
+    getContext().renderWindow.draw(m_uiContainers[m_currentContainer]);
 }
 
 bool MenuState::update(float dt)
@@ -127,6 +95,66 @@ bool MenuState::update(float dt)
 
 bool MenuState::handleEvent(const sf::Event& evt)
 {
-    m_uiContainer.handleEvent(evt);
+    m_uiContainers[m_currentContainer].handleEvent(evt);
     return true;
+}
+
+//private
+void MenuState::buildMainMenu()
+{
+    //player one button
+    auto playerOneButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    playerOneButton->setText("One Player");
+    playerOneButton->setPosition(960.f, 200.f);
+    playerOneButton->setTextColour(sf::Color::Black);
+    playerOneButton->setCallback([this]()
+    {
+        getContext().gameData.playerTwo.enabled = false;
+        requestStackPop();
+        requestStackPush(States::ID::Game);
+    });
+    m_uiContainers[Container::Main].addControl(playerOneButton);
+
+    //player two button
+    auto playerTwoButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    playerTwoButton->setText("Two Player");
+    playerTwoButton->setPosition(960.f, 248.f);
+    playerTwoButton->setTextColour(sf::Color::Black);
+    playerTwoButton->setCallback([this]()
+    {
+        requestStackPop();
+        requestStackPush(States::ID::Game);
+    });
+    m_uiContainers[Container::Main].addControl(playerTwoButton);
+
+    //options button
+    auto optionsButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    optionsButton->setText("Options");
+    optionsButton->setTextColour(sf::Color::Black);
+    optionsButton->setPosition(960.f, 296.f);
+    //TODO set callback to switch container
+    m_uiContainers[Container::Main].addControl(optionsButton);
+
+    //help button
+    auto helpButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    helpButton->setText("How To Play");
+    helpButton->setTextColour(sf::Color::Black);
+    helpButton->setPosition(960.f, 344.f);
+    //TODO set callback to display help text
+    m_uiContainers[Container::Main].addControl(helpButton);
+}
+
+void MenuState::buildInputOptions()
+{
+
+}
+
+void MenuState::buildSoundOptions()
+{
+
+}
+
+void MenuState::buildGraphicsOptions()
+{
+
 }

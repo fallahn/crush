@@ -45,6 +45,9 @@ public:
 
     SpriteSheet(const std::string& path);
     SpriteSheet(const SpriteSheet& copy) = default;
+    //SpriteSheet& operator=(const SpriteSheet& s) = delete;
+    //SpriteSheet(SpriteSheet&& s){}
+    SpriteSheet& operator=(SpriteSheet&&){ return *this; }
     ~SpriteSheet() = default;
 
     const std::string& getName() const;

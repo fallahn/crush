@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//basse class for 'deletable' objects, which allows deferring of deletion
+//base class for 'deletable' objects, which allows deferring of deletion
 //until it is safe to do so
 
 #ifndef DELETABLE_H_

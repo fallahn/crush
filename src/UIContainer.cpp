@@ -37,8 +37,9 @@ namespace
     const float deadzone = 40.f;
 }
 
-Container::Container()
-    : m_selectedIndex(-1)
+Container::Container(SoundPlayer& sp)
+    : m_selectedIndex   (-1),
+    m_soundPlayer       (sp)
 {}
 
 //public
@@ -76,7 +77,11 @@ void Container::handleEvent(const sf::Event& e)
         else if (e.key.code == sf::Keyboard::Return/* ||
             e.key.code == sf::Keyboard::Space*/)
         {
-            if (hasSelection()) m_controls[m_selectedIndex]->activate();
+            if (hasSelection())
+            {
+                m_controls[m_selectedIndex]->activate();
+                m_soundPlayer.play(SoundPlayer::AudioId::UISelect);
+            }
         }
     }
     //controller navigation
@@ -112,7 +117,13 @@ void Container::handleEvent(const sf::Event& e)
     {
         //TODO check button mapping (A and START on xbawx)
         if (e.joystickButton.button == 0 || e.joystickButton.button == 7)
-            if (hasSelection()) m_controls[m_selectedIndex]->activate();
+        {
+            if (hasSelection())
+            {
+                m_controls[m_selectedIndex]->activate();
+                m_soundPlayer.play(SoundPlayer::AudioId::UISelect);
+            }
+        }
     }
 }
 
@@ -131,6 +142,8 @@ void Container::select(sf::Int16 index)
 
         m_controls[index]->select();
         m_selectedIndex = index;
+
+        m_soundPlayer.play(SoundPlayer::AudioId::UIMove);
     }
 }
 
