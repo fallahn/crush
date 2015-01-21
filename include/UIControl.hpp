@@ -70,10 +70,10 @@ namespace ui
         virtual void activate();
         virtual void deactivate();
 
-        virtual void handleEvent(const sf::Event& e) = 0;
+        virtual void handleEvent(const sf::Event&) = 0;
         virtual void update(float dt){};
 
-        virtual void setAlignment(Alignment a) = 0;
+        virtual void setAlignment(Alignment) = 0;
 
     private:
 

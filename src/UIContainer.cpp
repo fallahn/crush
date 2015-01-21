@@ -103,7 +103,8 @@ void Container::handleEvent(const sf::Event& e)
         //}
         ////pov direction is opposite to thumb on XBC
         //else 
-        if (e.joystickMove.axis == sf::Joystick::Axis::PovY)
+        if (e.joystickMove.axis == sf::Joystick::Axis::PovY
+            || e.joystickMove.axis == sf::Joystick::Axis::PovX)
         {
             if (e.joystickMove.position > deadzone)
             {

@@ -175,6 +175,8 @@
     <ClInclude Include="include\StateStack.hpp" />
     <ClInclude Include="include\TitleState.hpp" />
     <ClInclude Include="include\UIButton.hpp" />
+    <ClInclude Include="include\UICheckBox.hpp" />
+    <ClInclude Include="include\UIComboBox.hpp" />
     <ClInclude Include="include\UIContainer.hpp" />
     <ClInclude Include="include\UIControl.hpp" />
     <ClInclude Include="include\UILabel.hpp" />
