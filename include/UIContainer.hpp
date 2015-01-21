@@ -54,6 +54,7 @@ namespace ui
         virtual bool selectable() const override;
         virtual void handleEvent(const sf::Event& e) override;
         virtual void update(float dt) override;
+        virtual void setAlignment(Alignment a) override{} //TODO flow layout
     private:
         std::vector<Control::Ptr> m_controls;
         sf::Int16 m_selectedIndex;

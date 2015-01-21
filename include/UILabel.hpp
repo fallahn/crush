@@ -48,6 +48,8 @@ namespace ui
         bool selectable() const override;
         void handleEvent(const sf::Event& e) override;
 
+        void setAlignment(Alignment a) override;
+
         void setText(const std::string& text);
         void setTextColour(const sf::Color& c);
         void setFont(const sf::Font& font);

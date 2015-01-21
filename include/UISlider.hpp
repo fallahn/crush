@@ -61,11 +61,14 @@ namespace ui
 
         void handleEvent(const sf::Event& e);
 
+        void setAlignment(Alignment a) override;
+
         void setMaxValue(float value);
         void setDirection(Direction direction);
         void setLength(float length);
         void setValue(float value);
         float getValue() const;
+        float getLength() const;
 
         void setText(const std::string& text);
         void setTextColour(const sf::Color& colour);
@@ -88,8 +91,14 @@ namespace ui
         std::vector<sf::IntRect> m_subRects;
         sf::Text m_text;
 
+        sf::Color m_borderColour;
+        sf::Color m_activeColour;
+
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const;
         void updateText();
+
+        void increase();
+        void decrease();
     };
 }
 

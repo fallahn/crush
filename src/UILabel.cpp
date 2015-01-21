@@ -45,6 +45,35 @@ bool Label::selectable() const
 
 void Label::handleEvent(const sf::Event& e){}
 
+void Label::setAlignment(Alignment a)
+{
+    switch (a)
+    {
+    case Alignment::TopLeft:
+        setOrigin(0.f, 0.f);
+        break;
+    case Alignment::BottomLeft:
+        setOrigin(0.f, m_text.getLocalBounds().height);
+        break;
+    case Alignment::Centre:
+    {
+        auto size = m_text.getLocalBounds();
+        setOrigin(sf::Vector2f(size.width, size.height) / 2.f);
+    }
+        break;
+    case Alignment::TopRight:
+        setOrigin(m_text.getLocalBounds().width, 0.f);
+        break;
+    case Alignment::BottomRight:
+    {
+        auto size = m_text.getLocalBounds();
+        setOrigin(sf::Vector2f(size.width, size.height));
+    }
+        break;
+    default:break;
+    }
+}
+
 void Label::setText(const std::string& text)
 {
     m_text.setString(text);

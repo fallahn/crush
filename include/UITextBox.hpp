@@ -59,6 +59,8 @@ namespace ui
         void handleEvent(const sf::Event& e) override;
         void update(float dt) override;
 
+        void setAlignment(Alignment a) override;
+
         const std::string& getText() const;
         void setTexture(const sf::Texture& text);
         void showBorder(bool show = true);
@@ -73,6 +75,9 @@ namespace ui
         sf::Clock m_cursorClock;
         bool m_showCursor;
         sf::Keyboard::Key m_lastKey;
+
+        sf::Color m_borderColour;
+        sf::Color m_selectedColour;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     };

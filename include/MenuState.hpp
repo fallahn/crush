@@ -51,6 +51,8 @@ private:
         InputOptions,
         SoundOptions,
         GraphicsOptions,
+        NameInput,
+        Help,
         Count
     }m_currentContainer;
 
@@ -64,6 +66,8 @@ private:
     void buildInputOptions();
     void buildSoundOptions();
     void buildGraphicsOptions();
+    void buildNameInput();
+    void buildHelp();
 };
 
 #endif //MENU_STATE_H_

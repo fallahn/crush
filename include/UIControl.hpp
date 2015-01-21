@@ -43,6 +43,15 @@ namespace sf
 
 namespace ui
 {
+    enum class Alignment
+    {
+        TopLeft,
+        BottomLeft,
+        Centre,
+        TopRight,
+        BottomRight
+    };
+
     class Control : public sf::Drawable, public sf::Transformable, private sf::NonCopyable
     {
     public:
@@ -63,6 +72,8 @@ namespace ui
 
         virtual void handleEvent(const sf::Event& e) = 0;
         virtual void update(float dt){};
+
+        virtual void setAlignment(Alignment a) = 0;
 
     private:
 

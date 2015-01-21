@@ -48,7 +48,7 @@ Button::Button(const sf::Font& font, const sf::Texture& texture)
 
     m_sprite.setTexture(m_texture);
     m_sprite.setTextureRect(m_subRects[State::Normal]);
-
+    
     auto bounds = m_sprite.getLocalBounds();
     m_text.setPosition(bounds.width / 2.f, bounds.height / 2.f);
 }
@@ -102,6 +102,29 @@ void Button::deactivate()
 void Button::handleEvent(const sf::Event& e)
 {
 
+}
+
+void Button::setAlignment(Alignment a)
+{
+    switch (a)
+    {
+    case Alignment::TopLeft:
+        setOrigin(0.f, 0.f);
+        break;
+    case Alignment::BottomLeft:
+        setOrigin(0.f, static_cast<float>(m_subRects[0].height));
+        break;
+    case Alignment::Centre:
+        setOrigin(static_cast<float>(m_subRects[0].width / 2), static_cast<float>(m_subRects[0].height / 2));
+        break;
+    case Alignment::TopRight:
+        setOrigin(static_cast<float>(m_subRects[0].width), 0.f);
+        break;
+    case Alignment::BottomRight:
+        setOrigin(static_cast<float>(m_subRects[0].width), static_cast<float>(m_subRects[0].height));
+        break;
+    default:break;
+    }
 }
 
 void Button::setCallback(Callback cb)

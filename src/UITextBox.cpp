@@ -35,22 +35,25 @@ using namespace ui;
 namespace
 {
     const float borderThickness = 2.f;
-    const sf::Vector2f defaultSize(320.f, 70.f);
-    const float flashTime = 0.8f;
+    const sf::Vector2f defaultSize(320.f, 40.f);
+    const float flashTime = 0.4f;
     const float padding = 20.f;
 }
 
 TextBox::TextBox(const sf::Font& font, const sf::Color& backColour, const sf::Color& borderColour)
     : m_text        ("", font, 30u),
-    m_cursorShape   (sf::Vector2f()),
+    m_cursorShape   (sf::Vector2f(12.f, 34.f)),
     m_showCursor    (false),
-    m_lastKey       (sf::Keyboard::Unknown)
+    m_lastKey       (sf::Keyboard::Unknown),
+    m_borderColour  (borderColour),
+    m_selectedColour(borderColour.r / 2u, borderColour.g / 2u, borderColour.b / 2u, borderColour.a)
 {
     m_backShape.setFillColor(backColour);
     m_backShape.setOutlineColor(borderColour);
     m_backShape.setOutlineThickness(borderThickness);
     m_backShape.setSize(defaultSize);
-    //TODO set origin?
+
+    m_cursorShape.setFillColor(m_selectedColour);
 
     m_text.setColor(borderColour);
     m_text.setPosition(padding, 0.f);
@@ -65,13 +68,13 @@ bool TextBox::selectable() const
 void TextBox::select()
 {
     Control::select();
-    //TODO change border colour to selected
+    m_backShape.setOutlineColor(m_selectedColour);
 }
 
 void TextBox::deselect()
 {
     Control::deselect();
-    //TODO return to normal border colour
+    m_backShape.setOutlineColor(m_borderColour);
 }
 
 void TextBox::activate()
@@ -88,7 +91,7 @@ void TextBox::deactivate()
 
 void TextBox::handleEvent(const sf::Event& e)
 {
-    if (active()) //TODO why aren't we just checking if we're active?
+    if (active())
     {
         if (e.type == sf::Event::KeyReleased)
         {
@@ -98,6 +101,10 @@ void TextBox::handleEvent(const sf::Event& e)
                 {
                     m_string.pop_back();
                 }
+            }
+            else if (e.key.code == sf::Keyboard::Return)
+            {
+                deactivate();
             }
         }
 
@@ -109,19 +116,52 @@ void TextBox::handleEvent(const sf::Event& e)
                 m_string += static_cast<char>(e.text.unicode);
             }
         }
+        else if (e.type == sf::Event::JoystickButtonReleased)
+        {
+            if (e.joystickButton.button == 1)
+            {
+                deactivate();
+            }
+        }
     }
 }
 
 void TextBox::update(float dt)
 {
-    sf::FloatRect bounds = m_text.getGlobalBounds();
-    m_cursorShape.setPosition(bounds.left + bounds.width, -(m_cursorShape.getSize().y / 2.f));
-    m_text.setString(m_string);
-
-    if (m_cursorClock.getElapsedTime().asSeconds() > flashTime)
+    if (active())
     {
-        m_showCursor = !m_showCursor;
-        m_cursorClock.restart();
+        sf::FloatRect bounds = m_text.getGlobalBounds();
+        m_cursorShape.setPosition(bounds.left + bounds.width, (m_backShape.getSize().y - m_cursorShape.getSize().y) / 2.f);
+        m_text.setString(m_string);
+
+        if (m_cursorClock.getElapsedTime().asSeconds() > flashTime)
+        {
+            m_showCursor = !m_showCursor;
+            m_cursorClock.restart();
+        }
+    }
+}
+
+void TextBox::setAlignment(Alignment a)
+{
+    switch (a)
+    {
+    case Alignment::TopLeft:
+        setOrigin(0.f, 0.f);
+        break;
+    case Alignment::BottomLeft:
+        setOrigin(0.f, m_backShape.getSize().y);
+        break;
+    case Alignment::Centre:
+        setOrigin(m_backShape.getSize() / 2.f);
+        break;
+    case Alignment::TopRight:
+        setOrigin(m_backShape.getSize().x, 0.f);
+        break;
+    case Alignment::BottomRight:
+        setOrigin(m_backShape.getSize());
+        break;
+    default:break;
     }
 }
 

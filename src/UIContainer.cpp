@@ -66,11 +66,13 @@ void Container::handleEvent(const sf::Event& e)
     //keyboard input
     else if (e.type == sf::Event::KeyReleased)
     {
-        if (e.key.code == sf::Keyboard::Up)
+        if (e.key.code == sf::Keyboard::Up
+            || e.key.code == sf::Keyboard::Left)
         {
             selectPrevious();
         }
-        else if (e.key.code == sf::Keyboard::Down)
+        else if (e.key.code == sf::Keyboard::Down
+            || e.key.code == sf::Keyboard::Right)
         {
             selectNext();
         }
@@ -100,7 +102,8 @@ void Container::handleEvent(const sf::Event& e)
         //    }
         //}
         ////pov direction is opposite to thumb on XBC
-        //else if (e.joystickMove.axis == sf::Joystick::Axis::PovY)
+        //else 
+        if (e.joystickMove.axis == sf::Joystick::Axis::PovY)
         {
             if (e.joystickMove.position > deadzone)
             {

@@ -5,7 +5,7 @@ Crush or be Crushed!
 
 A simple 2D game where the main objective is to crush all of the bad guys by squashing them between
 two blocks, without getting crushed yourself. Special bonuses are awarded for collecting all of 
-the time limited items which appear in the map.
+the time limited items which appear in the map, and for surviving the longest wearing the Magic Hat!
 
 
 CRUSH is written in C++1y and requires a modern compiler, such as Visual Studio 2013 or clang/llvm
@@ -34,6 +34,9 @@ make
 
 the CRUSH binary will be compiled and output to the build subdirectory.
 
+There are known problems with the XCB build of SFML on Linux. If you experience these try the 2.2
+tagged version which uses XLib.
+
 
 WINDOWS:
 --------
@@ -47,10 +50,10 @@ nuget package for JSON.net to be installed via the nuget manager.
 You can also use Cmake-gui 2.8 or newer to create project files for other IDEs such as Code::Blocks,
 or unix style make files for mingw. The same limitations apply as the linux build process: you will
 need to have either clang 3.4 or g++ 4.9 or higher installed, and a set of SFML binaries for your 
-chosen compiler. Clicking Configure in CMake-gui will probably lead to path errors when it cannot 
-find the SFML libraries, simply open each entry highlighted in red and browse to the corresponding 
-library file. Click Configure again, and then Generate if there are no further errors to output a 
-project file which can be used to build CRUSH.
+chosen compiler. Clicking Configure in CMake-gui may lead to path errors if it cannot find the SFML
+ibraries, simply open each entry highlighted in red and browse to the corresponding library file. 
+Click Configure again, and then Generate if there are no further errors, to output a project file 
+which can be used to build CRUSH.
 
 
 OSX:
@@ -58,3 +61,13 @@ OSX:
 
 In theory the build process is similar to that on Linux, but I don't have a mac (nor will I likely
 ever), so you're on your own.
+
+
+
+
+
+----CONTRIBUTIONS:----
+----------------------
+
+Bug fixes are gratefully accepted, as are any bug reports or suggestions, via the Github issue
+tracker.

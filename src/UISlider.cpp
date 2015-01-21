@@ -29,6 +29,7 @@ source distribution.
 #include <Util.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Window/Event.hpp>
 
 #include <cassert>
 
@@ -38,6 +39,7 @@ namespace
 {
     const float thickness = 5.f;
     const sf::Color borderColour(160u, 160u, 160u);
+    const float deadzone = 40.f;
 }
 
 Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, float maxValue)
@@ -46,9 +48,11 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     m_direction     (Direction::Horizontal),
     m_handleSprite  (texture),
     m_slotShape     ({ length, thickness }),
-    m_text          ("", font, 20u)
+    m_text          ("", font, 20u),
+    m_borderColour  (160u, 160u, 160u),
+    m_activeColour  (255u, 208u, 0u)
 {
-    sf::IntRect subrect(0, 0, texture.getSize().x, texture.getSize().y / 2);
+    sf::IntRect subrect(0, 0, texture.getSize().x, texture.getSize().y / 2u);
     m_subRects.push_back(subrect);
     subrect.top += subrect.height;
     m_subRects.push_back(subrect);
@@ -58,7 +62,7 @@ Slider::Slider(const sf::Font& font, const sf::Texture& texture, float length, f
     Util::Position::centreOrigin(m_handleSprite);
     m_slotShape.setOrigin(0.f, thickness / 2.f);
     m_slotShape.setFillColor(sf::Color::Black);
-    m_slotShape.setOutlineColor(borderColour);
+    m_slotShape.setOutlineColor(m_borderColour);
     m_slotShape.setOutlineThickness(3.f);
 }
 
@@ -83,16 +87,82 @@ void Slider::deselect()
 void Slider::activate()
 {
     Control::activate();
+    m_slotShape.setOutlineColor(m_activeColour);
 }
 
 void Slider::deactivate()
 {
     Control::deactivate();
+    m_slotShape.setOutlineColor(m_borderColour);
 }
 
 void Slider::handleEvent(const sf::Event& e)
 {
+    if (active())
+    {
+        if (e.type == sf::Event::KeyPressed)
+        {
+            if (e.key.code == sf::Keyboard::Left)
+            {
+                decrease();
+            }
+            else if (e.key.code == sf::Keyboard::Right)
+            {
+                increase();
+            }           
+        }
+        else if (e.type == sf::Event::KeyReleased)
+        {
+            if (e.key.code == sf::Keyboard::Return)
+            {
+                deactivate();
+            }
+        }
+        else if (e.type == sf::Event::JoystickMoved)
+        {
+            if (e.joystickMove.axis == sf::Joystick::PovX)
+            {
+                if (e.joystickMove.position > deadzone)
+                {
+                    increase();
+                }
+                else if (e.joystickMove.position < -deadzone)
+                {
+                    decrease();
+                }
+            }
+        }
+        else if (e.type == sf::Event::JoystickButtonReleased)
+        {
+            if (e.joystickButton.button == 1)
+            {
+                deactivate();
+            }
+        }
+    }
+}
 
+void Slider::setAlignment(Alignment a)
+{
+    switch (a)
+    {
+    case Alignment::TopLeft:
+        setOrigin(0.f, 0.f);
+        break;
+    case Alignment::BottomLeft:
+        setOrigin(0.f, m_slotShape.getSize().y);
+        break;
+    case Alignment::Centre:
+        setOrigin(m_slotShape.getSize() / 2.f);
+        break;
+    case Alignment::TopRight:
+        setOrigin(m_slotShape.getSize().x, 0.f);
+        break;
+    case Alignment::BottomRight:
+        setOrigin(m_slotShape.getSize());
+        break;
+    default:break;
+    }
 }
 
 void Slider::setMaxValue(float value)
@@ -180,6 +250,11 @@ float Slider::getValue() const
     }
 }
 
+float Slider::getLength() const
+{
+    return m_length;
+}
+
 void Slider::setText(const std::string& text)
 {
     m_text.setString(text);
@@ -211,4 +286,32 @@ void Slider::updateText()
 {
     Util::Position::centreOrigin(m_text);
     m_text.setPosition(m_text.getOrigin().x, -m_text.getLocalBounds().height * 2.f);
+}
+
+void Slider::increase()
+{
+    auto pos = m_handleSprite.getPosition();    
+    if (m_direction == Direction::Horizontal)
+    {
+        pos.x = std::min(pos.x + (m_length / m_maxValue), m_length);
+    }
+    else
+    {
+        pos.y = std::min(pos.y + (m_length / m_maxValue), m_length);
+    }
+    m_handleSprite.setPosition(pos);
+}
+
+void Slider::decrease()
+{
+    auto pos = m_handleSprite.getPosition();
+    if (m_direction == Direction::Horizontal)
+    {
+        pos.x = std::max(pos.x - (m_length / m_maxValue), 0.f);
+    }
+    else
+    {
+        pos.y = std::max(pos.y - (m_length / m_maxValue), 0.f);
+    }
+    m_handleSprite.setPosition(pos);
 }
