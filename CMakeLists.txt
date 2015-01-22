@@ -95,8 +95,11 @@ add_executable(
 	src/StateStack.cpp
 	src/TitleState.cpp
 	src/UIButton.cpp
+	src/UICheckBox.cpp
+	src/UIComboBox.cpp
 	src/UIContainer.cpp
 	src/UIControl.cpp
+	src/UIInputSelect.cpp
 	src/UILabel.cpp
 	src/UISlider.cpp
 	src/UITextBox.cpp

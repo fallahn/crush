@@ -74,7 +74,7 @@ namespace ui
             sf::Int32 value;
 
             sf::FloatRect bounds;
-            sf::Texture text;
+            sf::Text text;
 
             Item(const std::string& name, sf::Int32 value, const sf::Font& font);
         };
@@ -87,6 +87,7 @@ namespace ui
         mutable sf::RectangleShape m_highlightShape;
 
         sf::Uint16 m_selectedIndex;
+        sf::Uint16 m_nextIndex;
         sf::Text m_selectedText;
 
         const sf::Font& m_font;

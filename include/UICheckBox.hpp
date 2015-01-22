@@ -80,9 +80,9 @@ namespace ui
         sf::Text m_text;
         std::vector<sf::IntRect> m_subRects;
         bool m_checked;
+        Alignment m_alignment;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
-        void alignText();
     };
 }
 

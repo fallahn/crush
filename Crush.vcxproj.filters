@@ -222,6 +222,15 @@
     <ClCompile Include="src\UITextBox.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\UICheckBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UIComboBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\UIInputSelect.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -405,6 +414,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\UIComboBox.hpp">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\UIInputSelect.hpp">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
   </ItemGroup>

@@ -25,41 +25,45 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef UI_LABEL_H_
-#define UI_LABEL_H_
+#ifndef UI_INPUT_SELECT_H_
+#define UI_INPUT_SELECT_H_
 
-#include <Resource.hpp>
 #include <UIControl.hpp>
 
+#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
-
-#include <string>
+#include <SFML/Graphics/RectangleShape.hpp>
 
 namespace ui
 {
-    class Label final : public Control
+    class InputSelect final : public Control
     {
     public:
-        typedef std::shared_ptr<Label> Ptr;
+        typedef std::shared_ptr<InputSelect> Ptr;
 
-        Label(const std::string& text, const sf::Font& font);
-        ~Label() = default;
+        explicit InputSelect(const sf::Font& font);
+        ~InputSelect() = default;
 
         bool selectable() const override;
-        void handleEvent(const sf::Event& e) override;
+        void select() override;
+        void deselect() override;
 
-        void setAlignment(Alignment a) override;
+        void activate() override;
+        void deactivate() override;
 
-        void setText(const std::string& text);
-        void setTextColour(const sf::Color& c);
-        void setFont(const sf::Font& font);
-        void setFontSize(sf::Uint16 size);
+        void handleEvent(const sf::Event&) override;
+        void setAlignment(Alignment) override;
 
     private:
+        
+        sf::Color m_borderColour;
+        sf::Color m_selectedColour;
+
+        sf::RectangleShape m_backShape;
         sf::Text m_text;
-        Alignment m_alignment;
+
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     };
 }
 
-#endif //UI_LABEL_H_
+#endif //UI_INPUT_SELECT_H_

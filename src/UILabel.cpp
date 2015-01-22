@@ -32,7 +32,8 @@ source distribution.
 using namespace ui;
 
 Label::Label(const std::string& text, const sf::Font& font)
-    : m_text(text, font, 20u)
+    : m_text    (text, font, 20u),
+    m_alignment (Alignment::TopLeft)
 {
 
 }
@@ -72,11 +73,13 @@ void Label::setAlignment(Alignment a)
         break;
     default:break;
     }
+    m_alignment = a;
 }
 
 void Label::setText(const std::string& text)
 {
     m_text.setString(text);
+    setAlignment(m_alignment);
 }
 
 void Label::setTextColour(const sf::Color& colour)
@@ -92,6 +95,7 @@ void Label::setFont(const sf::Font& font)
 void Label::setFontSize(sf::Uint16 size)
 {
     m_text.setCharacterSize(size);
+    setAlignment(m_alignment);
 }
 
 //private

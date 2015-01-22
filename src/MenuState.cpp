@@ -32,6 +32,8 @@ source distribution.
 #include <UISlider.hpp>
 #include <UILabel.hpp>
 #include <UITextBox.hpp>
+#include <UICheckBox.hpp>
+#include <UIComboBox.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -226,9 +228,26 @@ void MenuState::buildSoundOptions()
 
 void MenuState::buildGraphicsOptions()
 {
+    ui::CheckBox::Ptr fullScreen = std::make_unique<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
+    fullScreen->setText("Full Screen");
+    fullScreen->setAlignment(ui::Alignment::Centre);
+    fullScreen->setPosition(960.f, 500.f);
+    m_uiContainers[Container::GraphicsOptions].addControl(fullScreen);
+
+    ui::CheckBox::Ptr vsync = std::make_unique<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
+    vsync->setText("Enable V-Sync");
+    vsync->setAlignment(ui::Alignment::Centre);
+    vsync->setPosition(960.f, 550.f);
+    m_uiContainers[Container::GraphicsOptions].addControl(vsync);
     
-    
-    
+    ui::ComboBox::Ptr resolution = std::make_unique<ui::ComboBox>(m_font, m_textureResource.get("res/textures/ui/combobox.png"));
+    resolution->setAlignment(ui::Alignment::Centre);
+    resolution->setPosition(960.f, 600.f);
+    resolution->addItem("funt", 3);
+    resolution->addItem("McBunt", 23);
+    resolution->addItem("Speef", 93475);
+    m_uiContainers[Container::GraphicsOptions].addControl(resolution);
+
     ui::Button::Ptr buttonPrev = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonPrev->setPosition(buttonPrevPosition);
     buttonPrev->setAlignment(ui::Alignment::Centre);
