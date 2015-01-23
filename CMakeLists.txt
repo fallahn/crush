@@ -71,6 +71,7 @@ add_executable(
 	src/Game.cpp
 	src/GameState.cpp
 	src/GameOverState.cpp
+	src/InputMapping.cpp
 	src/ItemBehaviour.cpp
 	src/Light.cpp
 	src/Map.cpp

@@ -96,17 +96,11 @@ private:
     sf::Text m_outputText;
     sf::Text m_bufferText;
 
-    std::map<std::string, sf::Keyboard::Key> m_keyMap;
-    std::map<std::string, sf::Mouse::Button> m_mouseMap;
-    std::map<std::string, sf::Uint16> m_joyMap;
-    std::map<std::string, sf::Joystick::Axis> m_axisMap;
-
     std::map<sf::Keyboard::Key, std::string> m_keyBinds;
     std::string bindInput(CommandList& l);
 
     void parseCommand();
     void updateText();
-    void mapStrToInput();
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
 };
 

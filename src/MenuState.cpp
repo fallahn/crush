@@ -28,12 +28,14 @@ source distribution.
 #include <MenuState.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
+#include <InputMapping.hpp>
 #include <UIButton.hpp>
 #include <UISlider.hpp>
 #include <UILabel.hpp>
 #include <UITextBox.hpp>
 #include <UICheckBox.hpp>
 #include <UIComboBox.hpp>
+#include <UIInputSelect.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -68,11 +70,12 @@ MenuState::MenuState(StateStack& stack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
 
-    //reset game data TODO make sure to load correct keybinds and names
-    context.gameData.playerOne = {};
+    //reset game data
+    /*context.gameData.playerOne = {};
     context.gameData.playerOne.name = "Sidney Burnsides";
     context.gameData.playerTwo = {};
-    context.gameData.playerTwo.name = "Gemima Headson";
+    context.gameData.playerTwo.name = "Gemima Headson";*/
+    //TODO reset just scores
     context.gameData.mapIndex = 0;
     
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UIMove, "res/sound/ui/move.wav");
@@ -161,10 +164,60 @@ void MenuState::buildMainMenu()
 
 void MenuState::buildInputOptions()
 {
+    ui::InputSelect::Ptr playerOneLeft = std::make_shared<ui::InputSelect>(m_font, "player_one_left");
+    playerOneLeft->setPosition(200.f, 200.f);
+    playerOneLeft->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.left));
+    //playerOneLeft->setCallback([&, this](){getContext().gameInstance.getConsole().exec("set_key player_one_left " + getValue()); });
+    m_uiContainers[Container::InputOptions].addControl(playerOneLeft);
 
+    ui::InputSelect::Ptr playerOneRight = std::make_shared<ui::InputSelect>(m_font, "player_one_right");
+    playerOneRight->setPosition(200.f, 250.f);
+    playerOneRight->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.right));
+    m_uiContainers[Container::InputOptions].addControl(playerOneRight);
 
+    ui::InputSelect::Ptr playerOneJump = std::make_shared<ui::InputSelect>(m_font, "player_one_jump");
+    playerOneJump->setPosition(200.f, 300.f);
+    playerOneJump->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.jump));
+    m_uiContainers[Container::InputOptions].addControl(playerOneJump);
 
-    ui::Button::Ptr backButton = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::InputSelect::Ptr playerOneDrag = std::make_shared<ui::InputSelect>(m_font, "player_one_drag");
+    playerOneDrag->setPosition(200.f, 350.f);
+    playerOneDrag->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.grab));
+    m_uiContainers[Container::InputOptions].addControl(playerOneDrag);
+
+    ui::InputSelect::Ptr playerOnePickup = std::make_shared<ui::InputSelect>(m_font, "player_one_pickup");
+    playerOnePickup->setPosition(200.f, 400.f);
+    playerOnePickup->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.pickUp));
+    m_uiContainers[Container::InputOptions].addControl(playerOnePickup);
+
+    //------------------------------------------------------------------
+
+    ui::InputSelect::Ptr playerTwoLeft = std::make_shared<ui::InputSelect>(m_font, "player_two_left");
+    playerTwoLeft->setPosition(1400.f, 200.f);
+    playerTwoLeft->setValue("left"); //TODO parse context data
+    m_uiContainers[Container::InputOptions].addControl(playerTwoLeft);
+
+    ui::InputSelect::Ptr playerTwoRight = std::make_shared<ui::InputSelect>(m_font, "player_two_right");
+    playerTwoRight->setPosition(1400.f, 250.f);
+    playerTwoRight->setValue("right");
+    m_uiContainers[Container::InputOptions].addControl(playerTwoRight);
+
+    ui::InputSelect::Ptr playerTwoJump = std::make_shared<ui::InputSelect>(m_font, "player_two_jump");
+    playerTwoJump->setPosition(1400.f, 300.f);
+    playerTwoJump->setValue("up");
+    m_uiContainers[Container::InputOptions].addControl(playerTwoJump);
+
+    ui::InputSelect::Ptr playerTwoDrag = std::make_shared<ui::InputSelect>(m_font, "player_two_drag");
+    playerTwoDrag->setPosition(1400.f, 350.f);
+    playerTwoDrag->setValue("right_shift");
+    m_uiContainers[Container::InputOptions].addControl(playerTwoDrag);
+
+    ui::InputSelect::Ptr playerTwoPickup = std::make_shared<ui::InputSelect>(m_font, "player_two_pickup");
+    playerTwoPickup->setPosition(1400.f, 400.f);
+    playerTwoPickup->setValue("down");
+    m_uiContainers[Container::InputOptions].addControl(playerTwoPickup);
+
+    ui::Button::Ptr backButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     backButton->setPosition(buttonPrevPosition);
     backButton->setAlignment(ui::Alignment::Centre);
     backButton->setTextColour(sf::Color::Black);
@@ -175,7 +228,7 @@ void MenuState::buildInputOptions()
     });
     m_uiContainers[Container::InputOptions].addControl(backButton);
 
-    ui::Button::Ptr nextButton = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr nextButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     nextButton->setPosition(buttonNextPosition);
     nextButton->setAlignment(ui::Alignment::Centre);
     nextButton->setTextColour(sf::Color::Black);
@@ -191,19 +244,19 @@ void MenuState::buildInputOptions()
 void MenuState::buildSoundOptions()
 {
     //TODO load volume from config
-    ui::Slider::Ptr musicVol = std::make_unique<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
+    ui::Slider::Ptr musicVol = std::make_shared<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
     musicVol->setPosition(960.f, 400.f);
     musicVol->setAlignment(ui::Alignment::Centre);
     musicVol->setText("Music Volume");
     m_uiContainers[Container::SoundOptions].addControl(musicVol);
 
-    ui::Slider::Ptr fxVol = std::make_unique<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
+    ui::Slider::Ptr fxVol = std::make_shared<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
     fxVol->setPosition(960.f, 500.f);
     fxVol->setAlignment(ui::Alignment::Centre);
     fxVol->setText("FX Volume");
     m_uiContainers[Container::SoundOptions].addControl(fxVol);
 
-    ui::Button::Ptr buttonPrev = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonPrev->setPosition(buttonPrevPosition);
     buttonPrev->setAlignment(ui::Alignment::Centre);
     buttonPrev->setTextColour(sf::Color::Black);
@@ -214,7 +267,7 @@ void MenuState::buildSoundOptions()
     });
     m_uiContainers[Container::SoundOptions].addControl(buttonPrev);
 
-    ui::Button::Ptr buttonNext = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr buttonNext = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonNext->setPosition(buttonNextPosition);
     buttonNext->setAlignment(ui::Alignment::Centre);
     buttonNext->setTextColour(sf::Color::Black);
@@ -228,19 +281,19 @@ void MenuState::buildSoundOptions()
 
 void MenuState::buildGraphicsOptions()
 {
-    ui::CheckBox::Ptr fullScreen = std::make_unique<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
+    ui::CheckBox::Ptr fullScreen = std::make_shared<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
     fullScreen->setText("Full Screen");
     fullScreen->setAlignment(ui::Alignment::Centre);
     fullScreen->setPosition(960.f, 500.f);
     m_uiContainers[Container::GraphicsOptions].addControl(fullScreen);
 
-    ui::CheckBox::Ptr vsync = std::make_unique<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
+    ui::CheckBox::Ptr vsync = std::make_shared<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
     vsync->setText("Enable V-Sync");
     vsync->setAlignment(ui::Alignment::Centre);
     vsync->setPosition(960.f, 550.f);
     m_uiContainers[Container::GraphicsOptions].addControl(vsync);
     
-    ui::ComboBox::Ptr resolution = std::make_unique<ui::ComboBox>(m_font, m_textureResource.get("res/textures/ui/combobox.png"));
+    ui::ComboBox::Ptr resolution = std::make_shared<ui::ComboBox>(m_font, m_textureResource.get("res/textures/ui/combobox.png"));
     resolution->setAlignment(ui::Alignment::Centre);
     resolution->setPosition(960.f, 600.f);
     resolution->addItem("funt", 3);
@@ -248,7 +301,7 @@ void MenuState::buildGraphicsOptions()
     resolution->addItem("Speef", 93475);
     m_uiContainers[Container::GraphicsOptions].addControl(resolution);
 
-    ui::Button::Ptr buttonPrev = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonPrev->setPosition(buttonPrevPosition);
     buttonPrev->setAlignment(ui::Alignment::Centre);
     buttonPrev->setTextColour(sf::Color::Black);
@@ -259,7 +312,7 @@ void MenuState::buildGraphicsOptions()
     });
     m_uiContainers[Container::GraphicsOptions].addControl(buttonPrev);
 
-    ui::Button::Ptr buttonApply = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr buttonApply = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonApply->setPosition(buttonNextPosition);
     buttonApply->setAlignment(ui::Alignment::Centre);
     buttonApply->setTextColour(sf::Color::Black);
@@ -273,17 +326,19 @@ void MenuState::buildGraphicsOptions()
 
 void MenuState::buildNameInput()
 {
-    ui::TextBox::Ptr playerOneInput = std::make_unique<ui::TextBox>(m_font);
+    ui::TextBox::Ptr playerOneInput = std::make_shared<ui::TextBox>(m_font);
     playerOneInput->setPosition(960.f, 200.f);
     playerOneInput->setAlignment(ui::Alignment::Centre);
+    playerOneInput->setText(getContext().gameData.playerOne.name);
     m_uiContainers[Container::NameInput].addControl(playerOneInput);
 
-    ui::TextBox::Ptr playerTwoInput = std::make_unique<ui::TextBox>(m_font);
+    ui::TextBox::Ptr playerTwoInput = std::make_shared<ui::TextBox>(m_font);
     playerTwoInput->setPosition(960.f, 260.f);
     playerTwoInput->setAlignment(ui::Alignment::Centre);
+    playerTwoInput->setText(getContext().gameData.playerTwo.name);
     m_uiContainers[Container::NameInput].addControl(playerTwoInput);
     
-    ui::Button::Ptr buttonPrev = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonPrev->setPosition(buttonPrevPosition);
     buttonPrev->setAlignment(ui::Alignment::Centre);
     buttonPrev->setTextColour(sf::Color::Black);
@@ -294,7 +349,7 @@ void MenuState::buildNameInput()
     });
     m_uiContainers[Container::NameInput].addControl(buttonPrev);
 
-    ui::Button::Ptr buttonStart = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr buttonStart = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonStart->setPosition(buttonNextPosition);
     buttonStart->setAlignment(ui::Alignment::Centre);
     buttonStart->setTextColour(sf::Color::Black);
@@ -312,12 +367,12 @@ void MenuState::buildNameInput()
 
 void MenuState::buildHelp()
 {
-    ui::Label::Ptr helpText = std::make_unique<ui::Label>(helpStr, m_font);
+    ui::Label::Ptr helpText = std::make_shared<ui::Label>(helpStr, m_font);
     helpText->setFontSize(60u);
     helpText->setPosition(60.f, 40.f);
     m_uiContainers[Container::Help].addControl(helpText);
 
-    ui::Button::Ptr okButton = std::make_unique<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    ui::Button::Ptr okButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     okButton->setPosition(buttonOkPosition);
     okButton->setAlignment(ui::Alignment::Centre);
     okButton->setTextColour(sf::Color::Black);

@@ -231,6 +231,9 @@
     <ClCompile Include="src\UIInputSelect.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="src\InputMapping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -418,6 +421,9 @@
     </ClInclude>
     <ClInclude Include="include\UIInputSelect.hpp">
       <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\InputMapping.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

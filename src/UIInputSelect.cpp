@@ -26,17 +26,29 @@ source distribution.
 *********************************************************************/
 
 #include <UIInputSelect.hpp>
+#include <InputMapping.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
 using namespace ui;
 
-InputSelect::InputSelect(const sf::Font& font)
-    : m_borderColour    (),
-    m_selectedColour    (m_borderColour.r / 2u, m_borderColour.g / 2u, m_borderColour.b / 2u, m_borderColour.a),
-    m_text              ("", font, 18u)
+namespace
 {
-    //TODO set up back shape
+    const float padding = 4.f;
+}
+
+InputSelect::InputSelect(const sf::Font& font, const std::string& name,  const sf::Color& borderColour)
+    : m_borderColour    (borderColour),
+    m_selectedColour    (m_borderColour.r / 2u, m_borderColour.g / 2u, m_borderColour.b / 2u, m_borderColour.a),
+    m_text              ("", font, 18u),
+    m_name              (name)
+{
+    m_backShape.setSize(sf::Vector2f(160.f, 28.f));
+    m_backShape.setOutlineColor(borderColour);
+    m_backShape.setOutlineThickness(2.f);
+    m_backShape.setFillColor(sf::Color::Black);
+
+    m_text.setPosition(padding, padding);
 }
 
 //public
@@ -60,16 +72,29 @@ void InputSelect::deselect()
 void InputSelect::activate()
 {
     Control::activate();
+    m_text.setString("Press any key");
 }
 
 void InputSelect::deactivate()
 {
     Control::deactivate();
+    if (m_callback) m_callback();
 }
 
 void InputSelect::handleEvent(const sf::Event& e)
 {
-
+    if (e.type == sf::Event::KeyReleased)
+    {
+        m_value = InputMap::toString(e.key.code);
+        m_text.setString(m_value);
+        deactivate();
+    }
+    else if (e.type == sf::Event::JoystickButtonReleased)
+    {
+        m_value == InputMap::toString(e.joystickButton.button);
+        m_text.setString(m_value);
+        deactivate();
+    }
 }
 
 void InputSelect::setAlignment(Alignment a)
@@ -93,6 +118,27 @@ void InputSelect::setAlignment(Alignment a)
         break;
     default: break;
     }
+}
+
+const std::string& InputSelect::getName() const
+{
+    return m_name;
+}
+
+void InputSelect::setValue(const std::string& str)
+{
+    m_value = str;
+    m_text.setString(str);
+}
+
+const std::string& InputSelect::getValue() const
+{
+    return m_value;
+}
+
+void InputSelect::setCallback(Callback cb)
+{
+    m_callback = std::move(cb);
 }
 
 //private

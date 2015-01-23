@@ -34,14 +34,17 @@ source distribution.
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
+#include <functional>
+
 namespace ui
 {
     class InputSelect final : public Control
     {
     public:
         typedef std::shared_ptr<InputSelect> Ptr;
+        typedef std::function<void()> Callback;
 
-        explicit InputSelect(const sf::Font& font);
+        InputSelect(const sf::Font& font, const std::string& name, const sf::Color& borderColour = sf::Color::White);
         ~InputSelect() = default;
 
         bool selectable() const override;
@@ -54,6 +57,12 @@ namespace ui
         void handleEvent(const sf::Event&) override;
         void setAlignment(Alignment) override;
 
+        const std::string& getName() const;
+        void setValue(const std::string&);
+        const std::string& getValue() const;
+
+        void setCallback(Callback);
+
     private:
         
         sf::Color m_borderColour;
@@ -61,6 +70,11 @@ namespace ui
 
         sf::RectangleShape m_backShape;
         sf::Text m_text;
+
+        std::string m_name;
+        std::string m_value;
+
+        Callback m_callback;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     };

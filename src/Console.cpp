@@ -28,6 +28,7 @@ source distribution.
 #include <Console.hpp>
 #include <Util.hpp>
 #include <FileSystem.hpp>
+#include <InputMapping.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 
@@ -65,7 +66,6 @@ Console::Console(const sf::Font& font)
     m_backgroundRect.setSize(size);
     
     updateText();
-    mapStrToInput();
 
     //create default commands
 
@@ -123,20 +123,20 @@ Console::Console(const sf::Font& font)
         file << std::endl;
         file << "Inputs available for mapping:" << std::endl;
         file << "---------------------------" << std::endl;
-        for (const auto& k : m_keyMap)
-            file << "Key: " << k.first << std::endl;
-        file << std::endl;
+        //for (const auto& k : m_keyMap)
+        //    file << "Key: " << k.first << std::endl;
+        //file << std::endl;
 
-        for (const auto& m : m_mouseMap)
-            file << "Mouse: " << m.first << std::endl;
-        file << std::endl;
+        //for (const auto& m : m_mouseMap)
+        //    file << "Mouse: " << m.first << std::endl;
+        //file << std::endl;
 
-        for (const auto& j : m_joyMap)
-            file << "Controller: " << j.first << std::endl;
-        file << std::endl;
+        //for (const auto& j : m_joyMap)
+        //    file << "Controller: " << j.first << std::endl;
+        //file << std::endl;
 
-        for (const auto& j : m_axisMap)
-            file << "Controller axis: " << j.first << std::endl;
+        //for (const auto& j : m_axisMap)
+        //    file << "Controller axis: " << j.first << std::endl;
 
         file.close();
         return "Wrote file commands.txt";
@@ -359,13 +359,13 @@ std::string Console::bindInput(CommandList& l)
     case 1:
     {
         //keyboard
-        auto k = m_keyMap.find(input);
-        if (k != m_keyMap.end())
+        auto k = InputMap::getKey(input);
+        if (k != sf::Keyboard::Unknown)
         {
-            const auto ic = m_keyBinds.find(k->second);
+            const auto ic = m_keyBinds.find(k);
             if (ic != m_keyBinds.end())
             {
-                return k->first + " currently bound to: " + ic->second;
+                return k + " currently bound to: " + ic->second;
             }
         }
         //TODO fall through to test joy/mouse bindings
@@ -381,11 +381,11 @@ std::string Console::bindInput(CommandList& l)
 
     std::string cfgArgs = "bind";
     for (auto& str : l) cfgArgs += " " + str;
-    auto k = m_keyMap.find(input);
-    if (k != m_keyMap.end())
+    auto k = InputMap::getKey(input);
+    if (k != sf::Keyboard::Unknown)
     {
         //update key if already bound
-        auto ic = m_keyBinds.find(k->second);
+        auto ic = m_keyBinds.find(k);
         if (ic != m_keyBinds.end())
         {
             ic->second = l[1];
@@ -393,7 +393,7 @@ std::string Console::bindInput(CommandList& l)
         }
         else
         {
-            m_keyBinds.insert(std::make_pair(k->second, l[1]));
+            m_keyBinds.insert(std::make_pair(k, l[1]));
         }
         addToConfig(cfgArgs);
         return "bound " + input + " to: '" + l[1] + "'";
@@ -482,156 +482,4 @@ void Console::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     rt.draw(m_backgroundRect, states);
     rt.draw(m_outputText, states);
     rt.draw(m_bufferText, states);
-}
-
-void Console::mapStrToInput()
-{
-    m_keyMap["a"] = sf::Keyboard::A;
-    m_keyMap["b"] = sf::Keyboard::B;
-    m_keyMap["c"] = sf::Keyboard::C;
-    m_keyMap["d"] = sf::Keyboard::D;
-    m_keyMap["e"] = sf::Keyboard::E;
-    m_keyMap["f"] = sf::Keyboard::F;
-    m_keyMap["g"] = sf::Keyboard::G;
-    m_keyMap["h"] = sf::Keyboard::H;
-    m_keyMap["i"] = sf::Keyboard::I;
-    m_keyMap["j"] = sf::Keyboard::J;
-    m_keyMap["k"] = sf::Keyboard::K;
-    m_keyMap["l"] = sf::Keyboard::L;
-    m_keyMap["m"] = sf::Keyboard::M;
-    m_keyMap["n"] = sf::Keyboard::N;
-    m_keyMap["o"] = sf::Keyboard::O;
-    m_keyMap["p"] = sf::Keyboard::P;
-    m_keyMap["q"] = sf::Keyboard::Q;
-    m_keyMap["r"] = sf::Keyboard::R;
-    m_keyMap["s"] = sf::Keyboard::S;
-    m_keyMap["t"] = sf::Keyboard::T;
-    m_keyMap["u"] = sf::Keyboard::U;
-    m_keyMap["v"] = sf::Keyboard::V;
-    m_keyMap["w"] = sf::Keyboard::W;
-    m_keyMap["x"] = sf::Keyboard::X;
-    m_keyMap["y"] = sf::Keyboard::Y;
-    m_keyMap["z"] = sf::Keyboard::Z;
-    m_keyMap["num0"] = sf::Keyboard::Num0;
-    m_keyMap["num1"] = sf::Keyboard::Num1;
-    m_keyMap["num2"] = sf::Keyboard::Num2;
-    m_keyMap["num3"] = sf::Keyboard::Num3;
-    m_keyMap["num4"] = sf::Keyboard::Num4;
-    m_keyMap["num5"] = sf::Keyboard::Num5;
-    m_keyMap["num6"] = sf::Keyboard::Num6;
-    m_keyMap["num7"] = sf::Keyboard::Num7;
-    m_keyMap["num8"] = sf::Keyboard::Num8;
-    m_keyMap["num9"] = sf::Keyboard::Num9;
-    m_keyMap["escape"] = sf::Keyboard::Escape;
-    m_keyMap["left_control"] = sf::Keyboard::LControl;
-    m_keyMap["left_shift"] = sf::Keyboard::LShift;
-    m_keyMap["left_alt"] = sf::Keyboard::LAlt;
-    m_keyMap["left_system"] = sf::Keyboard::LSystem;
-    m_keyMap["right_control"] = sf::Keyboard::RControl;
-    m_keyMap["right_shift"] = sf::Keyboard::RShift;
-    m_keyMap["right_alt"] = sf::Keyboard::RAlt;
-    m_keyMap["right_System"] = sf::Keyboard::RSystem;
-    m_keyMap["menu"] = sf::Keyboard::Menu;
-    m_keyMap["left_bracket"] = sf::Keyboard::LBracket;
-    m_keyMap["right_bracket"] = sf::Keyboard::RBracket;
-    m_keyMap["semicolon"] = sf::Keyboard::SemiColon;
-    m_keyMap["comma"] = sf::Keyboard::Comma;
-    m_keyMap["period"] = sf::Keyboard::Period;
-    m_keyMap["quote"] = sf::Keyboard::Quote;
-    m_keyMap["forward_slash"] = sf::Keyboard::Slash;
-    m_keyMap["back_slash"] = sf::Keyboard::BackSlash;
-    m_keyMap["tilde"] = sf::Keyboard::Tilde;
-    m_keyMap["equal"] = sf::Keyboard::Equal;
-    m_keyMap["dash"] = sf::Keyboard::Dash;
-    m_keyMap["space"] = sf::Keyboard::Space;
-    m_keyMap["return"] = sf::Keyboard::Return;
-    m_keyMap["backspace"] = sf::Keyboard::BackSpace;
-    m_keyMap["tab"] = sf::Keyboard::Tab;
-    m_keyMap["pageup"] = sf::Keyboard::PageUp;
-    m_keyMap["pagedown"] = sf::Keyboard::PageDown;
-    m_keyMap["end"] = sf::Keyboard::End;
-    m_keyMap["home"] = sf::Keyboard::Home;
-    m_keyMap["insert"] = sf::Keyboard::Insert;
-    m_keyMap["delete"] = sf::Keyboard::Delete;
-    m_keyMap["add"] = sf::Keyboard::Add;
-    m_keyMap["subtract"] = sf::Keyboard::Subtract;
-    m_keyMap["multiply"] = sf::Keyboard::Multiply;
-    m_keyMap["divide"] = sf::Keyboard::Divide;
-    m_keyMap["left"] = sf::Keyboard::Left;
-    m_keyMap["right"] = sf::Keyboard::Right;
-    m_keyMap["up"] = sf::Keyboard::Up;
-    m_keyMap["down"] = sf::Keyboard::Down;
-    m_keyMap["numpad0"] = sf::Keyboard::Numpad0;
-    m_keyMap["numpad1"] = sf::Keyboard::Numpad1;
-    m_keyMap["numpad2"] = sf::Keyboard::Numpad2;
-    m_keyMap["numpad3"] = sf::Keyboard::Numpad3;
-    m_keyMap["numpad4"] = sf::Keyboard::Numpad4;
-    m_keyMap["numpad5"] = sf::Keyboard::Numpad5;
-    m_keyMap["numpad6"] = sf::Keyboard::Numpad6;
-    m_keyMap["numpad7"] = sf::Keyboard::Numpad7;
-    m_keyMap["numpad8"] = sf::Keyboard::Numpad8;
-    m_keyMap["numpad9"] = sf::Keyboard::Numpad9;
-    m_keyMap["f1"] = sf::Keyboard::F1;
-    m_keyMap["f2"] = sf::Keyboard::F2;
-    m_keyMap["f3"] = sf::Keyboard::F3;
-    m_keyMap["f4"] = sf::Keyboard::F4;
-    m_keyMap["f5"] = sf::Keyboard::F5;
-    m_keyMap["f6"] = sf::Keyboard::F6;
-    m_keyMap["f7"] = sf::Keyboard::F7;
-    m_keyMap["f8"] = sf::Keyboard::F8;
-    m_keyMap["f9"] = sf::Keyboard::F9;
-    m_keyMap["f10"] = sf::Keyboard::F10;
-    m_keyMap["f11"] = sf::Keyboard::F11;
-    m_keyMap["f12"] = sf::Keyboard::F12;
-    m_keyMap["f13"] = sf::Keyboard::F13;
-    m_keyMap["f14"] = sf::Keyboard::F14;
-    m_keyMap["f15"] = sf::Keyboard::F15;
-    m_keyMap["pause"] = sf::Keyboard::Pause;
-    ///----mouse-----
-    m_mouseMap["mouse_left"] = sf::Mouse::Left;
-    m_mouseMap["mouse_right"] = sf::Mouse::Right;
-    m_mouseMap["mouse_middle"] = sf::Mouse::Middle;
-    m_mouseMap["mouse_x1"] = sf::Mouse::XButton1;
-    m_mouseMap["mouse_x2"] = sf::Mouse::XButton2;
-    ///----controller----
-    m_joyMap["joy_button_0"] = 0;
-    m_joyMap["joy_button_1"] = 1;
-    m_joyMap["joy_button_2"] = 2;
-    m_joyMap["joy_button_3"] = 3;
-    m_joyMap["joy_button_4"] = 4;
-    m_joyMap["joy_button_5"] = 5;
-    m_joyMap["joy_button_6"] = 6;
-    m_joyMap["joy_button_7"] = 7;
-    m_joyMap["joy_button_8"] = 8;
-    m_joyMap["joy_button_9"] = 9;
-    m_joyMap["joy_button_10"] = 10;
-    m_joyMap["joy_button_11"] = 11;
-    m_joyMap["joy_button_12"] = 12;
-    m_joyMap["joy_button_13"] = 13;
-    m_joyMap["joy_button_14"] = 14;
-    m_joyMap["joy_button_15"] = 15;
-    m_joyMap["joy_button_16"] = 16;
-    m_joyMap["joy_button_17"] = 17;
-    m_joyMap["joy_button_18"] = 18;
-    m_joyMap["joy_button_19"] = 19;
-    m_joyMap["joy_button_20"] = 20;
-    m_joyMap["joy_button_21"] = 21;
-    m_joyMap["joy_button_22"] = 22;
-    m_joyMap["joy_button_23"] = 23;
-    m_joyMap["joy_button_24"] = 24;
-    m_joyMap["joy_button_25"] = 25;
-    m_joyMap["joy_button_26"] = 26;
-    m_joyMap["joy_button_27"] = 27;
-    m_joyMap["joy_button_28"] = 28;
-    m_joyMap["joy_button_29"] = 29;
-    m_joyMap["joy_button_30"] = 30;
-    m_joyMap["joy_button_31"] = 31;
-    m_axisMap["joy_axis_x"] = sf::Joystick::X;
-    m_axisMap["joy_axis_y"] = sf::Joystick::Y;
-    m_axisMap["joy_axis_z"] = sf::Joystick::Z;
-    m_axisMap["joy_axis_r"] = sf::Joystick::R;
-    m_axisMap["joy_axis_u"] = sf::Joystick::U;
-    m_axisMap["joy_axis_v"] = sf::Joystick::V;
-    m_axisMap["joy_pov_x"] = sf::Joystick::PovX;
-    m_axisMap["joy_pov_y"] = sf::Joystick::PovY;
 }

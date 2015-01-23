@@ -87,7 +87,9 @@ GameState::GameState(StateStack& stack, Context context)
     //set up controllers
     m_players.reserve(2);
     m_players.emplace_back(m_commandStack, Category::PlayerOne, m_textureResource, m_shaderResource.get(Shader::Type::NormalMapSpecular));
+    m_players.back().setKeyBinds(context.gameData.playerOne.keyBinds);
     m_players.emplace_back(m_commandStack, Category::PlayerTwo, m_textureResource, m_shaderResource.get(Shader::Type::NormalMapSpecular));
+    //TODO player two keybinds
 
     std::function<void(const sf::Vector2f&, Player&)> playerSpawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
     m_players[0].setSpawnFunction(playerSpawnFunc);

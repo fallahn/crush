@@ -91,37 +91,34 @@ void TextBox::deactivate()
 
 void TextBox::handleEvent(const sf::Event& e)
 {
-    if (active())
+    if (e.type == sf::Event::KeyReleased)
     {
-        if (e.type == sf::Event::KeyReleased)
+        if (e.key.code == sf::Keyboard::BackSpace)
         {
-            if (e.key.code == sf::Keyboard::BackSpace)
+            if (m_string.size())
             {
-                if (m_string.size())
-                {
-                    m_string.pop_back();
-                }
-            }
-            else if (e.key.code == sf::Keyboard::Return)
-            {
-                deactivate();
+                m_string.pop_back();
             }
         }
+        else if (e.key.code == sf::Keyboard::Return)
+        {
+            deactivate();
+        }
+    }
 
-        else if (e.type == sf::Event::TextEntered)
+    else if (e.type == sf::Event::TextEntered)
+    {
+        if (e.text.unicode > 31
+            && e.text.unicode < 127)
         {
-            if (e.text.unicode > 31
-                && e.text.unicode < 127)
-            {
-                m_string += static_cast<char>(e.text.unicode);
-            }
+            m_string += static_cast<char>(e.text.unicode);
         }
-        else if (e.type == sf::Event::JoystickButtonReleased)
+    }
+    else if (e.type == sf::Event::JoystickButtonReleased)
+    {
+        if (e.joystickButton.button == 1)
         {
-            if (e.joystickButton.button == 1)
-            {
-                deactivate();
-            }
+            deactivate();
         }
     }
 }
@@ -195,6 +192,7 @@ void TextBox::setSize(const sf::Vector2f& size)
 void TextBox::setText(const std::string& text)
 {
     m_string = text;
+    m_text.setString(m_string);
 }
 
 //private

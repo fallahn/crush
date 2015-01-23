@@ -79,6 +79,7 @@
     <ClCompile Include="src\ConsoleState.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
     <ClCompile Include="src\FreeFormBehaviour.cpp" />
+    <ClCompile Include="src\InputMapping.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
     <ClCompile Include="src\Light.cpp" />
     <ClCompile Include="src\MapController.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="include\ConsoleState.hpp" />
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\FreeFormBehaviour.hpp" />
+    <ClInclude Include="include\InputMapping.hpp" />
     <ClInclude Include="include\UIInputSelect.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />

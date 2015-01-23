@@ -248,7 +248,8 @@ void FreeFormBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorl
         break;
     case CollisionWorld::Body::Block:
         //kill if from above
-        if (manifold.y * manifold.z > 6)
+        if (manifold.y * manifold.z > 6
+            && other->getSpeed() > 10.f)
         {
             kill();
 

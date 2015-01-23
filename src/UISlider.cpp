@@ -98,46 +98,43 @@ void Slider::deactivate()
 
 void Slider::handleEvent(const sf::Event& e)
 {
-    if (active())
+    if (e.type == sf::Event::KeyPressed)
     {
-        if (e.type == sf::Event::KeyPressed)
+        if (e.key.code == sf::Keyboard::Left)
         {
-            if (e.key.code == sf::Keyboard::Left)
+            decrease();
+        }
+        else if (e.key.code == sf::Keyboard::Right)
+        {
+            increase();
+        }           
+    }
+    else if (e.type == sf::Event::KeyReleased)
+    {
+        if (e.key.code == sf::Keyboard::Return)
+        {
+            deactivate();
+        }
+    }
+    else if (e.type == sf::Event::JoystickMoved)
+    {
+        if (e.joystickMove.axis == sf::Joystick::PovX)
+        {
+            if (e.joystickMove.position > deadzone)
+            {
+                increase();
+            }
+            else if (e.joystickMove.position < -deadzone)
             {
                 decrease();
             }
-            else if (e.key.code == sf::Keyboard::Right)
-            {
-                increase();
-            }           
         }
-        else if (e.type == sf::Event::KeyReleased)
+    }
+    else if (e.type == sf::Event::JoystickButtonReleased)
+    {
+        if (e.joystickButton.button == 1)
         {
-            if (e.key.code == sf::Keyboard::Return)
-            {
-                deactivate();
-            }
-        }
-        else if (e.type == sf::Event::JoystickMoved)
-        {
-            if (e.joystickMove.axis == sf::Joystick::PovX)
-            {
-                if (e.joystickMove.position > deadzone)
-                {
-                    increase();
-                }
-                else if (e.joystickMove.position < -deadzone)
-                {
-                    decrease();
-                }
-            }
-        }
-        else if (e.type == sf::Event::JoystickButtonReleased)
-        {
-            if (e.joystickButton.button == 1)
-            {
-                deactivate();
-            }
+            deactivate();
         }
     }
 }
