@@ -43,7 +43,7 @@ class GameState final : public State
 {
 public:
     GameState(StateStack& stack, Context context);
-    ~GameState() = default;
+    ~GameState();// = default;
 
     bool update(float dt) override;
     void draw() override;
@@ -67,7 +67,12 @@ private:
     void addBlock(const sf::Vector2f& position, const sf::Vector2f& size);
     void addPlayer(const sf::Vector2f& position, Player& player);
     void addNpc(const sf::Vector2f& position, const sf::Vector2f& size);
-    void addMapBody(const Map::Node& n); 
+    void addMapBody(const Map::Node& n);
+
+    std::vector<std::string> m_consoleCommands;
+    void registerConsoleCommands();
+    void unregisterConsoleCommands();
+
 };
 
 #endif //GAME_STATE_H_

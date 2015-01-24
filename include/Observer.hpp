@@ -84,7 +84,9 @@ source distribution.
                 ExtraSpeed,
                 JumpIncrease,
                 ReverseControls,
-                Attraction,
+                SuperStrength,
+                SpeedReduction,
+                JumpReduction,
                 Size
             }item;
             float positionX, positionY;

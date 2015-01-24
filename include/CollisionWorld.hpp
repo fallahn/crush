@@ -85,6 +85,7 @@ public:
         
         void addChild(Body* b, const sf::Vector2f& relPosition);
         void removeChild(Body* b);
+        void detatch();
         void flipChildren();
 
         float getSpeed() const;

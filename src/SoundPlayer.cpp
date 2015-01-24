@@ -59,7 +59,7 @@ void SoundPlayer::update()
         {
             float speed = cb->getSpeed();
             //hmm magic consts ....
-            speed = std::max(speed / 305000.f, 0.9f);
+            speed = std::max(speed / 330000.f, 0.9f);
             p.second->setPitch(speed);
             //std::cerr << speed << std::endl;
         }

@@ -70,6 +70,7 @@ protected:
 
     bool deleted() const;
     bool hasChild(CollisionWorld::Body::Type t);
+    CollisionWorld::Body* getParent();
 
 private:
     CollisionWorld::Body* m_body;

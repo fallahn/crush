@@ -42,7 +42,7 @@ void BlockBehaviourAir::update(float dt)
 {
     //simply negate sideways movement and allow gravity to do its thing
     auto vel = getVelocity();
-    vel.x = 0.f;
+    vel.x *= getFriction();
     setVelocity(vel);
 
     sf::Int32 cat = getParentCategory();
@@ -80,7 +80,7 @@ void BlockBehaviourAir::resolve(const sf::Vector3f& manifold, CollisionWorld::Bo
         //setParentCategory(Category::Block); //reset any previous owners
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({});
+        setVelocity({getVelocity().x, 0.f});
         setBehaviour<BlockBehaviourGround>();
 
         Event e;
@@ -213,7 +213,8 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
         break;
     case CollisionWorld::Body::Type::Solid:
         move(sf::Vector2f(manifold.x, manifold.y) * manifold.z);
-        setVelocity({});
+        if (manifold.x != 0) //only stop when hitting walls
+            setVelocity({}); //so boxes still slide hitting floor
 
         //Event e;
         //e.type = Event::Block;
@@ -259,10 +260,7 @@ void BlockBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld:
 //-------------------------------------------
 void BlockBehaviourCarry::update(float dt)
 {
-    //auto vel = getVelocity();
-    //vel.y = 0.f; //cancel gravity
-    //setVelocity(vel);
-    setVelocity({});
+    setVelocity({getVelocity().x, 0.f});
 
     if ((getParentCategory() & (Category::CarriedOne | Category::CarriedTwo)) == 0)
     {

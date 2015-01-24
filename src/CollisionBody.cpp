@@ -68,7 +68,7 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     {
     case Type::Block:
         m_behaviour = std::make_unique<BlockBehaviourAir>(this);
-        m_friction = 0.8f;
+        m_friction = 0.84f;
         break;
     case Type::Npc:
         m_behaviour = std::make_unique<NpcBehaviourAir>(this);
@@ -210,6 +210,14 @@ void CollisionWorld::Body::removeChild(CollisionWorld::Body* b)
         b->m_velocity = m_velocity;
         if (b->m_node) b->setPosition(b->m_node->getWorldPosition());
         m_children.erase(result);
+    }
+}
+
+void CollisionWorld::Body::detatch()
+{
+    if (m_parent)
+    {
+        m_parent->removeChild(this);
     }
 }
 

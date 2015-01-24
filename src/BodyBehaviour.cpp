@@ -145,3 +145,8 @@ bool BodyBehaviour::hasChild(CollisionWorld::Body::Type t)
 {
     return m_body->hasChild(t);
 }
+
+CollisionWorld::Body* BodyBehaviour::getParent()
+{
+    return m_body->m_parent;
+}

@@ -90,16 +90,24 @@ bool TitleState::update(float dt)
 
 bool TitleState::handleEvent(const sf::Event& evt)
 {
-    if (evt.type == sf::Event::KeyPressed)
+    if (evt.type == sf::Event::KeyReleased)
     {
         if (evt.key.code == sf::Keyboard::Space)
         {
             requestStackPop();
             requestStackPush(States::ID::Menu);
         }
-        else if (evt.key.code == sf::Keyboard::L)
+        /*else if (evt.key.code == sf::Keyboard::L)
         {
             requestStackPush(States::ID::GameOver);
+        }*/
+    }
+    else if (evt.type == sf::Event::JoystickButtonReleased)
+    {
+        if (evt.joystickButton.button == 7) //strart on xbox
+        {
+            requestStackPop();
+            requestStackPush(States::ID::Menu);
         }
     }
     return true;

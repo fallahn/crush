@@ -247,20 +247,15 @@ void FreeFormBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorl
 
         break;
     case CollisionWorld::Body::Block:
-        //kill if from above
-        if (manifold.y * manifold.z > 6
-            && other->getSpeed() > 10.f)
+        //drop if from above
+        if (manifold.y * manifold.z > 6)
         {
-            kill();
+            Event evt;
+            evt.type = Event::Player;
+            evt.player.action = Event::PlayerEvent::LostHat;
+            raiseEvent(evt, getParent());
 
-            Event e;
-            e.node.action = Event::NodeEvent::KilledNode;
-            e.node.type = Category::Block;
-            e.node.target = Category::HatDropped;
-            e.node.owner = Category::None;
-
-            e.type = Event::Node;
-            raiseEvent(e, other);
+            move(-Util::Vector::normalise(getVelocity()) * (manifold.z * 2.f));
         }
         break;
     default: break;

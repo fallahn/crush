@@ -381,8 +381,8 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                     m_playerTwoLives++;
                 msg = "Extra Life! ";
                 break;
-            case Event::PlayerEvent::Attraction:
-                msg = "Nothing! ";
+            case Event::PlayerEvent::SuperStrength:
+                msg = "Super Strength! ";
                 break;
             case Event::PlayerEvent::ExtraSpeed:
                 msg = "Extra Speed! ";
@@ -392,6 +392,12 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                 break;
             case Event::PlayerEvent::ReverseControls:
                 msg = "Reverse Controls! ";
+                break;
+            case Event::PlayerEvent::SpeedReduction:
+                msg = "Reduced Speed! ";
+                break;
+            case Event::PlayerEvent::JumpReduction:
+                msg = "Reduced Jump! ";
                 break;
             default: break;
             }

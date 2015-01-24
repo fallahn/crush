@@ -123,7 +123,7 @@ private:
     void doRelease();
     void doPickUp();
     void doDrop(bool raiseEvent = true);
-    void dropHat();
+    void dropHat(bool raiseEvent = true);
 };
 
 #endif //PLAYER_H_

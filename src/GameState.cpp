@@ -131,6 +131,13 @@ GameState::GameState(StateStack& stack, Context context)
     //close loading screen before starting music
     quitLoadingScreen();
     context.gameInstance.playMusic(music);
+
+    registerConsoleCommands();
+}
+
+GameState::~GameState()
+{
+    unregisterConsoleCommands();
 }
 
 bool GameState::update(float dt)
@@ -378,4 +385,22 @@ void GameState::addMapBody(const Map::Node& n)
     }
     default: break;
     }
+}
+
+void GameState::registerConsoleCommands()
+{
+    Console::CommandData cd;
+    cd.action = [this](Console::CommandList l)-> std::string
+    {
+        Event e;
+        
+        return "";
+    };
+
+}
+
+void GameState::unregisterConsoleCommands()
+{
+    for (const auto& c : m_consoleCommands)
+        getContext().gameInstance.getConsole().removeItem(c);
 }

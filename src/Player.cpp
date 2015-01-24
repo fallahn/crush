@@ -51,7 +51,10 @@ namespace
     //item modifiers
     const float itemDuration = 16.f;
     const float speedIncrease = 1.8f;
+    const float speedDecrease = 0.5f;
     const float jumpIncrease = 1.3f;
+    const float jumpDecrease = 0.7f;
+    const float strengthForce = 2000.f;
 
     //animation consts
     const float maxFrameRate = 12.f;
@@ -384,9 +387,18 @@ void Player::onNotify(Subject& s, const Event& evt)
                     m_activeItems |= (1 << Event::PlayerEvent::ReverseControls);
                     std::cout << "reverse player controls" << std::endl;
                     break;
-                case Event::PlayerEvent::Attraction:
-                    std::cout << "NPC attraction not yet implemented" << std::endl;
-                    m_activeItems |= (1 << Event::PlayerEvent::Attraction);
+                case Event::PlayerEvent::SuperStrength:
+                    std::cout << "Super Strength!" << std::endl;
+                    m_activeItems |= (1 << Event::PlayerEvent::SuperStrength);
+                    break;
+                case Event::PlayerEvent::SpeedReduction:
+                    std::cout << "Reduced Speed" << std::endl;
+                    m_activeItems |= (1 << Event::PlayerEvent::SpeedReduction);
+                    break;
+                case Event::PlayerEvent::JumpReduction:
+                    std::cout << "Reduced Jump" << std::endl;
+                    m_jumpForce = jumpForce * jumpDecrease;
+                    m_activeItems |= (1 << Event::PlayerEvent::JumpReduction);
                     break;
                 default: break;
                 }
@@ -404,6 +416,9 @@ void Player::onNotify(Subject& s, const Event& evt)
                     };
                     m_commandStack.push(c);
                 }
+                break;
+            case Event::PlayerEvent::LostHat:
+                dropHat(false);
                 break;
             default: break;
             }
@@ -494,8 +509,10 @@ void Player::doMovement(float dt)
     //add speed increase if active
     if (m_activeItems & (1 << Event::PlayerEvent::ExtraSpeed))
         m_moveForce *= speedIncrease;
+    else if (m_activeItems & (1 << Event::PlayerEvent::SpeedReduction))
+        m_moveForce *= speedDecrease;
     //invert movement if reverse active
-    if (m_activeItems & (1 << Event::PlayerEvent::ReverseControls))
+    else if (m_activeItems & (1 << Event::PlayerEvent::ReverseControls))
         m_moveForce = -m_moveForce;
 
     if (m_moveForce != 0.f)
@@ -753,9 +770,11 @@ void Player::doDrop(bool raiseEvent)
     if (m_carryingBlock)
     {
         m_jumpForce = jumpForce;
-        if (m_activeItems & (1 << Event::PlayerEvent::ExtraSpeed))
+        if (m_activeItems & (1 << Event::PlayerEvent::JumpIncrease))
             m_jumpForce *= jumpIncrease;
-        
+        else if (m_activeItems & (1 << Event::PlayerEvent::JumpReduction))
+            m_jumpForce *= jumpDecrease;
+
         //release block
         Command c;
         c.categoryMask |= m_carryId;
@@ -781,11 +800,14 @@ void Player::doDrop(bool raiseEvent)
             //and remove child
             Command d;
             d.categoryMask |= m_id;
-            d.action = [&](Node& on, float dt)
+            d.action = [&, this](Node& on, float dt)
             {
                 assert(on.getCollisionBody());
                 on.getCollisionBody()->setFriction(friction);
                 on.getCollisionBody()->removeChild(n.getCollisionBody());
+
+                if (m_activeItems & (1 << Event::PlayerEvent::SuperStrength))
+                    n.getCollisionBody()->applyForce({ (m_leftFacing) ? - strengthForce : strengthForce, -20.f });
             };
             m_commandStack.push(d);
 
@@ -796,25 +818,30 @@ void Player::doDrop(bool raiseEvent)
     }
 }
 
-void Player::dropHat()
+void Player::dropHat(bool raiseEvent)
 {
     if (m_hasHat)
     {
         Command c;
         c.categoryMask |= Category::HatCarried;
-        c.action = [this](Node& n, float dt)
+        c.action = [raiseEvent, this](Node& n, float dt)
         {
             n.setCategory(Category::HatDropped);
 
-            //raise dropped event
-            Event evt;
-            evt.type = Event::Player;
-            evt.player.action = Event::PlayerEvent::LostHat;
-            evt.player.playerId = m_id;
-            auto position = n.getWorldPosition();
-            evt.player.positionX = position.x;
-            evt.player.positionY = position.y;
-            n.raiseEvent(evt);
+            n.getCollisionBody()->detatch();
+
+            if (raiseEvent)
+            {
+                //raise dropped event
+                Event evt;
+                evt.type = Event::Player;
+                evt.player.action = Event::PlayerEvent::LostHat;
+                evt.player.playerId = m_id;
+                auto position = n.getWorldPosition();
+                evt.player.positionX = position.x;
+                evt.player.positionY = position.y;
+                n.raiseEvent(evt);
+            }
         };
         m_commandStack.push(c);
         m_hasHat = false;

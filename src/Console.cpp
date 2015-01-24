@@ -331,7 +331,12 @@ void Console::addToConfig(const std::string& cmd)
 {
     m_configList.push_back(cmd);
     std::sort(m_configList.begin(), m_configList.end());
-    m_configList.erase(std::unique(m_configList.begin(), m_configList.end()), m_configList.end());
+    m_configList.erase(std::unique(m_configList.begin(), m_configList.end(),
+        [](const std::string& str1, const std::string& str2)
+    {
+        return (str1.substr(0, str1.find_last_of(' ')) == str2.substr(0, str2.find_last_of(' ')));
+    }),
+        m_configList.end());
 }
 
 void Console::removeFromConfig(const std::string& cmd)

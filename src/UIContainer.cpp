@@ -89,22 +89,7 @@ void Container::handleEvent(const sf::Event& e)
     //controller navigation
     else if (e.type == sf::Event::JoystickMoved)
     {
-        //TODO stick is a little over sensitive
-        //if (e.joystickMove.axis == sf::Joystick::Axis::Y)
-        //{
-        //    if (e.joystickMove.position > deadzone)
-        //    {
-        //        selectNext();
-        //    }
-        //    else if (e.joystickMove.position < -deadzone)
-        //    {
-        //        selectPrevious();
-        //    }
-        //}
-        ////pov direction is opposite to thumb on XBC
-        //else 
-        if (e.joystickMove.axis == sf::Joystick::Axis::PovY
-            || e.joystickMove.axis == sf::Joystick::Axis::PovX)
+        if (e.joystickMove.axis == sf::Joystick::Axis::PovY)
         {
             if (e.joystickMove.position > deadzone)
             {
@@ -113,6 +98,17 @@ void Container::handleEvent(const sf::Event& e)
             else if (e.joystickMove.position < -deadzone)
             {
                 selectNext();
+            }
+        }//axis is inverse so needs its own branch :/
+        else if (e.joystickMove.axis == sf::Joystick::Axis::PovX)
+        {
+            if (e.joystickMove.position > deadzone)
+            {
+                selectNext();
+            }
+            else if (e.joystickMove.position < -deadzone)
+            {
+                selectPrevious();
             }
         }
     }

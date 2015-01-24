@@ -50,7 +50,7 @@ namespace
 }
 
 Game::Game()
-    : m_renderWindow    (sf::VideoMode(1024, 576), "CRUSH 0.5", sf::Style::Close), //1024, 576
+    : m_renderWindow    (sf::VideoMode(1600, 900), "CRUSH 0.5", sf::Style::Close), //1024, 576
     m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
     m_console           (getFont("res/fonts/VeraMono.ttf"))
 {
@@ -268,69 +268,69 @@ void Game::registerConCommands()
         if (l.size() < 2)
             return "not enough parameters";
 
-        if (l[0] == "player_one_left")
+        if (l[1] == "player_one_left")
         {
-            gameData.playerOne.keyBinds.left = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerOne.keyBinds.left == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerOne.keyBinds.left = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerOne.keyBinds.left == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_one_right")
+        else if (l[1] == "player_one_right")
         {
-            gameData.playerOne.keyBinds.right = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerOne.keyBinds.right == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerOne.keyBinds.right = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerOne.keyBinds.right == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_one_jump")
+        else if (l[1] == "player_one_jump")
         {
-            gameData.playerOne.keyBinds.jump = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerOne.keyBinds.jump == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerOne.keyBinds.jump = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerOne.keyBinds.jump == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_one_drag")
+        else if (l[1] == "player_one_drag")
         {
-            gameData.playerOne.keyBinds.grab = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerOne.keyBinds.grab == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerOne.keyBinds.grab = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerOne.keyBinds.grab == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_one_pickup")
+        else if (l[1] == "player_one_pickup")
         {
-            gameData.playerOne.keyBinds.pickUp = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerOne.keyBinds.pickUp == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerOne.keyBinds.pickUp = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerOne.keyBinds.pickUp == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_two_left")
+        else if (l[1] == "player_two_left")
         {
-            gameData.playerTwo.keyBinds.left = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerTwo.keyBinds.left == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerTwo.keyBinds.left = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerTwo.keyBinds.left == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_two_right")
+        else if (l[1] == "player_two_right")
         {
-            gameData.playerTwo.keyBinds.right = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerTwo.keyBinds.right == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerTwo.keyBinds.right = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerTwo.keyBinds.right == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_two_jump")
+        else if (l[1] == "player_two_jump")
         {
-            gameData.playerTwo.keyBinds.jump = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerTwo.keyBinds.jump == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerTwo.keyBinds.jump = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerTwo.keyBinds.jump == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_two_drag")
+        else if (l[1] == "player_two_drag")
         {
-            gameData.playerTwo.keyBinds.grab = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerTwo.keyBinds.grab == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerTwo.keyBinds.grab = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerTwo.keyBinds.grab == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
-        else if (l[0] == "player_two_pickup")
+        else if (l[1] == "player_two_pickup")
         {
-            gameData.playerTwo.keyBinds.pickUp = InputMap::getKey(l[1]);
-            std::string k = (gameData.playerTwo.keyBinds.pickUp == sf::Keyboard::Unknown) ? "unknown" : l[1];
-            return "bound " + l[0] + " to " + k;
+            gameData.playerTwo.keyBinds.pickUp = InputMap::getKey(l[0]);
+            std::string k = (gameData.playerTwo.keyBinds.pickUp == sf::Keyboard::Unknown) ? "unknown" : l[0];
+            return "bound " + l[1] + " to " + k;
         }
         return "unrecognised key bind";
     };
-    cd.help = "set key bind for player control";
+    cd.help = "usage: set_key <key> <control>";
     cd.flags |= Console::Config;
     m_console.addItem("set_key", cd);
 }
