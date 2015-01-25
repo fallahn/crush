@@ -389,14 +389,86 @@ void GameState::addMapBody(const Map::Node& n)
 
 void GameState::registerConsoleCommands()
 {
+    auto& console = getContext().gameInstance.getConsole();
     Console::CommandData cd;
-    cd.action = [this](Console::CommandList l)-> std::string
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)-> std::string
     {
-        Event e;
+        if (l.size() < 2)
+            return "give: not enough parameters";
+
+        //raise player event with item info and use command stack
+        //to target player and raise event from node
         
+        Event e;
+        e.type = Event::Player;
+        e.player.action = Event::PlayerEvent::GotItem;
+
+        if (l[0] != "player_one" && l[0] != "player_two")
+            return "unrecognised player";
+        
+        e.player.playerId = (l[0] == "player_one") ? Category::PlayerOne : Category::PlayerTwo;
+
+        if (l[1] == "extra_life")
+        {
+            e.player.item = Event::PlayerEvent::Item::ExtraLife;
+        }
+        else if (l[1] == "extra_speed")
+        {
+            e.player.item = Event::PlayerEvent::Item::ExtraSpeed;
+        }
+        else if (l[1] == "jump_increase")
+        {
+            e.player.item = Event::PlayerEvent::Item::JumpIncrease;
+        }
+        else if (l[1] == "reverse_controls")
+        {
+            e.player.item = Event::PlayerEvent::Item::ReverseControls;
+        }
+        else if (l[1] == "super_strength")
+        {
+            e.player.item = Event::PlayerEvent::Item::SuperStrength;
+        }
+        else if (l[1] == "speed_reduction")
+        {
+            e.player.item = Event::PlayerEvent::Item::SpeedReduction;
+        }
+        else if (l[1] == "jump_reduction")
+        {
+            e.player.item = Event::PlayerEvent::Item::JumpReduction;
+        }
+        else
+        {
+            return "invalid item. try extra_life, jump_increase, reverse_controls, super_strength, speed_reduction or jump_reduction";
+        }        
+        
+        Command c;
+        c.categoryMask |= e.player.playerId;
+        c.action = [e](Node& n, float dt)
+        {
+            Event evt = e;
+            assert(n.getCollisionBody());
+            auto pos = n.getCollisionBody()->getCentre();
+            evt.player.positionX = pos.x;
+            evt.player.positionY = pos.y;
+            n.raiseEvent(evt);
+        };
+        m_commandStack.push(c);
+
         return "";
     };
+    cd.help = "params <player> <item> eg player_one super_strength";
+    m_consoleCommands.push_back("give");
+    console.addItem(m_consoleCommands.back(), cd);
 
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        if (!l.size()) return "missing parameter: true or false";
+        m_npcController.enable((l[0] == "true") ? true : false);
+        return "";
+    };
+    cd.help = "param: true / false";
+    m_consoleCommands.push_back("npc_enable");
+    console.addItem(m_consoleCommands.back(), cd);
 }
 
 void GameState::unregisterConsoleCommands()

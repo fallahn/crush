@@ -73,7 +73,7 @@ TitleState::TitleState(StateStack& stack, Context context)
     Util::Position::centreOrigin(bigText);
     bigText.setPosition(titleText.getPosition() - sf::Vector2f(0.f, bigText.getLocalBounds().height + 20.f));
 
-    context.gameInstance.playMusic(music);
+    //context.gameInstance.playMusic(music);
 }
 
 void TitleState::draw()

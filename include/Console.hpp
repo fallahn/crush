@@ -50,11 +50,12 @@ public:
         None      = 0,
         Cheat     = (1 << 0), //command will only execute if cheats enabled
         Config    = (1 << 1), //command should be saved to .con file
-        ConClosed = (1 << 2) //only executes if console is closed
+        ConClosed = (1 << 2), //only executes if console is closed
+        Valid     = (1 << 3) //execution validated this command
     };
 
     typedef std::vector<std::string> CommandList;
-    typedef std::function<std::string(CommandList&)> Command;
+    typedef std::function<std::string(CommandList&, sf::Uint32& flags)> Command;
 
     struct CommandData
     {

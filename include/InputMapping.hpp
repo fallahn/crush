@@ -48,6 +48,8 @@ public:
     static const std::string& toString(sf::Uint16);
     static const std::string& toString(sf::Joystick::Axis);
 
+    static const std::vector<std::string>& getInputList();
+
     InputMap();
     ~InputMap() = default;
 

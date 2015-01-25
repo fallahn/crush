@@ -48,6 +48,8 @@ public:
     explicit NpcController(CommandStack& c, TextureResource& tr, ShaderResource& sr);
     ~NpcController() = default;
 
+    void enable(bool e);
+
     void onNotify(Subject& s, const Event& evt) override;
     void update(float dt);
 

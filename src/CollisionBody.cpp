@@ -281,7 +281,8 @@ void CollisionWorld::Body::step(float dt)
     for (auto& c : m_children)
     {
         c.first->setPosition(getCentre() + (c.second - c.first->m_centre));
-        c.first->step(dt); //else children lag by a frame
+        if (c.first->getType() == Body::Type::FreeForm) //this is a kludge
+            c.first->step(dt); //to stop the hat lagging
     }
 
     //update strength value or kill if no health

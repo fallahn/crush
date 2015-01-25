@@ -55,7 +55,7 @@ namespace
         "(or each other!). Crush enemies between blocks..\n"
         "but don't accidentally crush yourself!\n";
 
-    const std::string music = "res/sound/music/main_menu.ogg";
+    const std::string music = "res/sound/music/intro.ogg";
 
     const sf::Vector2f buttonPrevPosition(400.f, 1000.f);
     const sf::Vector2f buttonNextPosition(1920.f - 400.f, 1000.f);
@@ -90,6 +90,8 @@ MenuState::MenuState(StateStack& stack, Context context)
     buildGraphicsOptions();
     buildNameInput();
     buildHelp();
+
+    context.gameInstance.playMusic(music);
 }
 
 void MenuState::draw()

@@ -341,6 +341,14 @@ void BlockBehaviourWater::resolve(const sf::Vector3f& manifold, CollisionWorld::
             evt.node.speed = getVelocity().y;
             raiseEvent(evt, other);
 
+            Event e;
+            e.type = Event::Block;
+            e.block.action = Event::BlockEvent::DragEnd;
+            auto pos = getBody()->getCentre();
+            e.block.positionX = pos.x;
+            e.block.positionY = pos.y;
+            raiseEvent(e);
+
             m_splashed = true;
         }
         break;

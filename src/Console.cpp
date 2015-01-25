@@ -71,7 +71,7 @@ Console::Console(const sf::Font& font)
 
     //---list commands---//
     CommandData cd;
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         for (const auto& i : m_items)
             print(i.first + ": " + i.second.help + ((i.second.flags & CommandFlag::Cheat) ? " CHEAT" : ""));
@@ -81,7 +81,7 @@ Console::Console(const sf::Font& font)
     addItem("list_commands", cd);
 
     //---show help for command---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         if (l.empty())
         {
@@ -105,7 +105,7 @@ Console::Console(const sf::Font& font)
     addItem("help", cd);
 
     //---bind command to key or action---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         return bindInput(l);
     };
@@ -115,7 +115,7 @@ Console::Console(const sf::Font& font)
     //TODO unbind inputs / commands
 
     //---output list of available commands---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         std::ofstream file("commands.txt");
         for (const auto& i : m_items)
@@ -123,20 +123,10 @@ Console::Console(const sf::Font& font)
         file << std::endl;
         file << "Inputs available for mapping:" << std::endl;
         file << "---------------------------" << std::endl;
-        //for (const auto& k : m_keyMap)
-        //    file << "Key: " << k.first << std::endl;
-        //file << std::endl;
-
-        //for (const auto& m : m_mouseMap)
-        //    file << "Mouse: " << m.first << std::endl;
-        //file << std::endl;
-
-        //for (const auto& j : m_joyMap)
-        //    file << "Controller: " << j.first << std::endl;
-        //file << std::endl;
-
-        //for (const auto& j : m_axisMap)
-        //    file << "Controller axis: " << j.first << std::endl;
+        
+        const auto& list = InputMap::getInputList();
+        for (const auto& s : list)
+            file << s << std::endl;
 
         file.close();
         return "Wrote file commands.txt";
@@ -145,7 +135,7 @@ Console::Console(const sf::Font& font)
     addItem("create_cmd_list", cd);
 
     //---executes a given config file if available---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         if (l.empty())
         {
@@ -173,7 +163,7 @@ Console::Console(const sf::Font& font)
     addItem("exec", cd);
 
     //---echos a string to the console output---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         if (l.empty()) return " echo Usage: <string> prints a string to the console";
         print(l[0]);
@@ -183,7 +173,7 @@ Console::Console(const sf::Font& font)
     addItem("echo", cd);
 
     //---exports config list to given config file---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         std::string fileName;
         if (!l.empty())
@@ -207,7 +197,7 @@ Console::Console(const sf::Font& font)
     addItem("export_config", cd);
 
     //---enables commands which require the cheat flag set---//
-    cd.action = [this](CommandList l)->std::string
+    cd.action = [this](CommandList l, sf::Uint32& flags)->std::string
     {
         m_cheatsEnabled = !m_cheatsEnabled;
         return "set cheats enabled to " + (m_cheatsEnabled) ? "true" : "false";
@@ -435,12 +425,6 @@ void Console::parseCommand()
     const auto item = m_items.find(commandList[0]);
     if (item != m_items.end())
     {
-        //check if result of command should be saved in con file
-        if ((item->second.flags & CommandFlag::Config))
-        {
-            removeFromConfig(cmd);
-            addToConfig(cmd);
-        }
         if ((item->second.flags & CommandFlag::Cheat)
             && !m_cheatsEnabled)
         {
@@ -455,8 +439,16 @@ void Console::parseCommand()
         else
         {
             commandList.erase(commandList.begin()); //remove command name before passing args
-            std::string result = item->second.action(commandList);
+            std::string result = item->second.action(commandList, item->second.flags);
             if (!result.empty()) print(result);
+        }
+
+        //check if result of command should be saved in con file
+        if ((item->second.flags & CommandFlag::Config)
+            && (item->second.flags & CommandFlag::Valid))
+        {
+            removeFromConfig(cmd);
+            addToConfig(cmd); //TODO why aren't we just validating duplicates when adding?
         }
     }
     else

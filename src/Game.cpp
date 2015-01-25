@@ -203,7 +203,7 @@ void Game::registerConCommands()
 {
     //-------toggle console state-----//
     Console::CommandData cd;
-    cd.action = [this](Console::CommandList l)->std::string
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
     {
         if (m_console.visible())
         {
@@ -220,7 +220,7 @@ void Game::registerConCommands()
     m_console.addItem("show", cd);
 
     //-----quit application-----//
-    cd.action = [this](Console::CommandList l)->std::string
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
     {
         m_renderWindow.close();
         return "Quitting...";
@@ -229,7 +229,7 @@ void Game::registerConCommands()
     m_console.addItem("quit", cd);
 
     //----register map change----//
-    cd.action = [this](Console::CommandList l)->std::string
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
     {
         if (l.empty()) return "please specify a map name";
         for (auto i = 0u; i < gameData.mapList.size(); ++i)
@@ -248,7 +248,7 @@ void Game::registerConCommands()
     m_console.addItem("map", cd);
 
     //---skip map---//
-    cd.action = [this](Console::CommandList l)->std::string
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
     {
         gameData.mapIndex++;
         if (gameData.mapIndex == gameData.mapList.size())
@@ -263,11 +263,12 @@ void Game::registerConCommands()
 
 
     //---set a key to a player command---//
-    cd.action = [this](Console::CommandList l)->std::string
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
     {
         if (l.size() < 2)
             return "not enough parameters";
 
+        flags |= Console::CommandFlag::Valid;
         if (l[1] == "player_one_left")
         {
             gameData.playerOne.keyBinds.left = InputMap::getKey(l[0]);
@@ -328,9 +329,10 @@ void Game::registerConCommands()
             std::string k = (gameData.playerTwo.keyBinds.pickUp == sf::Keyboard::Unknown) ? "unknown" : l[0];
             return "bound " + l[1] + " to " + k;
         }
+        flags &= ~Console::CommandFlag::Valid;
         return "unrecognised key bind";
     };
-    cd.help = "usage: set_key <key> <control>";
+    cd.help = "params <key> <control>";
     cd.flags |= Console::Config;
     m_console.addItem("set_key", cd);
 }

@@ -229,6 +229,21 @@ void PlayerBehaviourGround::resolve(const sf::Vector3f& manifold, CollisionWorld
             float damageAmount = std::fabs(manifold.z /** damageMultiplier*/);
             damage(damageAmount, other);
             setVelocity({});
+
+            if (hasChild(CollisionWorld::Body::Block))
+            {
+                //drop block
+                Event e;
+                e.type = Event::Player;
+                e.player.action = Event::PlayerEvent::Released;
+                e.player.playerId = getParentCategory();
+                auto pos = getBody()->getCentre();
+                e.player.positionX = pos.x;
+                e.player.positionY = pos.y;
+                raiseEvent(e);
+
+                std::cerr << "release block in collision" << std::endl;
+            }
         }
         break;
     case CollisionWorld::Body::Type::Player:

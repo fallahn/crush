@@ -60,6 +60,11 @@ NpcController::NpcController(CommandStack& c, TextureResource& tr, ShaderResourc
     m_textureResource   (tr),
     m_shaderResource    (sr){}
 
+void NpcController::enable(bool e)
+{
+    m_enabled = e;
+}
+
 void NpcController::onNotify(Subject& s, const Event& evt)
 {
     switch (evt.type)

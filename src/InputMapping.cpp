@@ -37,6 +37,8 @@ namespace
     std::map<std::string, sf::Int16> joyMap;
     std::map<std::string, sf::Joystick::Axis> axisMap;
 
+    std::vector<std::string> inputList;
+
     InputMap mapInstance;
 }
 
@@ -144,12 +146,20 @@ InputMap::InputMap()
     keyMap["f15"] = sf::Keyboard::F15;
     keyMap["pause"] = sf::Keyboard::Pause;
     keyMap["unknown"] = sf::Keyboard::Unknown;
+
+    for (const auto& k : keyMap)
+        inputList.push_back(k.first);
+
     //----mouse-----
     mouseMap["mouse_left"] = sf::Mouse::Left;
     mouseMap["mouse_right"] = sf::Mouse::Right;
     mouseMap["mouse_middle"] = sf::Mouse::Middle;
     mouseMap["mouse_x1"] = sf::Mouse::XButton1;
     mouseMap["mouse_x2"] = sf::Mouse::XButton2;
+
+    for (const auto& m : mouseMap)
+        inputList.push_back(m.first);
+
     ///----controller----
     joyMap["joy_button_0"] = 0;
     joyMap["joy_button_1"] = 1;
@@ -184,6 +194,9 @@ InputMap::InputMap()
     joyMap["joy_button_30"] = 30;
     joyMap["joy_button_31"] = 31;
 
+    for (const auto& j : joyMap)
+        inputList.push_back(j.first);
+
     axisMap["joy_axis_x"] = sf::Joystick::X;
     axisMap["joy_axis_y"] = sf::Joystick::Y;
     axisMap["joy_axis_z"] = sf::Joystick::Z;
@@ -192,6 +205,9 @@ InputMap::InputMap()
     axisMap["joy_axis_v"] = sf::Joystick::V;
     axisMap["joy_pov_x"] = sf::Joystick::PovX;
     axisMap["joy_pov_y"] = sf::Joystick::PovY;
+
+    for (const auto& a : axisMap)
+        inputList.push_back(a.first);
 }
 
 sf::Keyboard::Key InputMap::getKey(const std::string& str)
@@ -264,4 +280,9 @@ const std::string& InputMap::toString(sf::Joystick::Axis a)
     });
     assert(r != axisMap.end());
     return r->first;
+}
+
+const std::vector<std::string>& InputMap::getInputList()
+{
+    return inputList;
 }
