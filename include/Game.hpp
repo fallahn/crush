@@ -67,8 +67,6 @@ private:
     sf::RenderWindow m_renderWindow;
     sf::Color m_clearColour;
 
-    StateStack m_stateStack;
-
     FontResource m_fontResource;
     TextureResource m_textureResource;
     ShaderResource m_shaderResource;
@@ -76,6 +74,7 @@ private:
     MusicPlayer m_musicPlayer;
 
     Console m_console;
+    StateStack m_stateStack;
 
     void handleEvents();
     std::function<void(float)> update;

@@ -28,6 +28,7 @@ source distribution.
 #include <PauseState.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
+#include <UIButton.hpp>
 
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -40,20 +41,30 @@ namespace
 }
 
 PauseState::PauseState(StateStack& stack, Context context)
-    : State(stack, context)
+    : State             (stack, context),
+    m_currentContainer  (Container::Main),
+    m_font              (context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
+    m_textureResource   (context.gameInstance.getTextureResource())
 {
     context.renderWindow.setView(context.defaultView);
     
     grey.setFillColor({ 0u, 0u, 0u, 148u });
     grey.setSize(context.defaultView.getSize());
 
-    text.setFont(context.gameInstance.getFont("res/fonts/VeraMono.ttf"));
+    text.setFont(m_font);
     text.setString("PAUSED");
     text.setCharacterSize(80u);
     Util::Position::centreOrigin(text);
     text.setPosition(context.defaultView.getCenter());
+    text.move(0.f, -270.f);
 
     context.gameInstance.pauseMusic();
+
+    //build menus
+    for (auto i = 0; i < Container::Count; ++i)
+        m_uiContainers.emplace_back(m_soundPlayer);
+
+    buildMainMenu();
 }
 
 PauseState::~PauseState()
@@ -63,13 +74,16 @@ PauseState::~PauseState()
 
 bool PauseState::update(float dt)
 {
+    m_uiContainers[m_currentContainer].update(dt);
     return false;
 }
 
 void PauseState::draw()
 {
-    getContext().renderWindow.draw(grey);
-    getContext().renderWindow.draw(text);
+    auto& renderWindow = getContext().renderWindow;
+    renderWindow.draw(grey);
+    renderWindow.draw(text);
+    renderWindow.draw(m_uiContainers[m_currentContainer]);
 }
 
 bool PauseState::handleEvent(const sf::Event& evt)
@@ -89,6 +103,57 @@ bool PauseState::handleEvent(const sf::Event& evt)
         if (evt.joystickButton.button == 7)
             requestStackPop();
     }
+
+    m_uiContainers[m_currentContainer].handleEvent(evt);
+
     return false;
 }
 
+//private
+void PauseState::buildMainMenu()
+{
+    auto resumeButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    resumeButton->setText("Resume");
+    resumeButton->setAlignment(ui::Alignment::Centre);
+    resumeButton->setPosition(960.f, 400.f);
+    resumeButton->setTextColour(sf::Color::Black);
+    resumeButton->setCallback([this]()
+    {
+        requestStackPop();
+    });
+    m_uiContainers[Container::Main].addControl(resumeButton);
+
+    auto mainMenuButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    mainMenuButton->setText("Main Menu");
+    mainMenuButton->setAlignment(ui::Alignment::Centre);
+    mainMenuButton->setPosition(960.f, 450.f);
+    mainMenuButton->setTextColour(sf::Color::Black);
+    mainMenuButton->setCallback([this]()
+    {
+        requestStackClear();
+        requestStackPush(States::ID::Menu);
+    });
+    m_uiContainers[Container::Main].addControl(mainMenuButton);
+
+    auto optionsButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    optionsButton->setText("Options");
+    optionsButton->setAlignment(ui::Alignment::Centre);
+    optionsButton->setTextColour(sf::Color::Black);
+    optionsButton->setPosition(960.f, 500.f);
+    optionsButton->setCallback([this]()
+    {
+        //TODO
+    });
+    m_uiContainers[Container::Main].addControl(optionsButton);
+
+    auto quitButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    quitButton->setText("Quit");
+    quitButton->setTextColour(sf::Color::Black);
+    quitButton->setAlignment(ui::Alignment::Centre);
+    quitButton->setPosition(960.f, 550.f);
+    quitButton->setCallback([this]()
+    {
+        getContext().gameInstance.getConsole().exec("quit");
+    });
+    m_uiContainers[Container::Main].addControl(quitButton);
+}

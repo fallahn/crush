@@ -29,6 +29,8 @@ source distribution.
 #define PAUSE_STATE_H_
 
 #include <State.hpp>
+#include <UIContainer.hpp>
+#include <SoundPlayer.hpp>
 
 class PauseState final : public State
 {
@@ -41,7 +43,23 @@ public:
     bool handleEvent(const sf::Event& evt) override;
 
 private:
+    enum Container
+    {
+        Main = 0,
+        InputOptions,
+        SoundOptions,
+        GraphicsOptions,
+        Count
+    }m_currentContainer;
 
+    sf::Font& m_font;
+    TextureResource& m_textureResource;
+
+    std::vector<ui::Container> m_uiContainers;
+
+    SoundPlayer m_soundPlayer;
+
+    void buildMainMenu();
 };
 
 #endif //PAUSE_STATE_H_

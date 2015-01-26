@@ -27,8 +27,9 @@ source distribution.
 
 #include <MenuState.hpp>
 #include <Game.hpp>
-#include <Util.hpp>
 #include <InputMapping.hpp>
+#include <Util.hpp>
+#include <UIContainer.hpp>
 #include <UIButton.hpp>
 #include <UISlider.hpp>
 #include <UILabel.hpp>
@@ -162,6 +163,18 @@ void MenuState::buildMainMenu()
         m_currentContainer = Container::Help;
     });
     m_uiContainers[Container::Main].addControl(helpButton);
+
+    //quit button
+    auto quitButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
+    quitButton->setText("Quit");
+    quitButton->setTextColour(sf::Color::Black);
+    quitButton->setAlignment(ui::Alignment::Centre);
+    quitButton->setPosition(960.f, 550.f);
+    quitButton->setCallback([this]()
+    {
+        getContext().gameInstance.getConsole().exec("quit");
+    });
+    m_uiContainers[Container::Main].addControl(quitButton);
 }
 
 void MenuState::buildInputOptions()

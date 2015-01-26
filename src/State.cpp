@@ -31,6 +31,7 @@ source distribution.
 #include <Game.hpp>
 #include <Util.hpp>
 
+
 #include <SFML/Graphics/RenderWindow.hpp>
 
 State::Context::Context(sf::RenderWindow& window, Game& game, GameData& gd)

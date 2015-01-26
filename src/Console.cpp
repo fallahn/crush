@@ -319,14 +319,14 @@ bool Console::visible() const
 //private
 void Console::addToConfig(const std::string& cmd)
 {
-    m_configList.push_back(cmd);
-    std::sort(m_configList.begin(), m_configList.end());
-    m_configList.erase(std::unique(m_configList.begin(), m_configList.end(),
-        [](const std::string& str1, const std::string& str2)
+    m_configList.erase(std::remove_if(m_configList.begin(), m_configList.end(),
+        [&cmd](const std::string& str)
     {
-        return (str1.substr(0, str1.find_last_of(' ')) == str2.substr(0, str2.find_last_of(' ')));
-    }),
-        m_configList.end());
+        return(cmd.substr(0, cmd.find_first_of(' ')) == str.substr(0, str.find_first_of(' '))
+            && cmd.substr(cmd.find_last_of(' ')) == str.substr(str.find_last_of(' ')));
+    }), m_configList.end());
+
+    m_configList.push_back(cmd);
 }
 
 void Console::removeFromConfig(const std::string& cmd)
