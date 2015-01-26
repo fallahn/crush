@@ -170,8 +170,7 @@ void MapController::loadMap(const Map& map)
             switch (n.type)
             {
             case Category::Solid:
-                //TODO select a single texture for solid blocks in editor
-                m_solidDrawable.addPart(n.position, n.size, "funt");
+                m_solidDrawable.addPart(n.position, n.size, map.getPlatformImageName());
                 break;
 
             case Category::Block:
@@ -207,10 +206,14 @@ void MapController::loadMap(const Map& map)
     //shuffle item order
     shuffleItems();
 
-    //TODO load background texture based on map data
-    m_backgroundSprite.setTexture(m_textureResource.get("res/textures/map/background.png"));
+    //load background texture based on map data
+    std::string imageName = map.getBackgroundImageName();
+    m_backgroundSprite.setTexture(m_textureResource.get("res/textures/map/" + imageName));
     m_backgroundSprite.setFrameSize(sf::Vector2i(m_backgroundSprite.getTexture()->getSize()));
-    m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/map/background_normal.png"));
+    auto strpos = imageName.find_last_of('.');
+    if(strpos != std::string::npos)
+        imageName.insert(strpos, "_normal");
+    m_backgroundSprite.setNormalMap(m_textureResource.get("res/textures/map/" + imageName));
     m_backgroundSprite.setShader(m_shaderResource.get(Shader::Type::NormalMap));
     m_shaderResource.get(Shader::Type::Water).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
     m_shaderResource.get(Shader::Type::WaterDrop).setParameter("u_reflectMap", *m_backgroundSprite.getTexture());
@@ -329,11 +332,15 @@ void MapController::LayerDrawable::addPart(const sf::Vector2f& pos, const sf::Ve
     {
         auto pair = std::make_pair(textureName, LayerData());
         
-        //TODO load actual texture name
-        pair.second.diffuseTexture = m_textureResource.get("res/textures/map/brick_diffuse.png");
+        std::string texture = textureName;
+        pair.second.diffuseTexture = m_textureResource.get("res/textures/map/" + texture);
         pair.second.diffuseTexture.setRepeated(true);
-        pair.second.normalTexture = m_textureResource.get("res/textures/map/brick_normal.png");
-        pair.second.normalTexture.setRepeated(true);
+        auto strpos = texture.find_last_of('.');
+        if (strpos != std::string::npos)
+            texture.insert(strpos, "_normal");
+
+        pair.second.normalTexture = m_textureResource.get("res/textures/map/" + texture);
+        pair.second.normalTexture.setRepeated(true); 
         pair.second.vertexArray.setPrimitiveType(sf::Quads);
 
         m_layerData.insert(pair);

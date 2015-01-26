@@ -122,6 +122,8 @@ namespace Level_editor
                     break;
                 case Node.BodyType.Solid:
                     p.BackColor = solidColour;
+                    if (m_platformTexture != null)
+                        p.BackgroundImage = m_platformTexture;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
                     nd.layer = Layer.Solid;
@@ -241,6 +243,8 @@ namespace Level_editor
             m_currentMap.PlayerTwoSpawn = new Point((int)numericUpDownPlayerTwoX.Value, (int)numericUpDownPlayerTwoY.Value);
             m_currentMap.AmbientColour = panelAmbientColour.BackColor.ToArgb();
             m_currentMap.SunColour = panelSunColour.BackColor.ToArgb();
+            m_currentMap.BackgroundTexture = m_backgroundFileName;
+            m_currentMap.PlatformTexture = m_platformFileName;
             m_currentMap.Nodes.Clear();
 
             foreach(Panel p in panelEditorInner.Controls)
@@ -314,6 +318,22 @@ namespace Level_editor
 
             panelAmbientColour.BackColor = Color.FromArgb(m_currentMap.AmbientColour);
             panelSunColour.BackColor = Color.FromArgb(m_currentMap.SunColour);
+
+            try
+            {
+                Image img = Image.FromFile(m_mapTextureDirectory + "\\" + m_currentMap.PlatformTexture);
+                m_platformTexture = (Image)(new Bitmap(img, new Size(img.Width / scale, img.Height / scale)));
+                m_platformFileName = m_currentMap.PlatformTexture;
+            }
+            catch { }
+
+            try
+            {
+                Image img = Image.FromFile(m_mapTextureDirectory + "\\" + m_currentMap.BackgroundTexture);
+                panelEditorInner.BackgroundImage = (Image)(new Bitmap(img, new Size(img.Width / scale, img.Height / scale)));
+                m_backgroundFileName = m_currentMap.BackgroundTexture;
+            }
+            catch { }
 
             panelEditorInner.Controls.Clear();
             m_selectedNode = null;

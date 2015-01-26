@@ -48,6 +48,9 @@ namespace Level_editor
             m_mainWindow = mainWindow;
             toolTips.SetToolTip(textBoxTexturePath, "this should be the \'atlases\' directory in the game's resource path");
             textBoxTexturePath.Text = m_mainWindow.TextureDirectory;
+
+            toolTips.SetToolTip(textBoxMapTexturePath, "the map texture directory in the game's resource path");
+            textBoxMapTexturePath.Text = m_mainWindow.MapTextureDirectory;
         }
 
         private void buttonOk_Click(object sender, EventArgs e)
@@ -56,6 +59,10 @@ namespace Level_editor
             {
                 m_mainWindow.TextureDirectory = textBoxTexturePath.Text;
                 RegKey.write("texture_directory", textBoxTexturePath.Text);
+
+                m_mainWindow.MapTextureDirectory = textBoxMapTexturePath.Text;
+                RegKey.write("map_texture_directory", textBoxMapTexturePath.Text);
+
                 this.DialogResult = DialogResult.OK;
             }
             else
@@ -75,6 +82,15 @@ namespace Level_editor
             if(fd.ShowDialog() == DialogResult.OK)
             {
                 textBoxTexturePath.Text = fd.SelectedPath;
+            }
+        }
+
+        private void buttonMapTextures_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fd = new FolderBrowserDialog();
+            if (fd.ShowDialog() == DialogResult.OK)
+            {
+                textBoxMapTexturePath.Text = fd.SelectedPath;
             }
         }
     }

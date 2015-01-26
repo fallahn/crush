@@ -50,11 +50,18 @@ namespace Level_editor
             set { m_npcTotal = value; }
         }
 
-        private string m_npcTexture;
-        public string NpcTexture
+        private string m_backgroundTexture;
+        public string BackgroundTexture
         {
-            get { return m_npcTexture; }
-            set { m_npcTexture = value; }
+            get { return m_backgroundTexture; }
+            set { m_backgroundTexture = value; }
+        }
+
+        private string m_platformTexture;
+        public string PlatformTexture
+        {
+            get { return m_platformTexture; }
+            set { m_platformTexture = value; }
         }
 
         private string m_mapName;

@@ -74,6 +74,8 @@ public:
     const sf::Vector2f& getPlayerOneSpawn() const;
     const sf::Vector2f& getPlayerTwoSpawn() const;
 
+    const std::string& getBackgroundImageName() const;
+    const std::string& getPlatformImageName() const;
 
 private:
 
@@ -87,6 +89,9 @@ private:
     std::string m_mapName;
     sf::Color m_ambientColour;
     sf::Color m_sunlightColour;
+
+    std::string m_backgroundImageName;
+    std::string m_platformImageName;
 
     std::vector<Node> m_nodes;
 

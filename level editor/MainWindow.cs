@@ -74,6 +74,17 @@ namespace Level_editor
             get { return m_textureDirectory; }
         }
 
+        private string m_mapTextureDirectory;
+        public string MapTextureDirectory
+        {
+            get { return m_mapTextureDirectory; }
+            set { m_mapTextureDirectory = value; }
+        }
+        private string m_backgroundFileName;
+        private string m_platformFileName;
+
+        private Image m_platformTexture;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -98,6 +109,8 @@ namespace Level_editor
             {
                 loadTextures();
             }
+
+            m_mapTextureDirectory = RegKey.read("map_texture_directory");
         }
 
 
@@ -129,7 +142,7 @@ namespace Level_editor
         {     
             toolTips.SetToolTip(numericUpDownNpcCount, "Minimum number of NPCs on screen");
             toolTips.SetToolTip(numericUpDownNpcTotal, "Total number of NPCs for this map");
-            toolTips.SetToolTip(buttonNpcTexture, "Select the texture to use for this map's NPCs");
+            toolTips.SetToolTip(buttonBackgroundImage, "Select the texture to use for this map's NPCs");
 
             ToolStripMenuItem cloneItem = new ToolStripMenuItem("Clone");
             cloneItem.MouseDown += cloneItem_MouseDown;
@@ -299,6 +312,62 @@ namespace Level_editor
                     && ((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
                 {
                     m_selectedNode.BackColor = cd.Color;
+                }
+            }
+        }
+        private void buttonBackgroundImage_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog od = new OpenFileDialog();
+            od.Filter = "JPEG files (Portable Network Graphic (*.png)|*.png|*.jpg)|*.jpg";
+            if (m_mapTextureDirectory != null && m_mapTextureDirectory != String.Empty)
+                od.InitialDirectory = m_mapTextureDirectory;
+
+            if(od.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Image img = Image.FromFile(od.FileName);
+                    panelEditorInner.BackgroundImage = (Image)(new Bitmap(img, new Size(img.Width / scale, img.Height / scale)));
+
+                    m_backgroundFileName = Path.GetFileName(od.FileName);
+                    m_modified = true;
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Failed opening file");
+                }
+            }
+        }
+        private void buttonSolidTexture_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog od = new OpenFileDialog();
+            od.Filter = "JPEG files (Portable Network Graphic (*.png)|*.png|*.jpg)|*.jpg";
+            if (m_mapTextureDirectory != null && m_mapTextureDirectory != String.Empty)
+                od.InitialDirectory = m_mapTextureDirectory;
+
+            if (od.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    Image img = Image.FromFile(od.FileName);
+                    m_platformTexture = (Image)(new Bitmap(img, new Size(img.Width / scale, img.Height / scale)));
+
+                    //loop through existing nodes and update image
+                    foreach(Panel p in panelEditorInner.Controls)
+                    {
+                        NodeData nd = (NodeData)p.Tag;
+                        if(nd.type == Node.BodyType.Solid)
+                        {
+                            p.BackgroundImage = m_platformTexture;
+                        }
+                    }
+
+                    m_platformFileName = Path.GetFileName(od.FileName);
+                    m_modified = true;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message, "Failed opening file");
                 }
             }
         }

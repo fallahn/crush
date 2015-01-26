@@ -78,9 +78,17 @@ Map::Map(const std::string& path)
         m_mapName = v.get("MapName").get<std::string>();
     else
         std::cerr << "Map Parse: missing MapName value." << std::endl;
-    //---
-    //TODO load texture info
-    //---
+
+    if (v.get("BackgroundTexture").is<std::string>())
+        m_backgroundImageName = v.get("BackgroundTexture").get<std::string>();
+    else
+        std::cerr << "Map Parse: missing BackgroundTexture value" << std::endl;
+
+    if (v.get("PlatformTexture").is<std::string>())
+        m_platformImageName = v.get("PlatformTexture").get<std::string>();
+    else
+        std::cerr << "Map Parse: missing platform texture value" << std::endl;
+
     if (v.get("PlayerOneSpawn").is<std::string>())
         m_playerOneSpawn = Util::Vector::vec2FromString(v.get("PlayerOneSpawn").get<std::string>());
     else
@@ -189,6 +197,16 @@ const sf::Vector2f& Map::getPlayerOneSpawn() const
 const sf::Vector2f& Map::getPlayerTwoSpawn() const
 {
     return m_playerTwoSpawn;
+}
+
+const std::string& Map::getBackgroundImageName() const
+{
+    return m_backgroundImageName;
+}
+
+const std::string& Map::getPlatformImageName() const
+{
+    return m_platformImageName;
 }
 
 //private

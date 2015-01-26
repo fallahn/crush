@@ -35,6 +35,9 @@
             this.buttonOk = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxMapTexturePath = new System.Windows.Forms.TextBox();
+            this.buttonMapTextures = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -42,9 +45,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(91, 13);
+            this.label1.Size = new System.Drawing.Size(81, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "Texture Directory:";
+            this.label1.Text = "Detail Textures:";
             // 
             // textBoxTexturePath
             // 
@@ -83,11 +86,40 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 52);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(75, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Map Textures:";
+            // 
+            // textBoxMapTexturePath
+            // 
+            this.textBoxMapTexturePath.Location = new System.Drawing.Point(110, 49);
+            this.textBoxMapTexturePath.Name = "textBoxMapTexturePath";
+            this.textBoxMapTexturePath.Size = new System.Drawing.Size(227, 20);
+            this.textBoxMapTexturePath.TabIndex = 6;
+            // 
+            // buttonMapTextures
+            // 
+            this.buttonMapTextures.Location = new System.Drawing.Point(343, 47);
+            this.buttonMapTextures.Name = "buttonMapTextures";
+            this.buttonMapTextures.Size = new System.Drawing.Size(75, 23);
+            this.buttonMapTextures.TabIndex = 7;
+            this.buttonMapTextures.Text = "Browse";
+            this.buttonMapTextures.UseVisualStyleBackColor = true;
+            this.buttonMapTextures.Click += new System.EventHandler(this.buttonMapTextures_Click);
+            // 
             // OptionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(432, 256);
+            this.Controls.Add(this.buttonMapTextures);
+            this.Controls.Add(this.textBoxMapTexturePath);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.buttonOk);
             this.Controls.Add(this.buttonBrowseTextures);
@@ -111,5 +143,8 @@
         private System.Windows.Forms.Button buttonOk;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.ToolTip toolTips;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxMapTexturePath;
+        private System.Windows.Forms.Button buttonMapTextures;
     }
 }

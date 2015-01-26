@@ -50,6 +50,8 @@
             this.comboBoxNodePropertyType = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBoxMapProperties = new System.Windows.Forms.GroupBox();
+            this.buttonSolidTexture = new System.Windows.Forms.Button();
+            this.label13 = new System.Windows.Forms.Label();
             this.panelAmbientColour = new System.Windows.Forms.Panel();
             this.panelSunColour = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
@@ -63,8 +65,7 @@
             this.label7 = new System.Windows.Forms.Label();
             this.numericUpDownNpcTotal = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.pictureBoxNpc = new System.Windows.Forms.PictureBox();
-            this.buttonNpcTexture = new System.Windows.Forms.Button();
+            this.buttonBackgroundImage = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.numericUpDownNpcCount = new System.Windows.Forms.NumericUpDown();
@@ -99,7 +100,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPlayerOneY)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPlayerOneX)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNpcTotal)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxNpc)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNpcCount)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -384,6 +384,8 @@
             // 
             // groupBoxMapProperties
             // 
+            this.groupBoxMapProperties.Controls.Add(this.buttonSolidTexture);
+            this.groupBoxMapProperties.Controls.Add(this.label13);
             this.groupBoxMapProperties.Controls.Add(this.panelAmbientColour);
             this.groupBoxMapProperties.Controls.Add(this.panelSunColour);
             this.groupBoxMapProperties.Controls.Add(this.label12);
@@ -397,8 +399,7 @@
             this.groupBoxMapProperties.Controls.Add(this.label7);
             this.groupBoxMapProperties.Controls.Add(this.numericUpDownNpcTotal);
             this.groupBoxMapProperties.Controls.Add(this.label3);
-            this.groupBoxMapProperties.Controls.Add(this.pictureBoxNpc);
-            this.groupBoxMapProperties.Controls.Add(this.buttonNpcTexture);
+            this.groupBoxMapProperties.Controls.Add(this.buttonBackgroundImage);
             this.groupBoxMapProperties.Controls.Add(this.label2);
             this.groupBoxMapProperties.Controls.Add(this.label1);
             this.groupBoxMapProperties.Controls.Add(this.numericUpDownNpcCount);
@@ -408,6 +409,25 @@
             this.groupBoxMapProperties.TabIndex = 0;
             this.groupBoxMapProperties.TabStop = false;
             this.groupBoxMapProperties.Text = "Map Properties";
+            // 
+            // buttonSolidTexture
+            // 
+            this.buttonSolidTexture.Location = new System.Drawing.Point(134, 128);
+            this.buttonSolidTexture.Name = "buttonSolidTexture";
+            this.buttonSolidTexture.Size = new System.Drawing.Size(75, 23);
+            this.buttonSolidTexture.TabIndex = 19;
+            this.buttonSolidTexture.Text = "Browse";
+            this.buttonSolidTexture.UseVisualStyleBackColor = true;
+            this.buttonSolidTexture.Click += new System.EventHandler(this.buttonSolidTexture_Click);
+            // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(15, 133);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(87, 13);
+            this.label13.TabIndex = 18;
+            this.label13.Text = "Platform Texture:";
             // 
             // panelAmbientColour
             // 
@@ -554,33 +574,24 @@
             this.label3.TabIndex = 5;
             this.label3.Text = "NPC Total:";
             // 
-            // pictureBoxNpc
+            // buttonBackgroundImage
             // 
-            this.pictureBoxNpc.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pictureBoxNpc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureBoxNpc.Location = new System.Drawing.Point(18, 125);
-            this.pictureBoxNpc.Name = "pictureBoxNpc";
-            this.pictureBoxNpc.Size = new System.Drawing.Size(191, 117);
-            this.pictureBoxNpc.TabIndex = 4;
-            this.pictureBoxNpc.TabStop = false;
-            // 
-            // buttonNpcTexture
-            // 
-            this.buttonNpcTexture.Location = new System.Drawing.Point(134, 96);
-            this.buttonNpcTexture.Name = "buttonNpcTexture";
-            this.buttonNpcTexture.Size = new System.Drawing.Size(75, 23);
-            this.buttonNpcTexture.TabIndex = 3;
-            this.buttonNpcTexture.Text = "Browse";
-            this.buttonNpcTexture.UseVisualStyleBackColor = true;
+            this.buttonBackgroundImage.Location = new System.Drawing.Point(134, 96);
+            this.buttonBackgroundImage.Name = "buttonBackgroundImage";
+            this.buttonBackgroundImage.Size = new System.Drawing.Size(75, 23);
+            this.buttonBackgroundImage.TabIndex = 3;
+            this.buttonBackgroundImage.Text = "Browse";
+            this.buttonBackgroundImage.UseVisualStyleBackColor = true;
+            this.buttonBackgroundImage.Click += new System.EventHandler(this.buttonBackgroundImage_Click);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(15, 101);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 13);
+            this.label2.Size = new System.Drawing.Size(97, 13);
             this.label2.TabIndex = 2;
-            this.label2.Text = "NPC Texture:";
+            this.label2.Text = "BackgroundImage:";
             // 
             // label1
             // 
@@ -731,7 +742,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPlayerOneY)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPlayerOneX)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNpcTotal)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBoxNpc)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownNpcCount)).EndInit();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -757,8 +767,7 @@
         private System.Windows.Forms.GroupBox groupBoxMapProperties;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.NumericUpDown numericUpDownNpcCount;
-        private System.Windows.Forms.PictureBox pictureBoxNpc;
-        private System.Windows.Forms.Button buttonNpcTexture;
+        private System.Windows.Forms.Button buttonBackgroundImage;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown numericUpDownNpcTotal;
         private System.Windows.Forms.Label label3;
@@ -791,6 +800,8 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBoxFrontDetail;
+        private System.Windows.Forms.Button buttonSolidTexture;
+        private System.Windows.Forms.Label label13;
     }
 }
 
