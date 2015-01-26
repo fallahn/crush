@@ -66,4 +66,11 @@ void MusicPlayer::setVolume(float volume)
     assert(volume >= 0.f && volume <= 100.f);
 
     m_volume = volume;
+    if(m_music.getStatus() == sf::Music::Playing)
+        m_music.setVolume(volume);
+}
+
+float MusicPlayer::getVolume() const
+{
+    return m_volume;
 }

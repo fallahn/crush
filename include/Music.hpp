@@ -45,6 +45,7 @@ public:
     void stop();
     void setPaused(bool paused);
     void setVolume(float volume);
+    float getVolume() const;
 
 private:
 

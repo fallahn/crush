@@ -335,4 +335,25 @@ void Game::registerConCommands()
     cd.help = "params <key> <control>";
     cd.flags |= Console::Config;
     m_console.addItem("set_key", cd);
+
+    //------set music volume-----//
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        if (l.size() < 1u) return "not enough parameters - acceptable range 0.0 - 100.0";
+        float value = m_musicPlayer.getVolume();
+
+        try
+        {
+            value = std::stof(l[0]);
+            value = std::min(value, 100.f);
+            value = std::max(value, 0.f);
+            flags |= Console::Valid;
+        }
+        catch (...){}
+
+        m_musicPlayer.setVolume(value);
+        return "set music volume to " + std::to_string(value);
+    };
+    cd.help = "param <float> volume in range 0.0 - 100.0";
+    m_console.addItem("set_music_volume", cd);
 }

@@ -268,6 +268,11 @@ void Slider::setFontSize(sf::Uint16 size)
     m_text.setCharacterSize(size);
 }
 
+void Slider::setCallback(Slider::Callback c)
+{
+    m_callback = std::move(c);
+}
+
 //private
 void Slider::draw(sf::RenderTarget& rt, sf::RenderStates states)const
 {
@@ -297,6 +302,8 @@ void Slider::increase()
         pos.y = std::min(pos.y + (m_length / m_maxValue), m_length);
     }
     m_handleSprite.setPosition(pos);
+
+    if (m_callback) m_callback(this);
 }
 
 void Slider::decrease()
@@ -311,4 +318,6 @@ void Slider::decrease()
         pos.y = std::max(pos.y - (m_length / m_maxValue), 0.f);
     }
     m_handleSprite.setPosition(pos);
+
+    if (m_callback) m_callback(this);
 }

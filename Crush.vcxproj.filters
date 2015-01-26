@@ -177,9 +177,6 @@
     <ClCompile Include="src\AudioController.cpp">
       <Filter>Source Files\Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="src\Music.cpp">
-      <Filter>Source Files\States</Filter>
-    </ClCompile>
     <ClCompile Include="src\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -232,6 +229,9 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="src\InputMapping.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Music.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -362,9 +362,6 @@
     <ClInclude Include="include\AudioController.hpp">
       <Filter>Header Files\Controllers</Filter>
     </ClInclude>
-    <ClInclude Include="include\Music.hpp">
-      <Filter>Header Files\States</Filter>
-    </ClInclude>
     <ClInclude Include="include\FileSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -423,6 +420,9 @@
       <Filter>Header Files\UI</Filter>
     </ClInclude>
     <ClInclude Include="include\InputMapping.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Music.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

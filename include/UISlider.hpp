@@ -37,12 +37,16 @@ source distribution.
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 
+#include <functional>
+
 namespace ui
 {
     class Slider final : public Control
     {
     public:
         typedef std::shared_ptr<Slider> Ptr;
+        typedef std::function<void(const Slider*)> Callback;
+
         enum class Direction
         {
             Horizontal,
@@ -74,6 +78,8 @@ namespace ui
         void setTextColour(const sf::Color& colour);
         void setFontSize(sf::Uint16 size);
 
+        void setCallback(Callback c);
+
     private:
         enum State
         {
@@ -93,6 +99,8 @@ namespace ui
 
         sf::Color m_borderColour;
         sf::Color m_activeColour;
+
+        Callback m_callback;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const;
         void updateText();

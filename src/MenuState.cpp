@@ -263,6 +263,10 @@ void MenuState::buildSoundOptions()
     musicVol->setPosition(960.f, 400.f);
     musicVol->setAlignment(ui::Alignment::Centre);
     musicVol->setText("Music Volume");
+    musicVol->setCallback([this](const ui::Slider* slider)
+    {
+        getContext().gameInstance.getConsole().exec("set_music_volume " + std::to_string(slider->getValue()));
+    });
     m_uiContainers[Container::SoundOptions].addControl(musicVol);
 
     ui::Slider::Ptr fxVol = std::make_shared<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
