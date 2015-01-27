@@ -157,7 +157,7 @@ bool CheckBox::checked() const
 void CheckBox::check(bool checked)
 {
     m_checked = checked;
-    select();
+    deselect();
 }
 
 //private

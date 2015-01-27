@@ -43,6 +43,19 @@ source distribution.
 class Game final : private sf::NonCopyable
 {
 public:
+    struct VideoSettings
+    {
+        sf::Int32 windowStyle;
+        sf::VideoMode videoMode;
+        bool vSync = true;
+        std::vector<sf::VideoMode> availableVideoModes;
+
+        VideoSettings()
+            : windowStyle   (sf::Style::Close),
+            videoMode       (1024, 576), //1024, 576
+            vSync           (true){}
+    };
+
     Game();
     ~Game() = default;
 
@@ -57,12 +70,12 @@ public:
     ShaderResource& getShaderResource();
     Console& getConsole();
 
-    void playMusic(const std::string& title, bool loop = true);
-    void stopMusic();
-    void pauseMusic();
-    void resumeMusic();
+    MusicPlayer& getMusicPlayer();
+
+    const VideoSettings& getVideoSettings() const;
 
 private: 
+    VideoSettings m_videoSettings;
 
     sf::RenderWindow m_renderWindow;
     sf::Color m_clearColour;
@@ -75,6 +88,10 @@ private:
 
     Console m_console;
     StateStack m_stateStack;
+
+
+    sf::Text m_fpsText;
+    bool m_showFps;
 
     void handleEvents();
     std::function<void(float)> update;

@@ -130,7 +130,7 @@ GameState::GameState(StateStack& stack, Context context)
 
     //close loading screen before starting music
     quitLoadingScreen();
-    context.gameInstance.playMusic(music);
+    context.gameInstance.getMusicPlayer().play(music);
 
     registerConsoleCommands();
 }

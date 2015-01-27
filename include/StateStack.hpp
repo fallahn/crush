@@ -77,6 +77,8 @@ public:
 
     bool empty() const;
 
+    sf::View updateView();
+
 private:
     struct PendingChange
     {

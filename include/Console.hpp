@@ -51,7 +51,8 @@ public:
         Cheat     = (1 << 0), //command will only execute if cheats enabled
         Config    = (1 << 1), //command should be saved to .con file
         ConClosed = (1 << 2), //only executes if console is closed
-        Valid     = (1 << 3) //execution validated this command
+        Valid     = (1 << 3), //execution validated this command
+        WriteOnce = (1 << 4) //this command can't be written to configs more than once
     };
 
     typedef std::vector<std::string> CommandList;
@@ -88,7 +89,7 @@ private:
     std::map<std::string, CommandData> m_items;
 
     CommandList m_configList; //list of commands to store in autoexec
-    void addToConfig(const std::string& cmd);
+    void addToConfig(const std::string& cmd, bool writeOnce = false);
     void removeFromConfig(const std::string& cmd);
 
     bool m_show;

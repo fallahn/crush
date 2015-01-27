@@ -92,7 +92,7 @@ MenuState::MenuState(StateStack& stack, Context context)
     buildNameInput();
     buildHelp();
 
-    context.gameInstance.playMusic(music);
+    context.gameInstance.getMusicPlayer().play(music);
 }
 
 void MenuState::draw()
@@ -108,6 +108,9 @@ bool MenuState::update(float dt)
 
 bool MenuState::handleEvent(const sf::Event& evt)
 {
+    if (evt.type == sf::Event::Resized)
+        getContext().renderWindow.setView(getContext().defaultView);
+
     m_uiContainers[m_currentContainer].handleEvent(evt);
     return true;
 }
@@ -258,21 +261,35 @@ void MenuState::buildInputOptions()
 
 void MenuState::buildSoundOptions()
 {
-    //TODO load volume from config
     ui::Slider::Ptr musicVol = std::make_shared<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
     musicVol->setPosition(960.f, 400.f);
     musicVol->setAlignment(ui::Alignment::Centre);
     musicVol->setText("Music Volume");
+    musicVol->setValue(getContext().gameInstance.getMusicPlayer().getVolume());
     musicVol->setCallback([this](const ui::Slider* slider)
     {
         getContext().gameInstance.getConsole().exec("set_music_volume " + std::to_string(slider->getValue()));
-    });
+    }, ui::Slider::Event::SetInactive);
+    musicVol->setCallback([this](const ui::Slider* s)
+    {
+        getContext().gameInstance.getMusicPlayer().setVolume(s->getValue());
+    }, ui::Slider::Event::ValueChanged);
     m_uiContainers[Container::SoundOptions].addControl(musicVol);
+
 
     ui::Slider::Ptr fxVol = std::make_shared<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
     fxVol->setPosition(960.f, 500.f);
     fxVol->setAlignment(ui::Alignment::Centre);
     fxVol->setText("FX Volume");
+    fxVol->setValue(SoundPlayer::getVolume());
+    fxVol->setCallback([this](const ui::Slider* slider)
+    {
+        getContext().gameInstance.getConsole().exec("set_sfx_volume " + std::to_string(slider->getValue()));
+    }, ui::Slider::Event::SetInactive);
+    fxVol->setCallback([this](const ui::Slider* slider)
+    {
+        SoundPlayer::setVolume(slider->getValue());
+    }, ui::Slider::Event::ValueChanged);
     m_uiContainers[Container::SoundOptions].addControl(fxVol);
 
     ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
@@ -304,20 +321,28 @@ void MenuState::buildGraphicsOptions()
     fullScreen->setText("Full Screen");
     fullScreen->setAlignment(ui::Alignment::Centre);
     fullScreen->setPosition(960.f, 500.f);
+    fullScreen->check(getContext().gameInstance.getVideoSettings().windowStyle == sf::Style::Fullscreen);
     m_uiContainers[Container::GraphicsOptions].addControl(fullScreen);
 
     ui::CheckBox::Ptr vsync = std::make_shared<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
     vsync->setText("Enable V-Sync");
     vsync->setAlignment(ui::Alignment::Centre);
     vsync->setPosition(960.f, 550.f);
+    vsync->check(getContext().gameInstance.getVideoSettings().vSync);
     m_uiContainers[Container::GraphicsOptions].addControl(vsync);
     
     ui::ComboBox::Ptr resolution = std::make_shared<ui::ComboBox>(m_font, m_textureResource.get("res/textures/ui/combobox.png"));
     resolution->setAlignment(ui::Alignment::Centre);
     resolution->setPosition(960.f, 600.f);
-    resolution->addItem("funt", 3);
-    resolution->addItem("McBunt", 23);
-    resolution->addItem("Speef", 93475);
+    const auto& modes = getContext().gameInstance.getVideoSettings().availableVideoModes;
+    for (const auto& m : modes)
+    {
+        std::string name = std::to_string(m.width) + " x " + std::to_string(m.height);
+        sf::Int32 val = (m.width << 16) | m.height;
+        resolution->addItem(name, val);
+        //TODO select currently active mode
+    }
+
     m_uiContainers[Container::GraphicsOptions].addControl(resolution);
 
     ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
@@ -336,9 +361,18 @@ void MenuState::buildGraphicsOptions()
     buttonApply->setAlignment(ui::Alignment::Centre);
     buttonApply->setTextColour(sf::Color::Black);
     buttonApply->setText("Apply");
-    buttonApply->setCallback([this]()
+    buttonApply->setCallback([&, this]()
     {
-        //TODO recreate window
+        //apply settings
+        auto& console = getContext().gameInstance.getConsole();
+        console.exec("enable_vsync " + (vsync->checked()) ? "true" : "false");
+        console.exec("set_fullscreen " + (fullScreen->checked()) ? "true" : "false");
+
+        sf::Int32 val = resolution->getSelectedValue();
+        sf::Int32 width = (val & 0xFF00) >> 16;
+        sf::Int32 height = val & 0x00FF;
+
+        console.exec("set_resolution " + std::to_string(width) + " " + std::to_string(height));
     });
     m_uiContainers[Container::GraphicsOptions].addControl(buttonApply);
 }

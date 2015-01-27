@@ -58,7 +58,7 @@ PauseState::PauseState(StateStack& stack, Context context)
     text.setPosition(context.defaultView.getCenter());
     text.move(0.f, -270.f);
 
-    context.gameInstance.pauseMusic();
+    context.gameInstance.getMusicPlayer().setPaused(true);
 
     //build menus
     for (auto i = 0; i < Container::Count; ++i)
@@ -69,7 +69,7 @@ PauseState::PauseState(StateStack& stack, Context context)
 
 PauseState::~PauseState()
 {
-    getContext().gameInstance.resumeMusic();
+    getContext().gameInstance.getMusicPlayer().setPaused(false);
 }
 
 bool PauseState::update(float dt)

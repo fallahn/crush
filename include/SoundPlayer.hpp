@@ -84,6 +84,9 @@ public:
     sf::Vector2f getListenerPosition() const;
     void cacheSound(AudioId, const std::string&);
 
+    static void setVolume(float volume);
+    static float getVolume();
+
 private:
 
     std::map<AudioId, sf::SoundBuffer> m_buffers;

@@ -53,6 +53,13 @@ namespace ui
             Vertical
         };
 
+        enum class Event
+        {
+            ValueChanged,
+            SetActive,
+            SetInactive
+        };
+
         Slider(const sf::Font& font, const sf::Texture& texture, float length = 250.f, float maxValue = 100.f);
         ~Slider() = default;
 
@@ -78,7 +85,7 @@ namespace ui
         void setTextColour(const sf::Color& colour);
         void setFontSize(sf::Uint16 size);
 
-        void setCallback(Callback c);
+        void setCallback(Callback c, Event e);
 
     private:
         enum State
@@ -100,7 +107,9 @@ namespace ui
         sf::Color m_borderColour;
         sf::Color m_activeColour;
 
-        Callback m_callback;
+        Callback m_valueChanged;
+        Callback m_setActive;
+        Callback m_setInactive;
 
         void draw(sf::RenderTarget& rt, sf::RenderStates states) const;
         void updateText();

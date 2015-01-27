@@ -88,12 +88,14 @@ void Slider::activate()
 {
     Control::activate();
     m_slotShape.setOutlineColor(m_activeColour);
+    if (m_setActive) m_setActive(this);
 }
 
 void Slider::deactivate()
 {
     Control::deactivate();
     m_slotShape.setOutlineColor(m_borderColour);
+    if (m_setInactive) m_setInactive(this);
 }
 
 void Slider::handleEvent(const sf::Event& e)
@@ -268,9 +270,21 @@ void Slider::setFontSize(sf::Uint16 size)
     m_text.setCharacterSize(size);
 }
 
-void Slider::setCallback(Slider::Callback c)
+void Slider::setCallback(Slider::Callback c, Event e)
 {
-    m_callback = std::move(c);
+    switch (e)
+    {
+    case Event::SetActive:
+        m_setActive = std::move(c);
+        break;
+    case Event::SetInactive:
+        m_setInactive = std::move(c);
+        break;
+    case Event::ValueChanged:
+        m_valueChanged = std::move(c);
+        break;
+    default: break;
+    }
 }
 
 //private
@@ -303,7 +317,7 @@ void Slider::increase()
     }
     m_handleSprite.setPosition(pos);
 
-    if (m_callback) m_callback(this);
+    if (m_valueChanged) m_valueChanged(this);
 }
 
 void Slider::decrease()
@@ -319,5 +333,5 @@ void Slider::decrease()
     }
     m_handleSprite.setPosition(pos);
 
-    if (m_callback) m_callback(this);
+    if (m_valueChanged) m_valueChanged(this);
 }

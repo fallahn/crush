@@ -1,4 +1,4 @@
-/*********************************************************************
+﻿/*********************************************************************
 Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
@@ -37,7 +37,7 @@ source distribution.
 
 namespace
 {
-    const sf::Uint8 maxBufferLines = 42u;
+    const sf::Uint8 maxBufferLines = 24u;
     const sf::Uint8 maxBufferLength = 100u;
     const sf::Vector2f size(1920.f, 768.f);
     const float textOffset = 10.f;
@@ -317,14 +317,26 @@ bool Console::visible() const
 }
 
 //private
-void Console::addToConfig(const std::string& cmd)
+void Console::addToConfig(const std::string& cmd, bool writeOnce)
 {
+    //don't enter single statements
+    if (cmd.find(' ') == std::string::npos)return;
+
     m_configList.erase(std::remove_if(m_configList.begin(), m_configList.end(),
         [&cmd](const std::string& str)
     {
         return(cmd.substr(0, cmd.find_first_of(' ')) == str.substr(0, str.find_first_of(' '))
             && cmd.substr(cmd.find_last_of(' ')) == str.substr(str.find_last_of(' ')));
     }), m_configList.end());
+
+    if (writeOnce) //remove existing
+    {
+        m_configList.erase(std::remove_if(m_configList.begin(), m_configList.end(),
+            [&cmd](const std::string& str)
+        {
+            return(cmd.substr(0, cmd.find(' ')) == str.substr(0, str.find(' ')));
+        }), m_configList.end());
+    }
 
     m_configList.push_back(cmd);
 }
@@ -447,8 +459,8 @@ void Console::parseCommand()
         if ((item->second.flags & CommandFlag::Config)
             && (item->second.flags & CommandFlag::Valid))
         {
-            removeFromConfig(cmd);
-            addToConfig(cmd); //TODO why aren't we just validating duplicates when adding?
+            removeFromConfig(cmd); //TODO why aren't we just validating duplicates when adding?
+            addToConfig(cmd, (item->second.flags & CommandFlag::WriteOnce)); 
         }
     }
     else

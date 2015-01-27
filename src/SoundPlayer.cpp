@@ -39,6 +39,8 @@ namespace
     const float attenuation = 1.f;
     const float minDistance2D = 700.f; //bear in mind listener won't be moving and we want to hear everything on screen
     const float minDistance3D = std::sqrt((minDistance2D * minDistance2D) + (listenerDepth * listenerDepth));
+
+    float volume = 100.f; //static value as it is shared by all sound players
 }
 
 SoundPlayer::SoundPlayer()
@@ -83,6 +85,7 @@ void SoundPlayer::play(AudioId id, const sf::Vector2f& position, bool loop, Node
     sound.setAttenuation(attenuation);
     sound.setMinDistance(minDistance3D);
     sound.setLoop(loop);
+    sound.setVolume(volume);
     sound.play();
 
     if (owner)
@@ -121,6 +124,16 @@ void SoundPlayer::cacheSound(AudioId id, const std::string& path)
 {
     m_buffers.insert(std::make_pair(id, sf::SoundBuffer()));
     m_buffers[id].loadFromFile(path);
+}
+
+void SoundPlayer::setVolume(float vol)
+{
+    volume = vol;
+}
+
+float SoundPlayer::getVolume()
+{
+    return volume;
 }
 
 //private

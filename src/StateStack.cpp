@@ -27,10 +27,15 @@ source distribution.
 
 #include <StateStack.hpp>
 
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include <cassert>
 
 StateStack::StateStack(State::Context context)
-    : m_context(context){}
+    : m_context (context)
+{
+    updateView();
+}
 
 //public
 void StateStack::update(float dt)
@@ -72,6 +77,29 @@ void StateStack::clearStates()
     m_pendingList.push_back(PendingChange(Action::Clear));
 }
 
+sf::View StateStack::updateView()
+{
+    //calculate the correct view size / ratio for window size
+    m_context.defaultView.setSize(1920.f, 1080.f);
+    m_context.defaultView.setCenter(960.f, 540.f);
+
+    float ratioX = static_cast<float>(m_context.renderWindow.getSize().x) / 16.f;
+    float ratioY = static_cast<float>(m_context.renderWindow.getSize().y) / ratioX;
+
+    if (ratioY != 9)
+    {
+        auto winSize = static_cast<sf::Vector2f>(m_context.renderWindow.getSize());
+        float windowRatio = winSize.x / winSize.y;
+        float viewRatio = 16.f / 9.f;
+
+        float sizeY = windowRatio / viewRatio;
+        m_context.defaultView.setViewport({ { 0.f, (1.f - sizeY) / 2.f }, { 1.f, sizeY } });
+    }
+    ;
+    return m_context.defaultView;
+}
+
+//private
 State::Ptr StateStack::createState(States::ID id)
 {
     auto result = m_factories.find(id);
@@ -80,7 +108,6 @@ State::Ptr StateStack::createState(States::ID id)
     return result->second();
 }
 
-//private
 void StateStack::applyPendingChanges()
 {
     for (auto& change : m_pendingList)

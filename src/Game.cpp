@@ -47,24 +47,39 @@ namespace
     float timeSinceLastUpdate = 0.f;
 
     GameData gameData;
+
+    const std::string windowTitle = "CRUSH 0.5";
 }
 
 Game::Game()
-    : m_renderWindow    (sf::VideoMode(1024, 576), "CRUSH 0.5", sf::Style::Close), //1024, 576
+    : m_videoSettings   (),
+    m_renderWindow      (m_videoSettings.videoMode, windowTitle, m_videoSettings.windowStyle),
     m_console           (getFont("res/fonts/VeraMono.ttf")),
-    m_stateStack        (State::Context(m_renderWindow, *this, gameData))
+    m_stateStack        (State::Context(m_renderWindow, *this, gameData)),
+    m_fpsText           ("", getFont("res/fonts/VeraMono.ttf"), 24u),
+    m_showFps           (false)
 {
     registerStates();
     m_stateStack.pushState(States::ID::Title);
 
-    m_renderWindow.setVerticalSyncEnabled(true);
+    m_renderWindow.setVerticalSyncEnabled(m_videoSettings.vSync);
+    //store available modes and remove unusable
+    m_videoSettings.availableVideoModes = sf::VideoMode::getFullscreenModes();
+    m_videoSettings.availableVideoModes.erase(std::remove_if(m_videoSettings.availableVideoModes.begin(), m_videoSettings.availableVideoModes.end(),
+        [](const sf::VideoMode& vm)
+    {
+        return (!vm.isValid() || vm.bitsPerPixel != 32);
+    }), m_videoSettings.availableVideoModes.end());
 
-    m_clearColour = sf::Color(100u, 149u, 237u);
+    //m_clearColour = sf::Color(100u, 149u, 237u);
 
     //bind commands to console
     registerConCommands();
 
     update = std::bind(&Game::updateGame, this, std::placeholders::_1);
+
+    m_fpsText.setColor(sf::Color::Yellow);
+    m_fpsText.setPosition(20.f, 1050.f);
 }
 
 //public
@@ -80,6 +95,8 @@ void Game::run()
     {
         float elapsedTime = frameClock.restart().asSeconds();
         timeSinceLastUpdate += elapsedTime;
+
+        m_fpsText.setString(std::to_string(1.f / elapsedTime));
 
         while (timeSinceLastUpdate > timePerFrame)
         {
@@ -134,24 +151,14 @@ Console& Game::getConsole()
     return m_console;
 }
 
-void Game::playMusic(const std::string& title, bool loop)
+MusicPlayer& Game::getMusicPlayer()
 {
-    m_musicPlayer.play(title, loop);
+    return m_musicPlayer;
 }
 
-void Game::stopMusic()
+const Game::VideoSettings& Game::getVideoSettings() const
 {
-    m_musicPlayer.stop();
-}
-
-void Game::pauseMusic()
-{
-    m_musicPlayer.setPaused(true);
-}
-
-void Game::resumeMusic()
-{
-    m_musicPlayer.setPaused(false);
+    return m_videoSettings;
 }
 
 //private
@@ -185,7 +192,10 @@ void Game::draw()
 {
     m_renderWindow.clear(m_clearColour);
     m_stateStack.draw();
-    if (m_console.visible()) m_renderWindow.draw(m_console);
+
+    if (m_showFps)
+        m_renderWindow.draw(m_fpsText);
+
     m_renderWindow.display();
 }
 
@@ -261,6 +271,14 @@ void Game::registerConCommands()
     cd.help = "load next map in the list";
     m_console.addItem("nextmap", cd);
 
+    //----display frame rate----//
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        m_showFps = !m_showFps;
+        return "";
+    };
+    cd.help = "toggle fps display";
+    m_console.addItem("show_fps", cd);
 
     //---set a key to a player command---//
     cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
@@ -347,7 +365,7 @@ void Game::registerConCommands()
             value = std::stof(l[0]);
             value = std::min(value, 100.f);
             value = std::max(value, 0.f);
-            flags |= Console::Valid;
+            flags |= Console::Valid | Console::WriteOnce;
         }
         catch (...){}
 
@@ -356,4 +374,94 @@ void Game::registerConCommands()
     };
     cd.help = "param <float> volume in range 0.0 - 100.0";
     m_console.addItem("set_music_volume", cd);
+
+    //----set sfx volume----//
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        if (l.size() < 1u) return "not enough parameters - acceptable range 0.0 - 100.0";
+        float value = SoundPlayer::getVolume();
+
+        try
+        {
+            value = std::stof(l[0]);
+            value = std::min(value, 100.f);
+            value = std::max(value, 0.f);
+            flags |= Console::Valid | Console::WriteOnce;
+        }
+        catch (...){}
+
+        SoundPlayer::setVolume(value);
+        return "set sfx volume to " + std::to_string(value);
+    };
+    m_console.addItem("set_sfx_volume", cd);
+
+    //-----toggle full screen-----//
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        if (l.size() < 1u) return "not enough parameters. options: true or false";
+
+        sf::Int32 style = 0;
+        if (l[0] == "true") style = sf::Style::Fullscreen;
+        else if (l[0] == "false") style = sf::Style::Close;
+        else return l[0] + " invalid parameter. options: true or false";
+       
+        if (style != m_videoSettings.windowStyle)
+        {
+            flags |= Console::Valid | Console::WriteOnce;
+            m_videoSettings.windowStyle = style;
+            m_renderWindow.create(m_videoSettings.videoMode, windowTitle, m_videoSettings.windowStyle);
+            m_renderWindow.setVerticalSyncEnabled(m_videoSettings.vSync);
+            m_renderWindow.setView(m_stateStack.updateView());
+        }
+        return "";
+    };
+    cd.help = "param <bool>";
+    m_console.addItem("set_fullscreen", cd);
+
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        if (l.size() < 1u) return "not enough parameters. options: true or false";
+
+        if (l[0] == "true")m_videoSettings.vSync = true;
+        else if (l[0] == "false") m_videoSettings.vSync = false;
+        else return l[0] + " invalid paramter. options: true or false";
+
+        m_renderWindow.setVerticalSyncEnabled(m_videoSettings.vSync);
+        flags |= Console::Valid | Console::WriteOnce;
+        return "vertical sync set to " + l[0];
+    };
+    m_console.addItem("enable_vsync", cd);
+
+    //----set resolution----//
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        if (l.size() < 2) return "not enough parameters. options: <width> <height>";
+
+        try
+        {
+            sf::VideoMode newMode(std::stoi(l[0]), std::stoi(l[1]));
+            auto r = std::find(m_videoSettings.availableVideoModes.begin(), m_videoSettings.availableVideoModes.end(), newMode);
+            if (r == m_videoSettings.availableVideoModes.end())
+            {
+                return l[0] + " x " + l[1] + " not a valid video mode.";
+            }
+
+            if (newMode != m_videoSettings.videoMode)
+            {
+                flags |= Console::Valid | Console::WriteOnce;
+                m_videoSettings.videoMode = newMode;
+                m_renderWindow.create(m_videoSettings.videoMode, windowTitle, m_videoSettings.windowStyle);
+                m_renderWindow.setVerticalSyncEnabled(m_videoSettings.vSync);
+                m_renderWindow.setView(m_stateStack.updateView());
+            }
+            return "resolution set to " + l[0] + " x " + l[1];
+        }
+        catch (...)
+        {
+            return "unable to establish dimensions. are width and height values valid?";
+        }
+        return "";
+    };
+    cd.help = "param <width> <height>";
+    m_console.addItem("set_resolution", cd);
 }
