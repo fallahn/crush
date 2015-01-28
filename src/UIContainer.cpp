@@ -39,12 +39,15 @@ namespace
 
 Container::Container(SoundPlayer& sp)
     : m_selectedIndex   (-1),
-    m_soundPlayer       (sp)
-{}
+    m_soundPlayer       (sp),
+    m_background        (sf::Vector2f(1920.f, 1080.f))
+{
+    m_background.setFillColor(sf::Color::Transparent);
+}
 
 //public
 void Container::addControl(Control::Ptr c)
-{
+{    
     m_controls.push_back(c);
 
     if (!hasSelection() && c->selectable())
@@ -56,12 +59,12 @@ bool Container::selectable() const
     return false;
 }
 
-void Container::handleEvent(const sf::Event& e)
+void Container::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
     //pass event to selected control
     if (hasSelection() && m_controls[m_selectedIndex]->active())
     {
-        m_controls[m_selectedIndex]->handleEvent(e);
+        m_controls[m_selectedIndex]->handleEvent(e, mousePos);
     }
     //keyboard input
     else if (e.type == sf::Event::KeyReleased)
@@ -125,6 +128,44 @@ void Container::handleEvent(const sf::Event& e)
             }
         }
     }
+    //mouse input
+    else if (e.type == sf::Event::MouseMoved)
+    {
+        for (auto i = 0u; i < m_controls.size(); ++i)
+        {
+            if (m_controls[i]->contains(mousePos))
+            {
+                m_controls[i]->select();
+                m_selectedIndex = i;
+            }
+            else
+            {
+                m_controls[i]->deselect();
+            }
+        }
+    }
+    else if (e.type == sf::Event::MouseButtonPressed
+        && e.mouseButton.button == sf::Mouse::Left)
+    {
+        if (hasSelection())
+        {
+            if (m_controls[m_selectedIndex]->contains(mousePos))
+            {
+                m_controls[m_selectedIndex]->activate();
+            }
+        }
+    }
+}
+
+void Container::update(float dt)
+{
+    for (auto& c : m_controls)
+        c->update(dt);
+}
+
+void Container::setBackgroundColour(const sf::Color& colour)
+{
+    m_background.setFillColor(colour);
 }
 
 //private
@@ -175,15 +216,10 @@ void Container::selectPrevious()
     select(prev);
 }
 
-void Container::update(float dt)
-{
-    for (auto& c : m_controls)
-        c->update(dt);
-}
-
 void Container::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
     states.transform *= getTransform();
+    rt.draw(m_background, states);
     for (const auto& c : m_controls)
     {
         rt.draw(*c, states);

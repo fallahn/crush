@@ -81,7 +81,7 @@ void InputSelect::deactivate()
     if (m_callback) m_callback();
 }
 
-void InputSelect::handleEvent(const sf::Event& e)
+void InputSelect::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
     if (e.type == sf::Event::KeyReleased)
     {
@@ -118,6 +118,11 @@ void InputSelect::setAlignment(Alignment a)
         break;
     default: break;
     }
+}
+
+bool InputSelect::contains(const sf::Vector2f& mousePos) const
+{
+    return getTransform().transformRect(m_backShape.getGlobalBounds()).contains(mousePos);
 }
 
 const std::string& InputSelect::getName() const

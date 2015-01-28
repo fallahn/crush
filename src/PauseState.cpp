@@ -104,7 +104,10 @@ bool PauseState::handleEvent(const sf::Event& evt)
             requestStackPop();
     }
 
-    m_uiContainers[m_currentContainer].handleEvent(evt);
+    const auto& rw = getContext().renderWindow;
+    auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
+
+    m_uiContainers[m_currentContainer].handleEvent(evt, mousePos);
 
     return false;
 }

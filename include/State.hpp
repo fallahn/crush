@@ -66,6 +66,7 @@ struct GameData
         bool hasHat;
 
         PlayerData() : score(0u), hatTime(0.f), lives(5), name("Number Six"), enabled(true), hasHat(false){}
+        void reset(){ score = 0u; hatTime = 0.f; lives = 5; enabled = true; hasHat = false; }
     }playerOne, playerTwo;
 };
 

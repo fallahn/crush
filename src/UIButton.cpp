@@ -99,7 +99,7 @@ void Button::deactivate()
     }
 }
 
-void Button::handleEvent(const sf::Event& e)
+void Button::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
 
 }
@@ -125,6 +125,11 @@ void Button::setAlignment(Alignment a)
         break;
     default:break;
     }
+}
+
+bool Button::contains(const sf::Vector2f& mousePos) const
+{
+    return getTransform().transformRect(m_sprite.getGlobalBounds()).contains(mousePos);
 }
 
 void Button::setCallback(Callback cb)

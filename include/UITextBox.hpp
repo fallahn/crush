@@ -56,10 +56,11 @@ namespace ui
         void activate() override;
         void deactivate() override;
 
-        void handleEvent(const sf::Event& e) override;
+        void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
         void update(float dt) override;
 
         void setAlignment(Alignment a) override;
+        bool contains(const sf::Vector2f& mousePos) const override;
 
         const std::string& getText() const;
         void setTexture(const sf::Texture& text);

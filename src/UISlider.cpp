@@ -98,8 +98,9 @@ void Slider::deactivate()
     if (m_setInactive) m_setInactive(this);
 }
 
-void Slider::handleEvent(const sf::Event& e)
+void Slider::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
+    //keyboard
     if (e.type == sf::Event::KeyPressed)
     {
         if (e.key.code == sf::Keyboard::Left)
@@ -118,6 +119,7 @@ void Slider::handleEvent(const sf::Event& e)
             deactivate();
         }
     }
+    //controller
     else if (e.type == sf::Event::JoystickMoved)
     {
         if (e.joystickMove.axis == sf::Joystick::PovX)
@@ -138,6 +140,27 @@ void Slider::handleEvent(const sf::Event& e)
         {
             deactivate();
         }
+    }
+    //mouse
+    else if (e.type == sf::Event::MouseButtonReleased)
+    {
+        deactivate();
+    }
+    else if (e.type == sf::Event::MouseMoved)
+    {
+        auto localPos = getInverseTransform().transformPoint(mousePos);
+        if (m_direction == Direction::Horizontal)
+        {
+            localPos.x = std::min(localPos.x, m_length);
+            localPos.x = std::max(localPos.x, 0.f);
+            m_handleSprite.setPosition(localPos.x, m_handleSprite.getPosition().y);
+        }
+        else
+        {
+            localPos.y = std::min(localPos.y, m_length);
+            localPos.y = std::max(localPos.y, 0.f);
+            m_handleSprite.setPosition(m_handleSprite.getPosition().x, localPos.y);
+        }        
     }
 }
 
@@ -162,6 +185,11 @@ void Slider::setAlignment(Alignment a)
         break;
     default:break;
     }
+}
+
+bool Slider::contains(const sf::Vector2f& mousePos) const
+{
+    return getTransform().transformRect(m_handleSprite.getGlobalBounds()).contains(mousePos);
 }
 
 void Slider::setMaxValue(float value)

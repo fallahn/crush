@@ -44,7 +44,7 @@ bool Label::selectable() const
     return false;
 }
 
-void Label::handleEvent(const sf::Event& e){}
+void Label::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos){}
 
 void Label::setAlignment(Alignment a)
 {

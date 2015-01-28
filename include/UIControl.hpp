@@ -70,15 +70,17 @@ namespace ui
         virtual void activate();
         virtual void deactivate();
 
-        virtual void handleEvent(const sf::Event&) = 0;
+        virtual void handleEvent(const sf::Event&, const sf::Vector2f&) = 0;
         virtual void update(float dt){};
 
         virtual void setAlignment(Alignment) = 0;
+        virtual bool contains(const sf::Vector2f& mousePos) const;
 
     private:
 
         bool m_selected;
         bool m_active;
+        sf::Uint16 m_index;
     };
 }
 

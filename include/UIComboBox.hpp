@@ -51,9 +51,9 @@ namespace ui
         void activate() override;
         void deactivate() override;
 
-        void handleEvent(const sf::Event&) override;
+        void handleEvent(const sf::Event&, const sf::Vector2f&) override;
         void setAlignment(Alignment) override;
-
+        bool contains(const sf::Vector2f& mousePos) const override;
 
         void addItem(const std::string& name, sf::Int32 value);
         const std::string& getSelectedText() const;

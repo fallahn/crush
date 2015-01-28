@@ -70,9 +70,10 @@ namespace ui
         void activate() override;
         void deactivate() override;
 
-        void handleEvent(const sf::Event& e);
+        void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
 
         void setAlignment(Alignment a) override;
+        bool contains(const sf::Vector2f& mousePos) const override;
 
         void setMaxValue(float value);
         void setDirection(Direction direction);

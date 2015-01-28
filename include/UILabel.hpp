@@ -46,7 +46,7 @@ namespace ui
         ~Label() = default;
 
         bool selectable() const override;
-        void handleEvent(const sf::Event& e) override;
+        void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
 
         void setAlignment(Alignment a) override;
 

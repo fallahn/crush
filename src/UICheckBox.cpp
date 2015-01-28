@@ -90,7 +90,7 @@ void CheckBox::deactivate()
     Control::deactivate();
 }
 
-void CheckBox::handleEvent(const sf::Event&){}
+void CheckBox::handleEvent(const sf::Event&, const sf::Vector2f& mousePos){}
 
 void CheckBox::setAlignment(Alignment a)
 {
@@ -124,6 +124,11 @@ void CheckBox::setAlignment(Alignment a)
     default: break;
     }
     m_alignment = a;
+}
+
+bool CheckBox::contains(const sf::Vector2f& mousePos) const
+{
+    return getTransform().transformRect(m_sprite.getGlobalBounds()).contains(mousePos);
 }
 
 void CheckBox::setText(const std::string& text)

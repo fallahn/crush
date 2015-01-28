@@ -33,6 +33,8 @@ source distribution.
 #include <UIControl.hpp>
 #include <SoundPlayer.hpp>
 
+#include <SFML/Graphics/RectangleShape.hpp>
+
 #include <vector>
 
 namespace ui
@@ -44,7 +46,7 @@ namespace ui
         typedef std::shared_ptr<Container> Ptr;
 
         explicit Container(SoundPlayer& sp);
-        Container(Container&& c):m_soundPlayer(c.m_soundPlayer){}
+        Container(Container&& c):m_selectedIndex(c.m_selectedIndex),m_soundPlayer(c.m_soundPlayer), m_background(c.m_background){}
         Container& operator=(Container&&){ return *this; }
 
         ~Container() = default;
@@ -52,14 +54,18 @@ namespace ui
         void addControl(Control::Ptr control);
 
         virtual bool selectable() const override;
-        virtual void handleEvent(const sf::Event& e) override;
+        virtual void handleEvent(const sf::Event& e, const sf::Vector2f& mousePos) override;
         virtual void update(float dt) override;
         virtual void setAlignment(Alignment a) override{} //TODO flow layout
+
+        void setBackgroundColour(const sf::Color&);
     private:
         std::vector<Control::Ptr> m_controls;
         sf::Int16 m_selectedIndex;
 
         SoundPlayer& m_soundPlayer;
+
+        sf::RectangleShape m_background;
 
         bool hasSelection() const;
         void select(sf::Int16 index);

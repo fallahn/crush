@@ -88,8 +88,9 @@ void ComboBox::deactivate()
     m_showItems = false;
 }
 
-void ComboBox::handleEvent(const sf::Event& e)
+void ComboBox::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
+    //keyboard
     if (e.type == sf::Event::KeyReleased)
     {
         switch (e.key.code)
@@ -109,6 +110,7 @@ void ComboBox::handleEvent(const sf::Event& e)
         default:break;
         }
     }
+    //controller
     else if (e.type == sf::Event::JoystickMoved)
     {
         if (e.joystickMove.axis == sf::Joystick::Axis::PovY)
@@ -139,6 +141,25 @@ void ComboBox::handleEvent(const sf::Event& e)
         default: break;
         }
     }
+    //mouse
+    else if (e.type == sf::Event::MouseMoved)
+    {
+        auto localPos = getInverseTransform().transformPoint(mousePos);
+        for (auto i = 0u; i < m_items.size(); ++i)
+        {
+            if (m_items[i]->bounds.contains(localPos))
+            {
+                m_highlightShape.setPosition(0.f, m_items[i]->bounds.top);
+                m_nextIndex = i;
+            }
+        }
+    }
+    else if (e.type == sf::Event::MouseButtonPressed
+        && e.mouseButton.button == sf::Mouse::Left)
+    {
+        setSelectedIndex(m_nextIndex);
+        deactivate();
+    }
 }
 
 void ComboBox::setAlignment(Alignment a)
@@ -162,6 +183,11 @@ void ComboBox::setAlignment(Alignment a)
         break;
     default:break;
     }
+}
+
+bool ComboBox::contains(const sf::Vector2f& mousePos) const
+{
+    return getTransform().transformRect(m_mainShape.getGlobalBounds()).contains(mousePos);
 }
 
 void ComboBox::addItem(const std::string& name, sf::Int32 val)

@@ -89,7 +89,7 @@ void TextBox::deactivate()
     m_showCursor = false;
 }
 
-void TextBox::handleEvent(const sf::Event& e)
+void TextBox::handleEvent(const sf::Event& e, const sf::Vector2f& mousePos)
 {
     if (e.type == sf::Event::KeyReleased)
     {
@@ -160,6 +160,11 @@ void TextBox::setAlignment(Alignment a)
         break;
     default:break;
     }
+}
+
+bool TextBox::contains(const sf::Vector2f& mousePos) const
+{
+    return getTransform().transformRect(m_backShape.getGlobalBounds()).contains(mousePos);
 }
 
 const std::string& TextBox::getText() const

@@ -32,7 +32,8 @@ using namespace ui;
 
 Control::Control()
     : m_selected    (false),
-    m_active        (false)
+    m_active        (false),
+    m_index         (0u)
 {
 
 }
@@ -66,4 +67,9 @@ void Control::activate()
 void Control::deactivate()
 {
     m_active = false;
+}
+
+bool Control::contains(const sf::Vector2f& mousePos) const
+{
+    return false;
 }

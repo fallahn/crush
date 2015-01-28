@@ -71,19 +71,19 @@ MenuState::MenuState(StateStack& stack, Context context)
 {
     context.renderWindow.setView(context.defaultView);
 
-    //reset game data
-    /*context.gameData.playerOne = {};
-    context.gameData.playerOne.name = "Sidney Burnsides";
-    context.gameData.playerTwo = {};
-    context.gameData.playerTwo.name = "Gemima Headson";*/
-    //TODO reset just scores
+    //reset just scores
+    context.gameData.playerOne.reset();
+    context.gameData.playerTwo.reset();
     context.gameData.mapIndex = 0;
     
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UIMove, "res/sound/ui/move.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UISelect, "res/sound/ui/select.wav");
 
     for (auto i = 0; i < Container::Count; ++i)
+    {
         m_uiContainers.emplace_back(m_soundPlayer);
+        m_uiContainers.back().setBackgroundColour({ 100u, 149u, 237u });
+    }
 
     buildMainMenu();
     buildInputOptions();
@@ -108,10 +108,10 @@ bool MenuState::update(float dt)
 
 bool MenuState::handleEvent(const sf::Event& evt)
 {
-    if (evt.type == sf::Event::Resized)
-        getContext().renderWindow.setView(getContext().defaultView);
+    const auto& rw = getContext().renderWindow;
+    auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
 
-    m_uiContainers[m_currentContainer].handleEvent(evt);
+    m_uiContainers[m_currentContainer].handleEvent(evt, mousePos);
     return true;
 }
 
@@ -182,57 +182,128 @@ void MenuState::buildMainMenu()
 
 void MenuState::buildInputOptions()
 {
+    const auto& playerOneKeybinds = getContext().gameData.playerOne.keyBinds;
     ui::InputSelect::Ptr playerOneLeft = std::make_shared<ui::InputSelect>(m_font, "player_one_left");
     playerOneLeft->setPosition(200.f, 200.f);
-    playerOneLeft->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.left));
-    //playerOneLeft->setCallback([&, this](){getContext().gameInstance.getConsole().exec("set_key player_one_left " + getValue()); });
+    playerOneLeft->setValue(InputMap::toString(playerOneKeybinds.left));
+    playerOneLeft->setCallback([playerOneLeft, this]()
+    {
+        std::string str = "set_key ";
+        str += playerOneLeft->getValue();
+        str += " player_one_left";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerOneLeft);
 
     ui::InputSelect::Ptr playerOneRight = std::make_shared<ui::InputSelect>(m_font, "player_one_right");
     playerOneRight->setPosition(200.f, 250.f);
-    playerOneRight->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.right));
+    playerOneRight->setValue(InputMap::toString(playerOneKeybinds.right));
+    playerOneRight->setCallback([playerOneRight, this]
+    {
+        std::string str("set_key ");
+        str += playerOneRight->getValue();
+        str += " player_one_right";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerOneRight);
 
     ui::InputSelect::Ptr playerOneJump = std::make_shared<ui::InputSelect>(m_font, "player_one_jump");
     playerOneJump->setPosition(200.f, 300.f);
-    playerOneJump->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.jump));
+    playerOneJump->setValue(InputMap::toString(playerOneKeybinds.jump));
+    playerOneJump->setCallback([playerOneJump, this]()
+    {
+        std::string str("set_key ");
+        str += playerOneJump->getValue();
+        str += " player_one_jump";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerOneJump);
 
     ui::InputSelect::Ptr playerOneDrag = std::make_shared<ui::InputSelect>(m_font, "player_one_drag");
     playerOneDrag->setPosition(200.f, 350.f);
-    playerOneDrag->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.grab));
+    playerOneDrag->setValue(InputMap::toString(playerOneKeybinds.grab));
+    playerOneDrag->setCallback([playerOneDrag, this]()
+    {
+        std::string str("set_key ");
+        str += playerOneDrag->getValue();
+        str += " player_one_drag";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerOneDrag);
 
     ui::InputSelect::Ptr playerOnePickup = std::make_shared<ui::InputSelect>(m_font, "player_one_pickup");
     playerOnePickup->setPosition(200.f, 400.f);
-    playerOnePickup->setValue(InputMap::toString(getContext().gameData.playerOne.keyBinds.pickUp));
+    playerOnePickup->setValue(InputMap::toString(playerOneKeybinds.pickUp));
+    playerOnePickup->setCallback([playerOnePickup, this]()
+    {
+        std::string str("set_key ");
+        str += playerOnePickup->getValue();
+        str += " player_one_pickup";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerOnePickup);
 
     //------------------------------------------------------------------
 
+    const auto& playerTwoKeybinds = getContext().gameData.playerTwo.keyBinds;
     ui::InputSelect::Ptr playerTwoLeft = std::make_shared<ui::InputSelect>(m_font, "player_two_left");
     playerTwoLeft->setPosition(1400.f, 200.f);
-    playerTwoLeft->setValue("left"); //TODO parse context data
+    playerTwoLeft->setValue(InputMap::toString(playerTwoKeybinds.left));
+    playerTwoLeft->setCallback([playerTwoLeft, this]()
+    {
+        std::string str("set_key ");
+        str += playerTwoLeft->getValue();
+        str += " player_two_left";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerTwoLeft);
 
     ui::InputSelect::Ptr playerTwoRight = std::make_shared<ui::InputSelect>(m_font, "player_two_right");
     playerTwoRight->setPosition(1400.f, 250.f);
-    playerTwoRight->setValue("right");
+    playerTwoRight->setValue(InputMap::toString(playerTwoKeybinds.right));
+    playerTwoRight->setCallback([playerTwoRight, this]()
+    {
+        std::string str("set_key ");
+        str += playerTwoRight->getValue();
+        str += " player_two_right";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerTwoRight);
 
     ui::InputSelect::Ptr playerTwoJump = std::make_shared<ui::InputSelect>(m_font, "player_two_jump");
     playerTwoJump->setPosition(1400.f, 300.f);
-    playerTwoJump->setValue("up");
+    playerTwoJump->setValue(InputMap::toString(playerTwoKeybinds.jump));
+    playerTwoJump->setCallback([playerTwoJump, this]()
+    {
+        std::string str("set_key ");
+        str += playerTwoJump->getValue();
+        str += " player_two_jump";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerTwoJump);
 
     ui::InputSelect::Ptr playerTwoDrag = std::make_shared<ui::InputSelect>(m_font, "player_two_drag");
     playerTwoDrag->setPosition(1400.f, 350.f);
-    playerTwoDrag->setValue("right_shift");
+    playerTwoDrag->setValue(InputMap::toString(playerTwoKeybinds.grab));
+    playerTwoDrag->setCallback([playerTwoDrag, this]()
+    {
+        std::string str("set_key ");
+        str += playerTwoDrag->getValue();
+        str += " player_two_drag";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerTwoDrag);
 
     ui::InputSelect::Ptr playerTwoPickup = std::make_shared<ui::InputSelect>(m_font, "player_two_pickup");
     playerTwoPickup->setPosition(1400.f, 400.f);
-    playerTwoPickup->setValue("down");
+    playerTwoPickup->setValue(InputMap::toString(playerTwoKeybinds.pickUp));
+    playerTwoPickup->setCallback([playerTwoPickup, this]()
+    {
+        std::string str("set_key ");
+        str += playerTwoPickup->getValue();
+        str += " player_two_pickup";
+        getContext().gameInstance.getConsole().exec(str);
+    });
     m_uiContainers[Container::InputOptions].addControl(playerTwoPickup);
 
     ui::Button::Ptr backButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
@@ -335,13 +406,20 @@ void MenuState::buildGraphicsOptions()
     resolution->setAlignment(ui::Alignment::Centre);
     resolution->setPosition(960.f, 600.f);
     const auto& modes = getContext().gameInstance.getVideoSettings().availableVideoModes;
+    auto i = 0u;
+    auto j = 0u;
     for (const auto& m : modes)
     {
         std::string name = std::to_string(m.width) + " x " + std::to_string(m.height);
         sf::Int32 val = (m.width << 16) | m.height;
         resolution->addItem(name, val);
-        //TODO select currently active mode
+        //select currently active mode
+        if (getContext().gameInstance.getVideoSettings().videoMode != m)
+            i++;
+        else
+            j = i;
     }
+    if (i < modes.size()) resolution->setSelectedIndex(j);
 
     m_uiContainers[Container::GraphicsOptions].addControl(resolution);
 
@@ -361,16 +439,20 @@ void MenuState::buildGraphicsOptions()
     buttonApply->setAlignment(ui::Alignment::Centre);
     buttonApply->setTextColour(sf::Color::Black);
     buttonApply->setText("Apply");
-    buttonApply->setCallback([&, this]()
+    buttonApply->setCallback([vsync, fullScreen, resolution, this]()
     {
         //apply settings
         auto& console = getContext().gameInstance.getConsole();
-        console.exec("enable_vsync " + (vsync->checked()) ? "true" : "false");
-        console.exec("set_fullscreen " + (fullScreen->checked()) ? "true" : "false");
+        std::string str = "enable_vsync ";
+        str += (vsync->checked()) ? "true" : "false";
+        console.exec(str);
+        str = "set_fullscreen ";
+        str += (fullScreen->checked()) ? "true" : "false";
+        console.exec(str);
 
         sf::Int32 val = resolution->getSelectedValue();
-        sf::Int32 width = (val & 0xFF00) >> 16;
-        sf::Int32 height = val & 0x00FF;
+        sf::Int32 width = val >> 16;
+        sf::Int32 height = val & 0xFFFF;
 
         console.exec("set_resolution " + std::to_string(width) + " " + std::to_string(height));
     });
@@ -407,9 +489,11 @@ void MenuState::buildNameInput()
     buttonStart->setAlignment(ui::Alignment::Centre);
     buttonStart->setTextColour(sf::Color::Black);
     buttonStart->setText("BEGIN!");
-    buttonStart->setCallback([this]()
+    buttonStart->setCallback([playerOneInput, playerTwoInput, this]()
     {
-        //TODO update context data with names
+        //update context data with names
+        getContext().gameData.playerOne.name = playerOneInput->getText();
+        getContext().gameData.playerTwo.name = playerTwoInput->getText();
         
         //start game
         requestStackPop();

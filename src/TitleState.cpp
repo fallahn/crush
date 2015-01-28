@@ -97,10 +97,6 @@ bool TitleState::handleEvent(const sf::Event& evt)
             requestStackPop();
             requestStackPush(States::ID::Menu);
         }
-        /*else if (evt.key.code == sf::Keyboard::L)
-        {
-            requestStackPush(States::ID::GameOver);
-        }*/
     }
     else if (evt.type == sf::Event::JoystickButtonReleased)
     {
@@ -109,6 +105,11 @@ bool TitleState::handleEvent(const sf::Event& evt)
             requestStackPop();
             requestStackPush(States::ID::Menu);
         }
+    }
+    else if (evt.type == sf::Event::MouseButtonReleased)
+    {
+        requestStackPop();
+        requestStackPush(States::ID::Menu);
     }
     return true;
 }

@@ -71,8 +71,6 @@ Game::Game()
         return (!vm.isValid() || vm.bitsPerPixel != 32);
     }), m_videoSettings.availableVideoModes.end());
 
-    //m_clearColour = sf::Color(100u, 149u, 237u);
-
     //bind commands to console
     registerConCommands();
 
