@@ -133,10 +133,12 @@ GameState::GameState(StateStack& stack, Context context)
     context.gameInstance.getMusicPlayer().play(music);
 
     registerConsoleCommands();
+    context.renderWindow.setMouseCursorVisible(false);
 }
 
 GameState::~GameState()
 {
+    getContext().renderWindow.setMouseCursorVisible(true);
     unregisterConsoleCommands();
 }
 
