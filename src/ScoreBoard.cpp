@@ -208,7 +208,6 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                                 sf::Vector2f(evt.node.positionX, evt.node.positionY),
                                 messageFont);
 
-
                         case Category::Npc: //p1 killed bad guy
                             m_playerOneScore += crushPoints;
 

@@ -102,6 +102,7 @@ void ParticleSystem::move(const sf::Vector2f& amount)
 
 void ParticleSystem::setParticleLifetime(float time)
 {
+    assert(time > 0);
     m_particleLifetime = time;
 }
 
@@ -243,6 +244,8 @@ void ParticleSystem::updateVertices() const
         float ratio = p.lifetime / m_particleLifetime;
         colour.a = static_cast<sf::Uint8>(255.f * std::max(ratio, 0.f));
 
+        //TODO we aren't using position here? this should be so that we can move the system position
+        //independently of the particle positions (which sould be in world space)
         auto t = p.getTransform();
         addVertex(t.transformPoint(-halfSize.x, -halfSize.y), 0.f, 0.f, colour);
         addVertex(t.transformPoint(halfSize.x, -halfSize.y), m_texCoords.x, 0.f, colour);

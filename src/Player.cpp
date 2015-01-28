@@ -402,6 +402,7 @@ void Player::onNotify(Subject& s, const Event& evt)
                     break;
                 default: break;
                 }
+                if (evt.player.item != Event::PlayerEvent::ExtraLife)
                 {
                     //attach icon node
                     Command c;
@@ -415,6 +416,8 @@ void Player::onNotify(Subject& s, const Event& evt)
                         n.addChild(fxNode);
                     };
                     m_commandStack.push(c);
+
+                    //TODO attach particle system if necessary
                 }
                 break;
             case Event::PlayerEvent::LostHat:

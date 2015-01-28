@@ -130,6 +130,8 @@ void CollisionWorld::Body::setPosition(const sf::Vector2f& position)
 
     m_footSensor.left = position.x;
     m_footSensor.top = position.y + m_aabb.height;
+
+    if (m_node) m_node->setWorldPosition(m_position);
 }
 
 void CollisionWorld::Body::applyForce(const sf::Vector2f& force)
@@ -266,6 +268,12 @@ void CollisionWorld::Body::step(float dt)
         //std::cout << "stopped body" << std::endl;
     }
 
+    //update all the child bodies
+    for (auto& c : m_children)
+    {
+        c.first->setPosition(getCentre() + (c.second - c.first->m_centre));
+    }
+
     if (m_node)
         m_node->setWorldPosition(m_position);
     //--------------------------
@@ -275,14 +283,6 @@ void CollisionWorld::Body::step(float dt)
     {
         m_nextBehaviour.swap(m_behaviour);
         m_nextBehaviour.reset();
-    }
-
-    //update all the child bodies
-    for (auto& c : m_children)
-    {
-        c.first->setPosition(getCentre() + (c.second - c.first->m_centre));
-        if (c.first->getType() == Body::Type::FreeForm) //this is a kludge
-            c.first->step(dt); //to stop the hat lagging
     }
 
     //update strength value or kill if no health

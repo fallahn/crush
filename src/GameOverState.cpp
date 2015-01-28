@@ -81,7 +81,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
     backgroundRect.setFillColor({ 0u, 0u, 0u, 198u });
     backgroundRect.setSize(context.defaultView.getSize());
 
-    //context.gameInstance.playMusic(music);
+    context.gameInstance.getMusicPlayer().play(music);
 
     //parse context data and sum up scores
     auto& tr = context.gameInstance.getTextureResource();
@@ -195,7 +195,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 
 GameOverState::~GameOverState()
 {
-    //getContext().gameInstance.stopMusic();// playMusic("res/sound/music/intro.ogg");
+    
 }
 
 bool GameOverState::update(float dt)

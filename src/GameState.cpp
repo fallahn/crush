@@ -89,7 +89,7 @@ GameState::GameState(StateStack& stack, Context context)
     m_players.emplace_back(m_commandStack, Category::PlayerOne, m_textureResource, m_shaderResource.get(Shader::Type::NormalMapSpecular));
     m_players.back().setKeyBinds(context.gameData.playerOne.keyBinds);
     m_players.emplace_back(m_commandStack, Category::PlayerTwo, m_textureResource, m_shaderResource.get(Shader::Type::NormalMapSpecular));
-    //TODO player two keybinds
+    m_players.back().setKeyBinds(context.gameData.playerTwo.keyBinds);
 
     std::function<void(const sf::Vector2f&, Player&)> playerSpawnFunc = std::bind(&GameState::addPlayer, this, std::placeholders::_1, std::placeholders::_2);
     m_players[0].setSpawnFunction(playerSpawnFunc);
@@ -188,7 +188,7 @@ bool GameState::handleEvent(const sf::Event& evt)
     {
     case sf::Event::MouseButtonPressed:
     {  
-        auto position = getContext().renderWindow.mapPixelToCoords(sf::Mouse::getPosition(getContext().renderWindow));
+        //auto position = getContext().renderWindow.mapPixelToCoords(sf::Mouse::getPosition(getContext().renderWindow));
         switch (evt.mouseButton.button)
         {
         case sf::Mouse::Left:
@@ -324,7 +324,6 @@ void GameState::addMapBody(const Map::Node& n)
         {
             light->setDepth(50.f);
             node->setLight(light);
-            //node->addObserver(*light);
         }
         node->setBlendMode(sf::BlendAdd);
         m_scene.addNode(node, Scene::DynamicFront);
@@ -343,7 +342,7 @@ void GameState::addMapBody(const Map::Node& n)
         node->setDrawable(&lightDrawable);
         node->setBlendMode(sf::BlendAlpha);
 
-        //if (n.anchorOffset)
+        //if (n.anchorOffset) //TODO make not broken (see contraint solve())
         //{
         //    //we want a constraint on this light
         //    node->setCollisionBody(m_collisionWorld.addBody(CollisionWorld::Body::Type::FreeForm, { lightDrawable.getRadius(), lightDrawable.getRadius() }));
