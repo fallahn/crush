@@ -184,15 +184,29 @@ public:
         m_observers.push_back(&o);
     }
 
+    //use this if adding an observer during a notification
+    //so as not to invalidate current notification list
+    void delayAddObserver(Observer& o)
+    {
+        m_delayedObservers.push_back(&o);
+    }
+
 protected:
     void notify(Subject& s, Event evt)
     {
         for (auto& o : m_observers)
             o->onNotify(s, evt);
+
+        //update with any new observers we may have received
+        for (auto o : m_delayedObservers)
+            m_observers.push_back(o);
+
+        m_delayedObservers.clear();
     }
 
 private:
     std::vector<Observer*> m_observers;
+    std::vector<Observer*> m_delayedObservers;
 };
 
 

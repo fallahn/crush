@@ -61,6 +61,7 @@ public:
     Node* findChild(const std::string& name, bool recursive = true);
 
     sf::Vector2f getWorldPosition() const;
+    sf::Vector2f getCentre() const;
     sf::Transform getWorldTransform() const;
 
     void setWorldPosition(sf::Vector2f position);

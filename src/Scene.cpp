@@ -77,7 +77,7 @@ void Scene::addNode(Node::Ptr& node)
     auto pos = (node->getCollisionBody()) ? node->getCollisionBody()->getCentre() : node->getWorldPosition();
     e.node.positionX = pos.x;
     e.node.positionY = pos.y;
-    notify(*this, e);
+    notify(*node, e);
 
     m_children.push_back(std::move(node));
 }
@@ -96,7 +96,7 @@ void Scene::addNode(Node::Ptr& node, Layer layer)
     auto pos = (node->getCollisionBody()) ? node->getCollisionBody()->getCentre() : node->getWorldPosition();
     e.node.positionX = pos.x;
     e.node.positionY = pos.y;
-    notify(*this, e);
+    notify(*node, e);
 
     m_children[layer]->addChild(node);
 }

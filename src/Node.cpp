@@ -124,6 +124,11 @@ sf::Vector2f Node::getWorldPosition() const
     return getWorldTransform() * sf::Vector2f();
 }
 
+sf::Vector2f Node::getCentre() const
+{
+    return (m_collisionBody) ? m_collisionBody->getCentre() : getWorldPosition();
+}
+
 sf::Transform Node::getWorldTransform() const
 {
     auto t = sf::Transform::Identity;

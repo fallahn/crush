@@ -27,6 +27,7 @@ source distribution.
 
 #include <Particles.hpp>
 #include <Util.hpp>
+#include <Node.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -53,7 +54,8 @@ ParticleSystem::ParticleSystem(Particle::Type type)
     m_duration          (0.f),
     m_releaseCount      (1u),
     m_blendMode         (sf::BlendAdd),
-    m_shader            (nullptr)
+    m_shader            (nullptr),
+    m_parent            (nullptr)
 {
 
 }
@@ -172,6 +174,11 @@ void ParticleSystem::update(float dt)
 
     if (m_started)
     {
+        if (m_parent)
+        {
+            m_position = m_parent->getCentre();
+        }
+
         emit(dt);
         if (m_duration > 0)
         {
@@ -206,6 +213,44 @@ sf::Uint32 ParticleSystem::getParticleCount() const
     return m_particles.size();
 }
 
+void ParticleSystem::setNode(Node& n)
+{
+    m_parent = &n;
+
+    //add this system as observer so we can see when node dies
+    m_parent->delayAddObserver(*this);
+}
+
+void ParticleSystem::onNotify(Subject& s, const Event& e)
+{
+    if (e.type == Event::Node)
+    {
+        switch (e.node.action)
+        {
+            //node was removed so we have no parent
+        case Event::NodeEvent::Despawn:
+            if (static_cast<Node*>(&s) == m_parent)
+            {
+                m_parent = nullptr;
+                stop();
+            }
+            break;
+        default: break;
+        }
+    }
+    else if (e.type == Event::Player)
+    {
+        switch (e.player.action)
+        {
+        case Event::PlayerEvent::LostHat:
+            stop();
+            m_parent = nullptr;
+            break;
+        default: break;
+        }
+    }
+}
+
 //private
 void ParticleSystem::addParticle(const sf::Vector2f& position)
 {
@@ -237,15 +282,12 @@ void ParticleSystem::updateVertices() const
     m_vertices.clear();
     for (auto& p : m_particles)
     {
-        auto pos = p.getPosition();
         auto colour = p.colour;
 
         //make particle fade based on lifetime
         float ratio = p.lifetime / m_particleLifetime;
         colour.a = static_cast<sf::Uint8>(255.f * std::max(ratio, 0.f));
 
-        //TODO we aren't using position here? this should be so that we can move the system position
-        //independently of the particle positions (which sould be in world space)
         auto t = p.getTransform();
         addVertex(t.transformPoint(-halfSize.x, -halfSize.y), 0.f, 0.f, colour);
         addVertex(t.transformPoint(halfSize.x, -halfSize.y), m_texCoords.x, 0.f, colour);

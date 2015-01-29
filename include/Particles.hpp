@@ -36,6 +36,7 @@ source distribution.
 #include <SFML/Graphics/Transformable.hpp>
 
 #include <Affectors.hpp>
+#include <Observer.hpp>
 
 #include <deque>
 #include <functional>
@@ -49,7 +50,9 @@ struct Particle final : public sf::Transformable
         Splat,
         Splash,
         PlayerOneDie,
-        PlayerTwoDie
+        PlayerTwoDie,
+        Smoke,
+        Sparkle
     };
 
     //sf::Vector2f position;
@@ -58,7 +61,8 @@ struct Particle final : public sf::Transformable
     float lifetime = 0.f;
 };
 
-class ParticleSystem final : public sf::Drawable
+class Node;
+class ParticleSystem final : public sf::Drawable, public Observer
 {
 public:
     typedef std::function<void(Particle& p, float dt)> Affector;
@@ -93,7 +97,8 @@ public:
     Particle::Type getType() const;
     sf::Uint32 getParticleCount() const;
 
-
+    void setNode(Node& n);
+    void onNotify(Subject&, const Event&) override;
 private:
     std::deque<Particle> m_particles;
     sf::Texture* m_texture;
@@ -124,6 +129,8 @@ private:
 
     sf::BlendMode m_blendMode;
     sf::Shader* m_shader;
+
+    Node* m_parent;
 
     void emit(float dt);
     void addParticle(const sf::Vector2f& position);

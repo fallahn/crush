@@ -729,15 +729,7 @@ void Player::doPickUp()
                     {
                         n.setCategory(Category::HatCarried);
 
-                        //raise event to say we picked up hat
-                        Event evt;
-                        evt.type = Event::Player;
-                        evt.player.action = Event::PlayerEvent::GotHat;
-                        evt.player.playerId = m_id;
-                        auto position = n.getWorldPosition();
-                        evt.player.positionX = position.x;
-                        evt.player.positionY = position.y;
-                        n.raiseEvent(evt);
+                        //event was here
 
                         //raise a command for player node to attach hat body to player body
                         Command f;
@@ -746,6 +738,17 @@ void Player::doPickUp()
                         {
                             assert(on.getCollisionBody());
                             on.getCollisionBody()->addChild(n.getCollisionBody(), hatPosition);
+                        
+                            //raise event to say we picked up hat
+                            Event evt;
+                            evt.type = Event::Player;
+                            evt.player.action = Event::PlayerEvent::GotHat;
+                            evt.player.playerId = m_id;
+                            auto position = n.getWorldPosition();
+                            evt.player.positionX = position.x;
+                            evt.player.positionY = position.y;
+                            on.raiseEvent(evt);
+
                         };
                         m_commandStack.push(f);
 

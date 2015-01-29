@@ -75,6 +75,10 @@ GameState::GameState(StateStack& stack, Context context)
     m_scene.addShader(m_shaderResource.get(Shader::Type::Water));
     m_scene.addShader(m_shaderResource.get(Shader::Type::WaterDrop));
 
+    m_scene.addObserver(m_scoreBoard);
+    m_scene.addObserver(m_particleController);
+    m_scene.addObserver(m_audioController);
+
     float origin = lightDrawable.getRadius();
     lightDrawable.setOrigin(origin, origin);
     lightDrawable.setFillColor(sf::Color(255u, 255u, 255u, 140u));
@@ -115,9 +119,6 @@ GameState::GameState(StateStack& stack, Context context)
         m_scoreBoard.enablePlayer(Category::PlayerTwo);
     m_scoreBoard.setMaxNpcs(map.getNpcTotal());
 
-    m_scene.addObserver(m_scoreBoard);
-    m_scene.addObserver(m_particleController);
-    m_scene.addObserver(m_audioController);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::Solid), Scene::Solid);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::RearDetail), Scene::RearDetail);
     m_scene.setLayerDrawable(m_mapController.getDrawable(MapController::MapDrawable::FrontDetail), Scene::FrontDetail);

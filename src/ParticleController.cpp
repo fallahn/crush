@@ -27,6 +27,7 @@ source distribution.
 
 #include <ParticleController.hpp>
 #include <ParticleShaders.hpp>
+#include <Node.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
@@ -76,6 +77,36 @@ namespace
         {0.7f, 40.4f},
         {-20.f, 29.6f},
         {-60.f, 9.5f}
+    };
+
+    std::vector<sf::Vector2f> smokeVelocities = 
+    {
+        {-30.f, -20.f},
+        {-20.f, -30.f},
+        {0.f, -40.f},
+        {20.f, -30.f},
+        {30.f, -20.f},
+        {-50.f, -60.f},
+        {-40.f, -70.f},
+        {-30.f, -40.f},
+        {30.f, -45.f},
+        {40.f, -60.f}
+    };
+
+    std::vector<sf::Vector2f> sparkVelocities =
+    {
+        { -180.5f, 0.f },
+        { -120.f, -88.9f },
+        { -40.f, -124.f },
+        { 0.f, -120.5f },
+        { 48.5f, -64.6f },
+        { 124.f, -88.5f },
+        { 160.9f, 0.f },
+        { 124.f, 9.5f },
+        { 48.f, 27.5f },
+        { 0.7f, 40.4f },
+        { -40.f, 29.6f },
+        { -120.f, 9.5f }
     };
 }
 
@@ -154,6 +185,20 @@ void ParticleController::onNotify(Subject& s, const Event& evt)
             }
         }
         break;
+        default: break;
+        }
+    }
+    else if (evt.type == Event::Player)
+    {
+        switch (evt.player.action)
+        {
+        case Event::PlayerEvent::GotHat:
+        {
+            auto& ps = findSystem(Particle::Type::Sparkle);
+            ps.setNode(static_cast<Node&>(s));
+            ps.start();
+        }
+            break;
         default: break;
         }
     }
@@ -243,6 +288,43 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
         particleSystem.addAffector(fa);
 
     }
+    break;
+    case Particle::Type::Smoke:
+    {
+        particleSystem.setTexture(m_textureResource.get("res/textures/particles/dust_puff.png"));
+        particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
+        particleSystem.setParticleLifetime(3.f);
+        particleSystem.setParticleSize({ 10.f, 10.f });
+        particleSystem.setRandomInitialVelocity(smokeVelocities);
+        particleSystem.setEmitRate(20.f);
+        
+        ForceAffector fa({ 10.f, -60.f });
+        particleSystem.addAffector(fa);
+
+        ScaleAffector sa({ 10.f, 10.f });
+        particleSystem.addAffector(sa);
+
+        RotateAffector ra(40.f);
+        particleSystem.addAffector(ra);
+        
+    }
+        break;
+    case Particle::Type::Sparkle:
+        particleSystem.setTexture(m_textureResource.get("res/textures/particles/sparkle.png"));
+        particleSystem.setShader(m_shaderResource.get(Shader::Type::FlatShaded));
+        particleSystem.setParticleLifetime(0.5f);
+        particleSystem.setParticleSize({ 10.f, 10.f });
+        particleSystem.setRandomInitialVelocity(sparkVelocities);
+        {
+            ForceAffector fa({ 0.f, 20.f });
+            particleSystem.addAffector(fa);
+
+            ScaleAffector sa({ 2.f, 2.f });
+            particleSystem.addAffector(sa);
+
+            RotateAffector ra(140.f);
+            particleSystem.addAffector(ra);
+        }
         break;
     default: break;
     }
@@ -251,7 +333,7 @@ ParticleSystem& ParticleController::addSystem(Particle::Type type)
 
 ParticleSystem& ParticleController::findSystem(Particle::Type type)
 {
-    //find and idle system and use it
+    //find an idle system and use it
     auto result = std::find_if(m_systems.begin(), m_systems.end(),
         [type](const ParticleSystem& ps)
     {
