@@ -119,6 +119,8 @@ public:
         bool m_invincible;
         float m_invincibilityCount;
 
+        float m_lastSpeed;
+
         void step(float dt);
         void applyGravity(const sf::Vector2f& gravity);
         void move(const sf::Vector2f& distance);

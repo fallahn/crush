@@ -32,6 +32,7 @@ source distribution.
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
+#include <iostream>
 
 namespace
 {
@@ -185,6 +186,17 @@ void ParticleController::onNotify(Subject& s, const Event& evt)
             }
         }
         break;
+        case Event::NodeEvent::WentTurbo:
+            //std::cout << "went turbo" << std::endl;
+        {
+            /*auto& ps = findSystem(Particle::Type::Smoke);
+            ps.setNode(static_cast<Node&>(s));
+            ps.start();*/
+        }
+            break;
+        /*case Event::NodeEvent::LeftTurbo:
+            std::cout << "left turbo" << std::endl;
+            break;*/
         default: break;
         }
     }

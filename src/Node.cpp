@@ -361,6 +361,8 @@ void Node::onNotify(Subject& s, const Event& evt)
             water->splash(evt.node.positionX - getWorldPosition().x, std::min(500.f, std::fabs(evt.node.speed)));
         }
         case Event::NodeEvent::InvincibilityExpired:
+        case Event::NodeEvent::WentTurbo:
+        case Event::NodeEvent::LeftTurbo:
         {
             Event e = evt;
             e.node.type = m_category;

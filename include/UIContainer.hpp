@@ -59,6 +59,7 @@ namespace ui
         virtual void setAlignment(Alignment a) override{} //TODO flow layout
 
         void setBackgroundColour(const sf::Color&);
+        void setBackgroundTexture(const sf::Texture&);
     private:
         std::vector<Control::Ptr> m_controls;
         sf::Int16 m_selectedIndex;

@@ -49,7 +49,9 @@ source distribution.
                 Despawn, //removed from scene
                 KilledNode, //killed another node in scene
                 HitWater, //this node landed in water
-                InvincibilityExpired
+                InvincibilityExpired,
+                WentTurbo,
+                LeftTurbo
             }action;
             Category::Type target; //node type which was target of deathness
             Category::Type owner; //if this is a block, who last owned it

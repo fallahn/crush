@@ -229,6 +229,7 @@ void ParticleSystem::onNotify(Subject& s, const Event& e)
         {
             //node was removed so we have no parent
         case Event::NodeEvent::Despawn:
+        //case Event::NodeEvent::LeftTurbo:
             if (static_cast<Node*>(&s) == m_parent)
             {
                 m_parent = nullptr;

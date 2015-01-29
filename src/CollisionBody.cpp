@@ -46,6 +46,7 @@ namespace
     //TODO fix magic numbers - basically default view size with 100 unit padding
     const sf::FloatRect worldSize = { { -100.f, -100.f }, { 2020.f, 1280.f } };
     const float invincibilityTime = 4.f;
+    const float turboSpeed = 1700000.f; //bodies moving faster than this smoke :)
 }
 
 CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
@@ -62,7 +63,8 @@ CollisionWorld::Body::Body(Type type, const sf::Vector2f& size)
     m_parent            (nullptr),
     m_dead              (false),
     m_invincible        (false),
-    m_invincibilityCount(0.f)
+    m_invincibilityCount(0.f),
+    m_lastSpeed         (0.f)
 {
     switch (type)
     {
@@ -314,6 +316,29 @@ void CollisionWorld::Body::step(float dt)
         }
     }
 
+    //check speed for any effects it may have - TODO this doesn't work amazingly, may revisit some time
+    /*const float currentSpeed = getSpeed();
+    if (currentSpeed > turboSpeed
+        && m_lastSpeed < turboSpeed)
+    {
+        Event e;
+        e.type = Event::Node;
+        e.node.action = Event::NodeEvent::WentTurbo;
+        e.node.positionX = m_position.x;
+        e.node.positionY = m_position.y;
+        notify(*this, e);
+    }
+    else if (currentSpeed < turboSpeed
+        && m_lastSpeed > turboSpeed)
+    {
+        Event e;
+        e.type = Event::Node;
+        e.node.action = Event::NodeEvent::LeftTurbo;
+        e.node.positionX = m_position.x;
+        e.node.positionY = m_position.y;
+        notify(*this, e);
+    }
+    m_lastSpeed = currentSpeed;*/
 }
 
 void CollisionWorld::Body::move(const sf::Vector2f& amount)

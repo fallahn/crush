@@ -168,6 +168,11 @@ void Container::setBackgroundColour(const sf::Color& colour)
     m_background.setFillColor(colour);
 }
 
+void Container::setBackgroundTexture(const sf::Texture& t)
+{
+    m_background.setTexture(&t);
+}
+
 //private
 bool Container::hasSelection() const
 {
