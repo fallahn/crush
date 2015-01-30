@@ -36,7 +36,6 @@ source distribution.
 
 namespace
 {
-    sf::RectangleShape grey;
     sf::Text text;
 }
 
@@ -47,9 +46,6 @@ PauseState::PauseState(StateStack& stack, Context context)
     m_textureResource   (context.gameInstance.getTextureResource())
 {
     context.renderWindow.setView(context.defaultView);
-    
-    grey.setFillColor({ 0u, 0u, 0u, 148u });
-    grey.setSize(context.defaultView.getSize());
 
     text.setFont(m_font);
     text.setString("PAUSED");
@@ -62,13 +58,19 @@ PauseState::PauseState(StateStack& stack, Context context)
 
     //build menus
     for (auto i = 0; i < Container::Count; ++i)
+    {
         m_uiContainers.emplace_back(m_soundPlayer);
+        m_uiContainers.back().setBackgroundColour({ 0u, 0u, 0u, 148u });
+    }
 
     buildMainMenu();
+
+    context.renderWindow.setMouseCursorVisible(true);
 }
 
 PauseState::~PauseState()
 {
+    getContext().renderWindow.setMouseCursorVisible(false);
     getContext().gameInstance.getMusicPlayer().setPaused(false);
 }
 
@@ -81,9 +83,8 @@ bool PauseState::update(float dt)
 void PauseState::draw()
 {
     auto& renderWindow = getContext().renderWindow;
-    renderWindow.draw(grey);
-    renderWindow.draw(text);
     renderWindow.draw(m_uiContainers[m_currentContainer]);
+    renderWindow.draw(text);
 }
 
 bool PauseState::handleEvent(const sf::Event& evt)
@@ -98,7 +99,7 @@ bool PauseState::handleEvent(const sf::Event& evt)
         default: break;
         }
     }
-    else if (evt.type == sf::Event::JoystickButtonPressed)
+    else if (evt.type == sf::Event::JoystickButtonReleased)
     {
         if (evt.joystickButton.button == 7)
             requestStackPop();
@@ -145,7 +146,7 @@ void PauseState::buildMainMenu()
     optionsButton->setPosition(960.f, 500.f);
     optionsButton->setCallback([this]()
     {
-        //TODO
+        requestStackPush(States::ID::Options);
     });
     m_uiContainers[Container::Main].addControl(optionsButton);
 

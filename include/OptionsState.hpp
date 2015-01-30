@@ -25,25 +25,43 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-//IDs for various game states
+#ifndef OPTIONS_STATE_H_
+#define OPTIONS_STATE_H_
 
-#ifndef STATE_IDS_H_
-#define STATE_IDS_H_
+#include <State.hpp>
+#include <UIContainer.hpp>
+#include <SoundPlayer.hpp>
 
-namespace States
+#include <vector>
+
+class OptionsState final : public State
 {
-    enum class ID
-    {
-        None,
-        Title,
-        Menu,
-        Options,
-        Game,
-        Loading,
-        Pause,
-        GameOver,
-        Console
-    };
-}
+public:
+    OptionsState(StateStack& stack, Context context);
+    ~OptionsState() = default;
 
-#endif
+    bool update(float dt) override;
+    void draw() override;
+    bool handleEvent(const sf::Event& evt) override;
+
+private:
+    enum Container
+    {
+        InputOptions,
+        SoundOptions,
+        VideoOptions,
+        Count
+    }m_currentContainer;
+
+    std::vector<ui::Container> m_uiContainers;
+    SoundPlayer m_soundPlayer;
+
+    sf::Font& m_font;
+    TextureResource& m_textureResource;
+
+    void buildInputOptions();
+    void buildSoundOptions();
+    void buildVideoOptions();
+};
+
+#endif //OPTIONS_STATE_H_

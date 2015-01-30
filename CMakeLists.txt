@@ -81,6 +81,7 @@ add_executable(
 	src/Node.cpp
 	src/NpcBehaviour.cpp	
 	src/NpcController.cpp
+	src/OptionsState.cpp
 	src/ParticleController.cpp
 	src/Particles.cpp
 	src/PauseState.cpp

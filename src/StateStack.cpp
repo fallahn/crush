@@ -32,7 +32,7 @@ source distribution.
 #include <cassert>
 
 StateStack::StateStack(State::Context context)
-    : m_context (context)
+    : m_context     (context)
 {
     updateView();
 }

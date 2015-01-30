@@ -245,6 +245,12 @@ void FreeFormBehaviourCarry::resolve(const sf::Vector3f& manifold, CollisionWorl
         e.type = Event::Node;
         raiseEvent(e, other);
 
+        //make sure to notify that player lost hat too
+        Event f;
+        f.type = Event::Player;
+        f.player.action = Event::PlayerEvent::LostHat;
+        raiseEvent(f, getParent());
+
         break;
     case CollisionWorld::Body::Block:
         //drop if from above

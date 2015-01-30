@@ -234,6 +234,9 @@
     <ClCompile Include="src\Music.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\OptionsState.cpp">
+      <Filter>Source Files\States</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -424,6 +427,9 @@
     </ClInclude>
     <ClInclude Include="include\Music.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OptionsState.hpp">
+      <Filter>Header Files\States</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -32,12 +32,18 @@ source distribution.
 #include <PauseState.hpp>
 #include <GameOverState.hpp>
 #include <ConsoleState.hpp>
+#include <OptionsState.hpp>
 #include <Util.hpp>
 #include <Resource.hpp>
 #include <FileSystem.hpp>
 #include <InputMapping.hpp>
 
 #include <SFML/Graphics/Font.hpp>
+
+#include <chrono>
+#include <sstream>
+#include <ctime>
+#include <iomanip>
 
 namespace
 {
@@ -205,6 +211,7 @@ void Game::registerStates()
     m_stateStack.registerState<PauseState>(States::ID::Pause);
     m_stateStack.registerState<GameOverState>(States::ID::GameOver);
     m_stateStack.registerState<ConsoleState>(States::ID::Console);
+    m_stateStack.registerState<OptionsState>(States::ID::Options);
 }
 
 void Game::registerConCommands()
@@ -462,4 +469,24 @@ void Game::registerConCommands()
     };
     cd.help = "param <width> <height>";
     m_console.addItem("set_resolution", cd);
+
+    //----take a screen shot----//
+    cd.action = [this](Console::CommandList l, sf::Uint32& flags)->std::string
+    {
+        auto now = std::chrono::system_clock::now();
+        auto time_t = std::chrono::system_clock::to_time_t(now);
+
+        std::stringstream ss;
+        ss << std::put_time(std::localtime(&time_t), "%Y-%m-%d %X");
+        auto imageName = ss.str() + ".png";
+
+        auto image = m_renderWindow.capture();
+        if (image.saveToFile(imageName))
+            return "saved " + imageName;
+        else
+            return "failed to save " + imageName;
+    };
+    cd.help = "saves a time stamped screenshot";
+    cd.flags = 0u;
+    m_console.addItem("save_screenshot", cd);
 }

@@ -25,7 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <MenuState.hpp>
+#include <OptionsState.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
 #include <ContainerPool.hpp>
@@ -38,26 +38,8 @@ source distribution.
 #include <UIComboBox.hpp>
 #include <UIInputSelect.hpp>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Text.hpp>
-
 namespace
 {
-    std::string helpStr =
-        "HOW TO PLAY:\n"
-        "\n"
-        "Use WAD to move Player One and Arrow keys\n"
-        "to move Player Two. Hold Space (Player One)\n"
-        "or Right Shift (Player Two) to grab a box and\n"
-        "drag it around. Press S (Player One) or Down\n"
-        "(Player Two) to pick up a block and stack it\n"
-        "on others (also works with a controller!).\n"
-        "Score the most points by crushing the bad guys\n"
-        "(or each other!). Crush enemies between blocks..\n"
-        "but don't accidentally crush yourself!\n";
-
-    const std::string music = "res/sound/music/intro.ogg";
-
     const sf::Vector2f buttonPrevPosition(400.f, 1000.f);
     const sf::Vector2f buttonNextPosition(1920.f - 400.f, 1000.f);
     const sf::Vector2f buttonOkPosition(960.f, 1000.f);
@@ -65,19 +47,12 @@ namespace
     const sf::Color containerBackground(100u, 149u, 237u);
 }
 
-MenuState::MenuState(StateStack& stack, Context context)
+OptionsState::OptionsState(StateStack& stack, Context context)
     : State             (stack, context),
-    m_currentContainer  (Container::Main),
+    m_currentContainer  (Container::InputOptions),
     m_font              (context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
     m_textureResource   (context.gameInstance.getTextureResource())
 {
-    context.renderWindow.setView(context.defaultView);
-
-    //reset just scores
-    context.gameData.playerOne.reset();
-    context.gameData.playerTwo.reset();
-    context.gameData.mapIndex = 0;
-    
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UIMove, "res/sound/ui/move.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::UISelect, "res/sound/ui/select.wav");
 
@@ -87,102 +62,34 @@ MenuState::MenuState(StateStack& stack, Context context)
         m_uiContainers.back().setBackgroundColour(containerBackground);
     }
 
-    buildMainMenu();
-    //buildInputOptions();
-    //buildSoundOptions();
-    //buildGraphicsOptions();
-    buildNameInput();
-    buildHelp();
-
-    context.gameInstance.getMusicPlayer().play(music);
+    buildInputOptions();
+    buildSoundOptions();
+    buildVideoOptions();
 }
 
-void MenuState::draw()
+//public
+bool OptionsState::update(float dt)
+{
+    m_uiContainers[m_currentContainer].update(dt);
+    return false;
+}
+
+void OptionsState::draw()
 {
     getContext().renderWindow.draw(m_uiContainers[m_currentContainer]);
 }
 
-bool MenuState::update(float dt)
-{
-    m_uiContainers[m_currentContainer].update(dt);
-    return true;
-}
-
-bool MenuState::handleEvent(const sf::Event& evt)
+bool OptionsState::handleEvent(const sf::Event& evt)
 {
     const auto& rw = getContext().renderWindow;
     auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));
 
     m_uiContainers[m_currentContainer].handleEvent(evt, mousePos);
-    return true;
+    return false;
 }
 
 //private
-void MenuState::buildMainMenu()
-{
-    //player one button
-    auto playerOneButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    playerOneButton->setText("One Player");
-    playerOneButton->setPosition(960.f, 200.f);
-    playerOneButton->setAlignment(ui::Alignment::Centre);
-    playerOneButton->setTextColour(sf::Color::Black);
-    playerOneButton->setCallback([this]()
-    {
-        getContext().gameData.playerTwo.enabled = false;
-        m_currentContainer = Container::NameInput;
-    });
-    m_uiContainers[Container::Main].addControl(playerOneButton);
-
-    //player two button
-    auto playerTwoButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    playerTwoButton->setText("Two Player");
-    playerTwoButton->setPosition(960.f, 248.f);
-    playerTwoButton->setAlignment(ui::Alignment::Centre);
-    playerTwoButton->setTextColour(sf::Color::Black);
-    playerTwoButton->setCallback([this]()
-    {
-        m_currentContainer = Container::NameInput;
-    });
-    m_uiContainers[Container::Main].addControl(playerTwoButton);
-
-    //options button
-    auto optionsButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    optionsButton->setText("Options");
-    optionsButton->setTextColour(sf::Color::Black);
-    optionsButton->setPosition(960.f, 296.f);
-    optionsButton->setAlignment(ui::Alignment::Centre);
-    optionsButton->setCallback([this]()
-    {
-        requestStackPush(States::ID::Options);
-    });
-    m_uiContainers[Container::Main].addControl(optionsButton);
-
-    //help button
-    auto helpButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    helpButton->setText("How To Play");
-    helpButton->setTextColour(sf::Color::Black);
-    helpButton->setPosition(960.f, 344.f);
-    helpButton->setAlignment(ui::Alignment::Centre);
-    helpButton->setCallback([this]()
-    {
-        m_currentContainer = Container::Help;
-    });
-    m_uiContainers[Container::Main].addControl(helpButton);
-
-    //quit button
-    auto quitButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    quitButton->setText("Quit");
-    quitButton->setTextColour(sf::Color::Black);
-    quitButton->setAlignment(ui::Alignment::Centre);
-    quitButton->setPosition(960.f, 550.f);
-    quitButton->setCallback([this]()
-    {
-        getContext().gameInstance.getConsole().exec("quit");
-    });
-    m_uiContainers[Container::Main].addControl(quitButton);
-}
-/*
-void MenuState::buildInputOptions()
+void OptionsState::buildInputOptions()
 {
     const auto& playerOneKeybinds = getContext().gameData.playerOne.keyBinds;
     ui::InputSelect::Ptr playerOneLeft = std::make_shared<ui::InputSelect>(m_font, "player_one_left");
@@ -315,7 +222,8 @@ void MenuState::buildInputOptions()
     backButton->setText("Back");
     backButton->setCallback([this]()
     {
-        m_currentContainer = Container::Main;
+        //m_currentContainer = Container::Main;
+        requestStackPop();
     });
     m_uiContainers[Container::InputOptions].addControl(backButton);
 
@@ -332,7 +240,7 @@ void MenuState::buildInputOptions()
 
 }
 
-void MenuState::buildSoundOptions()
+void OptionsState::buildSoundOptions()
 {
     ui::Slider::Ptr musicVol = std::make_shared<ui::Slider>(m_font, m_textureResource.get("res/textures/ui/slider_handle.png"));
     musicVol->setPosition(960.f, 400.f);
@@ -383,27 +291,27 @@ void MenuState::buildSoundOptions()
     buttonNext->setText("Next");
     buttonNext->setCallback([this]()
     {
-        m_currentContainer = Container::GraphicsOptions;
+        m_currentContainer = Container::VideoOptions;
     });
     m_uiContainers[Container::SoundOptions].addControl(buttonNext);
 }
 
-void MenuState::buildGraphicsOptions()
+void OptionsState::buildVideoOptions()
 {
     ui::CheckBox::Ptr fullScreen = std::make_shared<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
     fullScreen->setText("Full Screen");
     fullScreen->setAlignment(ui::Alignment::Centre);
     fullScreen->setPosition(960.f, 500.f);
     fullScreen->check(getContext().gameInstance.getVideoSettings().windowStyle == sf::Style::Fullscreen);
-    m_uiContainers[Container::GraphicsOptions].addControl(fullScreen);
+    m_uiContainers[Container::VideoOptions].addControl(fullScreen);
 
     ui::CheckBox::Ptr vsync = std::make_shared<ui::CheckBox>(m_font, m_textureResource.get("res/textures/ui/checkbox.png"));
     vsync->setText("Enable V-Sync");
     vsync->setAlignment(ui::Alignment::Centre);
     vsync->setPosition(960.f, 550.f);
     vsync->check(getContext().gameInstance.getVideoSettings().vSync);
-    m_uiContainers[Container::GraphicsOptions].addControl(vsync);
-    
+    m_uiContainers[Container::VideoOptions].addControl(vsync);
+
     ui::ComboBox::Ptr resolution = std::make_shared<ui::ComboBox>(m_font, m_textureResource.get("res/textures/ui/combobox.png"));
     resolution->setAlignment(ui::Alignment::Centre);
     resolution->setPosition(960.f, 600.f);
@@ -423,7 +331,7 @@ void MenuState::buildGraphicsOptions()
     }
     if (i < modes.size()) resolution->setSelectedIndex(j);
 
-    m_uiContainers[Container::GraphicsOptions].addControl(resolution);
+    m_uiContainers[Container::VideoOptions].addControl(resolution);
 
     ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonPrev->setPosition(buttonPrevPosition);
@@ -434,7 +342,7 @@ void MenuState::buildGraphicsOptions()
     {
         m_currentContainer = Container::SoundOptions;
     });
-    m_uiContainers[Container::GraphicsOptions].addControl(buttonPrev);
+    m_uiContainers[Container::VideoOptions].addControl(buttonPrev);
 
     ui::Button::Ptr buttonApply = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
     buttonApply->setPosition(buttonNextPosition);
@@ -458,67 +366,5 @@ void MenuState::buildGraphicsOptions()
 
         console.exec("set_resolution " + std::to_string(width) + " " + std::to_string(height));
     });
-    m_uiContainers[Container::GraphicsOptions].addControl(buttonApply);
-}
-*/
-void MenuState::buildNameInput()
-{
-    ui::TextBox::Ptr playerOneInput = std::make_shared<ui::TextBox>(m_font);
-    playerOneInput->setPosition(960.f, 200.f);
-    playerOneInput->setAlignment(ui::Alignment::Centre);
-    playerOneInput->setText(getContext().gameData.playerOne.name);
-    m_uiContainers[Container::NameInput].addControl(playerOneInput);
-
-    ui::TextBox::Ptr playerTwoInput = std::make_shared<ui::TextBox>(m_font);
-    playerTwoInput->setPosition(960.f, 260.f);
-    playerTwoInput->setAlignment(ui::Alignment::Centre);
-    playerTwoInput->setText(getContext().gameData.playerTwo.name);
-    m_uiContainers[Container::NameInput].addControl(playerTwoInput);
-    
-    ui::Button::Ptr buttonPrev = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    buttonPrev->setPosition(buttonPrevPosition);
-    buttonPrev->setAlignment(ui::Alignment::Centre);
-    buttonPrev->setTextColour(sf::Color::Black);
-    buttonPrev->setText("Back");
-    buttonPrev->setCallback([this]()
-    {
-        m_currentContainer = Container::Main;
-    });
-    m_uiContainers[Container::NameInput].addControl(buttonPrev);
-
-    ui::Button::Ptr buttonStart = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    buttonStart->setPosition(buttonNextPosition);
-    buttonStart->setAlignment(ui::Alignment::Centre);
-    buttonStart->setTextColour(sf::Color::Black);
-    buttonStart->setText("BEGIN!");
-    buttonStart->setCallback([playerOneInput, playerTwoInput, this]()
-    {
-        //update context data with names
-        getContext().gameData.playerOne.name = playerOneInput->getText();
-        getContext().gameData.playerTwo.name = playerTwoInput->getText();
-        
-        //start game
-        requestStackPop();
-        requestStackPush(States::ID::Game);
-    });
-    m_uiContainers[Container::NameInput].addControl(buttonStart);
-}
-
-void MenuState::buildHelp()
-{
-    ui::Label::Ptr helpText = std::make_shared<ui::Label>(helpStr, m_font);
-    helpText->setFontSize(60u);
-    helpText->setPosition(60.f, 40.f);
-    m_uiContainers[Container::Help].addControl(helpText);
-
-    ui::Button::Ptr okButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
-    okButton->setPosition(buttonOkPosition);
-    okButton->setAlignment(ui::Alignment::Centre);
-    okButton->setTextColour(sf::Color::Black);
-    okButton->setText("OK");
-    okButton->setCallback([this]()
-    {
-        m_currentContainer = Container::Main;
-    });
-    m_uiContainers[Container::Help].addControl(okButton);
+    m_uiContainers[Container::VideoOptions].addControl(buttonApply);
 }

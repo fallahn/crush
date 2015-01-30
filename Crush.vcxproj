@@ -45,6 +45,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>include;extlibs/sfml/include</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -95,6 +96,7 @@
     <ClCompile Include="src\FontResource.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\Map.cpp" />
+    <ClCompile Include="src\OptionsState.cpp" />
     <ClCompile Include="src\ParticleController.cpp" />
     <ClCompile Include="src\Particles.cpp" />
     <ClCompile Include="src\ScoreBar.cpp" />
@@ -139,6 +141,7 @@
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\FreeFormBehaviour.hpp" />
     <ClInclude Include="include\InputMapping.hpp" />
+    <ClInclude Include="include\OptionsState.hpp" />
     <ClInclude Include="include\UIInputSelect.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />

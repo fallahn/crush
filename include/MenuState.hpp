@@ -48,9 +48,9 @@ private:
     enum Container
     {
         Main = 0,
-        InputOptions,
-        SoundOptions,
-        GraphicsOptions,
+        //InputOptions,
+        //SoundOptions,
+        //GraphicsOptions,
         NameInput,
         Help,
         Count
@@ -63,9 +63,9 @@ private:
     TextureResource& m_textureResource;
 
     void buildMainMenu();
-    void buildInputOptions();
-    void buildSoundOptions();
-    void buildGraphicsOptions();
+    //void buildInputOptions();
+    //void buildSoundOptions();
+    //void buildGraphicsOptions();
     void buildNameInput();
     void buildHelp();
 };
