@@ -99,11 +99,11 @@ bool PauseState::handleEvent(const sf::Event& evt)
         default: break;
         }
     }
-    else if (evt.type == sf::Event::JoystickButtonReleased)
+    /*else if (evt.type == sf::Event::JoystickButtonReleased)
     {
         if (evt.joystickButton.button == 7)
             requestStackPop();
-    }
+    }*/
 
     const auto& rw = getContext().renderWindow;
     auto mousePos = rw.mapPixelToCoords(sf::Mouse::getPosition(rw));

@@ -78,7 +78,8 @@ source distribution.
                 Jumped,
                 HitWater,
                 GotHat,
-                LostHat
+                LostHat,
+                KillStreak
             }action;
             enum Item
             {

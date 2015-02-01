@@ -337,7 +337,7 @@ void GameState::addMapBody(const Map::Node& n)
         auto node = std::make_unique<Node>();
         node->setCategory(Category::Light);
         //TODO magix0r numb0rz
-        auto light = m_scene.addLight(colourToVec3(n.colour), 500.f);
+        auto light = m_scene.addLight(colourToVec3(n.colour), 700.f);
         light->setDepth(50.f);
         node->setLight(light);
         node->setPosition(n.position + (n.size / 2.f));

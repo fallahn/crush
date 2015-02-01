@@ -28,6 +28,7 @@ source distribution.
 #include <ScoreBoard.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
+#include <Node.hpp>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -221,6 +222,13 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             {
                                 killstreakMessage();
                                 m_playerOneScore += (m_playerOneKillStreak / killStreakStep) * killStreakPoints;
+
+                                //raise killstreak event
+                                Event ks;
+                                ks.type = Event::Player;
+                                ks.player.action = Event::PlayerEvent::KillStreak;
+                                ks.player.playerId = Category::PlayerOne;
+                                static_cast<Node&>(s).raiseEvent(ks);
                             }
 
                             break;
@@ -272,6 +280,13 @@ void ScoreBoard::onNotify(Subject& s, const Event& evt)
                             {
                                 m_playerTwoScore += (m_playerTwoKillStreak / killStreakStep) * killStreakPoints;
                                 killstreakMessage();
+
+                                //raise killstreak event
+                                Event ks;
+                                ks.type = Event::Player;
+                                ks.player.action = Event::PlayerEvent::KillStreak;
+                                ks.player.playerId = Category::PlayerTwo;
+                                static_cast<Node&>(s).raiseEvent(ks);
                             }
                             break;
                         case Category::PlayerTwo: //p2 crushed self :S

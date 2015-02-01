@@ -34,7 +34,7 @@ source distribution.
 #include <SoundPlayer.hpp>
 
 #include <SFML/System/NonCopyable.hpp>
-
+#include <SFML/System/Clock.hpp>
 
 class Node;
 class AudioController final : private sf::NonCopyable, public Observer
@@ -52,6 +52,9 @@ public:
 
 private:
     SoundPlayer m_soundPlayer;
+
+    float m_randomTime;
+    sf::Clock m_randomClock;
 };
 
 #endif //AUDIO_CONTROLLER_H_

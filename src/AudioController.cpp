@@ -27,6 +27,7 @@ source distribution.
 
 #include <AudioController.hpp>
 #include <Node.hpp>
+#include <Util.hpp>
 
 #include <SFML/Audio/Listener.hpp>
 
@@ -34,6 +35,7 @@ source distribution.
 #include <iostream>
 
 AudioController::AudioController()
+    : m_randomTime(2.f)
 {
     //preload sounds
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::PlayerJump, "res/sound/fx/player_jump.wav");
@@ -56,6 +58,16 @@ AudioController::AudioController()
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::HatCrush, "res/sound/fx/hat_crush.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::HatSpawn, "res/sound/fx/hat_spawn.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::HatLand, "res/sound/fx/hat_land.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::KillStreak, "res/sound/fx/killstreak.wav");
+
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand01, "res/sound/fx/random/01.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand02, "res/sound/fx/random/02.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand03, "res/sound/fx/random/03.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand04, "res/sound/fx/random/04.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand05, "res/sound/fx/random/05.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand06, "res/sound/fx/random/06.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand07, "res/sound/fx/random/07.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand08, "res/sound/fx/random/08.wav");
 
     sf::Listener::setDirection(0.f, 0.f, -1.f);
     m_soundPlayer.setListenerPosition({ 960.f, 540.f }); //set to centre of world for now
@@ -64,8 +76,19 @@ AudioController::AudioController()
 //public
 void AudioController::update()
 {
-    //TODO spawn random ambience etc
+    //spawn random ambience etc
+    if (m_randomClock.getElapsedTime().asSeconds() > m_randomTime)
+    {
+        const float x = static_cast<float>(Util::Random::value(0, 1920));
+        const float y = static_cast<float>(Util::Random::value(0, 1080));
+        const float z = static_cast<float>(Util::Random::value(-1000, 1800));
 
+        auto sound = static_cast<SoundPlayer::AudioId>(Util::Random::value(static_cast<int>(SoundPlayer::AudioId::Rand01), static_cast<int>(SoundPlayer::AudioId::Rand08)));
+        m_soundPlayer.play(sound, { x, y, z });
+
+        m_randomTime = static_cast<float>(Util::Random::value(4, 10));
+        m_randomClock.restart();
+    }
     m_soundPlayer.update();
 }
 
@@ -114,6 +137,9 @@ void AudioController::onNotify(Subject& s, const Event& e)
                 break;
             default: break;
             }
+            break;
+        case Event::PlayerEvent::KillStreak:
+            m_soundPlayer.play(SoundPlayer::AudioId::KillStreak);
             break;
         default: break;
         }

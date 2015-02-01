@@ -61,7 +61,6 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
     m_frontDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular))
 {
-    //TODO load textures based on map data
     //scale sprite to match node size
     blockTextureSize = sf::Vector2f(tr.get("res/textures/map/steel_crate_diffuse.png").getSize() / 2u); //KLUUUDDGGE!!!
 

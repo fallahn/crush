@@ -66,10 +66,21 @@ public:
         HatSpawn,
         HatCrush,
         HatLand,
+        KillStreak,
 
         //UI sounds
         UIMove,
-        UISelect
+        UISelect,
+
+        //map sounds
+        Rand01,
+        Rand02,
+        Rand03,
+        Rand04,
+        Rand05,
+        Rand06,
+        Rand07,
+        Rand08
     };
 
     SoundPlayer();
@@ -78,6 +89,7 @@ public:
     void update();
     void play(AudioId id);
     void play(AudioId id, const sf::Vector2f& position, bool loop = false, Node* owner = nullptr);
+    void play(AudioId, const sf::Vector3f& position);
     void stop(Node* owner);
     
     void setListenerPosition(const sf::Vector2f& position);

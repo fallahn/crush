@@ -53,7 +53,7 @@ class AnimatedSprite final : public sf::Drawable, public sf::Transformable//, pr
 public:
     AnimatedSprite();
     explicit AnimatedSprite(const sf::Texture& t);
-    explicit AnimatedSprite(const SpriteSheet& sheet);
+    explicit AnimatedSprite(const SpriteSheet& sheet); //TODO replace this with custom format
     //AnimatedSprite(AnimatedSprite&& a){}
     //AnimatedSprite& operator=(AnimatedSprite&&){ return *this; }
     ~AnimatedSprite() = default;

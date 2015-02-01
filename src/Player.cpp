@@ -64,7 +64,7 @@ namespace
     Animation jump(6, 6);
     Animation fall(7, 7);
 
-    const sf::Vector2f hatPosition(0.f, -29.f);
+    const sf::Vector2f hatPosition(0.f, -31.f);
 }
 
 Player::Keys::Keys()

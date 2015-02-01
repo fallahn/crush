@@ -94,6 +94,19 @@ void SoundPlayer::play(AudioId id, const sf::Vector2f& position, bool loop, Node
     }
 }
 
+void SoundPlayer::play(AudioId id, const sf::Vector3f& position)
+{
+    m_sounds.emplace_back();
+
+    auto& sound = m_sounds.back();
+    sound.setBuffer(m_buffers[id]);
+    sound.setPosition(position.x, -position.y, position.z);
+    sound.setAttenuation(attenuation);
+    sound.setMinDistance(minDistance3D);
+    sound.setVolume(volume);
+    sound.play();
+}
+
 void SoundPlayer::stop(Node* owner)
 {
     assert(owner);

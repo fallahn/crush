@@ -1,0 +1,30 @@
+{"frames": [
+
+{
+	"filename": "tree01.png",
+	"frame": {"x":2,"y":2,"w":80,"h":160},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":160},
+	"sourceSize": {"w":80,"h":160},
+	"pivot": {"x":0.5,"y":0.5}
+},
+{
+	"filename": "tree02.png",
+	"frame": {"x":2,"y":164,"w":80,"h":200},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":80,"h":200},
+	"sourceSize": {"w":80,"h":200},
+	"pivot": {"x":0.5,"y":0.5}
+}],
+"meta": {
+	"app": "http://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "scenery03.png",
+	"format": "RGBA8888",
+	"size": {"w":84,"h":366},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:8712b20f9169c5ec4617643fb17686e2:c742f14a1506e13bd1a57026efdb9998:ba975d60bc64f5a0ba6c55d7c0e3e172$"
+}
+}
