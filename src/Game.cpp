@@ -476,8 +476,9 @@ void Game::registerConCommands()
         auto now = std::chrono::system_clock::now();
         auto time_t = std::chrono::system_clock::to_time_t(now);
 
+        //put_time currently unavailble in GCC 4.9
         std::stringstream ss;
-        ss << std::put_time(std::localtime(&time_t), "%Y-%m-%d %X");
+        ss << static_cast<unsigned long>(std::time(0));// std::put_time(std::localtime(&time_t), "%Y-%m-%d %X");
         auto imageName = ss.str() + ".png";
 
         auto image = m_renderWindow.capture();
