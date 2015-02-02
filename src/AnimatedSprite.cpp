@@ -170,7 +170,7 @@ void AnimatedSprite::play(sf::Int16 start, sf::Int16 end)
 {
     assert(start < m_frameCount && (end < m_frameCount));
 
-    m_playing = (start == end) ? false : true;
+    m_playing = !(start == end);// ? false : true;
     m_currentFrame = m_firstFrame = start;
     m_lastFrame = (end < 0) ? m_frameCount - 1 : end;
 
