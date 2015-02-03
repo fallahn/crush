@@ -115,6 +115,10 @@ namespace SpriteEditor
                     listBoxAnimations.DataSource = null;
                     listBoxAnimations.DataSource = m_listboxData;
                     listBoxAnimations.DisplayMember = "Name";
+
+                    m_aniSprite.FrameCount = data.FrameCount;
+                    m_aniSprite.FrameRate = data.FrameRate;
+                    m_aniSprite.FrameSize = new SFML.Window.Vector2i(data.FrameSize.Width, data.FrameSize.Height);
                 }
                 catch (Exception ex)
                 {
@@ -351,6 +355,9 @@ namespace SpriteEditor
             labelCurrentFrame.Text = "Current Frame:";
             m_currentPath = string.Empty;
             m_listboxData.Clear();
+            listBoxAnimations.DataSource = null;
+            listBoxAnimations.DataSource = m_listboxData;
+            listBoxAnimations.DisplayMember = "Name";
 
             m_modified = false;
         }
@@ -396,6 +403,12 @@ namespace SpriteEditor
                 new Size(m_aniSprite.FrameSize.X, m_aniSprite.FrameSize.Y),
                 m_aniSprite.FrameRate, this.Text.ToLower(), textBoxNormalMap.Text.ToLower());
 
+            //create a default animation
+            if(m_listboxData.Count < 1)
+            {
+                m_listboxData.Insert(0, new Animation("default", 0, m_aniSprite.FrameCount - 1));
+            }
+
             data.Animations = m_listboxData;
 
             try
@@ -424,8 +437,14 @@ namespace SpriteEditor
             if (tex.Size.X <= 2048 && tex.Size.Y <= 2048)
             {
                 m_aniSprite = new AnimatedSprite(tex);
+                m_sfmlControl.UpdateDelegates.Clear();
                 m_sfmlControl.UpdateDelegates.Add(m_aniSprite.Update);
                 ResetControls();
+
+                m_aniSprite.FrameRate = (uint)numericUpDownFrameRate.Value;
+                m_aniSprite.FrameCount = (uint)numericUpDownFrameCount.Value;
+                m_aniSprite.FrameSize = new SFML.Window.Vector2i((int)numericUpDownFrameWidth.Value, (int)numericUpDownFrameHeight.Value);
+
                 this.Text = Path.GetFileName(path);
 
                 m_modified = true;

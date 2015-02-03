@@ -44,14 +44,14 @@ WINDOWS:
 The repository contains a Visual Studio 2013 Community Edition solution, along with a set of SFML
 binaries compiled on Windows 7 64 bit. This is probably the easiest route, although it is only 
 included for my personal convenience, and may or may not work for you. The Visual Studio solution
-also includes a project for building a level editor, written in C#. The level editor requires the
-nuget package for JSON.net to be installed via the nuget manager.
+also includes a project for building a level editor and a sprite editor, written in C#. They both
+require the nuget package for JSON.net to be installed via the nuget manager.
 
 You can also use Cmake-gui 2.8 or newer to create project files for other IDEs such as Code::Blocks,
 or unix style make files for mingw. The same limitations apply as the linux build process: you will
 need to have either clang 3.4 or g++ 4.9 or higher installed, and a set of SFML binaries for your 
 chosen compiler. Clicking Configure in CMake-gui may lead to path errors if it cannot find the SFML
-ibraries, simply open each entry highlighted in red and browse to the corresponding library file. 
+libraries, simply open each entry highlighted in red and browse to the corresponding library file. 
 Click Configure again, and then Generate if there are no further errors, to output a project file 
 which can be used to build CRUSH.
 
