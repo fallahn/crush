@@ -42,13 +42,15 @@ namespace SpriteEditor
         private uint m_startFrame;
         private uint m_endFrame;
         private bool m_loop;
+        private string m_name;
 
-        public Animation(uint start, uint end, bool loop = true)
+        public Animation(string name, uint start, uint end, bool loop = true)
         {
-            Debug.Assert(start < end);
+            Debug.Assert(start <= end);
             m_startFrame = start;
             m_endFrame = end;
             m_loop = loop;
+            m_name = name;
         }
 
         public uint Start
@@ -67,6 +69,12 @@ namespace SpriteEditor
         {
             get { return m_loop; }
             set { m_loop = value; }
+        }
+
+        public string Name
+        {
+            get { return m_name; }
+            set { m_name = value; }
         }
     }
 
@@ -153,6 +161,8 @@ namespace SpriteEditor
                 m_subRect.Width = value.X;
                 m_subRect.Height = value.Y;
                 m_sprite.TextureRect = m_subRect;
+
+                Origin = new Vector2f(value.X / 2, value.Y / 2);
             }
 
             get
@@ -188,6 +198,11 @@ namespace SpriteEditor
             get { return m_playing; }
         }
 
+        public uint CurrentFrame
+        {
+            get { return m_currentFrame; }
+        }
+
         public void Play(uint start, uint end)
         {
             Debug.Assert(start < m_frameCount && (end < m_frameCount));
@@ -209,6 +224,28 @@ namespace SpriteEditor
         public void SetPaused(bool paused)
         {
             m_playing = !paused;
+        }
+
+        public void FrameForward()
+        {
+            if (m_firstFrame == m_lastFrame) return;
+            
+            m_currentFrame++;
+            if (m_currentFrame > m_lastFrame)
+                m_currentFrame = 0;
+
+            SetFrame(m_currentFrame);
+        }
+
+        public void FrameBack()
+        {
+            if (m_firstFrame == m_lastFrame) return;
+
+            m_currentFrame--;
+            if (m_currentFrame > m_lastFrame)
+                m_currentFrame = m_lastFrame;
+
+            SetFrame(m_currentFrame);
         }
 
         void Drawable.Draw(RenderTarget target, RenderStates states)

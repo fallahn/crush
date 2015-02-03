@@ -44,6 +44,12 @@ namespace SpriteEditor
     partial class SfmlControl : Control
     {
         private RenderWindow m_renderWindow;
+        private Color m_clearColour = new Color();
+        public Color BackgroundColour
+        {
+            get { return m_clearColour; }
+            set { m_clearColour = value; }
+        }
 
         //delegates for custom drawing
         private List<DrawDelegate> m_drawDelegates = new List<DrawDelegate>();
@@ -91,7 +97,7 @@ namespace SpriteEditor
 
         public void Draw()
         {
-            m_renderWindow.Clear();
+            m_renderWindow.Clear(m_clearColour);
             foreach (DrawDelegate d in m_drawDelegates)
                 d(m_renderWindow);
             m_renderWindow.Display();

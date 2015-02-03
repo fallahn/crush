@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimatedSprite.cs" />
+    <Compile Include="AnimationData.cs" />
     <Compile Include="DrawFunctions.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
