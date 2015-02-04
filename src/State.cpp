@@ -48,6 +48,7 @@ State::Context::Context(sf::RenderWindow& window, Game& game, GameData& gd)
 State::State(StateStack& stateStack, Context context)
     : m_stack           (&stateStack),
     m_context           (context),
+    m_loadingSprite     ("res/textures/characters/robot.json", context.gameInstance.getTextureResource()),
     m_loadingText       ("Loading..", context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
     m_threadRunning     (false),
     m_loadingThread     (&State::updateLoadingScreen, this){}
@@ -76,11 +77,7 @@ State::Context State::getContext() const
 void State::launchLoadingScreen()
 {
     m_context.gameInstance.pause();
-    
-    m_loadingSprite.setTexture(m_context.gameInstance.getTextureResource().get("res/textures/characters/robot_diffuse.png"));
-    m_loadingSprite.setFrameCount(8u);
-    m_loadingSprite.setFrameSize({ 48, 56 });
-    m_loadingSprite.setFrameRate(18.f);
+
     m_loadingSprite.setLooped(true);
     m_loadingSprite.play();
     m_loadingSprite.setScale(2.f, 2.f);

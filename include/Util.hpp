@@ -128,16 +128,17 @@ namespace Util
         }
 
         //converts a comma delimited string to vector 2
-        static sf::Vector2f vec2FromString(const std::string& str)
+        template <typename T>
+        static sf::Vector2<T> vec2FromString(const std::string& str)
         {
-            sf::Vector2f retVec;
+            sf::Vector2<T> retVec;
             auto values = String::toFloatArray(str);
             switch (values.size())
             {
             case 2:
-                retVec.y = values[1];
+                retVec.y = static_cast<T>(values[1]);
             case 1:
-                retVec.x = values[0];
+                retVec.x = static_cast<T>(values[0]);
                 break;
             default: break;
             }

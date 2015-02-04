@@ -142,6 +142,7 @@
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\FreeFormBehaviour.hpp" />
     <ClInclude Include="include\InputMapping.hpp" />
+    <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\OptionsState.hpp" />
     <ClInclude Include="include\UIInputSelect.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />

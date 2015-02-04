@@ -35,8 +35,18 @@
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundColourToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.buttonDivTwo = new System.Windows.Forms.Button();
+            this.buttonDivFour = new System.Windows.Forms.Button();
+            this.radioButtonHeight = new System.Windows.Forms.RadioButton();
+            this.radioButtonWidth = new System.Windows.Forms.RadioButton();
+            this.buttonBrowseNormalmap = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
+            this.textBoxNormalMap = new System.Windows.Forms.TextBox();
+            this.labelCurrentFrame = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -59,16 +69,6 @@
             this.numericUpDownAnimStart = new System.Windows.Forms.NumericUpDown();
             this.listBoxAnimations = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.labelCurrentFrame = new System.Windows.Forms.Label();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.backgroundColourToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.textBoxNormalMap = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.buttonBrowseNormalmap = new System.Windows.Forms.Button();
-            this.radioButtonWidth = new System.Windows.Forms.RadioButton();
-            this.radioButtonHeight = new System.Windows.Forms.RadioButton();
-            this.buttonDivFour = new System.Windows.Forms.Button();
-            this.buttonDivTwo = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -149,6 +149,22 @@
             this.closeToolStripMenuItem.Text = "Exit";
             this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.backgroundColourToolStripMenuItem});
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // backgroundColourToolStripMenuItem
+            // 
+            this.backgroundColourToolStripMenuItem.Name = "backgroundColourToolStripMenuItem";
+            this.backgroundColourToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
+            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.backgroundColourToolStripMenuItem.Text = "Background Colour..";
+            this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -207,6 +223,84 @@
             this.splitContainer2.Size = new System.Drawing.Size(360, 413);
             this.splitContainer2.SplitterDistance = 224;
             this.splitContainer2.TabIndex = 0;
+            // 
+            // buttonDivTwo
+            // 
+            this.buttonDivTwo.Location = new System.Drawing.Point(155, 49);
+            this.buttonDivTwo.Name = "buttonDivTwo";
+            this.buttonDivTwo.Size = new System.Drawing.Size(36, 23);
+            this.buttonDivTwo.TabIndex = 18;
+            this.buttonDivTwo.Text = "1/2";
+            this.buttonDivTwo.UseVisualStyleBackColor = true;
+            this.buttonDivTwo.Click += new System.EventHandler(this.buttonDivTwo_Click);
+            // 
+            // buttonDivFour
+            // 
+            this.buttonDivFour.Location = new System.Drawing.Point(154, 78);
+            this.buttonDivFour.Name = "buttonDivFour";
+            this.buttonDivFour.Size = new System.Drawing.Size(37, 23);
+            this.buttonDivFour.TabIndex = 17;
+            this.buttonDivFour.Text = "1/4";
+            this.buttonDivFour.UseVisualStyleBackColor = true;
+            this.buttonDivFour.Click += new System.EventHandler(this.buttonDivFour_Click);
+            // 
+            // radioButtonHeight
+            // 
+            this.radioButtonHeight.AutoSize = true;
+            this.radioButtonHeight.Location = new System.Drawing.Point(20, 81);
+            this.radioButtonHeight.Name = "radioButtonHeight";
+            this.radioButtonHeight.Size = new System.Drawing.Size(120, 17);
+            this.radioButtonHeight.TabIndex = 16;
+            this.radioButtonHeight.Text = "Quick Divide Height";
+            this.radioButtonHeight.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonWidth
+            // 
+            this.radioButtonWidth.AutoSize = true;
+            this.radioButtonWidth.Checked = true;
+            this.radioButtonWidth.Location = new System.Drawing.Point(20, 52);
+            this.radioButtonWidth.Name = "radioButtonWidth";
+            this.radioButtonWidth.Size = new System.Drawing.Size(117, 17);
+            this.radioButtonWidth.TabIndex = 15;
+            this.radioButtonWidth.TabStop = true;
+            this.radioButtonWidth.Text = "Quick Divide Width";
+            this.radioButtonWidth.UseVisualStyleBackColor = true;
+            // 
+            // buttonBrowseNormalmap
+            // 
+            this.buttonBrowseNormalmap.Location = new System.Drawing.Point(197, 118);
+            this.buttonBrowseNormalmap.Name = "buttonBrowseNormalmap";
+            this.buttonBrowseNormalmap.Size = new System.Drawing.Size(27, 23);
+            this.buttonBrowseNormalmap.TabIndex = 14;
+            this.buttonBrowseNormalmap.Text = "...";
+            this.buttonBrowseNormalmap.UseVisualStyleBackColor = true;
+            this.buttonBrowseNormalmap.Click += new System.EventHandler(this.buttonBrowseNormalmap_Click);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(17, 105);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(67, 13);
+            this.label8.TabIndex = 13;
+            this.label8.Text = "Normal Map:";
+            // 
+            // textBoxNormalMap
+            // 
+            this.textBoxNormalMap.Location = new System.Drawing.Point(20, 121);
+            this.textBoxNormalMap.Name = "textBoxNormalMap";
+            this.textBoxNormalMap.ReadOnly = true;
+            this.textBoxNormalMap.Size = new System.Drawing.Size(171, 20);
+            this.textBoxNormalMap.TabIndex = 12;
+            // 
+            // labelCurrentFrame
+            // 
+            this.labelCurrentFrame.AutoSize = true;
+            this.labelCurrentFrame.Location = new System.Drawing.Point(17, 155);
+            this.labelCurrentFrame.Name = "labelCurrentFrame";
+            this.labelCurrentFrame.Size = new System.Drawing.Size(76, 13);
+            this.labelCurrentFrame.TabIndex = 11;
+            this.labelCurrentFrame.Text = "Current Frame:";
             // 
             // label7
             // 
@@ -271,6 +365,11 @@
             // numericUpDownFrameCount
             // 
             this.numericUpDownFrameCount.Location = new System.Drawing.Point(290, 118);
+            this.numericUpDownFrameCount.Maximum = new decimal(new int[] {
+            1000,
+            0,
+            0,
+            0});
             this.numericUpDownFrameCount.Minimum = new decimal(new int[] {
             1,
             0,
@@ -460,100 +559,6 @@
             this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Animations:";
-            // 
-            // labelCurrentFrame
-            // 
-            this.labelCurrentFrame.AutoSize = true;
-            this.labelCurrentFrame.Location = new System.Drawing.Point(17, 155);
-            this.labelCurrentFrame.Name = "labelCurrentFrame";
-            this.labelCurrentFrame.Size = new System.Drawing.Size(76, 13);
-            this.labelCurrentFrame.TabIndex = 11;
-            this.labelCurrentFrame.Text = "Current Frame:";
-            // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.backgroundColourToolStripMenuItem});
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.editToolStripMenuItem.Text = "Edit";
-            // 
-            // backgroundColourToolStripMenuItem
-            // 
-            this.backgroundColourToolStripMenuItem.Name = "backgroundColourToolStripMenuItem";
-            this.backgroundColourToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.B)));
-            this.backgroundColourToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.backgroundColourToolStripMenuItem.Text = "Background Colour..";
-            this.backgroundColourToolStripMenuItem.Click += new System.EventHandler(this.backgroundColourToolStripMenuItem_Click);
-            // 
-            // textBoxNormalMap
-            // 
-            this.textBoxNormalMap.Location = new System.Drawing.Point(20, 121);
-            this.textBoxNormalMap.Name = "textBoxNormalMap";
-            this.textBoxNormalMap.ReadOnly = true;
-            this.textBoxNormalMap.Size = new System.Drawing.Size(171, 20);
-            this.textBoxNormalMap.TabIndex = 12;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(17, 105);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(67, 13);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "Normal Map:";
-            // 
-            // buttonBrowseNormalmap
-            // 
-            this.buttonBrowseNormalmap.Location = new System.Drawing.Point(197, 118);
-            this.buttonBrowseNormalmap.Name = "buttonBrowseNormalmap";
-            this.buttonBrowseNormalmap.Size = new System.Drawing.Size(27, 23);
-            this.buttonBrowseNormalmap.TabIndex = 14;
-            this.buttonBrowseNormalmap.Text = "...";
-            this.buttonBrowseNormalmap.UseVisualStyleBackColor = true;
-            this.buttonBrowseNormalmap.Click += new System.EventHandler(this.buttonBrowseNormalmap_Click);
-            // 
-            // radioButtonWidth
-            // 
-            this.radioButtonWidth.AutoSize = true;
-            this.radioButtonWidth.Checked = true;
-            this.radioButtonWidth.Location = new System.Drawing.Point(20, 52);
-            this.radioButtonWidth.Name = "radioButtonWidth";
-            this.radioButtonWidth.Size = new System.Drawing.Size(117, 17);
-            this.radioButtonWidth.TabIndex = 15;
-            this.radioButtonWidth.TabStop = true;
-            this.radioButtonWidth.Text = "Quick Divide Width";
-            this.radioButtonWidth.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonHeight
-            // 
-            this.radioButtonHeight.AutoSize = true;
-            this.radioButtonHeight.Location = new System.Drawing.Point(20, 81);
-            this.radioButtonHeight.Name = "radioButtonHeight";
-            this.radioButtonHeight.Size = new System.Drawing.Size(120, 17);
-            this.radioButtonHeight.TabIndex = 16;
-            this.radioButtonHeight.Text = "Quick Divide Height";
-            this.radioButtonHeight.UseVisualStyleBackColor = true;
-            // 
-            // buttonDivFour
-            // 
-            this.buttonDivFour.Location = new System.Drawing.Point(154, 78);
-            this.buttonDivFour.Name = "buttonDivFour";
-            this.buttonDivFour.Size = new System.Drawing.Size(37, 23);
-            this.buttonDivFour.TabIndex = 17;
-            this.buttonDivFour.Text = "1/4";
-            this.buttonDivFour.UseVisualStyleBackColor = true;
-            this.buttonDivFour.Click += new System.EventHandler(this.buttonDivFour_Click);
-            // 
-            // buttonDivTwo
-            // 
-            this.buttonDivTwo.Location = new System.Drawing.Point(155, 49);
-            this.buttonDivTwo.Name = "buttonDivTwo";
-            this.buttonDivTwo.Size = new System.Drawing.Size(36, 23);
-            this.buttonDivTwo.TabIndex = 18;
-            this.buttonDivTwo.Text = "1/2";
-            this.buttonDivTwo.UseVisualStyleBackColor = true;
-            this.buttonDivTwo.Click += new System.EventHandler(this.buttonDivTwo_Click);
             // 
             // MainWindow
             // 

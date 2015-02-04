@@ -54,7 +54,7 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_itemActive        (false),
     m_textureResource   (tr),
     m_shaderResource    (sr),
-    m_itemSprite        (tr.get("res/textures/map/item.png")),
+    m_itemSprite        ("res/textures/map/item.json", tr),
     m_hatSprite         (tr.get("res/textures/map/hat_diffuse.png")),
     m_hatCount          (0u),
     m_solidDrawable     (tr, sr.get(Shader::Type::NormalMap)),
@@ -73,14 +73,10 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
         blockSprite.setShader(sr.get(Shader::Type::NormalMap));
         blockSprite.setFrameCount(blockTextureCount);
         blockSprite.setFrameSize(sf::Vector2i(blockTextureSize));
-        blockSprite.play(Animation(i, i));
+        blockSprite.play(Animation("", i, i));
     }
 
-    m_itemSprite.setFrameCount(16u);
-    m_itemSprite.setFrameRate(18.f);
-    m_itemSprite.setFrameSize({ 64, 64 });
     m_itemSprite.setLooped(true);
-    m_itemSprite.setNormalMap(tr.get("res/textures/map/item_normal.png"));
     m_itemSprite.setShader(sr.get(Shader::Type::NormalMapSpecular));
     m_itemSprite.play();
 

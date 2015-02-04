@@ -27,6 +27,7 @@ source distribution.
 
 #include <Map.hpp>
 #include <Util.hpp>
+#include <JsonUtil.hpp>
 
 #include <picojson.h>
 
@@ -35,6 +36,20 @@ source distribution.
 
 #include <iostream>
 
+namespace
+{
+    sf::Color colourFromInt(sf::Int32 value)
+    {
+        sf::Color c;
+        c.r = (value & 0x00ff0000) >> 16;
+        c.g = (value & 0x0000ff00) >> 8;
+        c.b = (value & 0x000000ff);
+        c.a = (value & 0xff000000) >> 24;
+
+        return c;
+    }
+}
+
 Map::Map(const std::string& path)
     : m_npcCount    (0u),
     m_npcTotal      (0u)
@@ -42,6 +57,7 @@ Map::Map(const std::string& path)
     //attempt to parse json file
     std::ifstream file(path);
     assert(file.good());
+    assert(Util::File::validLength(file));
 
     //read the entire file into memory first
     std::string jsonString;
@@ -54,100 +70,100 @@ Map::Map(const std::string& path)
     assert(!jsonString.empty());
     file.close();
 
-
     picojson::value v;
     auto err = picojson::parse(v, jsonString);
-    if (!err.empty())
+    if (err.empty())
     {
-        std::cerr << "Map Parse: " << err << std::endl;
-        return;
-    }
+        //map data
+        if (v.get("NpcCount").is<double>())
+            m_npcCount = static_cast<sf::Uint8>(v.get("NpcCount").get<double>());
+        else
+            std::cerr << "Map Parse: missing NpcCount value." << std::endl;
 
-    //map data
-    if (v.get("NpcCount").is<double>())
-        m_npcCount = static_cast<sf::Uint8>(v.get("NpcCount").get<double>());
-    else
-        std::cerr << "Map Parse: missing NpcCount value." << std::endl;
+        if (v.get("NpcTotal").is<double>())
+            m_npcTotal = static_cast<sf::Uint8>(v.get("NpcTotal").get<double>());
+        else
+            std::cerr << "Map Parse: missing NpcTotal value." << std::endl;
 
-    if (v.get("NpcTotal").is<double>())
-        m_npcTotal = static_cast<sf::Uint8>(v.get("NpcTotal").get<double>());
-    else
-        std::cerr << "Map Parse: missing NpcTotal value." << std::endl;
+        if (v.get("MapName").is<std::string>())
+            m_mapName = v.get("MapName").get<std::string>();
+        else
+            std::cerr << "Map Parse: missing MapName value." << std::endl;
 
-    if (v.get("MapName").is<std::string>())
-        m_mapName = v.get("MapName").get<std::string>();
-    else
-        std::cerr << "Map Parse: missing MapName value." << std::endl;
+        if (v.get("BackgroundTexture").is<std::string>())
+            m_backgroundImageName = v.get("BackgroundTexture").get<std::string>();
+        else
+            std::cerr << "Map Parse: missing BackgroundTexture value" << std::endl;
 
-    if (v.get("BackgroundTexture").is<std::string>())
-        m_backgroundImageName = v.get("BackgroundTexture").get<std::string>();
-    else
-        std::cerr << "Map Parse: missing BackgroundTexture value" << std::endl;
+        if (v.get("PlatformTexture").is<std::string>())
+            m_platformImageName = v.get("PlatformTexture").get<std::string>();
+        else
+            std::cerr << "Map Parse: missing platform texture value" << std::endl;
 
-    if (v.get("PlatformTexture").is<std::string>())
-        m_platformImageName = v.get("PlatformTexture").get<std::string>();
-    else
-        std::cerr << "Map Parse: missing platform texture value" << std::endl;
+        if (v.get("PlayerOneSpawn").is<std::string>())
+            m_playerOneSpawn = Util::Vector::vec2FromString<float>(v.get("PlayerOneSpawn").get<std::string>());
+        else
+            std::cerr << "Map Parse: missing Player One spawn position." << std::endl;
 
-    if (v.get("PlayerOneSpawn").is<std::string>())
-        m_playerOneSpawn = Util::Vector::vec2FromString(v.get("PlayerOneSpawn").get<std::string>());
-    else
-        std::cerr << "Map Parse: missing Player One spawn position." << std::endl;
+        if (v.get("PlayerTwoSpawn").is<std::string>())
+            m_playerTwoSpawn = Util::Vector::vec2FromString<float>(v.get("PlayerTwoSpawn").get<std::string>());
+        else
+            std::cerr << "Map Parse: missing Player Two spawn position." << std::endl;
 
-    if (v.get("PlayerTwoSpawn").is<std::string>())
-        m_playerTwoSpawn = Util::Vector::vec2FromString(v.get("PlayerTwoSpawn").get<std::string>());
-    else
-        std::cerr << "Map Parse: missing Player Two spawn position." << std::endl;
+        if (v.get("AmbientColour").is<double>())
+            m_ambientColour = colourFromInt(static_cast<int>(v.get("AmbientColour").get<double>()));
+        else
+            std::cerr << "Map Parse: missing ambient lighting colour." << std::endl;
 
-    if (v.get("AmbientColour").is<double>())
-        m_ambientColour = colourFromInt(static_cast<int>(v.get("AmbientColour").get<double>()));
-    else
-        std::cerr << "Map Parse: missing ambient lighting colour." << std::endl;
-
-    if (v.get("SunColour").is<double>())
-        m_sunlightColour = colourFromInt(static_cast<int>(v.get("SunColour").get<double>()));
-    else
-        std::cerr << "Map Parse: missing sun light colour." << std::endl;
+        if (v.get("SunColour").is<double>())
+            m_sunlightColour = colourFromInt(static_cast<int>(v.get("SunColour").get<double>()));
+        else
+            std::cerr << "Map Parse: missing sun light colour." << std::endl;
 
 
-    //node array
-    if (v.get("Nodes").is<picojson::array>())
-    {
-        const auto& nodes = v.get("Nodes").get<picojson::array>();
-        for (const auto& n : nodes)
+        //node array
+        if (v.get("Nodes").is<picojson::array>())
         {
-            if (n.get("Position").is<std::string>()
-                && n.get("Size").is<std::string>()
-                && n.get("Type").is<std::string>()
-                && n.get("Colour").is<double>()
-                && n.get("Layer").is<std::string>())
+            const auto& nodes = v.get("Nodes").get<picojson::array>();
+            for (const auto& n : nodes)
             {
-                m_nodes.emplace_back(n.get("Position").get<std::string>(),
-                    n.get("Size").get<std::string>(),
-                    n.get("Type").get<std::string>(),
-                    colourFromInt(static_cast<int>(n.get("Colour").get<double>())),
-                    n.get("Layer").get<std::string>());
+                if (n.get("Position").is<std::string>()
+                    && n.get("Size").is<std::string>()
+                    && n.get("Type").is<std::string>()
+                    && n.get("Colour").is<double>()
+                    && n.get("Layer").is<std::string>())
+                {
+                    m_nodes.emplace_back(n.get("Position").get<std::string>(),
+                        n.get("Size").get<std::string>(),
+                        n.get("Type").get<std::string>(),
+                        colourFromInt(static_cast<int>(n.get("Colour").get<double>())),
+                        n.get("Layer").get<std::string>());
 
-                //sprite sheets and file names are optional
-                if (n.get("SpriteSheet").is<std::string>())
-                    m_nodes.back().spriteSheet = n.get("SpriteSheet").get<std::string>();
+                    //sprite sheets and file names are optional
+                    if (n.get("SpriteSheet").is<std::string>())
+                        m_nodes.back().spriteSheet = n.get("SpriteSheet").get<std::string>();
 
-                if (n.get("FrameName").is<std::string>())
-                    m_nodes.back().image = n.get("FrameName").get<std::string>();
+                    if (n.get("FrameName").is<std::string>())
+                        m_nodes.back().image = n.get("FrameName").get<std::string>();
 
-                //as are anchor offsets (used for lights with contraints)
-                if (n.get("AnchorOffset").is<double>())
-                    m_nodes.back().anchorOffset = static_cast<float>(n.get("AnchorOffset").get<double>());
+                    //as are anchor offsets (used for lights with contraints)
+                    if (n.get("AnchorOffset").is<double>())
+                        m_nodes.back().anchorOffset = static_cast<float>(n.get("AnchorOffset").get<double>());
+                }
+                else
+                {
+                    std::cerr << "Map Parse: node has missing or corrupt data..." << std::endl;
+                }
             }
-            else
-            {
-                std::cerr << "Map Parse: node has missing or corrupt data..." << std::endl;
-            }
+        }
+        else
+        {
+            std::cerr << "Map Parse: missing or corrupt node data array." << std::endl;
         }
     }
     else
     {
-        std::cerr << "Map Parse: missing or corrupt node data array." << std::endl;
+        std::cerr << "Map Parse: " << err << std::endl;
     }
 }
 
@@ -210,24 +226,15 @@ const std::string& Map::getPlatformImageName() const
 }
 
 //private
-sf::Color Map::colourFromInt(sf::Int32 value)
-{
-    sf::Color c;
-    c.r = (value & 0x00ff0000) >> 16;
-    c.g = (value & 0x0000ff00) >> 8;
-    c.b = (value & 0x000000ff);
-    c.a = (value & 0xff000000) >> 24;
 
-    return c;
-}
 
 //node ctor
 Map::Node::Node()
     : type(Category::HatDropped), anchorOffset(0.f){}
 
 Map::Node::Node(const std::string& position, const std::string& size, const std::string& type, const sf::Color& c, const std::string& layer)
-    : position  (Util::Vector::vec2FromString(position)),
-    size        (Util::Vector::vec2FromString(size)),
+    : position  (Util::Vector::vec2FromString<float>(position)),
+    size        (Util::Vector::vec2FromString<float>(size)),
     type        (Category::None),
     colour      (c),
     anchorOffset(0.f)

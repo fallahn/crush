@@ -94,8 +94,6 @@ private:
     std::string m_platformImageName;
 
     std::vector<Node> m_nodes;
-
-    sf::Color colourFromInt(sf::Int32 value);
 };
 
 #endif //MAP_H_

@@ -38,22 +38,28 @@ source distribution.
 struct Animation
 {
     friend class AnimatedSprite;
-    Animation(sf::Int16 begin, sf::Int16 end, bool loop = true)
-        : m_startFrame(begin), m_endFrame(end), m_loop(loop){}
+    Animation(const std::string& name, sf::Int16 begin, sf::Int16 end, bool loop = true)
+        : m_name(name), m_startFrame(begin), m_endFrame(end), m_loop(loop){}
+
+    const std::string& getName() const
+    {
+        return m_name;
+    }
 
 private:
+    std::string m_name;
     sf::Int16 m_startFrame;
     sf::Int16 m_endFrame;
     bool m_loop;
 };
 
-class SpriteSheet;
+class TextureResource;
 class AnimatedSprite final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
 {
 public:
     AnimatedSprite();
     explicit AnimatedSprite(const sf::Texture& t);
-    explicit AnimatedSprite(const SpriteSheet& sheet); //TODO replace this with custom format
+    AnimatedSprite(const std::string& propertiesPath, TextureResource& tr);
     //AnimatedSprite(AnimatedSprite&& a){}
     //AnimatedSprite& operator=(AnimatedSprite&&){ return *this; }
     ~AnimatedSprite() = default;
@@ -100,6 +106,8 @@ private:
     float m_elapsedTime;
     bool m_loop;
     bool m_playing;
+
+    std::vector<Animation> m_animations;
 
     void draw(sf::RenderTarget& rt, sf::RenderStates states) const override;
     void setFrame(sf::Uint8 frame);

@@ -431,5 +431,8 @@
     <ClInclude Include="include\OptionsState.hpp">
       <Filter>Header Files\States</Filter>
     </ClInclude>
+    <ClInclude Include="include\JsonUtil.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

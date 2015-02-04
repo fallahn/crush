@@ -26,12 +26,18 @@ source distribution.
 *********************************************************************/
 
 #include <AnimatedSprite.hpp>
+#include <Resource.hpp>
+#include <Util.hpp>
+#include <JsonUtil.hpp>
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Shader.hpp>
 
+#include <picojson.h>
+
 #include <cassert>
+#include <fstream>
 
 AnimatedSprite::AnimatedSprite()
     : m_shader      (nullptr),
@@ -57,7 +63,7 @@ AnimatedSprite::AnimatedSprite(const sf::Texture& t)
     m_loop          (false),
     m_playing       (false){}
 
-AnimatedSprite::AnimatedSprite(const SpriteSheet& spritesheet)
+AnimatedSprite::AnimatedSprite(const std::string& propertiesPath, TextureResource& tr)
     : m_shader      (nullptr),
     m_frameCount    (0u),
     m_currentFrame  (0u),
@@ -66,7 +72,75 @@ AnimatedSprite::AnimatedSprite(const SpriteSheet& spritesheet)
     m_frameRate     (0.f),
     m_elapsedTime   (0.f),
     m_loop          (false),
-    m_playing       (false){/*TODO*/}
+    m_playing       (false)
+{
+    std::ifstream file(propertiesPath);
+    assert(file.good());
+    assert(Util::File::validLength(file));
+
+    std::string jsonString;
+    while (!file.eof())
+    {
+        std::string temp;
+        file >> temp;
+        jsonString += temp;
+    }
+    assert(!jsonString.empty());
+    file.close();
+
+    picojson::value pv;
+    auto err = picojson::parse(pv, jsonString);
+    if (err.empty())
+    {
+        //get array of animations
+        if (pv.get("Animations").is<picojson::array>())
+        {
+            const auto& anims = pv.get("Animations").get<picojson::array>();
+            for (const auto& a : anims)
+            {
+                std::string name = (a.get("Name").is<std::string>()) ? a.get("Name").get<std::string>() : "";
+                sf::Int16 start = (a.get("Start").is<double>()) ? static_cast<sf::Int16>(a.get("Start").get<double>()) : 0;
+                sf::Int16 end = (a.get("End").is<double>()) ? static_cast<sf::Int16>(a.get("End").get<double>()) : 0;
+                bool loop = (a.get("Loop").is<bool>()) ? a.get("Loop").get<bool>() : false;
+                m_animations.emplace_back(name, start, end, loop);
+            }
+        }
+
+        //properties
+        if (pv.get("FrameCount").is<double>())
+            m_frameCount = static_cast<sf::Uint8>(pv.get("FrameCount").get<double>());
+        else
+            std::cerr << propertiesPath << " missing frame count" << std::endl;
+
+        if (pv.get("FrameSize").is<std::string>())
+            setFrameSize(Util::Vector::vec2FromString<int>(pv.get("FrameSize").get<std::string>()));
+        else
+            std::cerr << propertiesPath << " missing frame size" << std::endl;
+
+        if (pv.get("FrameRate").is<double>())
+            m_frameRate = static_cast<float>(pv.get("FrameRate").get<double>());
+        else
+            std::cerr << propertiesPath << " missing frame rate" << std::endl;
+
+        std::string filePath;
+        auto result = propertiesPath.find_last_of('/');
+        if (result != std::string::npos)
+            filePath = propertiesPath.substr(0, result + 1);
+
+        if (pv.get("Texture").is<std::string>())
+            setTexture(tr.get(filePath + pv.get("Texture").get<std::string>()));
+        else
+            std::cerr << propertiesPath << " missing texture name" << std::endl;
+
+        if (pv.get("NormalMap").is<std::string>())
+            setNormalMap(tr.get(filePath + pv.get("NormalMap").get<std::string>()));
+    }
+    else
+    {
+        std::cerr << "Animated Sprite: " << err << std::endl;
+    }
+
+}
 
 //public
 void AnimatedSprite::update(float dt)

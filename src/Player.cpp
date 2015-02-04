@@ -59,10 +59,10 @@ namespace
     //animation consts
     const float maxFrameRate = 12.f;
     const sf::Vector2i frameSize(41, 64);
-    Animation idle(2, 2);
-    Animation run(0, 5);
-    Animation jump(6, 6);
-    Animation fall(7, 7);
+    Animation idle("idle", 2, 2);
+    Animation run("run", 0, 5);
+    Animation jump("jump", 6, 6);
+    Animation fall("fall", 7, 7);
 
     const sf::Vector2f hatPosition(0.f, -31.f);
 }
@@ -95,7 +95,7 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_lastFacing    (false),
     m_carryingBlock (false),
     m_spawnPosition (80.f, 500.f),
-    m_powerupSprite (tr.get("res/textures/map/item_collected.png")),
+    m_powerupSprite ("res/textures/map/item_collected.json", tr),
     m_flashSprite   (true),
     m_hasHat        (false)
 {
@@ -134,11 +134,8 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
 
     setSize(static_cast<sf::Vector2f>(m_sprite.getFrameSize()));
 
-    m_powerupSprite.setFrameRate(18.f);
-    m_powerupSprite.setFrameSize({ 64, 64 });
-    m_powerupSprite.setFrameCount(16u);
     m_powerupSprite.setLooped(true);
-    m_powerupSprite.setOrigin({ 32.f, 32.f });
+    m_powerupSprite.setOrigin(sf::Vector2f(m_powerupSprite.getFrameSize() / 2));
     m_powerupSprite.play();
 }
 

@@ -258,7 +258,7 @@ namespace SpriteEditor
         private void buttonBrowseNormalmap_Click(object sender, EventArgs e)
         {
             OpenFileDialog od = new OpenFileDialog();
-            od.Filter = "PNG Files|*.png|JPG Files|*.jpg";
+            od.Filter = "PNG Files|*.png|JPG Files|*.jpg|Targa Files|*.tga";
             if(od.ShowDialog() == DialogResult.OK)
             {
                 textBoxNormalMap.Text = Path.GetFileName(od.FileName);

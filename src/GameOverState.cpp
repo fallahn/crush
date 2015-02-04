@@ -48,8 +48,8 @@ namespace
     const float maxFrameRate = 18.f;
     const sf::Vector2i frameSize(41, 64);
     const float spriteScale = 2.f;
-    Animation idle(2, 2);
-    Animation run(0, 5);
+    Animation idle("idle", 2, 2);
+    Animation run("run", 0, 5);
 
     //layout positions
     const sf::Vector2f playerOnePosition(60.f, 280.f);

@@ -26,6 +26,8 @@ source distribution.
 *********************************************************************/
 
 #include <SpriteSheet.hpp>
+#include <Util.hpp>
+#include <JsonUtil.hpp>
 
 #include <SFML/Graphics/Transform.hpp>
 
@@ -34,66 +36,11 @@ source distribution.
 #include <cassert>
 #include <fstream>
 
-namespace
-{
-    bool validLength(std::ifstream& file)
-    {
-        file.seekg(0, file.end);
-        sf::Int32 fileLength = static_cast<sf::Int32>(file.tellg());
-        file.seekg(0, file.beg);
-        return (fileLength > 0);
-    }
-
-    void parseJsonObject(const picojson::object& o, sf::FloatRect& rect)
-    {
-        for (const auto& p : o)
-        {
-            if (p.first == "x")
-            {
-                rect.left = (p.second.is<double>()) ?
-                    static_cast<float>(p.second.get<double>()) : 0;
-            }
-            else if (p.first == "y")
-            {
-                rect.top = (p.second.is<double>()) ?
-                    static_cast<float>(p.second.get<double>()) : 0;
-            }
-            else if (p.first == "w")
-            {
-                rect.width = (p.second.is<double>()) ?
-                    static_cast<float>(p.second.get<double>()) : 0;
-            }
-            else if (p.first == "h")
-            {
-                rect.height = (p.second.is<double>()) ?
-                    static_cast<float>(p.second.get<double>()) : 0;
-            }
-        }
-    }
-
-    void parseJsonObject(const picojson::object& o, sf::Vector2f& v)
-    {
-        for (const auto& p : o)
-        {
-            if (p.first == "x" || p.first == "w")
-            {
-                v.x = (p.second.is<double>()) ?
-                    static_cast<float>(p.second.get<double>()) : 0;
-            }
-            else if (p.first == "y" || p.first == "h")
-            {
-                v.y = (p.second.is<double>()) ?
-                    static_cast<float>(p.second.get<double>()) : 0;
-            }
-        }
-    }
-}
-
 SpriteSheet::SpriteSheet(const std::string& path)
 {
     std::ifstream file(path);
     assert(file.good());
-    assert(validLength(file));
+    assert(Util::File::validLength(file));
 
     //read the entire file into memory first
     std::string jsonString;
@@ -108,71 +55,72 @@ SpriteSheet::SpriteSheet(const std::string& path)
 
     picojson::value pv;
     auto err = picojson::parse(pv, jsonString);
-    if (!err.empty())
+    if (err.empty())
     {
-        std::cerr << "Sprite Sheet: " << err << std::endl;
-        return;
-    }
-
-    if (pv.get("meta").get("image").is<std::string>())
-    {
-        m_name = pv.get("meta").get("image").get<std::string>();
-    }
-    else
-    {
-        std::cerr << "Sprite Sheet: Missing image name." << std::endl;
-    }
-
-    //load frame info
-    if (pv.get("frames").is<picojson::array>())
-    {
-        const auto& frames = pv.get("frames").get<picojson::array>();
-        for (const auto& f : frames)
+        if (pv.get("meta").get("image").is<std::string>())
         {
-            m_frames.emplace_back();
-            auto& frame = m_frames.back();
+            m_name = pv.get("meta").get("image").get<std::string>();
+        }
+        else
+        {
+            std::cerr << "Sprite Sheet: Missing image name." << std::endl;
+        }
 
-            if (f.get("filename").is<std::string>())
-                frame.filename = f.get("filename").get<std::string>();
-
-            if (f.get("frame").is<picojson::object>())
+        //load frame info
+        if (pv.get("frames").is<picojson::array>())
+        {
+            const auto& frames = pv.get("frames").get<picojson::array>();
+            for (const auto& f : frames)
             {
-                const auto& o = f.get("frame").get<picojson::object>();
-                parseJsonObject(o, frame.frame);
-            }
+                m_frames.emplace_back();
+                auto& frame = m_frames.back();
 
-            if (f.get("rotated").is<bool>())
-            {
-                frame.rotated = f.get("rotated").get<bool>();
-            }
+                if (f.get("filename").is<std::string>())
+                    frame.filename = f.get("filename").get<std::string>();
 
-            if (f.get("trimmed").is<bool>())
-            {
-                frame.trimmed = f.get("trimmed").get<bool>();
-            }
+                if (f.get("frame").is<picojson::object>())
+                {
+                    const auto& o = f.get("frame").get<picojson::object>();
+                    Util::Json::parseJsonObject(o, frame.frame);
+                }
 
-            if (f.get("spriteSourceSize").is<picojson::object>())
-            {
-                const auto& o = f.get("spriteSourceSize").get<picojson::object>();
-                parseJsonObject(o, frame.spriteSourceSize);
-            }
+                if (f.get("rotated").is<bool>())
+                {
+                    frame.rotated = f.get("rotated").get<bool>();
+                }
 
-            if (f.get("sourceSize").is<picojson::object>())
-            {
-                const auto& o = f.get("sourceSize").get<picojson::object>();
-                parseJsonObject(o, frame.sourceSize);
-            }
+                if (f.get("trimmed").is<bool>())
+                {
+                    frame.trimmed = f.get("trimmed").get<bool>();
+                }
 
-            if (f.get("pivot").is<picojson::object>())
-            {
-                const auto& o = f.get("pivot").get<picojson::object>();
-                parseJsonObject(o, frame.pivot);
+                if (f.get("spriteSourceSize").is<picojson::object>())
+                {
+                    const auto& o = f.get("spriteSourceSize").get<picojson::object>();
+                    Util::Json::parseJsonObject(o, frame.spriteSourceSize);
+                }
+
+                if (f.get("sourceSize").is<picojson::object>())
+                {
+                    const auto& o = f.get("sourceSize").get<picojson::object>();
+                    Util::Json::parseJsonObject(o, frame.sourceSize);
+                }
+
+                if (f.get("pivot").is<picojson::object>())
+                {
+                    const auto& o = f.get("pivot").get<picojson::object>();
+                    Util::Json::parseJsonObject(o, frame.pivot);
+                }
             }
+        }
+        else
+        {
+            std::cerr << "Sprite Sheet: " << m_name << ", missing frames array." << std::endl;
         }
     }
     else
     {
-        std::cerr << "Sprite Sheet: " << m_name << ", missing frames array." << std::endl;
+        std::cerr << "Sprite Sheet: " << err << std::endl;
     }
 }
 
