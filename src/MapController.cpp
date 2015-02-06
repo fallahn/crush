@@ -56,7 +56,10 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_shaderResource    (sr),
     m_itemSprite        ("res/textures/map/item.json", tr),
     m_hatSprite         (tr.get("res/textures/map/hat_diffuse.png")),
+    m_batSprite         ("res/textures/characters/bat.json", tr),
+    m_birdSprite        ("res/textures/characters/bird.json", tr),
     m_hatCount          (0u),
+    m_detailTime        (static_cast<float>(Util::Random::value(10, 23))),
     m_solidDrawable     (tr, sr.get(Shader::Type::NormalMap)),
     m_rearDrawable      (tr, sr.get(Shader::Type::NormalMap)),
     m_frontDrawable     (tr, sr.get(Shader::Type::NormalMapSpecular))
@@ -84,6 +87,13 @@ MapController::MapController(CommandStack& cs, TextureResource& tr, ShaderResour
     m_hatSprite.setNormalMap(tr.get("res/textures/map/hat_normal.png"));
     m_hatSprite.setShader(sr.get(Shader::Type::Metal));
 
+    m_batSprite.setShader(sr.get(Shader::Type::FlatShaded));
+    m_batSprite.setLooped(true);
+    m_batSprite.play();
+
+    m_birdSprite.setShader(sr.get(Shader::Type::FlatShaded));
+    m_birdSprite.setLooped(true);
+    m_birdSprite.play();
 }
 
 //public
@@ -128,8 +138,67 @@ void MapController::update(float dt)
         }
     }
 
+    //spawn random details
+    if (m_detailTime <= 0)
+    {
+        Map::Node node;
+        node.type = (Util::Random::value(0, 1) == 0) ? Category::Bat : Category::Bird;
+        node.position = (node.type == Category::Bat) ? sf::Vector2f(1980.f, static_cast<float>(Util::Random::value(0, 600))) : sf::Vector2f(-100.f, static_cast<float>(Util::Random::value(0, 600)));
+        spawn(node);
+
+        m_detailTime = static_cast<float>(Util::Random::value(10, 23));
+    }
+    m_detailTime -= dt;
+
+    //and update existing details
+    Command batCmd;
+    batCmd.categoryMask |= Category::Bat;
+    batCmd.action = [](Node& n, float dt)
+    {
+        //kill if moved off screen
+        if (n.getPosition().x < - 100.f)
+        {
+            Event e;
+            e.type = Event::Node;
+            e.node.action = Event::NodeEvent::Despawn;
+            auto position = n.getWorldPosition();
+            e.node.positionX = position.x;
+            e.node.positionY = position.y;
+            n.raiseEvent(e);
+        }
+        else
+        {
+            n.move(-300.f * dt, -20.f * dt);
+        }
+    };
+    m_commandStack.push(batCmd);
+
+    Command birdCmd;
+    birdCmd.categoryMask |= Category::Bird;
+    birdCmd.action = [](Node& n, float dt)
+    {
+        //kill if moved off screen
+        if (n.getPosition().x > 2000.f)
+        {
+            Event e;
+            e.type = Event::Node;
+            e.node.action = Event::NodeEvent::Despawn;
+            auto position = n.getWorldPosition();
+            e.node.positionX = position.x;
+            e.node.positionY = position.y;
+            n.raiseEvent(e);
+        }
+        else
+        {
+            n.move(450.f * dt, -50.f * dt);
+        }
+    };
+    m_commandStack.push(birdCmd);
+
     //update animations
     m_itemSprite.update(dt);
+    m_batSprite.update(dt);
+    m_birdSprite.update(dt);
 
     for (auto& w : m_waterDrawables)
         w.update(dt);
@@ -260,6 +329,10 @@ sf::Drawable* MapController::getDrawable(MapController::MapDrawable type)
         return static_cast<sf::Drawable*>(&m_backgroundSprite);
     case MapDrawable::Hat:
         return static_cast<sf::Drawable*>(&m_hatSprite);
+    case MapDrawable::Bat:
+        return static_cast<sf::Drawable*>(&m_batSprite);
+    case MapDrawable::Bird:
+        return static_cast<sf::Drawable*>(&m_birdSprite);
     default: return nullptr;
     }
 }

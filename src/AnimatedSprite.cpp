@@ -283,6 +283,10 @@ sf::FloatRect AnimatedSprite::getGlobalBounds() const
     return getTransform().transformRect(getLocalBounds());
 }
 
+const std::vector<Animation>& AnimatedSprite::getAnimations()const
+{
+    return m_animations;
+}
 
 //private
 void AnimatedSprite::draw(sf::RenderTarget& rt, sf::RenderStates states) const

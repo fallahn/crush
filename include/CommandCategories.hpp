@@ -52,7 +52,9 @@ namespace Category
         Detail          = (1 << 14),
         HatDropped      = (1 << 15),
         HatCarried      = (1 << 16),
-        ActiveItem      = (1 << 17) //displays if a player has an active power up
+        ActiveItem      = (1 << 17), //displays if a player has an active power up
+        Bat             = (1 << 18),
+        Bird            = (1 << 19)
     };
 }
 

@@ -57,8 +57,8 @@ namespace
     const float strengthForce = 2000.f;
 
     //animation consts
-    const float maxFrameRate = 12.f;
-    const sf::Vector2i frameSize(41, 64);
+    const float maxFrameRate = 12.f; //animation varies with player speed so we don't use the framerate in the animation file
+
     Animation idle("idle", 2, 2);
     Animation run("run", 0, 5);
     Animation jump("jump", 6, 6);
@@ -115,22 +115,29 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
         m_lastTouchId = Category::LastTouchedTwo;
         m_carryId = Category::CarriedTwo;
 
-        m_sprite.setTexture(tr.get("res/textures/characters/playerTwo_diffuse.png"));
+        m_sprite = AnimatedSprite("res/textures/characters/playerTwo.json", tr);
         m_sprite.setScale(-1.f, 1.f);
-        m_sprite.setOrigin(static_cast<float>(frameSize.x), 0.f); //uhhh iron this out at some point
+        m_sprite.setOrigin(static_cast<float>(m_sprite.getFrameSize().x), 0.f); //uhhh iron this out at some point
     }
     else
     {
-        m_sprite.setTexture(tr.get("res/textures/characters/playerOne_diffuse.png"));
+        m_sprite = AnimatedSprite("res/textures/characters/playerOne.json", tr);
     }
 
-    m_sprite.setNormalMap(tr.get("res/textures/characters/player_normal.png"));
     m_sprite.setShader(shader);
-    m_sprite.setFrameCount(8u);
     m_sprite.setFrameRate(maxFrameRate);
-    m_sprite.setFrameSize(frameSize);
-    m_sprite.setLooped(true);
     m_sprite.play(idle);
+
+    //check for overriding animation data
+    const auto& anims = m_sprite.getAnimations();
+    auto result = std::find_if(anims.begin(), anims.end(), FindAnimation("idle"));
+    if (result != anims.end()) idle = *(result);
+    result = std::find_if(anims.begin(), anims.end(), FindAnimation("run"));
+    if (result != anims.end()) run = *(result);
+    result = std::find_if(anims.begin(), anims.end(), FindAnimation("jump_up"));
+    if (result != anims.end()) jump = *(result);
+    result = std::find_if(anims.begin(), anims.end(), FindAnimation("jump_down"));
+    if (result != anims.end()) fall = *(result);
 
     setSize(static_cast<sf::Vector2f>(m_sprite.getFrameSize()));
 

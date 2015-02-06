@@ -62,7 +62,9 @@ public:
         RearDetail,
         FrontDetail,
         Background,
-        Hat
+        Hat,
+        Bat,
+        Bird
     };
 
     MapController(CommandStack& cs, TextureResource& tr, ShaderResource& sr);
@@ -97,11 +99,14 @@ private:
     AnimatedSprite m_itemSprite;
     AnimatedSprite m_backgroundSprite;
     AnimatedSprite m_hatSprite;
+    AnimatedSprite m_batSprite;
+    AnimatedSprite m_birdSprite;
     std::vector<AnimatedSprite> m_blockSprites;
 
     std::list<WaterDrawable> m_waterDrawables;
     std::vector<sf::Vector2f> m_hatSpawns;
     sf::Uint8 m_hatCount;
+    float m_detailTime;
 
     std::function<void(const Map::Node&)> spawn;
     void shuffleItems();

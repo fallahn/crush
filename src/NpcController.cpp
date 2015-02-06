@@ -182,7 +182,7 @@ void NpcController::update(float dt)
 
     if (!m_enabled) return;
 
-    //add some random movement
+    //add some random movement - ALL MOVEMENT SHOULD NOW BE MOVED TO BODY BEHAVIOUR
     /*if (m_movementClock.getElapsedTime().asSeconds() > m_randTime)
     {
         m_randTime = Util::Random::value(3.f, 5.f);

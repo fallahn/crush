@@ -119,6 +119,8 @@ namespace SpriteEditor
                     m_aniSprite.FrameCount = data.FrameCount;
                     m_aniSprite.FrameRate = data.FrameRate;
                     m_aniSprite.FrameSize = new SFML.Window.Vector2i(data.FrameSize.Width, data.FrameSize.Height);
+
+                    m_currentPath = od.FileName;
                 }
                 catch (Exception ex)
                 {

@@ -385,6 +385,16 @@ void GameState::addMapBody(const Map::Node& n)
         m_scene.addNode(node, Scene::DynamicFront);
         break;
     }
+    case Category::Bat:
+    case Category::Bird:
+    {
+        auto node = std::make_unique<Node>();
+        node->setPosition(n.position);
+        node->setCategory(n.type);
+        node->setDrawable(m_mapController.getDrawable((n.type == Category::Bat) ? MapController::MapDrawable::Bat : MapController::MapDrawable::Bird));
+        m_scene.addNode(node, Scene::FrontDetail);
+        break;
+    }
     default: break;
     }
 }

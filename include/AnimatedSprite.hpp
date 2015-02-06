@@ -53,6 +53,18 @@ private:
     bool m_loop;
 };
 
+//functor for searching vectors of animations
+struct FindAnimation
+{
+    FindAnimation(const std::string& name) : m_name(name){}
+    bool operator()(const Animation& a)
+    {
+        return (a.getName() == m_name);
+    };
+private:
+    std::string m_name;
+};
+
 class TextureResource;
 class AnimatedSprite final : public sf::Drawable, public sf::Transformable//, private sf::NonCopyable
 {
@@ -87,6 +99,8 @@ public:
 
     sf::FloatRect getLocalBounds() const;
     sf::FloatRect getGlobalBounds() const;
+
+    const std::vector<Animation>& getAnimations()const;
 
 private:
 
