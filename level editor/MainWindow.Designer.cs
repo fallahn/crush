@@ -79,6 +79,8 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.useSoftwarePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -165,6 +167,7 @@
             this.panelEditorInner.Name = "panelEditorInner";
             this.panelEditorInner.Size = new System.Drawing.Size(960, 540);
             this.panelEditorInner.TabIndex = 0;
+            this.panelEditorInner.Visible = false;
             this.panelEditorInner.Click += new System.EventHandler(this.panelEditorInner_Click);
             this.panelEditorInner.Paint += new System.Windows.Forms.PaintEventHandler(this.panelEditorInner_Paint);
             // 
@@ -629,7 +632,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.editToolStripMenuItem});
+            this.editToolStripMenuItem,
+            this.viewToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1333, 24);
@@ -704,6 +708,23 @@
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(151, 22);
             this.optionsToolStripMenuItem.Text = "Options";
             this.optionsToolStripMenuItem.Click += new System.EventHandler(this.optionsToolStripMenuItem_Click);
+            // 
+            // viewToolStripMenuItem
+            // 
+            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.useSoftwarePreviewToolStripMenuItem});
+            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            this.viewToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
+            this.viewToolStripMenuItem.Text = "View";
+            // 
+            // useSoftwarePreviewToolStripMenuItem
+            // 
+            this.useSoftwarePreviewToolStripMenuItem.CheckOnClick = true;
+            this.useSoftwarePreviewToolStripMenuItem.Name = "useSoftwarePreviewToolStripMenuItem";
+            this.useSoftwarePreviewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.useSoftwarePreviewToolStripMenuItem.Text = "Use Software Preview";
+            this.useSoftwarePreviewToolStripMenuItem.ToolTipText = "Disable OpenGL Acceleration";
+            this.useSoftwarePreviewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.useSoftwarePreviewToolStripMenuItem_CheckedChanged);
             // 
             // MainWindow
             // 
@@ -802,6 +823,8 @@
         private System.Windows.Forms.CheckBox checkBoxFrontDetail;
         private System.Windows.Forms.Button buttonSolidTexture;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useSoftwarePreviewToolStripMenuItem;
     }
 }
 

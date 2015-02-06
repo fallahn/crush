@@ -35,6 +35,12 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="sfmlnet-graphics-2">
+      <HintPath>..\SpriteEditor\SFML\lib\sfmlnet-graphics-2.dll</HintPath>
+    </Reference>
+    <Reference Include="sfmlnet-window-2">
+      <HintPath>..\SpriteEditor\SFML\lib\sfmlnet-window-2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -68,6 +74,9 @@
     <Compile Include="MainWindowOperations.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MainWindowSceneView.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="MainWindowTextureLoading.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +91,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegKey.cs" />
+    <Compile Include="SfmlControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="SpriteSheet.cs" />
     <EmbeddedResource Include="BrowseTexturesWindow.resx">
       <DependentUpon>BrowseTexturesWindow.cs</DependentUpon>
@@ -133,6 +145,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="icons\block.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SFML\extlibs\csfml-audio-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SFML\extlibs\csfml-graphics-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SFML\extlibs\csfml-window-2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

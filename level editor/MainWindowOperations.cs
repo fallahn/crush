@@ -292,6 +292,8 @@ namespace Level_editor
             numericUpDownNodePropertyPosY.Enabled = false;
             numericUpDownNodePropertySizeX.Enabled = false;
             numericUpDownNodePropertySizeY.Enabled = false;
+
+            centreEditor();
         }
 
         private void openFile(string path)

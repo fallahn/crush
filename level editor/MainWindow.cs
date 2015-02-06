@@ -111,8 +111,14 @@ namespace Level_editor
             }
 
             m_mapTextureDirectory = RegKey.read("map_texture_directory");
-        }
 
+            InitPreview();
+        }
+        public void DispatchDrawingEvents()
+        {
+            m_sfmlControl.HandleEvents();
+            m_sfmlControl.Draw();
+        }
 
         //--------------event handlers-----------------//
         //form--------
@@ -142,7 +148,7 @@ namespace Level_editor
         {     
             toolTips.SetToolTip(numericUpDownNpcCount, "Minimum number of NPCs on screen");
             toolTips.SetToolTip(numericUpDownNpcTotal, "Total number of NPCs for this map");
-            toolTips.SetToolTip(buttonBackgroundImage, "Select the texture to use for this map's NPCs");
+            toolTips.SetToolTip(buttonBackgroundImage, "Select the texture to use for this map's background");            
 
             ToolStripMenuItem cloneItem = new ToolStripMenuItem("Clone");
             cloneItem.MouseDown += cloneItem_MouseDown;
@@ -253,6 +259,19 @@ namespace Level_editor
             if(optionsWindow.ShowDialog() == DialogResult.OK)
             {
                 loadTextures();
+            }
+        }
+        private void useSoftwarePreviewToolStripMenuItem_CheckedChanged(object sender, EventArgs e)
+        {
+            if(useSoftwarePreviewToolStripMenuItem.Checked)
+            {
+                panelEditorInner.Visible = true;
+                m_sfmlControl.Visible = false;
+            }
+            else
+            {
+                panelEditorInner.Visible = false;
+                m_sfmlControl.Visible = true;
             }
         }
 

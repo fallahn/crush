@@ -36,7 +36,7 @@ using System.Windows.Forms;
 using SFML.Graphics;
 using SFML.Window;
 
-namespace SpriteEditor
+namespace Level_editor
 {
     public delegate void DrawDelegate(RenderWindow rw);
     public delegate void UpdateDelegate(float dt);
@@ -76,8 +76,22 @@ namespace SpriteEditor
 
         void SfmlControl_Resize(object sender, EventArgs e)
         {
-            Vector2f size = new Vector2f(this.Size.Width, this.Size.Height);
-            SFML.Graphics.View v = new SFML.Graphics.View(new Vector2f(), size);
+            Vector2f size = new Vector2f(1920f, 1080f);
+            SFML.Graphics.View v = new SFML.Graphics.View(size / 2f, size);
+            
+            float ratioX = (float)this.Size.Width / 16f;
+            float ratioY = (float)this.Size.Height / ratioX;
+
+            if (ratioY != 9)
+            {
+                var winSize = new Vector2f(this.Size.Width, this.Size.Height);
+                float windowRatio = winSize.X / winSize.Y;
+                float viewRatio = 16f / 9f;
+
+                float sizeY = windowRatio / viewRatio;
+                v.Viewport = new FloatRect(0f, (1f - sizeY) / 2f, 1f, sizeY);
+            }
+
             m_renderWindow.SetView(v);
         }
 

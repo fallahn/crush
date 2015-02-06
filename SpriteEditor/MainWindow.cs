@@ -54,7 +54,6 @@ namespace SpriteEditor
 
             splitContainer2.Panel1.Controls.Add(m_sfmlControl);
             m_sfmlControl.Dock = DockStyle.Fill;
-            //m_sfmlControl.UpdateDelegates.Add(this.m_aniSprite.Update);
             m_sfmlControl.DrawDelegates.Add(this.DrawSprite);
         }
 

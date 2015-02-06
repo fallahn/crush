@@ -95,7 +95,7 @@ sf::View StateStack::updateView()
         float sizeY = windowRatio / viewRatio;
         m_context.defaultView.setViewport({ { 0.f, (1.f - sizeY) / 2.f }, { 1.f, sizeY } });
     }
-    ;
+    
     return m_context.defaultView;
 }
 

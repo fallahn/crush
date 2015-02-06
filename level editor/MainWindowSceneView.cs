@@ -1,5 +1,5 @@
 ﻿/*********************************************************************
-Matt Marchant 2014
+Matt Marchant 2014 - 2015
 http://trederia.blogspot.com
 
 Crush Map Editor - Zlib license.
@@ -25,33 +25,42 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+//functions related to drawig the preview via sfml
+
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Level_editor
 {
-    static class Program
+    public partial class MainWindow : Form
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        private SfmlControl m_sfmlControl = new SfmlControl();
+
+        private SFML.Graphics.RectangleShape m_testShape = new SFML.Graphics.RectangleShape(new SFML.Window.Vector2f(1920f, 1080f));
+        private SFML.Graphics.RectangleShape m_testShape2 = new SFML.Graphics.RectangleShape(new SFML.Window.Vector2f(60f, 80f));
+        
+        private void InitPreview()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new MainWindow());
-            
-            MainWindow mw = new MainWindow();
-            mw.Show();
-            while (mw.Visible)
-            {
-                Application.DoEvents();
-                mw.DispatchDrawingEvents();
-            }
+            m_sfmlControl.Dock = DockStyle.Fill;
+            //m_sfmlControl.BackgroundColour = SFML.Graphics.Color.Green;
+            m_testShape2.FillColor = SFML.Graphics.Color.Blue;
+            m_testShape2.Position = new SFML.Window.Vector2f(960f, 540f);
+            m_sfmlControl.DrawDelegates.Add(this.DrawPreview);
+            panelEditorOuter.Controls.Add(m_sfmlControl);
+        }
+
+        private void DrawPreview(SFML.Graphics.RenderWindow rw)
+        {
+            rw.Draw(m_testShape);
+            rw.Draw(m_testShape2);
         }
     }
 }
