@@ -80,7 +80,12 @@ public:
         Rand05,
         Rand06,
         Rand07,
-        Rand08
+        Rand08,
+        Rand09,
+        Bat01,
+        Bat02,
+        Bird01,
+        Bird02
     };
 
     SoundPlayer();

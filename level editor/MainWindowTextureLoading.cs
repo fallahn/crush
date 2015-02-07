@@ -62,14 +62,14 @@ namespace Level_editor
         //------------------------------------
         private void loadTextures()
         {
-            if(m_textureDirectory == null || m_textureDirectory == string.Empty)
+            if (m_atlasTextureDirectory == null || m_atlasTextureDirectory == string.Empty)
             {
                 MessageBox.Show("Invalid texture directory, textures will not be loaded");
                 return;
             }
 
             //get all json files in directory
-            var files = Directory.GetFiles(m_textureDirectory);
+            var files = Directory.GetFiles(m_atlasTextureDirectory);
             files = filterJson(files);
             if(files.Length < 1)
             {
@@ -87,7 +87,7 @@ namespace Level_editor
             //for each sprite sheet load image and cut into frames
             foreach(SpriteSheet s in m_spriteSheets)
             {
-                string imagePath = m_textureDirectory + "\\" + s.meta.image;
+                string imagePath = m_atlasTextureDirectory + "\\" + s.meta.image;
                 if(File.Exists(imagePath))
                 {
                     var ext = Path.GetExtension(imagePath);

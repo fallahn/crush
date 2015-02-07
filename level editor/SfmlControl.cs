@@ -69,33 +69,58 @@ namespace Level_editor
             m_renderWindow = new RenderWindow(this.Handle);
             m_renderWindow.SetVerticalSyncEnabled(true);
 
-            //add resize event handler
+            //add event handlers
             this.Resize += SfmlControl_Resize;
             SfmlControl_Resize(this, EventArgs.Empty);
+
+            this.MouseWheel += SfmlControl_MouseWheel;
         }
 
+        //event handlers
         void SfmlControl_Resize(object sender, EventArgs e)
         {
             Vector2f size = new Vector2f(1920f, 1080f);
             SFML.Graphics.View v = new SFML.Graphics.View(size / 2f, size);
-            
-            float ratioX = (float)this.Size.Width / 16f;
-            float ratioY = (float)this.Size.Height / ratioX;
+            v.Zoom(m_currentZoom);
 
-            if (ratioY != 9)
+            float windowRatio = (float)this.Size.Width / (float)this.Size.Height;
+            float viewRatio = 16f / 9f;
+            float sizeX = 1f;
+            float sizeY = 1f;
+            float posX = 0f;
+            float posY = 0f;
+
+            bool horizontalSpacing = (windowRatio > viewRatio);
+
+            if (horizontalSpacing)
             {
-                var winSize = new Vector2f(this.Size.Width, this.Size.Height);
-                float windowRatio = winSize.X / winSize.Y;
-                float viewRatio = 16f / 9f;
-
-                float sizeY = windowRatio / viewRatio;
-                v.Viewport = new FloatRect(0f, (1f - sizeY) / 2f, 1f, sizeY);
+                sizeX = viewRatio / windowRatio;
+                posX = (1f - sizeX) / 2f;
             }
+            else
+            {
+                sizeY = windowRatio / viewRatio;
+                posY = (1f - sizeY) / 2f;
+            }
+            v.Viewport = new FloatRect(posX, posY, sizeX, sizeY);
 
             m_renderWindow.SetView(v);
         }
-
-        Stopwatch clock = new Stopwatch();
+        void SfmlControl_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (e.Delta > 0) //up
+            {
+                ZoomIn();
+            }
+            else if (e.Delta < 0) //down
+            {
+                ZoomOut();
+            }
+        }
+        
+        
+        //public functions        
+        private Stopwatch clock = new Stopwatch();
         public void HandleEvents()
         {
             m_renderWindow.DispatchEvents();
@@ -107,13 +132,34 @@ namespace Level_editor
             }
             clock.Restart();
         }
-
         public void Draw()
         {
             m_renderWindow.Clear(m_clearColour);
             foreach (DrawDelegate d in m_drawDelegates)
                 d(m_renderWindow);
             m_renderWindow.Display();
+        }
+
+
+        //private functions
+        private float m_currentZoom = 1f;
+        private const float m_zoomAmount = 0.75f;
+        private void ZoomIn()
+        {
+            m_currentZoom *= m_zoomAmount;
+            
+            var v = m_renderWindow.GetView();
+            v.Zoom(m_zoomAmount);
+            m_renderWindow.SetView(v);
+        }
+        private void ZoomOut()
+        {
+            float zoom = (1f + (1f - m_zoomAmount));
+            m_currentZoom *= zoom;
+
+            var v = m_renderWindow.GetView();
+            v.Zoom(zoom);
+            m_renderWindow.SetView(v);
         }
 
         //----control overrides-----//

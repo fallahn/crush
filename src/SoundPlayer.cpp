@@ -61,7 +61,7 @@ void SoundPlayer::update()
         {
             float speed = cb->getSpeed();
             //hmm magic consts ....
-            speed = std::max(speed / 330000.f, 0.9f);
+            speed = std::max(speed / 430000.f, 0.9f);
             p.second->setPitch(speed);
             //std::cerr << speed << std::endl;
         }
@@ -153,4 +153,5 @@ float SoundPlayer::getVolume()
 void SoundPlayer::flushSounds()
 {
     m_sounds.remove_if([](const sf::Sound& s){return (s.getStatus() == sf::Sound::Stopped); });
+    m_loopedSounds.remove_if([](const std::pair<Node*, sf::Sound*>& p){return (p.second->getStatus() == sf::Sound::Stopped); });
 }

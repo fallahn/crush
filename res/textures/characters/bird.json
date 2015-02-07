@@ -1,1 +1,1 @@
-{"Animations":[{"Start":0,"End":4,"Loop":true,"Name":"default"}],"FrameCount":5,"FrameSize":"32, 43","FrameRate":25.0,"Texture":"bird_diffuse.png","NormalMap":""}
+{"Animations":[{"Start":0,"End":4,"Loop":true,"Name":"default"}],"FrameCount":5,"FrameSize":"32, 43","FrameRate":25.0,"Texture":"bird_diffuse.png","NormalMap":"none.png"}

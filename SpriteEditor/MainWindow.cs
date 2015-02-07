@@ -400,9 +400,11 @@ namespace SpriteEditor
         {
             Debug.Assert(m_currentPath != null && m_currentPath != string.Empty);
 
+            string normalMap = (textBoxNormalMap.Text == string.Empty || textBoxNormalMap.Text == null) ? "none.png" : textBoxNormalMap.Text;
+
             AnimationData data = new AnimationData(m_aniSprite.FrameCount,
                 new Size(m_aniSprite.FrameSize.X, m_aniSprite.FrameSize.Y),
-                m_aniSprite.FrameRate, this.Text.ToLower(), textBoxNormalMap.Text.ToLower());
+                m_aniSprite.FrameRate, this.Text, normalMap);
 
             //create a default animation
             if(m_listboxData.Count < 1)

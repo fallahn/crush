@@ -68,6 +68,12 @@ AudioController::AudioController()
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand06, "res/sound/fx/random/06.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand07, "res/sound/fx/random/07.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand08, "res/sound/fx/random/08.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand09, "res/sound/fx/random/09.wav");
+
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bat01, "res/sound/fx/bat01.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bat02, "res/sound/fx/bat02.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bird01, "res/sound/fx/bird01.wav");
+    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bird02, "res/sound/fx/bird02.wav");
 
     sf::Listener::setDirection(0.f, 0.f, -1.f);
     m_soundPlayer.setListenerPosition({ 960.f, 540.f }); //set to centre of world for now
@@ -83,7 +89,7 @@ void AudioController::update()
         const float y = static_cast<float>(Util::Random::value(0, 1080));
         const float z = static_cast<float>(Util::Random::value(-1000, 1800));
 
-        auto sound = static_cast<SoundPlayer::AudioId>(Util::Random::value(static_cast<int>(SoundPlayer::AudioId::Rand01), static_cast<int>(SoundPlayer::AudioId::Rand08)));
+        auto sound = static_cast<SoundPlayer::AudioId>(Util::Random::value(static_cast<int>(SoundPlayer::AudioId::Rand01), static_cast<int>(SoundPlayer::AudioId::Rand09)));
         m_soundPlayer.play(sound, { x, y, z });
 
         m_randomTime = static_cast<float>(Util::Random::value(4, 10));
@@ -175,6 +181,12 @@ void AudioController::onNotify(Subject& s, const Event& e)
                 break;
             case Category::HatDropped:
                 m_soundPlayer.play(SoundPlayer::AudioId::HatSpawn, { e.node.positionX, e.node.positionY });
+                break;
+            case Category::Bat:
+                m_soundPlayer.play((Util::Random::value(0, 1) == 0) ? SoundPlayer::AudioId::Bat01 : SoundPlayer::AudioId::Bat02, { }, false, static_cast<Node*>(&s));
+                break;
+            case Category::Bird:
+                m_soundPlayer.play((Util::Random::value(0, 1) == 0) ? SoundPlayer::AudioId::Bird01 : SoundPlayer::AudioId::Bird02, { e.node.positionX, e.node.positionY });
                 break;
             default: break;
             }

@@ -80,6 +80,13 @@ namespace Level_editor
             get { return m_mapTextureDirectory; }
             set { m_mapTextureDirectory = value; }
         }
+        private string m_atlasTextureDirectory;
+        public string AtlasTextureDirectory
+        {
+            get { return m_atlasTextureDirectory; }
+            set { m_atlasTextureDirectory = value; }
+        }
+
         private string m_backgroundFileName;
         private string m_platformFileName;
 
@@ -107,10 +114,11 @@ namespace Level_editor
             }
             else
             {
+                m_atlasTextureDirectory = m_textureDirectory + "\\atlases";
                 loadTextures();
             }
 
-            m_mapTextureDirectory = RegKey.read("map_texture_directory");
+            m_mapTextureDirectory = m_textureDirectory + "\\map";
 
             InitPreview();
         }

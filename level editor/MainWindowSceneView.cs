@@ -50,12 +50,15 @@ namespace Level_editor
         private void InitPreview()
         {
             m_sfmlControl.Dock = DockStyle.Fill;
+            m_sfmlControl.DrawDelegates.Add(this.DrawPreview);
+            panelEditorOuter.Controls.Add(m_sfmlControl);
+
             //m_sfmlControl.BackgroundColour = SFML.Graphics.Color.Green;
             m_testShape2.FillColor = SFML.Graphics.Color.Blue;
             m_testShape2.Position = new SFML.Window.Vector2f(960f, 540f);
-            m_sfmlControl.DrawDelegates.Add(this.DrawPreview);
-            panelEditorOuter.Controls.Add(m_sfmlControl);
+
         }
+
 
         private void DrawPreview(SFML.Graphics.RenderWindow rw)
         {
