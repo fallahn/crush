@@ -40,30 +40,65 @@ using System.Windows.Forms;
 
 namespace Level_editor
 {
+    public class Pair<T, U>
+    {
+        public Pair() { }
+        public Pair(T first)
+        {
+            this.First = first;
+        }
+        public Pair(T first, U second)
+        {
+            this.First = first;
+            this.Second = second;
+        }
+
+        public T First { get; set; }
+        public U Second { get; set; }
+    }
+
     public partial class MainWindow : Form
     {
         private SfmlControl m_sfmlControl = new SfmlControl();
-
-        private SFML.Graphics.RectangleShape m_testShape = new SFML.Graphics.RectangleShape(new SFML.Window.Vector2f(1920f, 1080f));
-        private SFML.Graphics.RectangleShape m_testShape2 = new SFML.Graphics.RectangleShape(new SFML.Window.Vector2f(60f, 80f));
+        private TextureResource m_textureResource = new TextureResource();
+        private List<List<SFML.Graphics.RectangleShape>> m_previewLayers = new List<List<SFML.Graphics.RectangleShape>>();
         
         private void InitPreview()
         {
             m_sfmlControl.Dock = DockStyle.Fill;
             m_sfmlControl.DrawDelegates.Add(this.DrawPreview);
+            m_sfmlControl.UpdateDelegates.Add(this.UpdateSprites);
             panelEditorOuter.Controls.Add(m_sfmlControl);
 
-            //m_sfmlControl.BackgroundColour = SFML.Graphics.Color.Green;
-            m_testShape2.FillColor = SFML.Graphics.Color.Blue;
-            m_testShape2.Position = new SFML.Window.Vector2f(960f, 540f);
-
+            //create layers to hold sprites
+            for(var i = 0; i < Enum.GetValues(typeof(Layer)).Length; ++i)
+            {
+                m_previewLayers.Add(new List<SFML.Graphics.RectangleShape>());
+            }
         }
 
+        private void UpdateSprites(float dt)
+        {
+            //update sprite positions based on nodes and vice versa
+            foreach (var layer in m_previewLayers)
+            {
+                foreach (var d in layer)
+                {
+                   //d.Position
+                    
+                }
+            }
+        }
 
         private void DrawPreview(SFML.Graphics.RenderWindow rw)
         {
-            rw.Draw(m_testShape);
-            rw.Draw(m_testShape2);
+            foreach(var layer in m_previewLayers)
+            {
+                foreach(var d in layer)
+                {
+                    rw.Draw(d);
+                }
+            }
         }
     }
 }

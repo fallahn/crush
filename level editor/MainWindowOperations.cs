@@ -91,6 +91,17 @@ namespace Level_editor
                     p.ContextMenuStrip = m_nodeMenu;
                     p.BackgroundImage = Properties.Resources.block;
                     nd.layer = Layer.Dynamic;
+                    {
+                        var shape = new SFML.Graphics.RectangleShape();
+                        shape.Texture = m_textureResource.Get("icons/block.png");
+                        shape.Texture.Smooth = true;
+                        shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
+                        shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        m_previewLayers[(int)Layer.Dynamic].Add(shape);
+                        nd.drawable = shape;
+                    }
+
                     break;
                 case Node.BodyType.PlayerOne:
                     p.BackColor = playerOneColour;
@@ -104,7 +115,16 @@ namespace Level_editor
                     numericUpDownPlayerOneY.Value = (decimal)position.Y;
                     numericUpDownPlayerOneX.ValueChanged += numericUpDownPlayerOneX_ValueChanged;
                     numericUpDownPlayerOneY.ValueChanged += numericUpDownPlayerOneY_ValueChanged;
-
+                    { 
+                        var shape = new SFML.Graphics.RectangleShape();
+                        shape.Texture = m_textureResource.Get("icons/player_one.png");
+                        shape.Texture.Smooth = true;
+                        shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
+                        shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        m_previewLayers[(int)Layer.Dynamic].Add(shape);
+                        nd.drawable = shape;
+                    }
                     break;
                 case Node.BodyType.PlayerTwo:
                     p.BackColor = playerTwoColour;
@@ -118,7 +138,16 @@ namespace Level_editor
                     numericUpDownPlayerTwoY.Value = (decimal)position.Y;
                     numericUpDownPlayerTwoX.ValueChanged += numericUpDownPlayerTwoX_ValueChanged;
                     numericUpDownPlayerTwoY.ValueChanged += numericUpDownPlayerTwoY_ValueChanged;
-
+                    {
+                        var shape = new SFML.Graphics.RectangleShape();
+                        shape.Texture = m_textureResource.Get("icons/player_two.png");
+                        shape.Texture.Smooth = true;
+                        shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
+                        shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        m_previewLayers[(int)Layer.Dynamic].Add(shape);
+                        nd.drawable = shape;
+                    }
                     break;
                 case Node.BodyType.Solid:
                     p.BackColor = solidColour;
@@ -127,6 +156,25 @@ namespace Level_editor
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
                     nd.layer = Layer.Solid;
+                    {
+                        var shape = new SFML.Graphics.RectangleShape(new SFML.Window.Vector2f(Size.Width, size.Height));
+                        shape.FillColor = new SFML.Graphics.Color(solidColour.R, solidColour.G, solidColour.B);
+                        string texturePath = m_mapTextureDirectory + "\\" + m_platformFileName;
+                        if(File.Exists(texturePath))
+                        {
+                            shape.Texture = m_textureResource.Get(texturePath);
+                            shape.Texture.Repeated = true;
+                            shape.TextureRect = new SFML.Graphics.IntRect(position.X, position.Y, size.Width, size.Height);
+                            shape.FillColor = SFML.Graphics.Color.White;
+                        }
+                        
+                        shape.Size = new SFML.Window.Vector2f(size.Width, size.Height);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        m_previewLayers[(int)Layer.Solid].Add(shape);
+                        nd.drawable = shape;
+                    }
+
+
                     break;
                 case Node.BodyType.Item:
                     p.BackColor = bonusColour;
@@ -134,12 +182,30 @@ namespace Level_editor
                     p.ContextMenuStrip = m_nodeMenu;
                     p.BackgroundImage = Properties.Resources.item;
                     nd.layer = Layer.Dynamic;
+                    {
+                        var shape = new SFML.Graphics.RectangleShape();
+                        shape.Texture = m_textureResource.Get("icons/item.png");
+                        shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
+                        shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        m_previewLayers[(int)Layer.Dynamic].Add(shape);
+                        nd.drawable = shape;
+                    }
                     break;
                 case Node.BodyType.Water:
                     p.BackColor = waterColour;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
                     nd.layer = Layer.Water;
+                    {
+                        var shape = new SFML.Graphics.RectangleShape();
+                        shape.Size = new SFML.Window.Vector2f(size.Width, size.Height);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        shape.FillColor = new SFML.Graphics.Color(20, 14, 34, 190);
+
+                        m_previewLayers[(int)Layer.Water].Add(shape);
+                        nd.drawable = shape;
+                    }
                     break;
                 case Node.BodyType.Light:
                     if(m_lightCount < m_maxLights)
@@ -150,6 +216,15 @@ namespace Level_editor
                         p.ContextMenuStrip = m_nodeMenu;
                         p.BackgroundImage = Properties.Resources.bulb;
                         nd.layer = Layer.FrontDetail;
+                        {
+                            var shape = new SFML.Graphics.RectangleShape();
+                            shape.Texture = m_textureResource.Get("icons/bulb.png");
+                            shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
+                            shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
+                            shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                            m_previewLayers[(int)Layer.Dynamic].Add(shape);
+                            nd.drawable = shape;
+                        }
                     }
                     else
                     {
@@ -165,6 +240,15 @@ namespace Level_editor
                     nd.layer = Layer.RearDetail; //TODO choose this between front / rear
                     nd.frameName = m_selectedFrame.filename;
                     nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
+                    {
+                        var shape = new SFML.Graphics.RectangleShape();
+                        shape.Size = new SFML.Window.Vector2f(size.Width, size.Height);
+                        shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                        shape.FillColor = new SFML.Graphics.Color(196, 72, 122, 190);
+                        //TODO make this swappable
+                        m_previewLayers[(int)Layer.RearDetail].Add(shape);
+                        nd.drawable = shape;
+                    }
                     break;
                 default: break;
             }
@@ -257,6 +341,10 @@ namespace Level_editor
 
         private void newFile()
         {
+            //clear out sprites
+            foreach (var layer in m_previewLayers)
+                layer.Clear();
+            
             m_currentMap = new Map();
             m_lightCount = 0;
 
@@ -278,7 +366,7 @@ namespace Level_editor
             //reset map properties
             numericUpDownNpcCount.Value = 3;
             numericUpDownNpcTotal.Value = 12;
-            //TODO NPC texture
+            
             numericUpDownPlayerOneX.Value = 80;
             numericUpDownPlayerOneY.Value = 500;
 
@@ -300,7 +388,11 @@ namespace Level_editor
         {
             //prevent sorting until load complete
             m_canSort = false;
-            
+
+            //clear out sprites
+            foreach (var layer in m_previewLayers)
+                layer.Clear();
+
             //create new map object and parse data into it
             m_currentMap = new Map();
             m_lightCount = 0;
@@ -334,6 +426,12 @@ namespace Level_editor
                 Image img = Image.FromFile(m_mapTextureDirectory + "\\" + m_currentMap.BackgroundTexture);
                 panelEditorInner.BackgroundImage = (Image)(new Bitmap(img, new Size(img.Width / scale, img.Height / scale)));
                 m_backgroundFileName = m_currentMap.BackgroundTexture;
+
+                m_previewLayers[(int)Layer.Background].Clear();
+                var shape = new SFML.Graphics.RectangleShape();
+                shape.Texture = m_textureResource.Get(m_mapTextureDirectory + "\\" + m_currentMap.BackgroundTexture); ;
+                shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y);
+                m_previewLayers[(int)Layer.Background].Add(shape);
             }
             catch { }
 

@@ -192,5 +192,6 @@ namespace Level_editor
         public string spriteSheet;
         public string frameName;
         public int anchorOffset; //how far above this node the constraint anchor resides
+        public SFML.Graphics.RectangleShape drawable;
     }
 }

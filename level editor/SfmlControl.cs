@@ -38,11 +38,13 @@ using SFML.Window;
 
 namespace Level_editor
 {
-    public delegate void DrawDelegate(RenderWindow rw);
-    public delegate void UpdateDelegate(float dt);
+
 
     partial class SfmlControl : Control
-    {
+    {        
+        public delegate void DrawDelegate(RenderWindow rw);
+        public delegate void UpdateDelegate(float dt);   
+     
         private RenderWindow m_renderWindow;
         private Color m_clearColour = new Color();
         public Color BackgroundColour
@@ -74,13 +76,21 @@ namespace Level_editor
             SfmlControl_Resize(this, EventArgs.Empty);
 
             this.MouseWheel += SfmlControl_MouseWheel;
+            this.MouseDown += SfmlControl_MouseDown;
+            this.MouseUp += SfmlControl_MouseUp;
+            this.MouseMove += SfmlControl_MouseMove;
         }
 
+
+
+
+
         //event handlers
+        Vector2f m_currentViewPosition = new Vector2f(960f, 540f);
         void SfmlControl_Resize(object sender, EventArgs e)
         {
             Vector2f size = new Vector2f(1920f, 1080f);
-            SFML.Graphics.View v = new SFML.Graphics.View(size / 2f, size);
+            SFML.Graphics.View v = new SFML.Graphics.View(m_currentViewPosition, size);
             v.Zoom(m_currentZoom);
 
             float windowRatio = (float)this.Size.Width / (float)this.Size.Height;
@@ -117,8 +127,42 @@ namespace Level_editor
                 ZoomOut();
             }
         }
-        
-        
+        private bool m_middleButtonPressed = false;
+        private System.Drawing.Point m_lastMousePosition;
+        void SfmlControl_MouseUp(object sender, MouseEventArgs e)
+        {
+            if(e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                m_middleButtonPressed = false;
+            }
+        }
+        void SfmlControl_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(e.Button == System.Windows.Forms.MouseButtons.Middle)
+            {
+                m_middleButtonPressed = true;
+                m_lastMousePosition = e.Location;
+            }
+
+            this.Focus();
+        }        
+        void SfmlControl_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(m_middleButtonPressed)
+            {
+                SFML.Window.Vector2f movement = new Vector2f(m_lastMousePosition.X - e.Location.X, m_lastMousePosition.Y - e.Location.Y);
+                movement *= m_currentZoom;
+                var view = m_renderWindow.GetView();
+                view.Move(movement);
+                m_currentViewPosition = view.Center;
+                m_renderWindow.SetView(view);
+                m_lastMousePosition = e.Location;
+            }
+        } 
+       
+
+
+
         //public functions        
         private Stopwatch clock = new Stopwatch();
         public void HandleEvents()

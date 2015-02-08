@@ -95,6 +95,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="SpriteSheet.cs" />
+    <Compile Include="TextureResource.cs" />
     <EmbeddedResource Include="BrowseTexturesWindow.resx">
       <DependentUpon>BrowseTexturesWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -132,19 +133,29 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="icons\bulb.png" />
+    <None Include="icons\bulb.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="icons\player_one.png" />
+    <None Include="icons\player_one.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="icons\player_two.png" />
+    <None Include="icons\player_two.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="icons\item.png" />
+    <None Include="icons\item.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <None Include="icons\block.png" />
+    <None Include="icons\block.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="SFML\extlibs\csfml-audio-2.dll">

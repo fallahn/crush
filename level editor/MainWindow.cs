@@ -358,6 +358,12 @@ namespace Level_editor
 
                     m_backgroundFileName = Path.GetFileName(od.FileName);
                     m_modified = true;
+
+                    m_previewLayers[(int)Layer.Background].Clear();
+                    var shape = new SFML.Graphics.RectangleShape();
+                    shape.Texture = m_textureResource.Get(od.FileName);
+                    shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y);
+                    m_previewLayers[(int)Layer.Background].Add(shape);
                 }
                 catch(Exception ex)
                 {
@@ -391,6 +397,16 @@ namespace Level_editor
 
                     m_platformFileName = Path.GetFileName(od.FileName);
                     m_modified = true;
+
+                    //update existinf drawables
+                    SFML.Graphics.Texture t = m_textureResource.Get(od.FileName);
+                    t.Repeated = true;
+                    foreach (var d in m_previewLayers[(int)Layer.Solid])
+                    {
+                        d.Texture = t;
+                        d.FillColor = SFML.Graphics.Color.White;
+                        d.TextureRect = new SFML.Graphics.IntRect((int)d.Position.X, (int)d.Position.Y, (int)d.Size.X, (int)d.Size.Y);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -626,6 +642,12 @@ namespace Level_editor
             numericUpDownPlayerOneX.ValueChanged += numericUpDownPlayerOneX_ValueChanged;
             numericUpDownPlayerOneY.ValueChanged += numericUpDownPlayerOneY_ValueChanged;
             m_modified = true;
+
+            NodeData nd = (NodeData)p.Tag;
+            if(nd.drawable != null)
+            {
+                nd.drawable.Position = new SFML.Window.Vector2f(p.Left * scale, p.Top * scale);
+            }
         }
         void p2_Move(object sender, EventArgs e)
         {
@@ -637,6 +659,12 @@ namespace Level_editor
             numericUpDownPlayerTwoX.ValueChanged += numericUpDownPlayerTwoX_ValueChanged;
             numericUpDownPlayerTwoY.ValueChanged += numericUpDownPlayerTwoY_ValueChanged;
             m_modified = true;
+
+            NodeData nd = (NodeData)p.Tag;
+            if (nd.drawable != null)
+            {
+                nd.drawable.Position = new SFML.Window.Vector2f(p.Left * scale, p.Top * scale);
+            }
         }
         void node_Move(object sender, EventArgs e)
         {
@@ -648,6 +676,12 @@ namespace Level_editor
             numericUpDownNodePropertyPosX.ValueChanged += numericUpDownNodePropertyPosX_ValueChanged;
             numericUpDownNodePropertyPosY.ValueChanged += numericUpDownNodePropertyPosY_ValueChanged;
             m_modified = true;
+
+            NodeData nd = (NodeData)p.Tag;
+            if (nd.drawable != null)
+            {
+                nd.drawable.Position = new SFML.Window.Vector2f(p.Left * scale, p.Top * scale);
+            }
         }
 
         //draw grid
