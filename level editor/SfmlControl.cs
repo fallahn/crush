@@ -183,7 +183,10 @@ namespace Level_editor
                 d(m_renderWindow);
             m_renderWindow.Display();
         }
-
+        public SFML.Window.Vector2f GetMouseWorldPosition()
+        {
+            return m_renderWindow.MapPixelToCoords(SFML.Window.Mouse.GetPosition(m_renderWindow), m_renderWindow.GetView());
+        }
 
         //private functions
         private float m_currentZoom = 1f;

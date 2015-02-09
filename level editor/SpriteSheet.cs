@@ -68,6 +68,7 @@ namespace Atlas
         public Bitmap largeImage { get; set; }
         public Bitmap smallImage { get; set; }
         public SpriteSheet parentSheet { get; set; }
+        public SFML.Graphics.IntRect subrect { get; set; }
     }
 
     public class Size

@@ -158,6 +158,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="icons\bulb2.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="SFML\extlibs\csfml-audio-2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

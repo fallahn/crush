@@ -108,6 +108,9 @@ namespace Level_editor
                             subrect.Height = i;
                         }
 
+                        //save the frame data as a subrect for sfml sprites
+                        frame.subrect = new SFML.Graphics.IntRect(subrect.Left, subrect.Top, subrect.Width, subrect.Height);
+
                         try
                         {
                             frame.largeImage = bitmap.Clone(subrect, bitmap.PixelFormat);

@@ -218,10 +218,11 @@ namespace Level_editor
                         nd.layer = Layer.FrontDetail;
                         {
                             var shape = new SFML.Graphics.RectangleShape();
-                            shape.Texture = m_textureResource.Get("icons/bulb.png");
+                            shape.Texture = m_textureResource.Get("icons/bulb2.png");
                             shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
                             shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
                             shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                            shape.FillColor = new SFML.Graphics.Color(sunColour.R, sunColour.G, sunColour.B);
                             m_previewLayers[(int)Layer.Dynamic].Add(shape);
                             nd.drawable = shape;
                         }
@@ -237,16 +238,25 @@ namespace Level_editor
                     p.BackgroundImage = m_selectedFrame.smallImage;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
-                    nd.layer = Layer.RearDetail; //TODO choose this between front / rear
+                    nd.layer = layer;//Layer.RearDetail; //TODO choose this between front / rear
                     nd.frameName = m_selectedFrame.filename;
                     nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
                     {
                         var shape = new SFML.Graphics.RectangleShape();
                         shape.Size = new SFML.Window.Vector2f(size.Width, size.Height);
                         shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
-                        shape.FillColor = new SFML.Graphics.Color(196, 72, 122, 190);
+                        //shape.FillColor = new SFML.Graphics.Color(196, 72, 122, 190);
+                        shape.Texture = m_textureResource.Get(m_atlasTextureDirectory + "\\" + nd.spriteSheet);
+                        shape.TextureRect = m_selectedFrame.subrect;
+                        if(m_selectedFrame.rotated)
+                        {
+                            shape.Size = new SFML.Window.Vector2f(size.Height, size.Width);
+                            shape.Rotation = -90f;
+                            shape.Origin = new SFML.Window.Vector2f(size.Height, 0f);
+                        }
+
                         //TODO make this swappable
-                        m_previewLayers[(int)Layer.RearDetail].Add(shape);
+                        m_previewLayers[(int)layer].Add(shape);
                         nd.drawable = shape;
                     }
                     break;
@@ -267,6 +277,10 @@ namespace Level_editor
             if (m_selectedNode != null)
             {
                 m_selectedNode.BorderStyle = BorderStyle.None;
+                var nd = (NodeData)m_selectedNode.Tag;
+                if (nd.drawable != null)
+                    nd.drawable.OutlineThickness = 0f;
+                m_selectedNode.Tag = nd;
             }
             m_selectedNode = p;
             m_selectedNode.BorderStyle = BorderStyle.Fixed3D;
@@ -304,6 +318,11 @@ namespace Level_editor
                 checkBoxFrontDetail.Enabled = true;
                 checkBoxFrontDetail.Checked = (tag.layer == Layer.FrontDetail);
             }
+
+            if (tag.drawable != null)
+                tag.drawable.OutlineThickness = 2f;
+
+            p.Tag = tag;
         }
 
         private void setPanelTexture(ref Panel p)
@@ -467,6 +486,7 @@ namespace Level_editor
                         node.BackColor = Color.FromArgb(n.Colour);
                         NodeData nd = (NodeData)node.Tag;
                         nd.anchorOffset = n.AnchorOffset;
+                        nd.drawable.FillColor = new SFML.Graphics.Color(node.BackColor.R, node.BackColor.G, node.BackColor.B);
                         node.Tag = nd;
                         break;
                     case "Detail":

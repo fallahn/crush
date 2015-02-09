@@ -543,10 +543,14 @@ namespace Level_editor
                 numericUpDownNodePropertySizeX.Enabled = false;
                 numericUpDownNodePropertySizeY.Enabled = false;
 
-                if(((NodeData)m_selectedNode.Tag).type == Node.BodyType.Light)
+                var nd = (NodeData)m_selectedNode.Tag;
+                if(nd.type == Node.BodyType.Light)
                 {
                     m_lightCount--;
                 }
+
+                if(nd.drawable != null)
+                    m_previewLayers[(int)nd.layer].Remove(nd.drawable);
 
                 panelEditorInner.Controls.Remove(m_selectedNode);
                 m_selectedNode = null;
@@ -584,6 +588,17 @@ namespace Level_editor
                     nd.layer = (checkBoxFrontDetail.Checked) ? Layer.FrontDetail : Layer.RearDetail;
                     m_selectedNode.Tag = nd;
                     sortNodes();
+
+                    if(nd.layer == Layer.RearDetail)
+                    {
+                        m_previewLayers[(int)Layer.RearDetail].Add(nd.drawable);
+                        m_previewLayers[(int)Layer.FrontDetail].Remove(nd.drawable);
+                    }
+                    else
+                    {
+                        m_previewLayers[(int)Layer.FrontDetail].Add(nd.drawable);
+                        m_previewLayers[(int)Layer.RearDetail].Remove(nd.drawable);
+                    }
                 }
             }
         }
@@ -703,11 +718,17 @@ namespace Level_editor
         {
             panelEditorInner.Invalidate();
             setIncrements((checkBoxSnap.Checked) ? numericUpDownSnap.Value : 1);
+
+            if (checkBoxSnap.Checked)
+                BuildGrid(); //builds the sfml grid display
         }
         private void numericUpDownSnap_ValueChanged(object sender, EventArgs e)
         {
             panelEditorInner.Invalidate();
             setIncrements((checkBoxSnap.Checked) ? numericUpDownSnap.Value : 1);
+
+            if (checkBoxSnap.Checked)
+                BuildGrid(); //builds the sfml grid display
         }
         private void setIncrements(decimal value)
         {
@@ -739,6 +760,7 @@ namespace Level_editor
                 mousePressed = true;
                 lastMouseX = e.X;
                 lastMouseY = e.Y;
+                //this.Text = lastMouseX.ToString() + ", " + lastMouseY.ToString();
             }
 
             var p = (Panel)sender;
@@ -777,16 +799,27 @@ namespace Level_editor
             {
                 var p = (Panel)sender;
                 p.Left += e.X - lastMouseX;
+                //clamp to bounds
+                if (p.Left < 0) p.Left = 0;
+                if (p.Left + p.Width > m_sceneSize.Width) p.Left = m_sceneSize.Width - p.Width;
+
                 p.Top += e.Y - lastMouseY;
+                if (p.Top < 0) p.Top = 0;
+                if (p.Top + p.Height > m_sceneSize.Height) p.Top = m_sceneSize.Height - p.Height;
 
                 m_modified = true;
+
+                this.Text = e.X.ToString() + ", " + e.Y.ToString() + " - " + lastMouseX.ToString() + ", " + lastMouseY.ToString();
             }
+            
         }
         private void panelEditorInner_Click(object sender, EventArgs e)
         {
             //deselect panel if clicking on background
             if(m_selectedNode != null)
             {
+                var nd = (NodeData)m_selectedNode.Tag;
+                if (nd.drawable != null) nd.drawable.OutlineThickness = 0f;
                 m_selectedNode.BorderStyle = BorderStyle.None;
                 m_selectedNode = null;
 

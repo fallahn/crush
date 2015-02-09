@@ -30,6 +30,7 @@ namespace Level_editor
         {
             NodeData nd = (NodeData)m_panel.Tag;
             nd.anchorOffset = (int)numericUpDownAnchorOffset.Value;
+            nd.drawable.FillColor = new SFML.Graphics.Color(m_panel.BackColor.R, m_panel.BackColor.G, m_panel.BackColor.B);
             m_panel.Tag = nd;
             
             this.DialogResult = DialogResult.OK;
