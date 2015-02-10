@@ -201,7 +201,7 @@ namespace Level_editor
                         var shape = new SFML.Graphics.RectangleShape();
                         shape.Size = new SFML.Window.Vector2f(size.Width, size.Height);
                         shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
-                        shape.FillColor = new SFML.Graphics.Color(20, 14, 34, 190);
+                        shape.FillColor = waterFillColour;
 
                         m_previewLayers[(int)Layer.Water].Add(shape);
                         nd.drawable = shape;
@@ -238,14 +238,13 @@ namespace Level_editor
                     p.BackgroundImage = m_selectedFrame.smallImage;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
-                    nd.layer = layer;//Layer.RearDetail; //TODO choose this between front / rear
+                    nd.layer = Layer.RearDetail;//layer;
                     nd.frameName = m_selectedFrame.filename;
                     nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
                     {
                         var shape = new SFML.Graphics.RectangleShape();
                         shape.Size = new SFML.Window.Vector2f(size.Width, size.Height);
                         shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
-                        //shape.FillColor = new SFML.Graphics.Color(196, 72, 122, 190);
                         shape.Texture = m_textureResource.Get(m_atlasTextureDirectory + "\\" + nd.spriteSheet);
                         shape.TextureRect = m_selectedFrame.subrect;
                         if(m_selectedFrame.rotated)
@@ -255,7 +254,6 @@ namespace Level_editor
                             shape.Origin = new SFML.Window.Vector2f(size.Height, 0f);
                         }
 
-                        //TODO make this swappable
                         m_previewLayers[(int)layer].Add(shape);
                         nd.drawable = shape;
                     }
@@ -317,10 +315,15 @@ namespace Level_editor
                 selectFrame(tag.spriteSheet, tag.frameName);
                 checkBoxFrontDetail.Enabled = true;
                 checkBoxFrontDetail.Checked = (tag.layer == Layer.FrontDetail);
+
+                if(m_selectedFrame.rotated)
+                {
+                    tag.drawable.Size = new SFML.Window.Vector2f((float)numericUpDownNodePropertySizeY.Value, (float)numericUpDownNodePropertySizeX.Value);
+                }
             }
 
             if (tag.drawable != null)
-                tag.drawable.OutlineThickness = 2f;
+                tag.drawable.OutlineThickness = -2f;
 
             p.Tag = tag;
         }
@@ -332,6 +335,28 @@ namespace Level_editor
             var nd = (NodeData)p.Tag;
             nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
             nd.frameName = m_selectedFrame.filename;
+
+            //update drawable
+            if(nd.drawable != null)
+            {
+                var size = new Size(p.Size.Width * scale, p.Size.Height * scale);
+                nd.drawable.Size = new SFML.Window.Vector2f(size.Width, size.Height);
+                //shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
+                nd.drawable.Texture = m_textureResource.Get(m_atlasTextureDirectory + "\\" + nd.spriteSheet);
+                nd.drawable.TextureRect = m_selectedFrame.subrect;
+                if (m_selectedFrame.rotated)
+                {
+                    nd.drawable.Size = new SFML.Window.Vector2f(size.Height, size.Width);
+                    nd.drawable.Rotation = -90f;
+                    nd.drawable.Origin = new SFML.Window.Vector2f(size.Height, 0f);
+                }
+                else
+                {
+                    nd.drawable.Rotation = 0f;
+                    nd.drawable.Origin = new SFML.Window.Vector2f();
+                }
+            }
+
             p.Tag = nd;
         }
 
@@ -564,6 +589,18 @@ namespace Level_editor
                 else if ((int)ndA.layer > (int)ndB.layer) return -1;
                 else return 0;
             }
+        }
+
+        private void clampPanelToBounds(ref Panel p)
+        {
+            //clamp to bounds
+            if (p.Left < 0) p.Left = 0;
+            int max = (int)numericUpDownNodePropertyPosX.Maximum / scale;
+            if (p.Left > max) p.Left = max;
+
+            if (p.Top < 0) p.Top = 0;
+            max = (int)numericUpDownNodePropertyPosY.Maximum / scale;
+            if (p.Top > max) p.Top = max;
         }
 
     }

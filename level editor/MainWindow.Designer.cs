@@ -78,9 +78,9 @@
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useSoftwarePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolTips = new System.Windows.Forms.ToolTip(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -479,7 +479,7 @@
             // 
             this.numericUpDownPlayerTwoY.Location = new System.Drawing.Point(151, 319);
             this.numericUpDownPlayerTwoY.Maximum = new decimal(new int[] {
-            1030,
+            1080,
             0,
             0,
             0});
@@ -492,7 +492,7 @@
             // 
             this.numericUpDownPlayerTwoX.Location = new System.Drawing.Point(88, 319);
             this.numericUpDownPlayerTwoX.Maximum = new decimal(new int[] {
-            1870,
+            1920,
             0,
             0,
             0});
@@ -514,7 +514,7 @@
             // 
             this.numericUpDownPlayerOneY.Location = new System.Drawing.Point(151, 290);
             this.numericUpDownPlayerOneY.Maximum = new decimal(new int[] {
-            1030,
+            1080,
             0,
             0,
             0});
@@ -527,7 +527,7 @@
             // 
             this.numericUpDownPlayerOneX.Location = new System.Drawing.Point(88, 290);
             this.numericUpDownPlayerOneX.Maximum = new decimal(new int[] {
-            1870,
+            1920,
             0,
             0,
             0});

@@ -64,30 +64,30 @@ namespace Level_editor
         private TextureResource m_textureResource = new TextureResource();
         private List<List<SFML.Graphics.RectangleShape>> m_previewLayers = new List<List<SFML.Graphics.RectangleShape>>();
 
-        //private string lightShaderVert =
-        //    "void main()\n"
-        //    + "{\n"
-        //    + "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
-        //    + "gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n"
-        //    + "gl_FrontColor = gl_Color;\n"
-        //    + "}";
+        private string lightShaderVert =
+            "void main()\n"
+            + "{\n"
+            + "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
+            + "gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n"
+            + "gl_FrontColor = gl_Color;\n"
+            + "}";
 
-        //private string lightShaderFrag =
-        //    "#version 120\n"
-        //    +"uniform vec4 u_ambientColour;\n"
-        //    +"uniform vec4 u_lightColour;\n"
-        //    +"uniform sampler2D u_texture;\n"
-        //    +"void main()\n"
-        //    +"{\n"
-        //    +"vec4 colour = gl_Texture2D(u_texture, gl_TexCoord[0].xy);\n"
-        //    +"colour *= u_ambientColour;\n"
-        //    +"gl_FragColor = colour + u_lightColour;\n"
-        //    +"}";
+        private string lightShaderFrag =
+            "#version 130\n"
+            + "uniform vec4 u_ambientColour = vec4(0.1, 0.1, 0.1, 1.0);\n"
+            + "uniform vec4 u_lightColour = vec4(1.0, 0.0, 0.0, 1.0);\n"
+            + "uniform sampler2D u_texture;\n"
+            + "void main()\n"
+            + "{\n"
+            + "vec4 colour = texture2D(u_texture, gl_TexCoord[0].xy);\n"
+            + "colour.rgb *= u_ambientColour.rgb;\n"
+            + "gl_FragColor = vec4(colour.rgb + u_lightColour.rgb, 1.0);\n"
+            + "}";
 
 
 
         private SFML.Graphics.VertexArray m_grid = new SFML.Graphics.VertexArray(SFML.Graphics.PrimitiveType.Lines);
-       // private SFML.Graphics.Shader m_lightShader = null;
+        private SFML.Graphics.Shader m_lightShader = null;
 
         private void InitPreview()
         {
@@ -102,12 +102,16 @@ namespace Level_editor
                 m_previewLayers.Add(new List<SFML.Graphics.RectangleShape>());
             }
 
-            //byte[] va = Encoding.UTF8.GetBytes(lightShaderVert);
-            //MemoryStream vs = new MemoryStream(va);
-            //byte[] fa = Encoding.UTF8.GetBytes(lightShaderFrag);
-            //MemoryStream fs = new MemoryStream(fa);
+            byte[] va = Encoding.UTF8.GetBytes(lightShaderVert);
+            MemoryStream vs = new MemoryStream(va);
+            byte[] fa = Encoding.UTF8.GetBytes(lightShaderFrag);
+            MemoryStream fs = new MemoryStream(fa);
 
-            //m_lightShader = new SFML.Graphics.Shader(vs, fs);
+            m_lightShader = new SFML.Graphics.Shader(vs, fs);
+            var colour = panelAmbientColour.BackColor;
+            m_lightShader.SetParameter("u_ambientColour", new SFML.Graphics.Color(colour.R, colour.G, colour.B));
+            colour = panelSunColour.BackColor;
+            m_lightShader.SetParameter("u_lightColour", new SFML.Graphics.Color(colour.R, colour.G, colour.B));
 
             m_sfmlControl.MouseDown += m_sfmlControl_MouseDown;
             m_sfmlControl.MouseUp += m_sfmlControl_MouseUp;
@@ -120,6 +124,7 @@ namespace Level_editor
 
 
         //event handlers to forward mouse events
+        private Panel m_lastClickedPanel;
         void m_sfmlControl_MouseUp(object sender, MouseEventArgs e)
         {
             var d = GetDrawableAtMouse();
@@ -133,10 +138,15 @@ namespace Level_editor
                     mouseUp(p, evt);
                 }
             }
+            else if(m_lastClickedPanel != null)
+            {
+                mouseUp(m_lastClickedPanel, e);
+            }
+
         }
         void m_sfmlControl_MouseDown(object sender, MouseEventArgs e)
         {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            //if (e.Button == System.Windows.Forms.MouseButtons.Left)
             {
                 //test if we have a sprite and forward event to parent panel
                 var d = GetDrawableAtMouse();
@@ -147,34 +157,42 @@ namespace Level_editor
                     {
                         var mousePos = (m_sfmlControl.GetMouseWorldPosition() - d.Position) / scale;
                         MouseEventArgs evt = new MouseEventArgs(e.Button, e.Clicks, (int)mousePos.X, (int)mousePos.Y, e.Delta);
-                        mouseDown(p, evt);         
+                        mouseDown(p, evt);
+
+                        m_lastClickedPanel = p;
                     }
                 }
             }
         }
         void m_sfmlControl_MouseMove(object sender, MouseEventArgs e)
         {
-            var d = GetDrawableAtMouse();
-            if(d != null)
+            if(m_lastClickedPanel != null)
             {
-                var p = GetParentPanel(d);
-                if (p != null)
-                {
-                    var mousePos = (m_sfmlControl.GetMouseWorldPosition() - d.Position) / scale;
-                    MouseEventArgs evt = new MouseEventArgs(e.Button, e.Clicks, (int)mousePos.X, (int)mousePos.Y, e.Delta);
-                    mouseMove(p, evt);
-
-                    this.Text = mousePos.X.ToString() + ", " + mousePos.Y.ToString();
-                }
+                var d = ((NodeData)m_lastClickedPanel.Tag).drawable;
+                var mousePos = (m_sfmlControl.GetMouseWorldPosition() - d.Position) / scale;
+                MouseEventArgs evt = new MouseEventArgs(e.Button, e.Clicks, (int)mousePos.X, (int)mousePos.Y, e.Delta);
+                mouseMove(m_lastClickedPanel, evt);
             }
         }
         void m_sfmlControl_MouseClick(object sender, MouseEventArgs e)
         {
-            if (GetDrawableAtMouse() == null)
-            {
-                var mousePos = m_sfmlControl.GetMouseWorldPosition() / scale;
+            var d = GetDrawableAtMouse();
+            var mousePos = m_sfmlControl.GetMouseWorldPosition() / scale;
+            if (d == null)
+            {               
                 MouseEventArgs evt = new MouseEventArgs(e.Button, e.Clicks, (int)mousePos.X, (int)mousePos.Y, e.Delta);
                 panelEditorInner_Click(panelEditorInner, evt);
+            }
+            else
+            {
+                if(e.Button == System.Windows.Forms.MouseButtons.Right)
+                {
+                    var p = GetParentPanel(d);
+                    if(p != null && p.ContextMenuStrip != null)
+                    {
+                        p.ContextMenuStrip.Show(this, this.PointToClient(Cursor.Position)); 
+                    }
+                }
             }
         }
 
@@ -196,9 +214,16 @@ namespace Level_editor
         {
             foreach(var layer in m_previewLayers)
             {
+                SFML.Graphics.RenderStates states = SFML.Graphics.RenderStates.Default;
+                if (layer != m_previewLayers[(int)Layer.Dynamic])
+                {
+                    states.Shader = m_lightShader;
+                }
+                
                 foreach(var d in layer)
                 {
-                    rw.Draw(d);
+                    m_lightShader.SetParameter("u_texture", SFML.Graphics.Shader.CurrentTexture);
+                    rw.Draw(d, states);
                 }
 
                 if(layer == m_previewLayers[(int)Layer.Background]
@@ -255,10 +280,11 @@ namespace Level_editor
 
         private SFML.Graphics.RectangleShape GetDrawableAtMouse()
         {
+            //go backwards so we detect front-most drawable
             var mousePos = m_sfmlControl.GetMouseWorldPosition();
-            for (var i = 1; i < m_previewLayers.Count; ++i) //skip background layer
+            for (var i = m_previewLayers.Count - 1; i > 0; --i) //skip background layer
             {
-                foreach (var d in m_previewLayers[i])
+                foreach (var d in m_previewLayers[i].Reverse<SFML.Graphics.RectangleShape>())
                 {
                     if (d.GetGlobalBounds().Contains(mousePos.X, mousePos.Y))
                     {

@@ -61,6 +61,7 @@ namespace Level_editor
         private Color solidColour = Color.IndianRed;
         private Color bonusColour = Color.Yellow;
         private Color waterColour = Color.Aqua;
+        private SFML.Graphics.Color waterFillColour = new SFML.Graphics.Color(20, 14, 34, 190);
 
         private Color sunColour = Color.FromArgb(255, 255, 252, 230);
         private Color ambientColour = Color.FromArgb(255, 64, 64, 64);
@@ -398,7 +399,7 @@ namespace Level_editor
                     m_platformFileName = Path.GetFileName(od.FileName);
                     m_modified = true;
 
-                    //update existinf drawables
+                    //update existing drawables
                     SFML.Graphics.Texture t = m_textureResource.Get(od.FileName);
                     t.Repeated = true;
                     foreach (var d in m_previewLayers[(int)Layer.Solid])
@@ -436,7 +437,28 @@ namespace Level_editor
         {
             if(m_selectedNode != null)
             {
-                m_selectedNode.Width = (int)numericUpDownNodePropertySizeX.Value / scale;
+                var width = (int)numericUpDownNodePropertySizeX.Value;
+                m_selectedNode.Width = width / scale;
+
+                //update drawable if attached
+                var nd = (NodeData)m_selectedNode.Tag;
+                if(nd.drawable != null)
+                {                    
+                    nd.drawable.Size = new SFML.Window.Vector2f(width, nd.drawable.Size.Y);
+
+                    //check if we need to rotate dims
+                    if(nd.type == Node.BodyType.Detail && m_selectedFrame.rotated)
+                    {
+                        nd.drawable.Size = new SFML.Window.Vector2f((int)numericUpDownNodePropertySizeY.Value, width);
+                    }
+
+                    else if (nd.type == Node.BodyType.Solid)
+                    {
+                        nd.drawable.TextureRect = new SFML.Graphics.IntRect((int)nd.drawable.Position.X, (int)nd.drawable.Position.Y,
+                            (int)nd.drawable.Size.X, (int)nd.drawable.Size.Y);
+                    }
+                }
+
                 m_modified = true;
             }
         }
@@ -444,7 +466,28 @@ namespace Level_editor
         {
             if(m_selectedNode != null)
             {
-                m_selectedNode.Height = (int)numericUpDownNodePropertySizeY.Value / scale;
+                var height = (int)numericUpDownNodePropertySizeY.Value;
+                m_selectedNode.Height = height / scale;
+
+                //update drawable if attached
+                var nd = (NodeData)m_selectedNode.Tag;
+                if(nd.drawable != null)
+                {
+                    nd.drawable.Size = new SFML.Window.Vector2f(nd.drawable.Size.X, height);
+
+                    //check if we need to rotate dims
+                    if (nd.type == Node.BodyType.Detail && m_selectedFrame.rotated)
+                    {
+                        nd.drawable.Size = new SFML.Window.Vector2f(height, (int)numericUpDownNodePropertySizeX.Value);
+                    }
+
+                    if (nd.type == Node.BodyType.Solid)
+                    {
+                        nd.drawable.TextureRect = new SFML.Graphics.IntRect((int)nd.drawable.Position.X, (int)nd.drawable.Position.Y,
+                            (int)nd.drawable.Size.X, (int)nd.drawable.Size.Y);
+                    }
+                }
+
                 m_modified = true;
             }
         }
@@ -462,7 +505,9 @@ namespace Level_editor
                 nodeData.type = type;
                 nodeData.spriteSheet = null;
                 nodeData.frameName = null;
-                
+
+                var oldLayer = nodeData.layer;
+
                 switch(type)
                 {
                     case Node.BodyType.Block:
@@ -472,6 +517,15 @@ namespace Level_editor
                         m_selectedNode.BackgroundImage = Properties.Resources.block;
                         m_selectedNode.Size = new Size(blockSize.Width / scale, blockSize.Height / scale);
                         nodeData.layer = Layer.Dynamic;
+
+                        if(nodeData.drawable != null)
+                        {
+                            nodeData.drawable.FillColor = SFML.Graphics.Color.White;
+                            nodeData.drawable.Texture = m_textureResource.Get("icons/block.png");
+                            nodeData.drawable.Texture.Smooth = true;
+                            nodeData.drawable.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)nodeData.drawable.Texture.Size.X, (int)nodeData.drawable.Texture.Size.Y);
+                        }
+
                         break;
                     case Node.BodyType.Item:
                         m_selectedNode.BackColor = bonusColour;
@@ -480,16 +534,53 @@ namespace Level_editor
                         m_selectedNode.BackgroundImage = Properties.Resources.item;
                         m_selectedNode.Size = new Size(itemSize.Width / scale, itemSize.Height / scale);
                         nodeData.layer = Layer.Dynamic;
+
+                        if(nodeData.drawable != null)
+                        {
+                            nodeData.drawable.FillColor = SFML.Graphics.Color.White;
+                            nodeData.drawable.Texture = m_textureResource.Get("icons/item.png");
+                            nodeData.drawable.Texture.Smooth = true;
+                            nodeData.drawable.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)nodeData.drawable.Texture.Size.X, (int)nodeData.drawable.Texture.Size.Y);
+                        }
+
                         break;
                     case Node.BodyType.Solid:
                         m_selectedNode.BackColor = solidColour;
                         m_selectedNode.BackgroundImage = null;
                         nodeData.layer = Layer.Solid;
+
+                        if(nodeData.drawable != null)
+                        {
+                            
+                            string texturePath = m_mapTextureDirectory + "\\" + m_platformFileName;
+                            if (File.Exists(texturePath))
+                            {
+                                nodeData.drawable.FillColor = SFML.Graphics.Color.White;
+                                nodeData.drawable.Texture = m_textureResource.Get(texturePath);
+                                nodeData.drawable.Texture.Repeated = true;
+                                nodeData.drawable.TextureRect = new SFML.Graphics.IntRect((int)nodeData.drawable.Position.X, (int)nodeData.drawable.Position.Y,
+                                    (int)numericUpDownNodePropertySizeX.Value, (int)numericUpDownNodePropertySizeY.Value);
+                                nodeData.drawable.FillColor = SFML.Graphics.Color.White;
+                            }
+                            else
+                            {
+                                nodeData.drawable.FillColor = new SFML.Graphics.Color(solidColour.R, solidColour.G, solidColour.B);
+                                nodeData.drawable.Texture = null;
+                            }
+                        }
+
                         break;
                     case Node.BodyType.Water:
                         m_selectedNode.BackColor = waterColour;
                         m_selectedNode.BackgroundImage = null;
                         nodeData.layer = Layer.Water;
+
+                        if(nodeData.drawable != null)
+                        {
+                            nodeData.drawable.FillColor = waterFillColour;
+                            nodeData.drawable.Texture = null;
+                        }
+
                         break;
                     case Node.BodyType.Detail:
                         if (m_spriteSheets.Count > 0)
@@ -501,6 +592,26 @@ namespace Level_editor
                             nodeData.spriteSheet = m_selectedFrame.parentSheet.meta.image;
                             nodeData.frameName = m_selectedFrame.filename;
                             checkBoxFrontDetail.Enabled = true;
+
+                            if (nodeData.drawable != null)
+                            {
+                                var size = new Size(m_selectedNode.Size.Width * scale, m_selectedNode.Size.Height * scale);
+                                nodeData.drawable.Size = new SFML.Window.Vector2f(size.Width, size.Height);
+                                nodeData.drawable.Texture = m_textureResource.Get(m_atlasTextureDirectory + "\\" + nodeData.spriteSheet);
+                                nodeData.drawable.TextureRect = m_selectedFrame.subrect;
+                                
+                                if (m_selectedFrame.rotated)
+                                {
+                                    nodeData.drawable.Rotation = -90f;
+                                    nodeData.drawable.Origin = new SFML.Window.Vector2f(nodeData.drawable.Size.Y, 0f);
+                                    nodeData.drawable.Size = new SFML.Window.Vector2f(nodeData.drawable.Size.Y, nodeData.drawable.Size.X);
+                                }
+                                else
+                                {
+                                    nodeData.drawable.Rotation = 0f;
+                                    nodeData.drawable.Origin = new SFML.Window.Vector2f();
+                                }
+                            }
                             break;
                         }
                         else
@@ -513,9 +624,27 @@ namespace Level_editor
                         m_selectedNode.Height = lightSize.Height / scale;
                         m_selectedNode.BackgroundImage = Properties.Resources.bulb;
                         nodeData.layer = Layer.FrontDetail;
+
+                        if(nodeData.drawable != null)
+                        {
+                            nodeData.drawable.FillColor = SFML.Graphics.Color.White;
+                            nodeData.drawable.Texture = m_textureResource.Get("icons/bulb2.png");
+                            nodeData.drawable.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)nodeData.drawable.Texture.Size.X, (int)nodeData.drawable.Texture.Size.Y);
+                        }
+
                         break;
                     default: break;
                 }
+
+                //update drawable if necessary
+                if(nodeData.drawable != null)
+                {
+                    nodeData.drawable.Size = new SFML.Window.Vector2f(m_selectedNode.Size.Width * scale, m_selectedNode.Height * scale);
+                    m_previewLayers[(int)nodeData.layer].Add(nodeData.drawable);
+                    m_previewLayers[(int)oldLayer].Remove(nodeData.drawable);
+                }
+
+
                 m_selectedNode.Tag = nodeData;
                 
                 if(type == Node.BodyType.Solid
@@ -609,6 +738,7 @@ namespace Level_editor
         {
             Node.BodyType type = Node.BodyType.Block;
             Size size = blockSize;
+            Layer layer = Layer.None;
             //if(comboBoxAddNode.Text == "Block")
             //{
             //    type = Node.BodyType.Block;
@@ -636,6 +766,7 @@ namespace Level_editor
                     {
                         type = Node.BodyType.Detail;
                         size = m_selectedFrame.largeImage.Size;
+                        //layer = Layer.RearDetail;
                         break;
                     }
                     MessageBox.Show("Details cannot be added when no sprite sheets are loaded");
@@ -643,13 +774,16 @@ namespace Level_editor
                 default: break;
             }
 
-            selectNode(addNode(type, new Point(960, 540), size));
+            selectNode(addNode(type, new Point(960, 540), size, layer));
         }
 
         //player panel movement
         void p1_Move(object sender, EventArgs e)
         {
             var p = (Panel)sender;
+
+            clampPanelToBounds(ref p);
+
             numericUpDownPlayerOneX.ValueChanged -= numericUpDownPlayerOneX_ValueChanged;
             numericUpDownPlayerOneY.ValueChanged -= numericUpDownPlayerOneY_ValueChanged;
             numericUpDownPlayerOneX.Value = (decimal)p.Left * scale; //don't forget to scale
@@ -667,6 +801,9 @@ namespace Level_editor
         void p2_Move(object sender, EventArgs e)
         {
             var p = (Panel)sender;
+
+            clampPanelToBounds(ref p);
+
             numericUpDownPlayerTwoX.ValueChanged -= numericUpDownPlayerTwoX_ValueChanged;
             numericUpDownPlayerTwoY.ValueChanged -= numericUpDownPlayerTwoY_ValueChanged;
             numericUpDownPlayerTwoX.Value = (decimal)p.Left * scale; //don't forget to scale
@@ -684,6 +821,9 @@ namespace Level_editor
         void node_Move(object sender, EventArgs e)
         {
             var p = (Panel)sender;
+
+            clampPanelToBounds(ref p);
+
             numericUpDownNodePropertyPosX.ValueChanged -= numericUpDownNodePropertyPosX_ValueChanged;
             numericUpDownNodePropertyPosY.ValueChanged -= numericUpDownNodePropertyPosY_ValueChanged;
             numericUpDownNodePropertyPosX.Value = (decimal)p.Left * scale;
@@ -692,10 +832,16 @@ namespace Level_editor
             numericUpDownNodePropertyPosY.ValueChanged += numericUpDownNodePropertyPosY_ValueChanged;
             m_modified = true;
 
+            //update drawable if attached
             NodeData nd = (NodeData)p.Tag;
             if (nd.drawable != null)
             {
                 nd.drawable.Position = new SFML.Window.Vector2f(p.Left * scale, p.Top * scale);
+                if (nd.type == Node.BodyType.Solid)
+                {
+                    nd.drawable.TextureRect = new SFML.Graphics.IntRect((int)nd.drawable.Position.X, 
+                        (int)nd.drawable.Position.Y, (int)nd.drawable.Size.X, (int)nd.drawable.Size.Y);
+                }
             }
         }
 
@@ -784,13 +930,6 @@ namespace Level_editor
                     p.Left = (int)Math.Round((double)p.Left / step) * step;
                     p.Top = (int)Math.Round((double)p.Top / step) * step;  
                 }
-
-                //clamp to bounds
-                if (p.Left < 0) p.Left = 0;
-                if (p.Top < 0) p.Top = 0;
-
-                if (p.Left > panelEditorInner.Width) p.Left = panelEditorInner.Width - 20;
-                if (p.Top > panelEditorInner.Height) p.Top = panelEditorInner.Height - 20;
             }
         }
         private void mouseMove(Object sender, MouseEventArgs e)
@@ -799,17 +938,11 @@ namespace Level_editor
             {
                 var p = (Panel)sender;
                 p.Left += e.X - lastMouseX;
-                //clamp to bounds
-                if (p.Left < 0) p.Left = 0;
-                if (p.Left + p.Width > m_sceneSize.Width) p.Left = m_sceneSize.Width - p.Width;
-
                 p.Top += e.Y - lastMouseY;
-                if (p.Top < 0) p.Top = 0;
-                if (p.Top + p.Height > m_sceneSize.Height) p.Top = m_sceneSize.Height - p.Height;
 
                 m_modified = true;
 
-                this.Text = e.X.ToString() + ", " + e.Y.ToString() + " - " + lastMouseX.ToString() + ", " + lastMouseY.ToString();
+                //this.Text = e.X.ToString() + ", " + e.Y.ToString() + " - " + lastMouseX.ToString() + ", " + lastMouseY.ToString();
             }
             
         }
@@ -843,6 +976,11 @@ namespace Level_editor
                     new Point(960, 540),
                     new Size(m_selectedNode.Width * scale, m_selectedNode.Height * scale),
                     nd.layer);
+
+                //we want the new drawable, not the existing one
+                var nd2 = (NodeData)node.Tag;
+                nd.drawable = nd2.drawable;
+
                 node.Tag = nd;
                 node.BackColor = m_selectedNode.BackColor;
             }
