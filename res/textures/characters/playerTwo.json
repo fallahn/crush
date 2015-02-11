@@ -1,1 +1,33 @@
-{"Animations":[{"Start":0,"End":5,"Loop":true,"Name":"run"},{"Start":7,"End":7,"Loop":false,"Name":"jump_down"},{"Start":6,"End":6,"Loop":false,"Name":"jump_up"},{"Start":2,"End":2,"Loop":true,"Name":"idle"}],"FrameCount":8,"FrameSize":"41, 64","FrameRate":12.0,"Texture":"playerTwo_diffuse.png","NormalMap":"player_normal.png"}
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 5,
+      "Loop": true,
+      "Name": "run"
+    },
+    {
+      "Start": 7,
+      "End": 7,
+      "Loop": false,
+      "Name": "jump_down"
+    },
+    {
+      "Start": 6,
+      "End": 6,
+      "Loop": false,
+      "Name": "jump_up"
+    },
+    {
+      "Start": 2,
+      "End": 2,
+      "Loop": true,
+      "Name": "idle"
+    }
+  ],
+  "FrameCount": 8,
+  "FrameSize": "41, 64",
+  "FrameRate": 12.0,
+  "Texture": "playerTwo_diffuse.png",
+  "NormalMap": "player_normal.png"
+}

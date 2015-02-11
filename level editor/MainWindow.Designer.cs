@@ -81,6 +81,7 @@
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useSoftwarePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
+            this.checkBoxPreviewLighting = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -387,6 +388,7 @@
             // 
             // groupBoxMapProperties
             // 
+            this.groupBoxMapProperties.Controls.Add(this.checkBoxPreviewLighting);
             this.groupBoxMapProperties.Controls.Add(this.buttonSolidTexture);
             this.groupBoxMapProperties.Controls.Add(this.label13);
             this.groupBoxMapProperties.Controls.Add(this.panelAmbientColour);
@@ -435,23 +437,25 @@
             // panelAmbientColour
             // 
             this.panelAmbientColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.panelAmbientColour.Location = new System.Drawing.Point(134, 396);
+            this.panelAmbientColour.Location = new System.Drawing.Point(135, 361);
             this.panelAmbientColour.Name = "panelAmbientColour";
             this.panelAmbientColour.Size = new System.Drawing.Size(75, 25);
             this.panelAmbientColour.TabIndex = 17;
+            this.panelAmbientColour.BackColorChanged += new System.EventHandler(this.panelAmbientColour_BackColorChanged);
             // 
             // panelSunColour
             // 
             this.panelSunColour.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(252)))), ((int)(((byte)(230)))));
-            this.panelSunColour.Location = new System.Drawing.Point(134, 365);
+            this.panelSunColour.Location = new System.Drawing.Point(135, 330);
             this.panelSunColour.Name = "panelSunColour";
             this.panelSunColour.Size = new System.Drawing.Size(75, 24);
             this.panelSunColour.TabIndex = 16;
+            this.panelSunColour.BackColorChanged += new System.EventHandler(this.panelSunColour_BackColorChanged);
             // 
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(15, 408);
+            this.label12.Location = new System.Drawing.Point(16, 373);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(81, 13);
             this.label12.TabIndex = 15;
@@ -460,7 +464,7 @@
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(16, 376);
+            this.label11.Location = new System.Drawing.Point(17, 341);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(62, 13);
             this.label11.TabIndex = 14;
@@ -469,7 +473,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(15, 267);
+            this.label9.Location = new System.Drawing.Point(16, 232);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(85, 13);
             this.label9.TabIndex = 13;
@@ -477,7 +481,7 @@
             // 
             // numericUpDownPlayerTwoY
             // 
-            this.numericUpDownPlayerTwoY.Location = new System.Drawing.Point(151, 319);
+            this.numericUpDownPlayerTwoY.Location = new System.Drawing.Point(152, 284);
             this.numericUpDownPlayerTwoY.Maximum = new decimal(new int[] {
             1080,
             0,
@@ -490,7 +494,7 @@
             // 
             // numericUpDownPlayerTwoX
             // 
-            this.numericUpDownPlayerTwoX.Location = new System.Drawing.Point(88, 319);
+            this.numericUpDownPlayerTwoX.Location = new System.Drawing.Point(89, 284);
             this.numericUpDownPlayerTwoX.Maximum = new decimal(new int[] {
             1920,
             0,
@@ -504,7 +508,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(16, 321);
+            this.label8.Location = new System.Drawing.Point(17, 286);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(63, 13);
             this.label8.TabIndex = 10;
@@ -512,7 +516,7 @@
             // 
             // numericUpDownPlayerOneY
             // 
-            this.numericUpDownPlayerOneY.Location = new System.Drawing.Point(151, 290);
+            this.numericUpDownPlayerOneY.Location = new System.Drawing.Point(152, 255);
             this.numericUpDownPlayerOneY.Maximum = new decimal(new int[] {
             1080,
             0,
@@ -525,7 +529,7 @@
             // 
             // numericUpDownPlayerOneX
             // 
-            this.numericUpDownPlayerOneX.Location = new System.Drawing.Point(88, 290);
+            this.numericUpDownPlayerOneX.Location = new System.Drawing.Point(89, 255);
             this.numericUpDownPlayerOneX.Maximum = new decimal(new int[] {
             1920,
             0,
@@ -539,7 +543,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(16, 292);
+            this.label7.Location = new System.Drawing.Point(17, 257);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(62, 13);
             this.label7.TabIndex = 7;
@@ -726,6 +730,17 @@
             this.useSoftwarePreviewToolStripMenuItem.ToolTipText = "Disable OpenGL Acceleration";
             this.useSoftwarePreviewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.useSoftwarePreviewToolStripMenuItem_CheckedChanged);
             // 
+            // checkBoxPreviewLighting
+            // 
+            this.checkBoxPreviewLighting.AutoSize = true;
+            this.checkBoxPreviewLighting.Location = new System.Drawing.Point(19, 402);
+            this.checkBoxPreviewLighting.Name = "checkBoxPreviewLighting";
+            this.checkBoxPreviewLighting.Size = new System.Drawing.Size(104, 17);
+            this.checkBoxPreviewLighting.TabIndex = 20;
+            this.checkBoxPreviewLighting.Text = "Preview Lighting";
+            this.checkBoxPreviewLighting.UseVisualStyleBackColor = true;
+            this.checkBoxPreviewLighting.CheckedChanged += new System.EventHandler(this.checkBoxPreviewLighting_CheckedChanged);
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -825,6 +840,7 @@
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useSoftwarePreviewToolStripMenuItem;
+        private System.Windows.Forms.CheckBox checkBoxPreviewLighting;
     }
 }
 

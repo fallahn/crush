@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -254,7 +255,7 @@ namespace Level_editor
                             shape.Origin = new SFML.Window.Vector2f(size.Height, 0f);
                         }
 
-                        m_previewLayers[(int)layer].Add(shape);
+                        m_previewLayers[(int)nd.layer].Add(shape);
                         nd.drawable = shape;
                     }
                     break;
@@ -285,13 +286,6 @@ namespace Level_editor
 
             numericUpDownNodePropertyPosX.Enabled = true;
             numericUpDownNodePropertyPosY.Enabled = true;
-
-            numericUpDownNodePropertyPosX.Value = (decimal)m_selectedNode.Left * scale;
-            numericUpDownNodePropertyPosY.Value = (decimal)m_selectedNode.Top * scale;
-
-            numericUpDownNodePropertySizeX.Value = (decimal)m_selectedNode.Width * scale;
-            numericUpDownNodePropertySizeY.Value = (decimal)m_selectedNode.Height * scale;
-
             checkBoxFrontDetail.Enabled = false;
             //checkBoxFrontDetail.Checked = false;
 
@@ -315,17 +309,20 @@ namespace Level_editor
                 selectFrame(tag.spriteSheet, tag.frameName);
                 checkBoxFrontDetail.Enabled = true;
                 checkBoxFrontDetail.Checked = (tag.layer == Layer.FrontDetail);
-
-                if(m_selectedFrame.rotated)
-                {
-                    tag.drawable.Size = new SFML.Window.Vector2f((float)numericUpDownNodePropertySizeY.Value, (float)numericUpDownNodePropertySizeX.Value);
-                }
+                //drawable rotation is taken care of by the size change event below
             }
 
             if (tag.drawable != null)
                 tag.drawable.OutlineThickness = -2f;
 
             p.Tag = tag;
+
+            //update these last so that the correct detail frame (if any) is already selected
+            numericUpDownNodePropertyPosX.Value = (decimal)m_selectedNode.Left * scale;
+            numericUpDownNodePropertyPosY.Value = (decimal)m_selectedNode.Top * scale;
+
+            numericUpDownNodePropertySizeX.Value = (decimal)m_selectedNode.Width * scale;
+            numericUpDownNodePropertySizeY.Value = (decimal)m_selectedNode.Height * scale;
         }
 
         private void setPanelTexture(ref Panel p)
@@ -545,6 +542,7 @@ namespace Level_editor
             //save json file
             JsonSerializer srlz = new JsonSerializer();
             srlz.NullValueHandling = NullValueHandling.Ignore;
+            srlz.Formatting = Formatting.Indented;
 
             using (StreamWriter sw = new StreamWriter(m_mapPath))
             using (JsonWriter jw = new JsonTextWriter(sw))

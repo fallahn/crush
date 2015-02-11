@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -415,6 +416,30 @@ namespace Level_editor
                 }
             }
         }
+        private void panelSunColour_BackColorChanged(object sender, EventArgs e)
+        {
+            var c = panelSunColour.BackColor;
+            m_sunColour = new SFML.Graphics.Color(c.R, c.G, c.B);
+            m_modified = true;
+        }
+        private void panelAmbientColour_BackColorChanged(object sender, EventArgs e)
+        {
+            var c = panelAmbientColour.BackColor;
+            m_ambientColour = new SFML.Graphics.Color(c.R, c.G, c.B);
+            m_modified = true;
+        }
+        private void checkBoxPreviewLighting_CheckedChanged(object sender, EventArgs e)
+        {
+            m_sfmlControl.DrawDelegates.Clear();
+            if (checkBoxPreviewLighting.Checked)
+            {
+                m_sfmlControl.DrawDelegates.Add(this.DrawPreviewLighting);
+            }
+            else
+            {
+                m_sfmlControl.DrawDelegates.Add(this.DrawPreviewNoLighting);
+            }
+        }
 
         //node properties
         private void numericUpDownNodePropertyPosX_ValueChanged(object sender, EventArgs e)
@@ -715,9 +740,7 @@ namespace Level_editor
                 if(nd.type == Node.BodyType.Detail)
                 {
                     nd.layer = (checkBoxFrontDetail.Checked) ? Layer.FrontDetail : Layer.RearDetail;
-                    m_selectedNode.Tag = nd;
-                    sortNodes();
-
+                    
                     if(nd.layer == Layer.RearDetail)
                     {
                         m_previewLayers[(int)Layer.RearDetail].Add(nd.drawable);
@@ -728,6 +751,9 @@ namespace Level_editor
                         m_previewLayers[(int)Layer.FrontDetail].Add(nd.drawable);
                         m_previewLayers[(int)Layer.RearDetail].Remove(nd.drawable);
                     }
+
+                    m_selectedNode.Tag = nd;
+                    sortNodes();
                 }
             }
         }
@@ -985,5 +1011,8 @@ namespace Level_editor
                 node.BackColor = m_selectedNode.BackColor;
             }
         }
+
+
+
     }
 }

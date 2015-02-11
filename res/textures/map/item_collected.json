@@ -1,1 +1,15 @@
-{"Animations":[{"Start":0,"End":15,"Loop":true,"Name":"default"}],"FrameCount":16,"FrameSize":"64, 64","FrameRate":18.0,"Texture":"item_collected.png"}
+{
+  "Animations": [
+    {
+      "Start": 0,
+      "End": 15,
+      "Loop": true,
+      "Name": "default"
+    }
+  ],
+  "FrameCount": 16,
+  "FrameSize": "64, 64",
+  "FrameRate": 18.0,
+  "Texture": "item_collected.png",
+  "NormalMap": "none.png"
+}

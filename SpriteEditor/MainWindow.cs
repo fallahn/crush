@@ -419,6 +419,7 @@ namespace SpriteEditor
                 //save json file
                 JsonSerializer srlz = new JsonSerializer();
                 srlz.NullValueHandling = NullValueHandling.Ignore;
+                srlz.Formatting = Formatting.Indented;
 
                 using (StreamWriter sw = new StreamWriter(m_currentPath))
                 using (JsonWriter jw = new JsonTextWriter(sw))

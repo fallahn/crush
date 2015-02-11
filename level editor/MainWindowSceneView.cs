@@ -72,27 +72,37 @@ namespace Level_editor
             + "gl_FrontColor = gl_Color;\n"
             + "}";
 
-        private string lightShaderFrag =
-            "#version 130\n"
-            + "uniform vec4 u_ambientColour = vec4(0.1, 0.1, 0.1, 1.0);\n"
+        private string lightShaderFrag = 
+            "uniform vec4 u_ambientColour = vec4(0.1, 0.1, 0.1, 1.0);\n"
             + "uniform vec4 u_lightColour = vec4(1.0, 0.0, 0.0, 1.0);\n"
             + "uniform sampler2D u_texture;\n"
+            + "const vec3 normal = vec3(0.0, 0.0, 1.0);"
+            + "const vec3 lightDir = normalize(vec3(20.0, -40.0, 30.0));"
             + "void main()\n"
             + "{\n"
+            + "#if defined(TEXTURE)\n"
             + "vec4 colour = texture2D(u_texture, gl_TexCoord[0].xy);\n"
-            + "colour.rgb *= u_ambientColour.rgb;\n"
-            + "gl_FragColor = vec4(colour.rgb + u_lightColour.rgb, 1.0);\n"
+            + "#endif\n"
+            + "#if defined(COLOUR)\n"
+            + "vec4 colour = gl_Color;\n"
+            + "#endif\n"
+            + "vec3 ambientColour = colour.rgb * u_ambientColour.rgb;\n"
+            + "float diffuseAmount = max(dot(normal, lightDir), 0.0);\n"
+            + "vec3 diffuseColour = u_lightColour.rgb * colour.rgb * diffuseAmount;\n"
+            + "gl_FragColor = vec4(ambientColour + diffuseColour, colour.a);\n"
             + "}";
 
 
-
         private SFML.Graphics.VertexArray m_grid = new SFML.Graphics.VertexArray(SFML.Graphics.PrimitiveType.Lines);
-        private SFML.Graphics.Shader m_lightShader = null;
+        private SFML.Graphics.Shader m_lightShaderTextured = null;
+        private SFML.Graphics.Shader m_lightShaderColoured = null;
+        private SFML.Graphics.Color m_sunColour;
+        private SFML.Graphics.Color m_ambientColour;
 
         private void InitPreview()
         {
             m_sfmlControl.Dock = DockStyle.Fill;
-            m_sfmlControl.DrawDelegates.Add(this.DrawPreview);
+            m_sfmlControl.DrawDelegates.Add(this.DrawPreviewLighting);
             m_sfmlControl.UpdateDelegates.Add(this.UpdateSprites);
             panelEditorOuter.Controls.Add(m_sfmlControl);
 
@@ -104,23 +114,24 @@ namespace Level_editor
 
             byte[] va = Encoding.UTF8.GetBytes(lightShaderVert);
             MemoryStream vs = new MemoryStream(va);
-            byte[] fa = Encoding.UTF8.GetBytes(lightShaderFrag);
+            byte[] fa = Encoding.UTF8.GetBytes("#version 130\n#define TEXTURE\n" + lightShaderFrag);
             MemoryStream fs = new MemoryStream(fa);
+            m_lightShaderTextured = new SFML.Graphics.Shader(vs, fs);
 
-            m_lightShader = new SFML.Graphics.Shader(vs, fs);
+            fa = Encoding.UTF8.GetBytes("#version 130\n#define COLOUR\n" + lightShaderFrag);
+            fs = new MemoryStream(fa);
+            m_lightShaderColoured = new SFML.Graphics.Shader(vs, fs);
+
             var colour = panelAmbientColour.BackColor;
-            m_lightShader.SetParameter("u_ambientColour", new SFML.Graphics.Color(colour.R, colour.G, colour.B));
+            m_ambientColour = new SFML.Graphics.Color(colour.R, colour.G, colour.B);
             colour = panelSunColour.BackColor;
-            m_lightShader.SetParameter("u_lightColour", new SFML.Graphics.Color(colour.R, colour.G, colour.B));
+            m_sunColour = new SFML.Graphics.Color(colour.R, colour.G, colour.B);
 
             m_sfmlControl.MouseDown += m_sfmlControl_MouseDown;
             m_sfmlControl.MouseUp += m_sfmlControl_MouseUp;
             m_sfmlControl.MouseMove += m_sfmlControl_MouseMove;
             m_sfmlControl.MouseClick += m_sfmlControl_MouseClick;
         }
-
-
-
 
 
         //event handlers to forward mouse events
@@ -210,19 +221,32 @@ namespace Level_editor
             }
         }
 
-        private void DrawPreview(SFML.Graphics.RenderWindow rw)
+        private void DrawPreviewLighting(SFML.Graphics.RenderWindow rw)
         {
+            m_lightShaderTextured.SetParameter("u_lightColour", m_sunColour);
+            m_lightShaderTextured.SetParameter("u_ambientColour", m_ambientColour);
+
+            m_lightShaderColoured.SetParameter("u_lightColour", m_sunColour);
+            m_lightShaderColoured.SetParameter("u_ambientColour", m_ambientColour);
+
             foreach(var layer in m_previewLayers)
             {
                 SFML.Graphics.RenderStates states = SFML.Graphics.RenderStates.Default;
                 if (layer != m_previewLayers[(int)Layer.Dynamic])
                 {
-                    states.Shader = m_lightShader;
+                    states.Shader = m_lightShaderTextured;
                 }
                 
                 foreach(var d in layer)
                 {
-                    m_lightShader.SetParameter("u_texture", SFML.Graphics.Shader.CurrentTexture);
+                    if (d.Texture == null)
+                    {
+                        states.Shader = m_lightShaderColoured;
+                    }
+                    else
+                    {
+                        m_lightShaderTextured.SetParameter("u_texture", SFML.Graphics.Shader.CurrentTexture);
+                    }
                     rw.Draw(d, states);
                 }
 
@@ -232,6 +256,23 @@ namespace Level_editor
                     rw.Draw(m_grid);
                 }
             }           
+        }
+
+        private void DrawPreviewNoLighting(SFML.Graphics.RenderWindow rw)
+        {
+            foreach(var layer in m_previewLayers)
+            {
+                foreach(var d in layer)
+                {
+                    rw.Draw(d);
+
+                }
+                if (layer == m_previewLayers[(int)Layer.Background]
+                        && checkBoxSnap.Checked)
+                {
+                    rw.Draw(m_grid);
+                }
+            }
         }
 
         private void BuildGrid()
