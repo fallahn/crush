@@ -196,7 +196,10 @@ namespace Level_editor
             m_currentZoom *= m_zoomAmount;
             
             var v = m_renderWindow.GetView();
+            var startPos = GetMouseWorldPosition();
             v.Zoom(m_zoomAmount);
+            m_renderWindow.SetView(v);
+            v.Move(startPos - GetMouseWorldPosition());
             m_renderWindow.SetView(v);
         }
         private void ZoomOut()
@@ -205,7 +208,10 @@ namespace Level_editor
             m_currentZoom *= zoom;
 
             var v = m_renderWindow.GetView();
+            var startPos = GetMouseWorldPosition();
             v.Zoom(zoom);
+            m_renderWindow.SetView(v);
+            v.Move(startPos - GetMouseWorldPosition());
             m_renderWindow.SetView(v);
         }
 

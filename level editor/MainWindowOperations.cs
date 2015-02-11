@@ -217,7 +217,7 @@ namespace Level_editor
                         {
                             var shape = new SFML.Graphics.RectangleShape();
                             shape.Texture = m_textureResource.Get("icons/bulb2.png");
-                            shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y) * scale;
+                            shape.Size = new SFML.Window.Vector2f(shape.Texture.Size.X, shape.Texture.Size.Y);// *scale;
                             shape.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)shape.Texture.Size.X, (int)shape.Texture.Size.Y);
                             shape.Position = new SFML.Window.Vector2f(position.X, position.Y);
                             shape.FillColor = new SFML.Graphics.Color(sunColour.R, sunColour.G, sunColour.B);
