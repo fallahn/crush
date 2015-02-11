@@ -212,7 +212,7 @@ namespace Shader
         "    vec3 ambientColour = diffuseColour.rgb * u_ambientColour;\n" \
         "    vec3 blendedColour = ambientColour;\n" \
         "    vec3 pointLightColours[LIGHT_COUNT] = unpackLightColours();\n" \
-        /*TODO fix inverse range index*/
+        
         "    for(int i = 0; i < LIGHT_COUNT; i++)\n" \
         "    {\n" \
         "        vec3 pointLightDirection = v_pointLightDirections[i] * inverseRanges[i];\n" \

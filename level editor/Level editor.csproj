@@ -59,6 +59,7 @@
     <Compile Include="BrowseTexturesWindow.Designer.cs">
       <DependentUpon>BrowseTexturesWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="Light.cs" />
     <Compile Include="LightPropertiesWindow.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -46,8 +46,6 @@ namespace Level_editor
 {
     public partial class MainWindow : Form
     {
-        private int m_lightCount = 0;
-        private const int m_maxLights = 4;
 
         //prevent initial sorting on loading of a map, until
         //the final node is added
@@ -209,9 +207,8 @@ namespace Level_editor
                     }
                     break;
                 case Node.BodyType.Light:
-                    if(m_lightCount < m_maxLights)
+                    if(m_lights.Count < m_maxLights)
                     {
-                        m_lightCount++;
                         p.BackColor = sunColour;
                         p.Move += node_Move;
                         p.ContextMenuStrip = m_nodeMenu;
@@ -227,6 +224,11 @@ namespace Level_editor
                             m_previewLayers[(int)Layer.Dynamic].Add(shape);
                             nd.drawable = shape;
                         }
+                        nd.light = new Light();
+                        nd.light.Colour = new SFML.Graphics.Color(sunColour.R, sunColour.G, sunColour.B);
+                        nd.light.Position = new SFML.Window.Vector2f(position.X + (size.Width / 2), position.Y + (size.Height / 2));
+                        nd.light.Range = 700f;
+                        m_lights.Add(nd.light);
                     }
                     else
                     {
@@ -239,7 +241,7 @@ namespace Level_editor
                     p.BackgroundImage = m_selectedFrame.smallImage;
                     p.Move += node_Move;
                     p.ContextMenuStrip = m_nodeMenu;
-                    nd.layer = Layer.RearDetail;//layer;
+                    nd.layer = (layer == Layer.None) ? Layer.RearDetail : layer;
                     nd.frameName = m_selectedFrame.filename;
                     nd.spriteSheet = m_selectedFrame.parentSheet.meta.image;
                     {
@@ -387,7 +389,7 @@ namespace Level_editor
                 layer.Clear();
             
             m_currentMap = new Map();
-            m_lightCount = 0;
+            m_lights = new List<Light>();
 
             //set window title to 'untitled'
             this.Text = "Untitled";
@@ -436,7 +438,7 @@ namespace Level_editor
 
             //create new map object and parse data into it
             m_currentMap = new Map();
-            m_lightCount = 0;
+            m_lights = new List<Light>();
 
             JsonSerializer js = new JsonSerializer();
             js.NullValueHandling = NullValueHandling.Ignore;
@@ -509,6 +511,7 @@ namespace Level_editor
                         NodeData nd = (NodeData)node.Tag;
                         nd.anchorOffset = n.AnchorOffset;
                         nd.drawable.FillColor = new SFML.Graphics.Color(node.BackColor.R, node.BackColor.G, node.BackColor.B);
+                        nd.light.Colour = nd.drawable.FillColor;
                         node.Tag = nd;
                         break;
                     case "Detail":

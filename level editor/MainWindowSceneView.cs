@@ -59,37 +59,101 @@ namespace Level_editor
 
     public partial class MainWindow : Form
     {
+        private List<Light> m_lights = new List<Light>();
+        private const int m_maxLights = 4;
+        
         private Size m_sceneSize = new Size(1920, 1080);
         private SfmlControl m_sfmlControl = new SfmlControl();
         private TextureResource m_textureResource = new TextureResource();
         private List<List<SFML.Graphics.RectangleShape>> m_previewLayers = new List<List<SFML.Graphics.RectangleShape>>();
 
         private string lightShaderVert =
-            "void main()\n"
+            "#define LIGHT_COUNT 4\n"
+            + "#define LIGHT_DISTANCE 50.0\n"
+            + "uniform mat4 u_lightPositions;\n"
+            + "uniform mat4 u_inverseWorldViewMatrix;\n"
+
+            + "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n"
+
+            + "const vec3 normal = vec3(0.0, 0.0, 1.0);\n" 
+            + "const vec3 tangent = vec3(1.0, 0.0, 0.0);\n"
+
+            + "vec3[LIGHT_COUNT] unpackLightPositions()\n"
+            + "{\n"
+            + "return vec3[LIGHT_COUNT](\n"
+            + "vec3(u_inverseWorldViewMatrix * vec4(u_lightPositions[0][0], u_lightPositions[1][0], LIGHT_DISTANCE, 1.0)),\n"
+            + "vec3(u_inverseWorldViewMatrix * vec4(u_lightPositions[3][0], u_lightPositions[0][1], LIGHT_DISTANCE, 1.0)),\n"
+            + "vec3(u_inverseWorldViewMatrix * vec4(u_lightPositions[1][1], u_lightPositions[3][1], LIGHT_DISTANCE, 1.0)),\n"
+            + "vec3(u_inverseWorldViewMatrix * vec4(u_lightPositions[0][3], u_lightPositions[1][3], LIGHT_DISTANCE, 1.0)));\n"
+            + "}\n"
+
+            + "void main()\n"
             + "{\n"
             + "gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;\n"
             + "gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;\n"
             + "gl_FrontColor = gl_Color;\n"
+
+            + "vec3 n = normalize(gl_NormalMatrix * normal);\n"
+            + "vec3 t = normalize(gl_NormalMatrix * tangent);\n"
+            + "vec3 b = cross(n, t);\n"
+            + "vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n"
+
+            + "vec3[LIGHT_COUNT] pointPositions = unpackLightPositions();\n"
+            + "for(int i = 0; i < LIGHT_COUNT; i++)\n"
+            + "{\n"
+            + "vec3 viewPointLightDir = vec3(gl_ModelViewMatrix * vec4(pointPositions[i], 1.0)) - viewVertex;\n"
+            + "v_pointLightDirections[i].x = dot(viewPointLightDir, t);\n"
+            + "v_pointLightDirections[i].y = dot(viewPointLightDir, b);\n"
+            + "v_pointLightDirections[i].z = dot(viewPointLightDir, n);\n"
+            + "}\n"
+
             + "}";
 
         private string lightShaderFrag = 
             "uniform vec4 u_ambientColour = vec4(0.1, 0.1, 0.1, 1.0);\n"
             + "uniform vec4 u_lightColour = vec4(1.0, 0.0, 0.0, 1.0);\n"
             + "uniform sampler2D u_texture;\n"
+            + "uniform vec4 u_pointColour0;\n"
+            + "uniform vec4 u_pointColour1;\n"
+            + "uniform vec4 u_pointColour2;\n"
+            + "uniform vec4 u_pointColour3;\n"
+            
+            + "#define LIGHT_COUNT 4\n"
+
+            + "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n"
+
+            + "vec3[LIGHT_COUNT] pointColours = vec3[LIGHT_COUNT](u_pointColour0.rgb, u_pointColour1.rgb, u_pointColour2.rgb, u_pointColour3.rgb);\n"
+            + "float[LIGHT_COUNT] pointRanges = float[LIGHT_COUNT](0.00145, 0.00145, 0.00145, 0.00145);\n"
+
             + "const vec3 normal = vec3(0.0, 0.0, 1.0);"
             + "const vec3 lightDir = normalize(vec3(20.0, -40.0, 30.0));"
+
+            + "vec4 diffuseColour;\n"
+            + "vec3 calcLighting(vec3 normal, vec3 lightDir, vec3 lightColour, float falloff)\n"
+            + "{\n"
+            + "float diffuseAmount = max(dot(normal, lightDir), 0.0);\n"
+            + "return lightColour * diffuseColour.rgb * diffuseAmount * falloff\n;"
+            + "}\n"
+
             + "void main()\n"
             + "{\n"
             + "#if defined(TEXTURE)\n"
-            + "vec4 colour = texture2D(u_texture, gl_TexCoord[0].xy);\n"
+            + "diffuseColour = texture2D(u_texture, gl_TexCoord[0].xy);\n"
             + "#endif\n"
             + "#if defined(COLOUR)\n"
-            + "vec4 colour = gl_Color;\n"
+            + "diffuseColour = gl_Color;\n"
             + "#endif\n"
-            + "vec3 ambientColour = colour.rgb * u_ambientColour.rgb;\n"
-            + "float diffuseAmount = max(dot(normal, lightDir), 0.0);\n"
-            + "vec3 diffuseColour = u_lightColour.rgb * colour.rgb * diffuseAmount;\n"
-            + "gl_FragColor = vec4(ambientColour + diffuseColour, colour.a);\n"
+            + "vec3 ambientColour = diffuseColour.rgb * u_ambientColour.rgb;\n"
+
+            + "for(int i = 0; i < LIGHT_COUNT; i++)\n"
+            + "{\n"
+            + "vec3 pointLightDir = v_pointLightDirections[i] * pointRanges[i];\n"
+            + "float falloff = clamp(1.0 - dot(pointLightDir, pointLightDir), 0.0, 1.0);\n"
+            + "ambientColour += calcLighting(normal, normalize(v_pointLightDirections[i]), pointColours[i], falloff);\n"
+            + "}\n"
+
+            + "ambientColour += calcLighting(normal, lightDir, u_lightColour.rgb, 1.0);\n"
+            + "gl_FragColor = vec4(ambientColour, diffuseColour.a);\n"
             + "}";
 
 
@@ -102,7 +166,7 @@ namespace Level_editor
         private void InitPreview()
         {
             m_sfmlControl.Dock = DockStyle.Fill;
-            m_sfmlControl.DrawDelegates.Add(this.DrawPreviewLighting);
+            m_sfmlControl.DrawDelegates.Add(this.DrawPreviewNoLighting);
             m_sfmlControl.UpdateDelegates.Add(this.UpdateSprites);
             panelEditorOuter.Controls.Add(m_sfmlControl);
 
@@ -220,32 +284,56 @@ namespace Level_editor
                 }
             }
         }
-
         private void DrawPreviewLighting(SFML.Graphics.RenderWindow rw)
         {
+            //pack data in matrix as SFML doesn't support array uniforms
+            SFML.Window.Vector2f[] positions = new SFML.Window.Vector2f[m_maxLights];
+            for (var i = 0; i < m_lights.Count; ++i)
+                positions[i] = m_lights[i].Position;
+
+            SFML.Graphics.Transform t = new SFML.Graphics.Transform(
+                positions[0].X, positions[0].Y,
+                positions[1].X, positions[1].Y,
+                positions[2].X, positions[2].Y,
+                positions[3].X, positions[3].Y, 0f);
+
             m_lightShaderTextured.SetParameter("u_lightColour", m_sunColour);
             m_lightShaderTextured.SetParameter("u_ambientColour", m_ambientColour);
+            m_lightShaderTextured.SetParameter("u_lightPositions", t);
 
             m_lightShaderColoured.SetParameter("u_lightColour", m_sunColour);
             m_lightShaderColoured.SetParameter("u_ambientColour", m_ambientColour);
+            m_lightShaderColoured.SetParameter("u_lightPositions", t);
+
+            for(var i = 0; i < m_lights.Count; ++i)
+            {
+                string param = "u_pointColour" + i.ToString();
+                m_lightShaderTextured.SetParameter(param, m_lights[i].Colour);
+                m_lightShaderColoured.SetParameter(param, m_lights[i].Colour);
+            }
+
+            SFML.Graphics.RenderStates states = SFML.Graphics.RenderStates.Default;
 
             foreach(var layer in m_previewLayers)
             {
-                SFML.Graphics.RenderStates states = SFML.Graphics.RenderStates.Default;
-                if (layer != m_previewLayers[(int)Layer.Dynamic])
-                {
-                    states.Shader = m_lightShaderTextured;
-                }
+                
+                //if (layer != m_previewLayers[(int)Layer.Dynamic])
+                //{
+                //    states.Shader = m_lightShaderTextured;
+                //}
                 
                 foreach(var d in layer)
                 {
                     if (d.Texture == null)
                     {
+                        m_lightShaderColoured.SetParameter("u_inverseWorldViewMatrix", d.InverseTransform);
                         states.Shader = m_lightShaderColoured;
                     }
                     else
-                    {
+                    {           
                         m_lightShaderTextured.SetParameter("u_texture", SFML.Graphics.Shader.CurrentTexture);
+                        m_lightShaderTextured.SetParameter("u_inverseWorldViewMatrix", d.InverseTransform);
+                        states.Shader = m_lightShaderTextured;
                     }
                     rw.Draw(d, states);
                 }
@@ -257,7 +345,6 @@ namespace Level_editor
                 }
             }           
         }
-
         private void DrawPreviewNoLighting(SFML.Graphics.RenderWindow rw)
         {
             foreach(var layer in m_previewLayers)
@@ -274,7 +361,6 @@ namespace Level_editor
                 }
             }
         }
-
         private void BuildGrid()
         {
             m_grid.Clear();
@@ -305,7 +391,6 @@ namespace Level_editor
                 m_grid.Append(v);
             }
         }
-
         private Panel GetParentPanel(SFML.Graphics.RectangleShape drawable)
         {
             foreach (Panel p in panelEditorInner.Controls)
@@ -318,7 +403,6 @@ namespace Level_editor
             }
             return null;
         }
-
         private SFML.Graphics.RectangleShape GetDrawableAtMouse()
         {
             //go backwards so we detect front-most drawable

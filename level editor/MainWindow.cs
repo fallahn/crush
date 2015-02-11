@@ -527,6 +527,8 @@ namespace Level_editor
                 var nodeData = (NodeData)m_selectedNode.Tag;
                 if (nodeData.type == type) return;
 
+                //TODO check if we're currently a light and remove from light array if necessary
+
                 nodeData.type = type;
                 nodeData.spriteSheet = null;
                 nodeData.frameName = null;
@@ -645,6 +647,8 @@ namespace Level_editor
                             return;
                         }
                     case Node.BodyType.Light:
+
+                        //TODO check we have lights availble first
                         m_selectedNode.Width = lightSize.Width / scale;
                         m_selectedNode.Height = lightSize.Height / scale;
                         m_selectedNode.BackgroundImage = Properties.Resources.bulb;
@@ -700,7 +704,10 @@ namespace Level_editor
                 var nd = (NodeData)m_selectedNode.Tag;
                 if(nd.type == Node.BodyType.Light)
                 {
-                    m_lightCount--;
+                    if(nd.light != null)
+                    {
+                        m_lights.Remove(nd.light);
+                    }
                 }
 
                 if(nd.drawable != null)
@@ -868,6 +875,12 @@ namespace Level_editor
                     nd.drawable.TextureRect = new SFML.Graphics.IntRect((int)nd.drawable.Position.X, 
                         (int)nd.drawable.Position.Y, (int)nd.drawable.Size.X, (int)nd.drawable.Size.Y);
                 }
+            }
+
+            //and possible light
+            if(nd.light != null)
+            {
+                nd.light.Position = new SFML.Window.Vector2f((p.Left * scale) + p.Width, (p.Top * scale) + p.Height);
             }
         }
 
