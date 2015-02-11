@@ -48,7 +48,7 @@ State::Context::Context(sf::RenderWindow& window, Game& game, GameData& gd)
 State::State(StateStack& stateStack, Context context)
     : m_stack           (&stateStack),
     m_context           (context),
-    m_loadingSprite     ("res/textures/characters/robot.json", context.gameInstance.getTextureResource()),
+    m_loadingSprite     ("res/textures/characters/robot.cra", context.gameInstance.getTextureResource()),
     m_loadingText       ("Loading..", context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
     m_threadRunning     (false),
     m_loadingThread     (&State::updateLoadingScreen, this){}

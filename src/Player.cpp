@@ -95,7 +95,7 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
     m_lastFacing    (false),
     m_carryingBlock (false),
     m_spawnPosition (80.f, 500.f),
-    m_powerupSprite ("res/textures/map/item_collected.json", tr),
+    m_powerupSprite ("res/textures/map/item_collected.cra", tr),
     m_flashSprite   (true),
     m_hasHat        (false)
 {
@@ -115,13 +115,13 @@ Player::Player(CommandStack& cs, Category::Type type, TextureResource& tr, sf::S
         m_lastTouchId = Category::LastTouchedTwo;
         m_carryId = Category::CarriedTwo;
 
-        m_sprite = AnimatedSprite("res/textures/characters/playerTwo.json", tr);
+        m_sprite = AnimatedSprite("res/textures/characters/playerTwo.cra", tr);
         m_sprite.setScale(-1.f, 1.f);
         m_sprite.setOrigin(static_cast<float>(m_sprite.getFrameSize().x), 0.f); //uhhh iron this out at some point
     }
     else
     {
-        m_sprite = AnimatedSprite("res/textures/characters/playerOne.json", tr);
+        m_sprite = AnimatedSprite("res/textures/characters/playerOne.cra", tr);
     }
 
     m_sprite.setShader(shader);

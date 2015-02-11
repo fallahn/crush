@@ -86,7 +86,7 @@ namespace SpriteEditor
             ConfirmClose();
 
             OpenFileDialog od = new OpenFileDialog();
-            od.Filter = "JSON Files|*.json";
+            od.Filter = "Animation Files|*.cra";
             if (od.ShowDialog() == DialogResult.OK)
             {
                 try
@@ -143,7 +143,7 @@ namespace SpriteEditor
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog sd = new SaveFileDialog();
-            sd.Filter = "JSON Files|*.json";
+            sd.Filter = "Animation Files|*.cra";
             if(sd.ShowDialog() == DialogResult.OK)
             {
                 m_currentPath = sd.FileName;

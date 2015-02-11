@@ -42,7 +42,7 @@ namespace
     sf::Text playerOneText;
     sf::Text playerTwoText;
     sf::Text npcText;
-    sf::Text timerText;
+    //sf::Text timerText;
 
     sf::Font messageFont;
 
@@ -99,8 +99,8 @@ ScoreBoard::ScoreBoard(StateStack& stack, State::Context context)
 
     messageFont = context.gameInstance.getFont("res/fonts/VeraMono.ttf");
 
-    timerText.setFont(messageFont);
-    timerText.setPosition(60.f, 50.f);
+    //timerText.setFont(messageFont);
+    //timerText.setPosition(60.f, 50.f);
     *m_playerOneHatTime = 0.f;
     *m_playerTwoHatTime = 0.f;
 }
@@ -116,11 +116,11 @@ void ScoreBoard::update(float dt)
     //update current timer
     *m_hatTimer += dt;
 
-    timerText.setString(std::to_string(static_cast<sf::Uint16>(m_nullHatTime)) + ", " 
-        + std::to_string(static_cast<sf::Uint16>(*m_playerOneHatTime)) + ", " 
-        + std::to_string(static_cast<sf::Uint16>(*m_playerTwoHatTime)) + ", "
-        + std::to_string(m_playerOneKillStreak) + ", "
-        + std::to_string(m_playerTwoKillStreak));
+    //timerText.setString(std::to_string(static_cast<sf::Uint16>(m_nullHatTime)) + ", " 
+    //    + std::to_string(static_cast<sf::Uint16>(*m_playerOneHatTime)) + ", " 
+    //    + std::to_string(static_cast<sf::Uint16>(*m_playerTwoHatTime)) + ", "
+    //    + std::to_string(m_playerOneKillStreak) + ", "
+    //    + std::to_string(m_playerTwoKillStreak));
 }
 
 void ScoreBoard::onNotify(Subject& s, const Event& evt)
@@ -570,8 +570,6 @@ void ScoreBoard::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     m_context.renderWindow.draw(playerOneText);
     m_context.renderWindow.draw(playerTwoText);
     m_context.renderWindow.draw(npcText);
-
-    m_context.renderWindow.draw(timerText);
 }
 
 void ScoreBoard::killstreakMessage()

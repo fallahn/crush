@@ -97,7 +97,7 @@ namespace Level_editor
         public MainWindow()
         {
             InitializeComponent();
-            //WindowState = FormWindowState.Maximized;
+            WindowState = FormWindowState.Maximized;
 
             //generate default data for selected sprite so it won't get all
             //borked when there are no sprite sheets to load / missing
@@ -527,7 +527,12 @@ namespace Level_editor
                 var nodeData = (NodeData)m_selectedNode.Tag;
                 if (nodeData.type == type) return;
 
-                //TODO check if we're currently a light and remove from light array if necessary
+                //check if we're currently a light and remove from light array if necessary
+                if(nodeData.light != null)
+                {
+                    m_lights.Remove(nodeData.light);
+                    nodeData.light = null;
+                }
 
                 nodeData.type = type;
                 nodeData.spriteSheet = null;
@@ -643,25 +648,41 @@ namespace Level_editor
                         }
                         else
                         {
+                            //TODO find previously selected index and return to it
                             comboBoxNodePropertyType.SelectedIndex--;
                             return;
                         }
                     case Node.BodyType.Light:
 
-                        //TODO check we have lights availble first
-                        m_selectedNode.Width = lightSize.Width / scale;
-                        m_selectedNode.Height = lightSize.Height / scale;
-                        m_selectedNode.BackgroundImage = Properties.Resources.bulb;
-                        nodeData.layer = Layer.FrontDetail;
-
-                        if(nodeData.drawable != null)
+                        //check we have lights availble first
+                        if (m_lights.Count < m_maxLights)
                         {
-                            nodeData.drawable.FillColor = SFML.Graphics.Color.White;
-                            nodeData.drawable.Texture = m_textureResource.Get("icons/bulb2.png");
-                            nodeData.drawable.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)nodeData.drawable.Texture.Size.X, (int)nodeData.drawable.Texture.Size.Y);
-                        }
+                            m_selectedNode.Width = lightSize.Width / scale;
+                            m_selectedNode.Height = lightSize.Height / scale;
+                            m_selectedNode.BackgroundImage = Properties.Resources.bulb;
+                            nodeData.layer = Layer.FrontDetail;
 
-                        break;
+                            if (nodeData.drawable != null)
+                            {
+                                nodeData.drawable.FillColor = SFML.Graphics.Color.White;
+                                nodeData.drawable.Texture = m_textureResource.Get("icons/bulb2.png");
+                                nodeData.drawable.TextureRect = new SFML.Graphics.IntRect(0, 0, (int)nodeData.drawable.Texture.Size.X, (int)nodeData.drawable.Texture.Size.Y);
+                            }
+
+                            nodeData.light = new Light();
+                            nodeData.light.Colour = SFML.Graphics.Color.White;
+                            nodeData.light.Range = 700f;
+                            nodeData.light.Position = new SFML.Window.Vector2f(m_selectedNode.Left * scale + m_selectedNode.Width, m_selectedNode.Top * scale + m_selectedNode.Height);
+                            m_lights.Add(nodeData.light);
+
+                            break;
+                        }
+                        else
+                        {
+                            //TODO find previously selected index and return to it
+                            comboBoxNodePropertyType.SelectedIndex--;
+                            return;
+                        }
                     default: break;
                 }
 

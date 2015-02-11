@@ -224,7 +224,7 @@ sf::Drawable* NpcController::getDrawable()
     }
     else
     {
-        m_sprites.emplace_back("res/textures/characters/robot.json", m_textureResource);
+        m_sprites.emplace_back("res/textures/characters/robot.cra", m_textureResource);
         AnimatedSprite* s = &m_sprites.back();
         s->setShader(m_shaderResource.get(Shader::Type::Metal));
         s->setLooped(true);

@@ -39,7 +39,7 @@ source distribution.
 
 namespace
 {
-    sf::CircleShape lightDrawable(6.f);
+    sf::CircleShape lightDrawable(4.f);
 
     const sf::Uint8 maxPlayers = 2u;
 
