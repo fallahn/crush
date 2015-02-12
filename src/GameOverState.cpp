@@ -25,7 +25,10 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+//this whole state is crappy and should probably be done from scratch
+
 #include <GameOverState.hpp>
+#include <HighScoreTable.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
 
@@ -43,6 +46,7 @@ namespace
     const sf::Uint16 pointsPerLife = 300u;
     const sf::Uint16 pointsPerHat = 100u;
     const float hatBonus = 1000.f;
+    const sf::Uint16 extraLifeDivisor = 10000u;
 
     //animation consts
     const float maxFrameRate = 18.f;
@@ -195,7 +199,7 @@ GameOverState::GameOverState(StateStack& stack, Context context)
 
 GameOverState::~GameOverState()
 {
-    
+
 }
 
 bool GameOverState::update(float dt)
@@ -216,8 +220,27 @@ bool GameOverState::update(float dt)
             bool barOneDone = m_playerOneBar[m_barIndex].update(dt);
             bool barTwoDone = m_playerTwoBar[m_barIndex].update(dt);
 
+            //check for extra life every 10000 points
+            std::string str = m_playerOneScoreText.getString();
+            sf::Int16 bonusCheckOne = std::atoi(str.c_str()) / extraLifeDivisor;
+            str = m_playerTwoScoreText.getString();
+            sf::Int16 bonusCheckTwo = std::atoi(str.c_str()) / extraLifeDivisor;
+
             m_playerOneScoreText.setString(std::to_string(static_cast<int>(m_playerOneRunningScore + m_playerOneBar[m_barIndex].getValue())));
             m_playerTwoScoreText.setString(std::to_string(static_cast<int>(m_playerTwoRunningScore + m_playerTwoBar[m_barIndex].getValue())));
+
+            str = m_playerOneScoreText.getString();
+            if (bonusCheckOne < (std::atoi(str.c_str()) / extraLifeDivisor))
+            {
+                //TODO raise event for sound
+                getContext().gameData.playerOne.lives++;
+            }
+            str = m_playerTwoScoreText.getString();
+            if (bonusCheckTwo < (std::atoi(str.c_str()) / extraLifeDivisor))
+            {
+                //TODO raise event for sound
+                getContext().gameData.playerTwo.lives++;
+            }
 
             if (barOneDone) m_playerOneSprite.play(idle);
             if (barTwoDone) m_playerTwoSprite.play(idle);
@@ -363,6 +386,12 @@ void GameOverState::continueGame()
     {
         //go back to main menu
         requestStackPush(States::ID::Menu);
+
+        //save high scores
+        auto scores = HighScoreTable::read();
+        scores.emplace_back(std::make_pair(gameData.playerOne.name, gameData.playerOne.score));
+        scores.emplace_back(std::make_pair(gameData.playerTwo.name, gameData.playerTwo.score));
+        HighScoreTable::write(scores);
     }
     else
     {

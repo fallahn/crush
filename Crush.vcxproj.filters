@@ -237,6 +237,9 @@
     <ClCompile Include="src\OptionsState.cpp">
       <Filter>Source Files\States</Filter>
     </ClCompile>
+    <ClCompile Include="src\HighScoreTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Game.hpp">
@@ -432,6 +435,9 @@
       <Filter>Header Files\States</Filter>
     </ClInclude>
     <ClInclude Include="include\JsonUtil.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\HighScoreTable.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

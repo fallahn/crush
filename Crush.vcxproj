@@ -81,6 +81,7 @@
     <ClCompile Include="src\ConsoleState.cpp" />
     <ClCompile Include="src\FileSystem.cpp" />
     <ClCompile Include="src\FreeFormBehaviour.cpp" />
+    <ClCompile Include="src\HighScoreTable.cpp" />
     <ClCompile Include="src\InputMapping.cpp" />
     <ClCompile Include="src\ItemBehaviour.cpp" />
     <ClCompile Include="src\Light.cpp" />
@@ -141,6 +142,7 @@
     <ClInclude Include="include\ConsoleState.hpp" />
     <ClInclude Include="include\FileSystem.hpp" />
     <ClInclude Include="include\FreeFormBehaviour.hpp" />
+    <ClInclude Include="include\HighScoreTable.hpp" />
     <ClInclude Include="include\InputMapping.hpp" />
     <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\OptionsState.hpp" />

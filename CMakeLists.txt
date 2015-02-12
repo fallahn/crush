@@ -71,6 +71,7 @@ add_executable(
 	src/Game.cpp
 	src/GameState.cpp
 	src/GameOverState.cpp
+	src/HighScoreTable.cpp
 	src/InputMapping.cpp
 	src/ItemBehaviour.cpp
 	src/Light.cpp
@@ -109,6 +110,6 @@ add_executable(
 	src/WaterDrawable.cpp)
 
 #copy reources to output directory
-#file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_DESTDIR}/res)
+#file(COPY ${CMAKE_SOURCE_DIR}/res DESTINATION ${CMAKE_DESTDIR})
 		
 
