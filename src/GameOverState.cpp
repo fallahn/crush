@@ -392,6 +392,9 @@ void GameOverState::continueGame()
         scores.emplace_back(std::make_pair(gameData.playerOne.name, gameData.playerOne.score));
         scores.emplace_back(std::make_pair(gameData.playerTwo.name, gameData.playerTwo.score));
         HighScoreTable::write(scores);
+
+        getContext().gameData.playerOne.hasHat = false;
+        getContext().gameData.playerTwo.hasHat = false;
     }
     else
     {

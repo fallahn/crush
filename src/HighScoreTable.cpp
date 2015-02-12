@@ -67,6 +67,7 @@ std::vector<HighScoreTable::Entry> HighScoreTable::read()
     if (results.size() > 0)
     {
         std::sort(results.begin(), results.end(), Sort());
+        while (results.size() > maxEntries) results.pop_back();
     }
 
     return results;
@@ -78,6 +79,8 @@ void HighScoreTable::write(std::vector<HighScoreTable::Entry>& data)
     if (file.good())
     {
         std::sort(data.begin(), data.end(), Sort());
+        while (data.size() > maxEntries) data.pop_back();
+
         for (const auto& e : data)
         {
             file << e.first + "," + std::to_string(e.second) << std::endl;

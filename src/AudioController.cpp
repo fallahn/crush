@@ -84,7 +84,7 @@ void AudioController::update()
 
         auto randStart = static_cast<int>(SoundPlayer::AudioId::Rand01);
         auto sound = static_cast<SoundPlayer::AudioId>(Util::Random::value(randStart, randStart + m_randomCount));
-        m_soundPlayer.play(sound, { x, y, z });
+        //m_soundPlayer.play(sound, { x, y, z });
 
         m_randomTime = static_cast<float>(Util::Random::value(4, 10));
         m_randomClock.restart();
@@ -177,10 +177,10 @@ void AudioController::onNotify(Subject& s, const Event& e)
                 m_soundPlayer.play(SoundPlayer::AudioId::HatSpawn, { e.node.positionX, e.node.positionY });
                 break;
             case Category::Bat:
-                m_soundPlayer.play((Util::Random::value(0, 1) == 0) ? SoundPlayer::AudioId::Bat01 : SoundPlayer::AudioId::Bat02, { }, false, static_cast<Node*>(&s));
+                //m_soundPlayer.play((Util::Random::value(0, 1) == 0) ? SoundPlayer::AudioId::Bat01 : SoundPlayer::AudioId::Bat02, {}, false, static_cast<Node*>(&s));
                 break;
             case Category::Bird:
-                m_soundPlayer.play((Util::Random::value(0, 1) == 0) ? SoundPlayer::AudioId::Bird01 : SoundPlayer::AudioId::Bird02, { e.node.positionX, e.node.positionY });
+                m_soundPlayer.play((Util::Random::value(0, 1) == 0) ? SoundPlayer::AudioId::Bird01 : SoundPlayer::AudioId::Bird02, {}, false, static_cast<Node*>(&s));
                 break;
             default: break;
             }
