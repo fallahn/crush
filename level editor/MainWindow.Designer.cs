@@ -50,6 +50,7 @@
             this.comboBoxNodePropertyType = new System.Windows.Forms.ComboBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBoxMapProperties = new System.Windows.Forms.GroupBox();
+            this.checkBoxPreviewLighting = new System.Windows.Forms.CheckBox();
             this.buttonSolidTexture = new System.Windows.Forms.Button();
             this.label13 = new System.Windows.Forms.Label();
             this.panelAmbientColour = new System.Windows.Forms.Panel();
@@ -81,7 +82,8 @@
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useSoftwarePreviewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTips = new System.Windows.Forms.ToolTip(this.components);
-            this.checkBoxPreviewLighting = new System.Windows.Forms.CheckBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.comboBoxAudioTheme = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -262,7 +264,7 @@
             this.checkBoxFrontDetail.Location = new System.Drawing.Point(19, 168);
             this.checkBoxFrontDetail.Name = "checkBoxFrontDetail";
             this.checkBoxFrontDetail.Size = new System.Drawing.Size(80, 17);
-            this.checkBoxFrontDetail.TabIndex = 11;
+            this.checkBoxFrontDetail.TabIndex = 8;
             this.checkBoxFrontDetail.Text = "Front Detail";
             this.checkBoxFrontDetail.UseVisualStyleBackColor = true;
             this.checkBoxFrontDetail.CheckedChanged += new System.EventHandler(this.checkBoxFrontDetail_CheckedChanged);
@@ -272,7 +274,7 @@
             this.buttonDeleteNode.Location = new System.Drawing.Point(134, 164);
             this.buttonDeleteNode.Name = "buttonDeleteNode";
             this.buttonDeleteNode.Size = new System.Drawing.Size(75, 23);
-            this.buttonDeleteNode.TabIndex = 8;
+            this.buttonDeleteNode.TabIndex = 9;
             this.buttonDeleteNode.Text = "Delete";
             this.buttonDeleteNode.UseVisualStyleBackColor = true;
             this.buttonDeleteNode.Click += new System.EventHandler(this.buttonDeleteNode_Click);
@@ -388,6 +390,8 @@
             // 
             // groupBoxMapProperties
             // 
+            this.groupBoxMapProperties.Controls.Add(this.comboBoxAudioTheme);
+            this.groupBoxMapProperties.Controls.Add(this.label14);
             this.groupBoxMapProperties.Controls.Add(this.checkBoxPreviewLighting);
             this.groupBoxMapProperties.Controls.Add(this.buttonSolidTexture);
             this.groupBoxMapProperties.Controls.Add(this.label13);
@@ -415,12 +419,23 @@
             this.groupBoxMapProperties.TabStop = false;
             this.groupBoxMapProperties.Text = "Map Properties";
             // 
+            // checkBoxPreviewLighting
+            // 
+            this.checkBoxPreviewLighting.AutoSize = true;
+            this.checkBoxPreviewLighting.Location = new System.Drawing.Point(19, 402);
+            this.checkBoxPreviewLighting.Name = "checkBoxPreviewLighting";
+            this.checkBoxPreviewLighting.Size = new System.Drawing.Size(104, 17);
+            this.checkBoxPreviewLighting.TabIndex = 21;
+            this.checkBoxPreviewLighting.Text = "Preview Lighting";
+            this.checkBoxPreviewLighting.UseVisualStyleBackColor = true;
+            this.checkBoxPreviewLighting.CheckedChanged += new System.EventHandler(this.checkBoxPreviewLighting_CheckedChanged);
+            // 
             // buttonSolidTexture
             // 
             this.buttonSolidTexture.Location = new System.Drawing.Point(134, 128);
             this.buttonSolidTexture.Name = "buttonSolidTexture";
             this.buttonSolidTexture.Size = new System.Drawing.Size(75, 23);
-            this.buttonSolidTexture.TabIndex = 19;
+            this.buttonSolidTexture.TabIndex = 7;
             this.buttonSolidTexture.Text = "Browse";
             this.buttonSolidTexture.UseVisualStyleBackColor = true;
             this.buttonSolidTexture.Click += new System.EventHandler(this.buttonSolidTexture_Click);
@@ -431,7 +446,7 @@
             this.label13.Location = new System.Drawing.Point(15, 133);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(87, 13);
-            this.label13.TabIndex = 18;
+            this.label13.TabIndex = 6;
             this.label13.Text = "Platform Texture:";
             // 
             // panelAmbientColour
@@ -440,7 +455,7 @@
             this.panelAmbientColour.Location = new System.Drawing.Point(135, 361);
             this.panelAmbientColour.Name = "panelAmbientColour";
             this.panelAmbientColour.Size = new System.Drawing.Size(75, 25);
-            this.panelAmbientColour.TabIndex = 17;
+            this.panelAmbientColour.TabIndex = 20;
             this.panelAmbientColour.BackColorChanged += new System.EventHandler(this.panelAmbientColour_BackColorChanged);
             // 
             // panelSunColour
@@ -449,7 +464,7 @@
             this.panelSunColour.Location = new System.Drawing.Point(135, 330);
             this.panelSunColour.Name = "panelSunColour";
             this.panelSunColour.Size = new System.Drawing.Size(75, 24);
-            this.panelSunColour.TabIndex = 16;
+            this.panelSunColour.TabIndex = 18;
             this.panelSunColour.BackColorChanged += new System.EventHandler(this.panelSunColour_BackColorChanged);
             // 
             // label12
@@ -458,7 +473,7 @@
             this.label12.Location = new System.Drawing.Point(16, 373);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(81, 13);
-            this.label12.TabIndex = 15;
+            this.label12.TabIndex = 19;
             this.label12.Text = "Ambient Colour:";
             // 
             // label11
@@ -467,7 +482,7 @@
             this.label11.Location = new System.Drawing.Point(17, 341);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(62, 13);
-            this.label11.TabIndex = 14;
+            this.label11.TabIndex = 17;
             this.label11.Text = "Sun Colour:";
             // 
             // label9
@@ -476,7 +491,7 @@
             this.label9.Location = new System.Drawing.Point(16, 232);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(85, 13);
-            this.label9.TabIndex = 13;
+            this.label9.TabIndex = 10;
             this.label9.Text = "Spawn Positions";
             // 
             // numericUpDownPlayerTwoY
@@ -489,7 +504,7 @@
             0});
             this.numericUpDownPlayerTwoY.Name = "numericUpDownPlayerTwoY";
             this.numericUpDownPlayerTwoY.Size = new System.Drawing.Size(58, 20);
-            this.numericUpDownPlayerTwoY.TabIndex = 12;
+            this.numericUpDownPlayerTwoY.TabIndex = 16;
             this.numericUpDownPlayerTwoY.ValueChanged += new System.EventHandler(this.numericUpDownPlayerTwoY_ValueChanged);
             // 
             // numericUpDownPlayerTwoX
@@ -502,7 +517,7 @@
             0});
             this.numericUpDownPlayerTwoX.Name = "numericUpDownPlayerTwoX";
             this.numericUpDownPlayerTwoX.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDownPlayerTwoX.TabIndex = 11;
+            this.numericUpDownPlayerTwoX.TabIndex = 15;
             this.numericUpDownPlayerTwoX.ValueChanged += new System.EventHandler(this.numericUpDownPlayerTwoX_ValueChanged);
             // 
             // label8
@@ -511,7 +526,7 @@
             this.label8.Location = new System.Drawing.Point(17, 286);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(63, 13);
-            this.label8.TabIndex = 10;
+            this.label8.TabIndex = 14;
             this.label8.Text = "Player Two:";
             // 
             // numericUpDownPlayerOneY
@@ -524,7 +539,7 @@
             0});
             this.numericUpDownPlayerOneY.Name = "numericUpDownPlayerOneY";
             this.numericUpDownPlayerOneY.Size = new System.Drawing.Size(58, 20);
-            this.numericUpDownPlayerOneY.TabIndex = 9;
+            this.numericUpDownPlayerOneY.TabIndex = 13;
             this.numericUpDownPlayerOneY.ValueChanged += new System.EventHandler(this.numericUpDownPlayerOneY_ValueChanged);
             // 
             // numericUpDownPlayerOneX
@@ -537,7 +552,7 @@
             0});
             this.numericUpDownPlayerOneX.Name = "numericUpDownPlayerOneX";
             this.numericUpDownPlayerOneX.Size = new System.Drawing.Size(57, 20);
-            this.numericUpDownPlayerOneX.TabIndex = 8;
+            this.numericUpDownPlayerOneX.TabIndex = 12;
             this.numericUpDownPlayerOneX.ValueChanged += new System.EventHandler(this.numericUpDownPlayerOneX_ValueChanged);
             // 
             // label7
@@ -546,7 +561,7 @@
             this.label7.Location = new System.Drawing.Point(17, 257);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(62, 13);
-            this.label7.TabIndex = 7;
+            this.label7.TabIndex = 11;
             this.label7.Text = "Player One:";
             // 
             // numericUpDownNpcTotal
@@ -564,7 +579,7 @@
             0});
             this.numericUpDownNpcTotal.Name = "numericUpDownNpcTotal";
             this.numericUpDownNpcTotal.Size = new System.Drawing.Size(47, 20);
-            this.numericUpDownNpcTotal.TabIndex = 6;
+            this.numericUpDownNpcTotal.TabIndex = 3;
             this.numericUpDownNpcTotal.Value = new decimal(new int[] {
             1,
             0,
@@ -578,7 +593,7 @@
             this.label3.Location = new System.Drawing.Point(15, 52);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(59, 13);
-            this.label3.TabIndex = 5;
+            this.label3.TabIndex = 2;
             this.label3.Text = "NPC Total:";
             // 
             // buttonBackgroundImage
@@ -586,7 +601,7 @@
             this.buttonBackgroundImage.Location = new System.Drawing.Point(134, 96);
             this.buttonBackgroundImage.Name = "buttonBackgroundImage";
             this.buttonBackgroundImage.Size = new System.Drawing.Size(75, 23);
-            this.buttonBackgroundImage.TabIndex = 3;
+            this.buttonBackgroundImage.TabIndex = 5;
             this.buttonBackgroundImage.Text = "Browse";
             this.buttonBackgroundImage.UseVisualStyleBackColor = true;
             this.buttonBackgroundImage.Click += new System.EventHandler(this.buttonBackgroundImage_Click);
@@ -597,7 +612,7 @@
             this.label2.Location = new System.Drawing.Point(15, 101);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(97, 13);
-            this.label2.TabIndex = 2;
+            this.label2.TabIndex = 4;
             this.label2.Text = "BackgroundImage:";
             // 
             // label1
@@ -606,7 +621,7 @@
             this.label1.Location = new System.Drawing.Point(15, 26);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(63, 13);
-            this.label1.TabIndex = 1;
+            this.label1.TabIndex = 0;
             this.label1.Text = "NPC Count:";
             // 
             // numericUpDownNpcCount
@@ -624,7 +639,7 @@
             0});
             this.numericUpDownNpcCount.Name = "numericUpDownNpcCount";
             this.numericUpDownNpcCount.Size = new System.Drawing.Size(47, 20);
-            this.numericUpDownNpcCount.TabIndex = 0;
+            this.numericUpDownNpcCount.TabIndex = 1;
             this.numericUpDownNpcCount.Value = new decimal(new int[] {
             1,
             0,
@@ -730,16 +745,23 @@
             this.useSoftwarePreviewToolStripMenuItem.ToolTipText = "Disable OpenGL Acceleration";
             this.useSoftwarePreviewToolStripMenuItem.CheckedChanged += new System.EventHandler(this.useSoftwarePreviewToolStripMenuItem_CheckedChanged);
             // 
-            // checkBoxPreviewLighting
+            // label14
             // 
-            this.checkBoxPreviewLighting.AutoSize = true;
-            this.checkBoxPreviewLighting.Location = new System.Drawing.Point(19, 402);
-            this.checkBoxPreviewLighting.Name = "checkBoxPreviewLighting";
-            this.checkBoxPreviewLighting.Size = new System.Drawing.Size(104, 17);
-            this.checkBoxPreviewLighting.TabIndex = 20;
-            this.checkBoxPreviewLighting.Text = "Preview Lighting";
-            this.checkBoxPreviewLighting.UseVisualStyleBackColor = true;
-            this.checkBoxPreviewLighting.CheckedChanged += new System.EventHandler(this.checkBoxPreviewLighting_CheckedChanged);
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(17, 177);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(73, 13);
+            this.label14.TabIndex = 8;
+            this.label14.Text = "Audio Theme:";
+            // 
+            // comboBoxAudioTheme
+            // 
+            this.comboBoxAudioTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxAudioTheme.FormattingEnabled = true;
+            this.comboBoxAudioTheme.Location = new System.Drawing.Point(96, 174);
+            this.comboBoxAudioTheme.Name = "comboBoxAudioTheme";
+            this.comboBoxAudioTheme.Size = new System.Drawing.Size(113, 21);
+            this.comboBoxAudioTheme.TabIndex = 9;
             // 
             // MainWindow
             // 
@@ -841,6 +863,8 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useSoftwarePreviewToolStripMenuItem;
         private System.Windows.Forms.CheckBox checkBoxPreviewLighting;
+        private System.Windows.Forms.ComboBox comboBoxAudioTheme;
+        private System.Windows.Forms.Label label14;
     }
 }
 

@@ -41,8 +41,8 @@ namespace Shader
     direction twice*/
 
     /*ANOTHER NOTE we can't pass arrays of data to SFML shaders, so
-    light arrays are fudged by packing them into matrices and extracting
-    again on the GPU. Not ideal, but it works*/
+    light arrays are packed into matrices and extracted again on the GPU.
+    Not ideal, but it works*/
 
     /*SKY_MAP is the scene reflected vertically for effects like water
     REFLECT_MAP is the scene reflected horizontally for metal type reflection*/

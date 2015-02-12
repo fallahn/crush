@@ -28,6 +28,7 @@ source distribution.
 #include <AudioController.hpp>
 #include <Node.hpp>
 #include <Util.hpp>
+#include <FileSystem.hpp>
 
 #include <SFML/Audio/Listener.hpp>
 
@@ -35,7 +36,8 @@ source distribution.
 #include <iostream>
 
 AudioController::AudioController()
-    : m_randomTime(2.f)
+    : m_randomCount (0),
+    m_randomTime    (2.f)
 {
     //preload sounds
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::PlayerJump, "res/sound/fx/player_jump.wav");
@@ -60,16 +62,6 @@ AudioController::AudioController()
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::HatLand, "res/sound/fx/hat_land.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::KillStreak, "res/sound/fx/killstreak.wav");
 
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand01, "res/sound/fx/random/01.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand02, "res/sound/fx/random/02.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand03, "res/sound/fx/random/03.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand04, "res/sound/fx/random/04.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand05, "res/sound/fx/random/05.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand06, "res/sound/fx/random/06.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand07, "res/sound/fx/random/07.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand08, "res/sound/fx/random/08.wav");
-    m_soundPlayer.cacheSound(SoundPlayer::AudioId::Rand09, "res/sound/fx/random/09.wav");
-
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bat01, "res/sound/fx/bat01.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bat02, "res/sound/fx/bat02.wav");
     m_soundPlayer.cacheSound(SoundPlayer::AudioId::Bird01, "res/sound/fx/bird01.wav");
@@ -83,13 +75,15 @@ AudioController::AudioController()
 void AudioController::update()
 {
     //spawn random ambience etc
-    if (m_randomClock.getElapsedTime().asSeconds() > m_randomTime)
+    if (m_randomCount > 0 &&
+     m_randomClock.getElapsedTime().asSeconds() > m_randomTime)
     {
         const float x = static_cast<float>(Util::Random::value(0, 1920));
         const float y = static_cast<float>(Util::Random::value(0, 1080));
         const float z = static_cast<float>(Util::Random::value(-1000, 1800));
 
-        auto sound = static_cast<SoundPlayer::AudioId>(Util::Random::value(static_cast<int>(SoundPlayer::AudioId::Rand01), static_cast<int>(SoundPlayer::AudioId::Rand09)));
+        auto randStart = static_cast<int>(SoundPlayer::AudioId::Rand01);
+        auto sound = static_cast<SoundPlayer::AudioId>(Util::Random::value(randStart, randStart + m_randomCount));
         m_soundPlayer.play(sound, { x, y, z });
 
         m_randomTime = static_cast<float>(Util::Random::value(4, 10));
@@ -246,6 +240,21 @@ void AudioController::onNotify(Subject& s, const Event& e)
         break;
     default: break;
     }
+}
+
+void AudioController::loadTheme(const std::string& theme)
+{
+    std::string path = "res/sound/themes/" + theme + "/random";
+    auto result = FileSystem::listFiles(path);
+
+    auto randStart = static_cast<int>(SoundPlayer::AudioId::Rand01);
+    auto count = std::min(static_cast<int>(SoundPlayer::AudioId::Rand09) - randStart, static_cast<int>(result.size()));
+    for (auto i = 0; i < count; ++i)
+    {
+        m_soundPlayer.cacheSound(static_cast<SoundPlayer::AudioId>(randStart + i), path + "/" + result[i]);
+    }
+
+    m_randomCount = (count > 0) ? count - 1 : 0;
 }
 
 //private

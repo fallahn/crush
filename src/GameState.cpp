@@ -49,8 +49,6 @@ namespace
             static_cast<float>(c.g) / 255.f,
             static_cast<float>(c.b) / 255.f };
     }
-
-    const std::string music = "res/sound/music/night_sounds.ogg";
 }
 
 GameState::GameState(StateStack& stack, Context context)
@@ -100,7 +98,6 @@ GameState::GameState(StateStack& stack, Context context)
     m_players[1].setSpawnFunction(playerSpawnFunc);
     m_players[0].setSpawnPosition(map.getPlayerOneSpawn());
     m_players[1].setSpawnPosition(map.getPlayerTwoSpawn());
-    //TODO set keybinds from context
 
     std::function<void(const sf::Vector2f&, const sf::Vector2f&)> npcSpawnFunc = std::bind(&GameState::addNpc, this, std::placeholders::_1, std::placeholders::_2);
     m_npcController.setSpawnFunction(npcSpawnFunc);
@@ -129,9 +126,18 @@ GameState::GameState(StateStack& stack, Context context)
     //sf::Clock c;
     //while (c.getElapsedTime().asSeconds() < 5.f){}
 
+    std::string theme = map.getAudioTheme();
+    std::string music;
+    if (!theme.empty())
+    {
+        m_audioController.loadTheme(theme);
+        music = "res/sound/themes/" + theme + "/main.ogg";
+    }
+
     //close loading screen before starting music
     quitLoadingScreen();
-    context.gameInstance.getMusicPlayer().play(music);
+    if (!music.empty())
+        context.gameInstance.getMusicPlayer().play(music);
 
     registerConsoleCommands();
     context.renderWindow.setMouseCursorVisible(false);

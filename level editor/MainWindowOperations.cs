@@ -372,6 +372,8 @@ namespace Level_editor
             m_currentMap.SunColour = panelSunColour.BackColor.ToArgb();
             m_currentMap.BackgroundTexture = m_backgroundFileName;
             m_currentMap.PlatformTexture = m_platformFileName;
+            if(comboBoxAudioTheme.Items.Count > 0)
+                m_currentMap.AudioTheme = comboBoxAudioTheme.SelectedItem.ToString();
             m_currentMap.Nodes.Clear();
 
             foreach(Panel p in panelEditorInner.Controls)
@@ -482,6 +484,10 @@ namespace Level_editor
             m_selectedNode = null;
             m_playerOnePanel = null;
             m_playerTwoPanel = null;
+
+            var res = comboBoxAudioTheme.FindString(m_currentMap.AudioTheme);
+            if (res > -1) comboBoxAudioTheme.SelectedIndex = res;
+
 
             foreach(Node n in m_currentMap.Nodes)
             {

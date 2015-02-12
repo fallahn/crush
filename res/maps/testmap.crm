@@ -8,6 +8,7 @@
   "PlayerTwoSpawn": "1840, 100",
   "AmbientColour": -14671840,
   "SunColour": -11967786,
+  "AudioTheme": "night",
   "Nodes": [
     {
       "Position": "920, 490",
@@ -17,350 +18,6 @@
       "Colour": 0,
       "SpriteSheet": "edging.png",
       "FrameName": "edge_end_left.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1640, 170",
-      "Size": "34, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_left.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "890, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1190, 490",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1050, 840",
-      "Size": "28, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_right.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1440, 740",
-      "Size": "34, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_left.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1820, 170",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "920, 752",
-      "Size": "32, 32",
-      "Type": "Light",
-      "Layer": "FrontDetail",
-      "Colour": -15819,
-      "AnchorOffset": 36
-    },
-    {
-      "Position": "1550, 740",
-      "Size": "28, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_right.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1544, 668",
-      "Size": "32, 32",
-      "Type": "Light",
-      "Layer": "FrontDetail",
-      "Colour": -5020,
-      "AnchorOffset": 40
-    },
-    {
-      "Position": "210, 640",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "730, 300",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1050, 300",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1470, 740",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "170, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "530, 640",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1740, 410",
-      "Size": "50, 56",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "ring.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "360, 940",
-      "Size": "50, 56",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "ring.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "410, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1490, 340",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "580, 390",
-      "Size": "50, 56",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "ring.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1460, 340",
-      "Size": "34, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_left.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "20, 210",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "890, 300",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1890, 340",
-      "Size": "28, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_right.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1130, 300",
-      "Size": "28, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_right.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1030, 490",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1350, 490",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "290, 640",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "370, 640",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "502, 564",
-      "Size": "32, 32",
-      "Type": "Light",
-      "Layer": "FrontDetail",
-      "Colour": -794,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "670, 940",
-      "Size": "50, 56",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "ring.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "10, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "570, 300",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1270, 490",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "950, 490",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
       "AnchorOffset": 0
     },
     {
@@ -532,127 +189,7 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "690, 640",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1730, 340",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "770, 640",
-      "Size": "28, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_right.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "540, 300",
-      "Size": "34, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_end_left.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1480, 800",
-      "Size": "50, 56",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "ring.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "450, 640",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "650, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "570, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "90, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1670, 170",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "940, 940",
-      "Size": "50, 56",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "ring.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "490, 840",
-      "Size": "80, 22",
-      "Type": "Detail",
-      "Layer": "FrontDetail",
-      "Colour": 0,
-      "SpriteSheet": "edging.png",
-      "FrameName": "edge_tile.png",
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "180, 210",
+      "Position": "730, 840",
       "Size": "80, 22",
       "Type": "Detail",
       "Layer": "FrontDetail",
@@ -672,7 +209,7 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "730, 840",
+      "Position": "180, 210",
       "Size": "80, 22",
       "Type": "Detail",
       "Layer": "FrontDetail",
@@ -682,24 +219,512 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "20, 850",
-      "Size": "1050, 210",
+      "Position": "940, 940",
+      "Size": "50, 56",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "ring.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1670, 170",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "90, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "950, 490",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "570, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "450, 640",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1480, 800",
+      "Size": "50, 56",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "ring.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "540, 300",
+      "Size": "34, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_left.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "770, 640",
+      "Size": "28, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_right.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1730, 340",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "690, 640",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "650, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1270, 490",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "490, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "10, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1640, 170",
+      "Size": "34, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_left.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "890, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1190, 490",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1050, 840",
+      "Size": "28, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_right.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1440, 740",
+      "Size": "34, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_left.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1820, 170",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "920, 752",
+      "Size": "32, 32",
+      "Type": "Light",
+      "Layer": "FrontDetail",
+      "Colour": -15819,
+      "AnchorOffset": 36
+    },
+    {
+      "Position": "1550, 740",
+      "Size": "28, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_right.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "210, 640",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "730, 300",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1050, 300",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1470, 740",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "170, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "530, 640",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1740, 410",
+      "Size": "50, 56",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "ring.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1544, 668",
+      "Size": "32, 32",
+      "Type": "Light",
+      "Layer": "FrontDetail",
+      "Colour": -5020,
+      "AnchorOffset": 40
+    },
+    {
+      "Position": "410, 840",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "670, 940",
+      "Size": "50, 56",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "ring.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "360, 940",
+      "Size": "50, 56",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "ring.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "370, 640",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "290, 640",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1350, 490",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1030, 490",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1130, 300",
+      "Size": "28, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_right.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "502, 564",
+      "Size": "32, 32",
+      "Type": "Light",
+      "Layer": "FrontDetail",
+      "Colour": -794,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "570, 300",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "890, 300",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "20, 210",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1460, 340",
+      "Size": "34, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_left.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "580, 390",
+      "Size": "50, 56",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "ring.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1490, 340",
+      "Size": "80, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_tile.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1890, 340",
+      "Size": "28, 22",
+      "Type": "Detail",
+      "Layer": "FrontDetail",
+      "Colour": 0,
+      "SpriteSheet": "edging.png",
+      "FrameName": "edge_end_right.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "20, 220",
+      "Size": "260, 40",
       "Type": "Solid",
       "Layer": "Solid",
       "Colour": 0,
       "AnchorOffset": 0
     },
     {
-      "Position": "550, 350",
-      "Size": "110, 190",
+      "Position": "550, 310",
+      "Size": "600, 40",
       "Type": "Solid",
       "Layer": "Solid",
       "Colour": 0,
       "AnchorOffset": 0
     },
     {
-      "Position": "930, 500",
-      "Size": "970, 40",
+      "Position": "1900, 0",
+      "Size": "20, 1060",
+      "Type": "Solid",
+      "Layer": "Solid",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1470, 350",
+      "Size": "430, 150",
+      "Type": "Solid",
+      "Layer": "Solid",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "0, 0",
+      "Size": "20, 1060",
+      "Type": "Solid",
+      "Layer": "Solid",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1070, 940",
+      "Size": "830, 120",
       "Type": "Solid",
       "Layer": "Solid",
       "Colour": 0,
@@ -722,56 +747,32 @@
       "AnchorOffset": 0
     },
     {
+      "Position": "930, 500",
+      "Size": "970, 40",
+      "Type": "Solid",
+      "Layer": "Solid",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "550, 350",
+      "Size": "110, 190",
+      "Type": "Solid",
+      "Layer": "Solid",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "20, 850",
+      "Size": "1050, 210",
+      "Type": "Solid",
+      "Layer": "Solid",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
       "Position": "0, 1060",
       "Size": "1920, 20",
-      "Type": "Solid",
-      "Layer": "Solid",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1070, 940",
-      "Size": "830, 120",
-      "Type": "Solid",
-      "Layer": "Solid",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "0, 0",
-      "Size": "20, 1060",
-      "Type": "Solid",
-      "Layer": "Solid",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1470, 350",
-      "Size": "430, 150",
-      "Type": "Solid",
-      "Layer": "Solid",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1900, 0",
-      "Size": "20, 1060",
-      "Type": "Solid",
-      "Layer": "Solid",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "550, 310",
-      "Size": "600, 40",
-      "Type": "Solid",
-      "Layer": "Solid",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "20, 220",
-      "Size": "260, 40",
       "Type": "Solid",
       "Layer": "Solid",
       "Colour": 0,
@@ -786,14 +787,6 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "1070, 860",
-      "Size": "380, 80",
-      "Type": "Water",
-      "Layer": "Water",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
       "Position": "1570, 860",
       "Size": "330, 80",
       "Type": "Water",
@@ -802,159 +795,15 @@
       "AnchorOffset": 0
     },
     {
+      "Position": "1070, 860",
+      "Size": "380, 80",
+      "Type": "Water",
+      "Layer": "Water",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
       "Position": "1480, 660",
-      "Size": "64, 64",
-      "Type": "Item",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "40, 130",
-      "Size": "40, 64",
-      "Type": "PlayerOne",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "520, 770",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "480, 700",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1650, 260",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "200, 560",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "440, 770",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "580, 230",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1840, 100",
-      "Size": "40, 64",
-      "Type": "PlayerTwo",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "200, 480",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1400, 420",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1250, 840",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "680, 230",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "200, 400",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1250, 740",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1800, 760",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "630, 150",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1000, 770",
-      "Size": "66, 66",
-      "Type": "Block",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "38, 756",
-      "Size": "64, 64",
-      "Type": "Item",
-      "Layer": "Dynamic",
-      "Colour": 0,
-      "AnchorOffset": 0
-    },
-    {
-      "Position": "1820, 260",
       "Size": "64, 64",
       "Type": "Item",
       "Layer": "Dynamic",
@@ -970,143 +819,155 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "930, 250",
-      "Size": "62, 58",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "1820, 260",
+      "Size": "64, 64",
+      "Type": "Item",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Bush-03.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "1270, 440",
-      "Size": "106, 62",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "38, 756",
+      "Size": "64, 64",
+      "Type": "Item",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Rock_Large-02.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "1130, 460",
-      "Size": "100, 42",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "1000, 770",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Fence-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "950, 190",
-      "Size": "128, 120",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "630, 150",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "VineLarge-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "430, 590",
-      "Size": "62, 58",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "1250, 740",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Bush-03.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "1234, 470",
-      "Size": "28, 26",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "200, 400",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Shroom-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "1030, 460",
-      "Size": "100, 42",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "680, 230",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Fence-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "500, 550",
-      "Size": "34, 96",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "1250, 840",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Lantern-02.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "114, 146",
-      "Size": "70, 76",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "1800, 760",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Rock_Large-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "220, 810",
-      "Size": "74, 42",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "200, 480",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Bush-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "324, 470",
-      "Size": "68, 176",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "1840, 100",
+      "Size": "40, 64",
+      "Type": "PlayerTwo",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "VineLarge-02.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "1750, 300",
-      "Size": "68, 50",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "580, 230",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Bush-02.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "720, 570",
-      "Size": "70, 76",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "440, 770",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Rock_Large-01.png",
       "AnchorOffset": 0
     },
     {
-      "Position": "1660, 140",
-      "Size": "74, 42",
-      "Type": "Detail",
-      "Layer": "RearDetail",
+      "Position": "200, 560",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
       "Colour": 0,
-      "SpriteSheet": "scenery01.png",
-      "FrameName": "Bush-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1650, 260",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "480, 700",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "520, 770",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "40, 130",
+      "Size": "40, 64",
+      "Type": "PlayerOne",
+      "Layer": "Dynamic",
+      "Colour": 0,
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1400, 420",
+      "Size": "66, 66",
+      "Type": "Block",
+      "Layer": "Dynamic",
+      "Colour": 0,
       "AnchorOffset": 0
     },
     {
@@ -1150,13 +1011,13 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "930, 460",
-      "Size": "100, 42",
+      "Position": "1110, 210",
+      "Size": "34, 96",
       "Type": "Detail",
       "Layer": "RearDetail",
       "Colour": 0,
       "SpriteSheet": "scenery01.png",
-      "FrameName": "Fence-01.png",
+      "FrameName": "Lantern-02.png",
       "AnchorOffset": 0
     },
     {
@@ -1190,13 +1051,133 @@
       "AnchorOffset": 0
     },
     {
-      "Position": "1110, 210",
+      "Position": "1660, 140",
+      "Size": "74, 42",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Bush-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "930, 460",
+      "Size": "100, 42",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Fence-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "720, 570",
+      "Size": "70, 76",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Rock_Large-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1270, 440",
+      "Size": "106, 62",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Rock_Large-02.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "324, 470",
+      "Size": "68, 176",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "VineLarge-02.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "220, 810",
+      "Size": "74, 42",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Bush-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "114, 146",
+      "Size": "70, 76",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Rock_Large-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "500, 550",
       "Size": "34, 96",
       "Type": "Detail",
       "Layer": "RearDetail",
       "Colour": 0,
       "SpriteSheet": "scenery01.png",
       "FrameName": "Lantern-02.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1030, 460",
+      "Size": "100, 42",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Fence-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1234, 470",
+      "Size": "28, 26",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Shroom-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "430, 590",
+      "Size": "62, 58",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Bush-03.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "950, 190",
+      "Size": "128, 120",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "VineLarge-01.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1130, 460",
+      "Size": "100, 42",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Fence-01.png",
       "AnchorOffset": 0
     },
     {
@@ -1207,6 +1188,26 @@
       "Colour": 0,
       "SpriteSheet": "scenery01.png",
       "FrameName": "Shroom-02.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "930, 250",
+      "Size": "62, 58",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Bush-03.png",
+      "AnchorOffset": 0
+    },
+    {
+      "Position": "1750, 300",
+      "Size": "68, 50",
+      "Type": "Detail",
+      "Layer": "RearDetail",
+      "Colour": 0,
+      "SpriteSheet": "scenery01.png",
+      "FrameName": "Bush-02.png",
       "AnchorOffset": 0
     },
     {

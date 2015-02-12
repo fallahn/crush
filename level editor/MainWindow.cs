@@ -97,7 +97,7 @@ namespace Level_editor
         public MainWindow()
         {
             InitializeComponent();
-            WindowState = FormWindowState.Maximized;
+            //WindowState = FormWindowState.Maximized;
 
             //generate default data for selected sprite so it won't get all
             //borked when there are no sprite sheets to load / missing
@@ -183,6 +183,8 @@ namespace Level_editor
             //enable numeric box snapping
             checkBoxSnap_CheckedChanged(null, EventArgs.Empty);
 
+            GetAudioThemes();
+
             newFile();
         }
 
@@ -205,6 +207,26 @@ namespace Level_editor
             cb.DataSource = data;
             cb.DisplayMember = "Description";
             cb.ValueMember = "value";
+        }
+        private void GetAudioThemes()
+        {
+            //check we have a valid path for resources and attempt to find audio themes
+            if(Directory.Exists(m_textureDirectory))
+            {
+                string audioPath = m_textureDirectory.Replace("textures", "sound\\themes");
+                if(Directory.Exists(audioPath))
+                {
+                    var dirs = Directory.GetDirectories(audioPath);
+                    foreach (var d in dirs)
+                    {
+                        comboBoxAudioTheme.Items.Add(new DirectoryInfo(d).Name);
+                    }
+                    if(comboBoxAudioTheme.Items.Count > 0)
+                    {
+                        comboBoxAudioTheme.SelectedIndex = 0;
+                    }
+                }
+            }
         }
 
         //toolstrip---
@@ -269,6 +291,7 @@ namespace Level_editor
             if(optionsWindow.ShowDialog() == DialogResult.OK)
             {
                 loadTextures();
+                GetAudioThemes();
             }
         }
         private void useSoftwarePreviewToolStripMenuItem_CheckedChanged(object sender, EventArgs e)

@@ -46,13 +46,13 @@ public:
     ~AudioController() = default;
 
     void update();
-
     void onNotify(Subject& s, const Event& evt) override;
-
+    void loadTheme(const std::string& theme);
 
 private:
     SoundPlayer m_soundPlayer;
 
+    sf::Int32 m_randomCount;
     float m_randomTime;
     sf::Clock m_randomClock;
 };

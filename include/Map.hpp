@@ -77,6 +77,8 @@ public:
     const std::string& getBackgroundImageName() const;
     const std::string& getPlatformImageName() const;
 
+    const std::string& getAudioTheme() const;
+
 private:
 
     sf::Vector2f m_playerOneSpawn;
@@ -92,6 +94,8 @@ private:
 
     std::string m_backgroundImageName;
     std::string m_platformImageName;
+
+    std::string m_audioTheme;
 
     std::vector<Node> m_nodes;
 };

@@ -74,7 +74,9 @@ namespace Level_editor
             + "uniform mat4 u_inverseWorldViewMatrix;\n"
 
             + "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n"
-
+            + "varying vec3 v_directionalLightDirection;\n"
+            
+            + "const vec3 lightDir = normalize(vec3(20.0, -40.0, 30.0));"
             + "const vec3 normal = vec3(0.0, 0.0, 1.0);\n" 
             + "const vec3 tangent = vec3(1.0, 0.0, 0.0);\n"
 
@@ -97,6 +99,11 @@ namespace Level_editor
             + "vec3 t = normalize(gl_NormalMatrix * tangent);\n"
             + "vec3 b = cross(n, t);\n"
             + "vec3 viewVertex = vec3(gl_ModelViewMatrix * gl_Vertex);\n"
+
+            + "vec3 viewDirectionalLightDirection = vec3(gl_ModelViewMatrix * u_inverseWorldViewMatrix * vec4(lightDir, 1.0));\n"
+            + "v_directionalLightDirection.x = dot(viewDirectionalLightDirection, t);\n"
+            + "v_directionalLightDirection.y = dot(viewDirectionalLightDirection, b);\n"
+            + "v_directionalLightDirection.z = dot(viewDirectionalLightDirection, n);\n"
 
             + "vec3[LIGHT_COUNT] pointPositions = unpackLightPositions();\n"
             + "for(int i = 0; i < LIGHT_COUNT; i++)\n"
@@ -121,13 +128,13 @@ namespace Level_editor
             + "#define LIGHT_COUNT 4\n"
 
             + "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n"
+            + "varying vec3 v_directionalLightDirection;\n"
 
             + "vec3[LIGHT_COUNT] pointColours = vec3[LIGHT_COUNT](u_pointColour0.rgb, u_pointColour1.rgb, u_pointColour2.rgb, u_pointColour3.rgb);\n"
             + "float[LIGHT_COUNT] pointRanges = float[LIGHT_COUNT](0.00145, 0.00145, 0.00145, 0.00145);\n"
 
             + "const vec3 normal = vec3(0.0, 0.0, 1.0);"
-            + "const vec3 lightDir = normalize(vec3(20.0, -40.0, 30.0));"
-
+            
             + "vec4 diffuseColour;\n"
             + "vec3 calcLighting(vec3 normal, vec3 lightDir, vec3 lightColour, float falloff)\n"
             + "{\n"
@@ -152,7 +159,7 @@ namespace Level_editor
             + "ambientColour += calcLighting(normal, normalize(v_pointLightDirections[i]), pointColours[i], falloff);\n"
             + "}\n"
 
-            + "ambientColour += calcLighting(normal, lightDir, u_lightColour.rgb, 1.0);\n"
+            + "ambientColour += calcLighting(normal, v_directionalLightDirection, u_lightColour.rgb, 1.0);\n"
             + "gl_FragColor = vec4(ambientColour, diffuseColour.a);\n"
             + "}";
 

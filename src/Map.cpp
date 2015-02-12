@@ -120,6 +120,10 @@ Map::Map(const std::string& path)
         else
             std::cerr << "Map Parse: missing sun light colour." << std::endl;
 
+        if (v.get("AudioTheme").is<std::string>())
+            m_audioTheme = v.get("AudioTheme").get<std::string>();
+        else
+            std::cerr << "Map Parse: missing audio theme" << std::endl;
 
         //node array
         if (v.get("Nodes").is<picojson::array>())
@@ -223,6 +227,11 @@ const std::string& Map::getBackgroundImageName() const
 const std::string& Map::getPlatformImageName() const
 {
     return m_platformImageName;
+}
+
+const std::string& Map::getAudioTheme() const
+{
+    return m_audioTheme;
 }
 
 //private

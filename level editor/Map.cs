@@ -99,6 +99,8 @@ namespace Level_editor
             set { m_sunColour = value; }
         }
 
+        public string AudioTheme { get; set; }
+
         private List<Node> m_nodes;
         public List<Node> Nodes
         {
