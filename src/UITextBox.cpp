@@ -79,6 +79,7 @@ void TextBox::deselect()
 
 void TextBox::activate()
 {
+    if (!visible()) return;
     Control::activate();
     m_showCursor = true;
 }
@@ -203,6 +204,7 @@ void TextBox::setText(const std::string& text)
 //private
 void TextBox::draw(sf::RenderTarget& rt, sf::RenderStates states) const
 {
+    if (!visible()) return;
     states.transform *= getTransform();
     rt.draw(m_backShape, states);
     rt.draw(m_text, states);

@@ -73,3 +73,13 @@ bool Control::contains(const sf::Vector2f& mousePos) const
 {
     return false;
 }
+
+void Control::setVisible(bool visible)
+{
+    m_visible = visible;
+}
+
+bool Control::visible() const
+{
+    return m_visible;
+}

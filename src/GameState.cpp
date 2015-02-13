@@ -225,7 +225,7 @@ bool GameState::handleEvent(const sf::Event& evt)
         default:break;
         }
         break;
-    case sf::Event::JoystickButtonPressed:
+    case sf::Event::JoystickButtonReleased:
         if (evt.joystickButton.button == 7)
             requestStackPush(States::ID::Pause);
         break;

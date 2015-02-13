@@ -25,46 +25,40 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef MENU_STATE_H_
-#define MENU_STATE_H_
+//used to display scrolling messages in a ticker style
 
-#include <State.hpp>
-#include <UIContainer.hpp>
-#include <SoundPlayer.hpp>
-#include <Ticker.hpp>
+#ifndef TICKER_H_
+#define TICKER_H_
+
+#include <SFML/System/NonCopyable.hpp>
+#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Transformable.hpp>
 
 #include <vector>
 
-class MenuState final : public State
+class Ticker final : private sf::NonCopyable, public sf::Drawable, public sf::Transformable
 {
 public:
-    MenuState(StateStack& stack, Context context);
-    ~MenuState() = default;
+    explicit Ticker(sf::Font& font);
+    ~Ticker() = default;
 
-    bool update(float dt) override;
-    void draw() override;
-    bool handleEvent(const sf::Event& evt) override;
+    void update(float dt);
+    void addItem(const std::string& text);
+    void setSpeed(float speed);
+    void setSize(sf::FloatRect size);
+    sf::Uint16 getMessageCount() const;
 
 private:
-    enum Container
-    {
-        Main = 0,
-        NameInput,
-        Help,
-        Count
-    }m_currentContainer;
-
-    std::vector<ui::Container> m_uiContainers;
-    SoundPlayer m_soundPlayer;
-
     sf::Font& m_font;
-    TextureResource& m_textureResource;
+    std::vector<sf::Text> m_messages;
+    sf::FloatRect m_size;
+    float m_speed;
+    float m_totalWidth;
 
-    Ticker m_ticker;
-
-    void buildMainMenu();
-    void buildNameInput();
-    void buildHelp();
+    void draw(sf::RenderTarget& rt, sf::RenderStates states)const override;
 };
 
-#endif //MENU_STATE_H_
+
+#endif //TICKER_H_
