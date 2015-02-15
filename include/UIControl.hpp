@@ -76,10 +76,14 @@ namespace ui
         virtual void setAlignment(Alignment) = 0;
         virtual bool contains(const sf::Vector2f& mousePos) const;
 
+        void setVisible(bool visible);
+        bool visible() const;
+
     private:
 
         bool m_selected;
         bool m_active;
+        bool m_visible;
         sf::Uint16 m_index;
     };
 }

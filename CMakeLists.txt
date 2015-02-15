@@ -96,6 +96,7 @@ add_executable(
 	src/SpriteSheet.cpp
 	src/State.cpp
 	src/StateStack.cpp
+	src/Ticker.cpp
 	src/TitleState.cpp
 	src/UIButton.cpp
 	src/UICheckBox.cpp

@@ -118,6 +118,7 @@
     <ClCompile Include="src\SpriteSheet.cpp" />
     <ClCompile Include="src\State.cpp" />
     <ClCompile Include="src\StateStack.cpp" />
+    <ClCompile Include="src\Ticker.cpp" />
     <ClCompile Include="src\TitleState.cpp" />
     <ClCompile Include="src\UIButton.cpp" />
     <ClCompile Include="src\UICheckBox.cpp" />
@@ -146,6 +147,7 @@
     <ClInclude Include="include\InputMapping.hpp" />
     <ClInclude Include="include\JsonUtil.hpp" />
     <ClInclude Include="include\OptionsState.hpp" />
+    <ClInclude Include="include\Ticker.hpp" />
     <ClInclude Include="include\UIInputSelect.hpp" />
     <ClInclude Include="include\ItemBehaviour.hpp" />
     <ClInclude Include="include\Light.hpp" />

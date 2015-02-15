@@ -28,6 +28,7 @@ source distribution.
 #include <MenuState.hpp>
 #include <Game.hpp>
 #include <Util.hpp>
+#include <HighScoreTable.hpp>
 
 #include <InputMapping.hpp>
 #include <UIButton.hpp>
@@ -69,7 +70,8 @@ MenuState::MenuState(StateStack& stack, Context context)
     : State             (stack, context),
     m_currentContainer  (Container::Main),
     m_font              (context.gameInstance.getFont("res/fonts/VeraMono.ttf")),
-    m_textureResource   (context.gameInstance.getTextureResource())
+    m_textureResource   (context.gameInstance.getTextureResource()),
+    m_ticker            (context.gameInstance.getFont("res/fonts/VeraMono.ttf"))
 {
     context.renderWindow.setView(context.defaultView);
 
@@ -92,16 +94,27 @@ MenuState::MenuState(StateStack& stack, Context context)
     buildHelp();
 
     context.gameInstance.getMusicPlayer().play(music);
+
+    m_ticker.setSize({ 0.f, 0.f, 1930.f, 40.f });
+    m_ticker.setPosition(0.f, 60.f);
+    auto scores = HighScoreTable::read();
+    for (const auto& s : scores)
+    {
+        std::string score = std::to_string(s.second);
+        m_ticker.addItem("--" + s.first + " - " + score + "--   ");
+    }
 }
 
 void MenuState::draw()
 {
     getContext().renderWindow.draw(m_uiContainers[m_currentContainer]);
+    getContext().renderWindow.draw(m_ticker);
 }
 
 bool MenuState::update(float dt)
 {
     m_uiContainers[m_currentContainer].update(dt);
+    m_ticker.update(dt);
     return true;
 }
 
@@ -140,7 +153,8 @@ void MenuState::buildMainMenu()
     {
         m_currentContainer = Container::NameInput;
     });
-    m_uiContainers[Container::Main].addControl(playerTwoButton);
+    m_uiContainers[Container::Main].addControl(playerTwoButton);        
+    
 
     //options button
     auto optionsButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
@@ -226,7 +240,7 @@ void MenuState::buildHelp()
 {
     ui::Label::Ptr helpText = std::make_shared<ui::Label>(helpStr, m_font);
     helpText->setFontSize(60u);
-    helpText->setPosition(60.f, 40.f);
+    helpText->setPosition(60.f, 140.f);
     m_uiContainers[Container::Help].addControl(helpText);
 
     ui::Button::Ptr okButton = std::make_shared<ui::Button>(m_font, m_textureResource.get("res/textures/ui/button.png"));
