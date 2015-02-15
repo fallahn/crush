@@ -8,8 +8,8 @@
     }
   ],
   "FrameCount": 8,
-  "FrameSize": "48, 56",
-  "FrameRate": 18.0,
+  "FrameSize": "43, 64",
+  "FrameRate": 25.0,
   "Texture": "robot_diffuse.png",
-  "NormalMap": "robot_normal.tga"
+  "NormalMap": "robot_normal.png"
 }

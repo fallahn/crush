@@ -295,6 +295,7 @@ void AnimatedSprite::draw(sf::RenderTarget& rt, sf::RenderStates states) const
     {
         m_shader->setParameter("u_normalMap", m_normalMap);
         m_shader->setParameter("u_diffuseMap", *m_sprite.getTexture());
+        m_shader->setParameter("u_xNormMultiplier", getScale().x);
     }
     states.transform *= getTransform();
     states.shader = m_shader;

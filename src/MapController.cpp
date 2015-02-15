@@ -499,6 +499,7 @@ void MapController::LayerDrawable::draw(sf::RenderTarget& rt, sf::RenderStates s
     {
         m_shader.setParameter("u_diffuseMap", sf::Shader::CurrentTexture);
         m_shader.setParameter("u_normalMap", layer.second.normalTexture);
+        m_shader.setParameter("u_xNormMultiplier", 1.f);
         states.texture = &layer.second.diffuseTexture;
         rt.draw(layer.second.vertexArray, states);
     }

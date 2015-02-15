@@ -55,7 +55,7 @@ namespace
 NpcController::NpcController(CommandStack& c, TextureResource& tr, ShaderResource& sr)
     : m_commandStack    (c),
     m_randTime          (10.f),
-    m_enabled           (false),
+    m_enabled           (true),
     m_npcSpawnCount     (0u),
     m_textureResource   (tr),
     m_shaderResource    (sr){}

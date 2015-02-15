@@ -125,7 +125,7 @@ namespace Shader
         "}\n";
 
     //TODO add specular exponent as uniform
-    static const std::string uberFragment =
+        static const std::string uberFragment =
         "#define LIGHT_COUNT 6\n" \
         "uniform sampler2D u_diffuseMap;\n" \
         "uniform sampler2D u_normalMap;\n" \
@@ -142,6 +142,7 @@ namespace Shader
         "uniform vec3 u_directionalLightColour;\n" \
         "uniform vec3 u_ambientColour;\n" \
         "uniform float u_textureOffset;\n" \
+        "uniform float u_xNormMultiplier = 1.0;\n" \
         "\n" \
         "varying vec3 v_directionalLightDirection;\n" \
         "varying vec3 v_pointLightDirections[LIGHT_COUNT];\n" \
@@ -173,13 +174,13 @@ namespace Shader
 
         "vec3[LIGHT_COUNT] unpackLightColours()\n" \
         "{\n" \
-            "return vec3[LIGHT_COUNT](\n" \
-                "vec3(u_pointLightColoursFirst[0][0], u_pointLightColoursFirst[1][0], u_pointLightColoursFirst[3][0]),\n" \
-                "vec3(u_pointLightColoursFirst[0][1], u_pointLightColoursFirst[1][1], u_pointLightColoursFirst[3][1]),\n" \
-                "vec3(u_pointLightColoursFirst[0][3], u_pointLightColoursFirst[1][3], u_pointLightColoursFirst[3][3]),\n" \
-                "vec3(u_pointLightColoursSecond[0][0], u_pointLightColoursSecond[1][0], u_pointLightColoursSecond[3][0]),\n" \
-                "vec3(u_pointLightColoursSecond[0][1], u_pointLightColoursSecond[1][1], u_pointLightColoursSecond[3][1]),\n" \
-                "vec3(u_pointLightColoursSecond[0][3], u_pointLightColoursSecond[1][3], u_pointLightColoursSecond[3][3]));\n" \
+        "return vec3[LIGHT_COUNT](\n" \
+        "vec3(u_pointLightColoursFirst[0][0], u_pointLightColoursFirst[1][0], u_pointLightColoursFirst[3][0]),\n" \
+        "vec3(u_pointLightColoursFirst[0][1], u_pointLightColoursFirst[1][1], u_pointLightColoursFirst[3][1]),\n" \
+        "vec3(u_pointLightColoursFirst[0][3], u_pointLightColoursFirst[1][3], u_pointLightColoursFirst[3][3]),\n" \
+        "vec3(u_pointLightColoursSecond[0][0], u_pointLightColoursSecond[1][0], u_pointLightColoursSecond[3][0]),\n" \
+        "vec3(u_pointLightColoursSecond[0][1], u_pointLightColoursSecond[1][1], u_pointLightColoursSecond[3][1]),\n" \
+        "vec3(u_pointLightColoursSecond[0][3], u_pointLightColoursSecond[1][3], u_pointLightColoursSecond[3][3]));\n" \
         "}\n" \
 
 
@@ -206,9 +207,10 @@ namespace Shader
         "    vec2 coordR = vec2(gl_TexCoord[2].xy- (normalColour.rg * 0.5));\n" \
         "    diffuseColour.rgb = mix(texture2D(u_reflectMap, coordR).rgb, diffuseColour.rgb, 0.4);\n" \
         "#endif\n" \
-
+        /*when we flip sprites we need to flip the norma x direction the other way*/
         "    gl_FragColor.a = diffuseColour.a;\n" \
         "    vec3 normalVector = normalColour.rgb * 2.0 - 1.0;\n" \
+        "    normalVector.x *= u_xNormMultiplier;\n" \
         "    vec3 ambientColour = diffuseColour.rgb * u_ambientColour;\n" \
         "    vec3 blendedColour = ambientColour;\n" \
         "    vec3 pointLightColours[LIGHT_COUNT] = unpackLightColours();\n" \

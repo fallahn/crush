@@ -97,7 +97,7 @@ namespace Level_editor
         public MainWindow()
         {
             InitializeComponent();
-            //WindowState = FormWindowState.Maximized;
+            WindowState = FormWindowState.Maximized;
 
             //generate default data for selected sprite so it won't get all
             //borked when there are no sprite sheets to load / missing
