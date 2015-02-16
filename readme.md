@@ -4,9 +4,10 @@ CRUSH
 Crush or be Crushed!
 
 A simple 2D game where the main objective is to crush all of the bad guys by squashing them between
-two blocks, without getting crushed yourself. Special bonuses are awarded for collecting all of 
+two blocks, without getting crushed yourself. Special bonuses are awarded for collecting any of 
 the time limited items which appear in the map, and for surviving the longest wearing the Magic Hat!
 
+Here's a video of it in action: http://youtu.be/g574U0Zlyf8
 
 CRUSH is written in C++1y and requires a modern compiler, such as Visual Studio 2013 or clang/llvm
 
@@ -34,8 +35,8 @@ make
 
 the CRUSH binary will be compiled and output to the build subdirectory.
 
-There are known problems with the XCB build of SFML on Linux. If you experience these try the 2.2
-tagged version which uses XLib.
+There are known problems with the xcb build of SFML on Linux. If you experience these try the 2.2
+tagged version which uses xlib.
 
 
 WINDOWS:
@@ -71,3 +72,14 @@ ever), so you're on your own.
 
 Bug fixes are gratefully accepted, as are any bug reports or suggestions, via the Github issue
 tracker.
+
+
+
+
+----CREDITS----
+---------------
+
+Unless otherwise stated, all artwork included in the repository is by Josh Mercier. You can find his
+most awesome stuff on his steam workshop page:
+
+http://steamcommunity.com/id/hunter-killer/myworkshopfiles/
