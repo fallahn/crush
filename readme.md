@@ -7,7 +7,7 @@ A simple 2D game where the main objective is to crush all of the bad guys by squ
 two blocks, without getting crushed yourself. Special bonuses are awarded for collecting any of 
 the time limited items which appear in the map, and for surviving the longest wearing the Magic Hat!
 
-Here's a video of it in action: http://youtu.be/g574U0Zlyf8
+[![Watch on YouTube](http://djfallen.com/images/crush.gif)](https://youtu.be/g574U0Zlyf8?t=28s)
 
 CRUSH is written in C++1y and requires a modern compiler, such as Visual Studio 2013 or clang/llvm
 
